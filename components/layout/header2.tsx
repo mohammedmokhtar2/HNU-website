@@ -209,10 +209,10 @@ function Header2() {
                         alt='HNU Logo'
                         width={48}
                         height={48}
-                        className='w-full h-full object-cover rounded-full'
+                        className='w-full h-full object-cover rounded-full shadow-md'
                       />
                     </div>
-                    <div className='absolute -top-2 -right-3 h-4 w-4 bg-blue-500 rounded-full border-2 border-white shadow-lg animate-bounce'></div>
+                    <div className='absolute -top-2 -right-3 h-4 w-4 bg-blue-500 rounded-full border-2 border- shadow-lg animate-bounce'></div>
                     <div className='absolute -bottom-2 left-2 h-4 w-4 bg-blue-950 rounded-full border-2 animate-pulse shadow-md'></div>
                   </div>
                   <div className='hidden sm:block'>
