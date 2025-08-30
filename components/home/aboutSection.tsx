@@ -11,6 +11,7 @@ import {
   Sparkles,
   Play,
 } from 'lucide-react';
+import { VideoPlayer } from '@/components/ui';
 
 export interface AboutSectionProps {
   image?: string;
@@ -46,13 +47,13 @@ function AboutSection({
             className='relative w-full max-w-6xl aspect-video'
             onClick={e => e.stopPropagation()}
           >
-            <iframe
-              src='https://www.youtube.com/embed/nTHbXAEOd9M?autoplay=1&rel=0&modestbranding=1'
-              title={local === 'ar' ? 'فيديو الجامعة' : 'University Video'}
-              className='w-full h-full rounded-lg'
-              frameBorder='0'
-              allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
-              allowFullScreen
+            <VideoPlayer
+              src="/home.mp4"
+              poster="/home.jpeg"
+              className="w-full h-full rounded-lg"
+              controls={true}
+              autoPlay={true}
+              muted={true}
             />
 
             {/* Close Button */}
