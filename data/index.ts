@@ -86,30 +86,59 @@ export const programsSection = {
   cardTitleClassName: 'text-[#023e8a]',
   items: [
     {
-      id: 'eng-cs',
+      id: 'cs',
       title: {
-        en: 'Computer Science & Information Technology',
-        ar: 'علوم الحاسوب وتكنولوجيا المعلومات',
+        en: 'Faculty of Computer Science & Information Technology',
+        ar: 'كلية علوم الحاسوب وتكنولوجيا المعلومات',
       },
       faculty: {
-        en: 'Engineering',
-        ar: 'الهندسة',
+        en: 'Computer Science',
+        ar: 'علوم الحاسوب',
       },
       description: {
         en: 'Advanced curriculum covering algorithms, systems, AI, and software engineering with industry projects.',
-        ar: 'منهج متقدم يغطي الخوارزميات والأنظمة والذكاء الاصطناعي وهندسة البرمجيات مع مشاريع صناعية.',
+        ar: 'منهج متقدم يغطي الخوارزميات والأنظمة والذكاء الاصطناعي وهندسة البرمجيات مع مشاريع عملية.',
       },
       duration: {
         en: '4 years',
         ar: '٤ سنوات',
       },
       degree: {
-        en: 'B.Sc.',
-        ar: 'بكاليروس في العلوم',
+        en: 'B.Sc. in Computer Science',
+        ar: 'بكالوريوس في علوم الحاسوب',
       },
       money: {
-        en: 'EGP 60,000/yr',
-        ar: '٦٠٠٠٠ جنيه مصري سنويًا',
+        en: 'EGP 80,000/yr',
+        ar: '٨٠٬٠٠٠ جنيه مصري سنويًا',
+      },
+      image: '/home.jpeg',
+      href: '#',
+    },
+    {
+      id: 'eng-cs',
+      title: {
+        en: 'Faculty of Engineering',
+        ar: 'كلية الهندسة',
+      },
+      faculty: {
+        en: 'Engineering',
+        ar: 'الهندسة',
+      },
+      description: {
+        en: 'Comprehensive curriculum focusing on software development, systems engineering, and AI applications.',
+        ar: 'منهج شامل يركز على تطوير البرمجيات، هندسة الأنظمة، وتطبيقات الذكاء الاصطناعي.',
+      },
+      duration: {
+        en: '4 years',
+        ar: '٤ سنوات',
+      },
+      degree: {
+        en: 'B.Sc. in Engineering',
+        ar: 'بكالوريوس في الهندسة',
+      },
+      money: {
+        en: 'EGP 70,000/yr',
+        ar: '٧٠٬٠٠٠ جنيه مصري سنويًا',
       },
       image: '/home.jpeg',
       href: '#',
@@ -117,16 +146,16 @@ export const programsSection = {
     {
       id: 'business-admin',
       title: {
+        en: 'Faculty of Humanities, Commerce, and Business Administration',
+        ar: 'كلية العلوم الإنسانية والتجارة وإدارة الأعمال',
+      },
+      faculty: {
         en: 'Business Administration',
         ar: 'إدارة الأعمال',
       },
-      faculty: {
-        en: 'Business',
-        ar: 'الأعمال',
-      },
       description: {
         en: 'Leadership, finance, marketing, and analytics for future-ready business professionals.',
-        ar: 'القيادة والتمويل والتسويق والتحليلات للمهنيين المستعدين للمستقبل في مجال الأعمال.',
+        ar: 'القيادة، التمويل، التسويق، والتحليلات لإعداد مهنيين مستعدين لسوق العمل.',
       },
       duration: {
         en: '4 years',
@@ -134,11 +163,11 @@ export const programsSection = {
       },
       degree: {
         en: 'B.B.A.',
-        ar: 'بكاليروس في إدارة الأعمال',
+        ar: 'بكالوريوس في إدارة الأعمال',
       },
       money: {
-        en: 'EGP 55,000/yr',
-        ar: '٥٥٠٠٠ جنيه مصري سنويًا',
+        en: 'EGP 60,000/yr',
+        ar: '٦٠٬٠٠٠ جنيه مصري سنويًا',
       },
       image: '/home.jpeg',
       href: '#',
@@ -146,8 +175,8 @@ export const programsSection = {
     {
       id: 'law',
       title: {
-        en: 'Law',
-        ar: 'القانون',
+        en: 'Faculty of Law (Arabic Program)',
+        ar: 'كلية الحقوق (برنامج عربي)',
       },
       faculty: {
         en: 'Law',
@@ -155,7 +184,7 @@ export const programsSection = {
       },
       description: {
         en: 'Foundations of legal systems, jurisprudence, and practical case analysis.',
-        ar: 'أسس الأنظمة القانونية، والفقه، وتحليل الحالات العملية.',
+        ar: 'أسس الأنظمة القانونية، الفقه، وتحليل الحالات العملية.',
       },
       duration: {
         en: '4 years',
@@ -163,11 +192,11 @@ export const programsSection = {
       },
       degree: {
         en: 'LL.B.',
-        ar: 'بكاليروس في القانون',
+        ar: 'بكالوريوس في القانون',
       },
       money: {
         en: 'EGP 50,000/yr',
-        ar: '٥٠٠٠٠ جنيه مصري سنويًا',
+        ar: '٦٠٬٠٠٠ جنيه مصري سنويًا',
       },
       image: '/home.jpeg',
       href: '#',
@@ -175,16 +204,16 @@ export const programsSection = {
     {
       id: 'medicine',
       title: {
-        en: 'Medicine',
-        ar: 'الطب',
+        en: 'Faculty of Medicine',
+        ar: 'كلية الطب البشري',
       },
       faculty: {
         en: 'Medicine',
-        ar: 'الطب',
+        ar: 'الطب البشري',
       },
       description: {
-        en: 'Comprehensive medical education with clinical training and research opportunities.',
-        ar: 'تعليم طبي شامل مع تدريب عيادي وفرص بحثية.',
+        en: 'Comprehensive medical education with clinical training, patient care, and research opportunities.',
+        ar: 'تعليم طبي شامل مع تدريب سريري، رعاية المرضى، وفرص البحث العلمي.',
       },
       duration: {
         en: '6 years',
@@ -192,11 +221,11 @@ export const programsSection = {
       },
       degree: {
         en: 'M.B.B.Ch.',
-        ar: 'بكاليروس في الطب',
+        ar: 'بكالوريوس في الطب البشري',
       },
       money: {
         en: 'EGP 90,000/yr',
-        ar: '٩٠٠٠٠ جنيه مصري سنويًا',
+        ar: '١٥٠٬٠٠٠ جنيه مصري سنويًا',
       },
       image: '/home.jpeg',
       href: '#',
@@ -204,28 +233,173 @@ export const programsSection = {
     {
       id: 'applied-health',
       title: {
-        en: 'Applied Health Sciences Technology',
-        ar: 'تكنولوجيا العلوم الصحية التطبيقية',
+        en: 'Faculty of Applied Health Sciences',
+        ar: 'كلية العلوم الصحية التطبيقية',
       },
       faculty: {
-        en: 'Applied Health Sciences Technology',
-        ar: 'تكنولوجيا العلوم الصحية التطبيقية',
+        en: 'Applied Health Sciences',
+        ar: 'العلوم الصحية التطبيقية',
       },
       description: {
-        en: 'Healthcare technology, diagnostics, and applied clinical sciences.',
-        ar: 'تكنولوجيا الرعاية الصحية، والتشخيصات، والعلوم السريرية التطبيقية.',
+        en: 'Education in healthcare technology, diagnostics, rehabilitation, and applied clinical sciences.',
+        ar: 'تعليم في مجال تكنولوجيا الرعاية الصحية، التشخيص، إعادة التأهيل، والعلوم السريرية التطبيقية.',
       },
       duration: {
         en: '4 years',
         ar: '٤ سنوات',
       },
       degree: {
-        en: 'B.Sc.',
-        ar: 'بكاليروس في العلوم',
+        en: 'B.Sc. in Applied Health Sciences',
+        ar: 'بكالوريوس في العلوم الصحية التطبيقية',
+      },
+      money: {
+        en: 'EGP 55,000/yr',
+        ar: '٥٥٬٠٠٠ جنيه مصري سنويًا',
+      },
+      image: '/home.jpeg',
+      href: '#',
+    },
+    {
+      id: 'sciences',
+      title: {
+        en: 'Faculty of Sciences',
+        ar: 'كلية العلوم',
+      },
+      faculty: {
+        en: 'Sciences',
+        ar: 'العلوم',
+      },
+      description: {
+        en: 'The Faculty of Sciences provides students with a strong foundation in various scientific disciplines, fostering analytical thinking, research skills, and practical laboratory experience for careers in science and technology.',
+        ar: 'تُقدم كلية العلوم أساسًا متينًا في مختلف التخصصات العلمية، مع تعزيز مهارات التفكير التحليلي، البحث، والخبرة العملية في المختبرات، لإعداد الطلاب لمهن في مجالات العلم والتكنولوجيا.',
+      },
+      duration: {
+        en: '4 years',
+        ar: '٤ سنوات',
+      },
+      degree: {
+        en: 'B.Sc. in Sciences',
+        ar: 'بكالوريوس في العلوم',
       },
       money: {
         en: 'EGP 60,000/yr',
-        ar: '٥٨٠٠٠ جنيه مصري سنويًا',
+        ar: '٦٠٬٠٠٠ جنيه مصري سنويًا',
+      },
+      image: '/home.jpeg',
+      href: '#',
+    },
+    {
+      id: 'physical-therapy',
+      title: {
+        en: 'Faculty of Physical Therapy',
+        ar: 'كلية العلاج الطبيعي',
+      },
+      faculty: {
+        en: 'Physical Therapy',
+        ar: 'العلاج الطبيعي',
+      },
+      description: {
+        en: 'Education in physical therapy focusing on rehabilitation, patient care, biomechanics, and clinical practice.',
+        ar: 'تعليم في مجال العلاج الطبيعي يركز على إعادة التأهيل، رعاية المرضى، علم الحركة، والممارسة السريرية.',
+      },
+      duration: {
+        en: '5 years',
+        ar: '٥ سنوات',
+      },
+      degree: {
+        en: 'B.Sc. in Physical Therapy',
+        ar: 'بكالوريوس في العلاج الطبيعي',
+      },
+      money: {
+        en: 'EGP 105,000/yr',
+        ar: '١٠٥٬٠٠٠ جنيه مصري سنويًا',
+      },
+      image: '/home.jpeg',
+      href: '#',
+    },
+    {
+      id: 'arts',
+      title: {
+        en: 'Faculty of Arts & Applied Arts',
+        ar: 'كلية الفنون والفنون التطبيقية',
+      },
+      faculty: {
+        en: 'Arts & Applied Arts',
+        ar: 'الفنون والفنون التطبيقية',
+      },
+      description: {
+        en: 'Education in fine arts, design, and applied arts, fostering creativity, artistic skills, and practical projects.',
+        ar: 'تعليم في الفنون الجميلة، التصميم، والفنون التطبيقية، مع تعزيز الإبداع والمهارات الفنية والمشاريع العملية.',
+      },
+      duration: {
+        en: '4 years',
+        ar: '٤ سنوات',
+      },
+      degree: {
+        en: 'B.F.A. (Bachelor of Fine Arts)',
+        ar: 'بكالوريوس في الفنون الجميلة',
+      },
+      money: {
+        en: 'EGP 60,000/yr',
+        ar: '٦٠٬٠٠٠ جنيه مصري سنويًا',
+      },
+      image: '/home.jpeg',
+      href: '#',
+    },
+    {
+      id: 'dentistry',
+      title: {
+        en: 'Faculty of Dentistry',
+        ar: 'كلية طب الأسنان',
+      },
+      faculty: {
+        en: 'Dentistry',
+        ar: 'طب الأسنان',
+      },
+      description: {
+        en: 'Comprehensive dental education focusing on oral health, clinical training, and preventive dentistry.',
+        ar: 'تعليم شامل في طب الأسنان يركز على صحة الفم، التدريب السريري، وطب الأسنان الوقائي.',
+      },
+      duration: {
+        en: '5 years',
+        ar: '٥ سنوات',
+      },
+      degree: {
+        en: 'B.D.S. (Bachelor of Dental Surgery)',
+        ar: 'بكالوريوس في جراحة الأسنان',
+      },
+      money: {
+        en: 'EGP 130,000/yr',
+        ar: '١٣٠٬٠٠٠ جنيه مصري سنويًا',
+      },
+      image: '/home.jpeg',
+      href: '#',
+    },
+    {
+      id: 'translation',
+      title: {
+        en: 'Specialized English Translation Program',
+        ar: 'برنامج الترجمة المتخصصة باللغة الإنجليزية',
+      },
+      faculty: {
+        en: 'Translation Studies',
+        ar: 'دراسات الترجمة',
+      },
+      description: {
+        en: 'Program focusing on professional translation skills, linguistic accuracy, and specialized fields such as technical, legal, and medical translation.',
+        ar: 'برنامج يركز على مهارات الترجمة الاحترافية، الدقة اللغوية، والمجالات المتخصصة مثل الترجمة التقنية والقانونية والطبية.',
+      },
+      duration: {
+        en: '4 years',
+        ar: '٤ سنوات',
+      },
+      degree: {
+        en: 'B.A. in Translation',
+        ar: 'بكالوريوس في الترجمة',
+      },
+      money: {
+        en: 'EGP 60,000/yr',
+        ar: '٦٠٬٠٠٠ جنيه مصري سنويًا',
       },
       image: '/home.jpeg',
       href: '#',
@@ -233,16 +407,7 @@ export const programsSection = {
   ],
 };
 
-export const headerData = {
-  tite: {
-    ar: 'جامعة حلوان الاهلية',
-    en: 'Helwan National University',
-  },
-  description: {
-    ar: 'جامعة حلوان الاهلية',
-    en: 'Helwan National University',
-  },
-};
+export const headerData = {};
 
 export const socialMediaLinks = {
   facebook: 'https://www.facebook.com/helwanuniversity',
