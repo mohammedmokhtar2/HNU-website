@@ -79,9 +79,9 @@ function AboutSection({
             src={backgroundImage || image || '/home.jpeg'}
             alt={local === 'ar' ? 'خلفية الجامعة' : 'University Background'}
             fill
-            className='object-cover opacity-20'
+            className='object-cover opacity-50'
           />
-          <div className='absolute inset-0 bg-gradient-to-br from-blue-900/30 via-blue-800/20 to-indigo-900/10'></div>
+          <div className='absolute inset-0 bg-gradient-to-b from-[#023e8a]/50 via-[#023e8a]/30 to-[#023e8a]/50'></div>
         </div>
 
         {/* Background with palm tree silhouettes */}
@@ -100,7 +100,7 @@ function AboutSection({
         </div>
 
         <div className='relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='grid lg:grid-cols-2 gap-12 lg:gap-16 items-center'>
+          <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center'>
             {/* Left Column - Text Content */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
@@ -214,7 +214,10 @@ function AboutSection({
                 </span>
                 <ArrowRight
                   size={18}
-                  className='relative z-10 group-hover:translate-x-1 transition-transform duration-300'
+                  className={`relative z-10 transition-transform duration-300 ${local === 'ar'
+                    ? 'rotate-180 group-hover:-translate-x-1'
+                    : 'group-hover:translate-x-1'
+                    }`}
                 />
 
                 {/* Animated background */}
@@ -272,9 +275,9 @@ function AboutSection({
                         className='bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4'
                       >
                         <div className='flex items-center gap-3 mb-2'>
-                          <div className='w-3 h-3 bg-red-500 rounded-full animate-pulse'></div>
+                          <div className='w-3 h-3 bg-blue-500 rounded-full animate-pulse'></div>
                           <span className='text-white/90 text-sm font-medium'>
-                            {local === 'ar' ? 'مباشر الآن' : 'Live Now'}
+                            {local === 'ar' ? 'فيديو جديد' : 'New Video'}
                           </span>
                         </div>
                         <h4 className='text-white font-semibold text-lg'>
