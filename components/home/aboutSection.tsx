@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { GraduationCap, Lightbulb, Globe, Award, ArrowRight, Star, Sparkles, Play } from 'lucide-react';
+import { VideoPlayer } from '@/components/ui';
 
 export interface AboutSectionProps {
   image?: string;
@@ -37,13 +38,13 @@ function AboutSection({
             className='relative w-full max-w-6xl aspect-video'
             onClick={(e) => e.stopPropagation()}
           >
-            <iframe
-              src="https://www.youtube.com/embed/nTHbXAEOd9M?autoplay=1&rel=0&modestbranding=1"
-              title={local === 'ar' ? 'فيديو الجامعة' : 'University Video'}
-              className='w-full h-full rounded-lg'
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
+            <VideoPlayer
+              src="/home.mp4"
+              poster="/home.jpeg"
+              className="w-full h-full rounded-lg"
+              controls={true}
+              autoPlay={true}
+              muted={false}
             />
 
             {/* Close Button */}
@@ -67,9 +68,9 @@ function AboutSection({
             src={backgroundImage || image || '/home.jpeg'}
             alt={local === 'ar' ? 'خلفية الجامعة' : 'University Background'}
             fill
-            className='object-cover opacity-20'
+            className='object-cover opacity-50'
           />
-          <div className='absolute inset-0 bg-gradient-to-br from-blue-900/30 via-blue-800/20 to-indigo-900/10'></div>
+          <div className='absolute inset-0 bg-gradient-to-b from-[#023e8a]/50 via-[#023e8a]/30 to-[#023e8a]/50'></div>
         </div>
 
         {/* Background with palm tree silhouettes */}
@@ -88,7 +89,7 @@ function AboutSection({
         </div>
 
         <div className='relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='grid lg:grid-cols-2 gap-12 lg:gap-16 items-center'>
+          <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center'>
 
             {/* Left Column - Text Content */}
             <motion.div
@@ -175,7 +176,13 @@ function AboutSection({
                 <span className='relative z-10 font-semibold'>
                   {local === 'ar' ? 'اقرأ المزيد' : 'Read More'}
                 </span>
-                <ArrowRight size={18} className='relative z-10 group-hover:translate-x-1 transition-transform duration-300' />
+                <ArrowRight
+                  size={18}
+                  className={`relative z-10 transition-transform duration-300 ${local === 'ar'
+                      ? 'rotate-180 group-hover:-translate-x-1'
+                      : 'group-hover:translate-x-1'
+                    }`}
+                />
 
                 {/* Animated background */}
                 <div className='absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-500' />
@@ -230,16 +237,16 @@ function AboutSection({
                         className='bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4'
                       >
                         <div className='flex items-center gap-3 mb-2'>
-                          <div className='w-3 h-3 bg-red-500 rounded-full animate-pulse'></div>
+                          <div className='w-3 h-3 bg-blue-500 rounded-full animate-pulse'></div>
                           <span className='text-white/90 text-sm font-medium'>
-                            {local === 'ar' ? 'مباشر الآن' : 'Live Now'}
+                            {local === 'ar' ? 'فيديو جديد' : 'New Video'}
                           </span>
                         </div>
                         <h4 className='text-white font-semibold text-lg'>
                           {local === 'ar' ? 'اكتشف جامعتنا' : 'Discover Our University'}
                         </h4>
                         <p className='text-white/80 text-sm'>
-                          {local === 'ar' ? 'جولة افتراضية في الحرم الجامعي' : 'Virtual Campus Tour'}
+                          {local === 'ar' ? 'شاهد فيديو الجامعة' : 'Watch University Video'}
                         </p>
                       </motion.div>
                     </div>
