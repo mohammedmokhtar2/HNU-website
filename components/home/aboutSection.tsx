@@ -1,8 +1,16 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { GraduationCap, Lightbulb, Globe, Award, ArrowRight, Star, Sparkles, Play } from 'lucide-react';
-import { VideoPlayer } from '@/components/ui';
+import {
+  GraduationCap,
+  Lightbulb,
+  Globe,
+  Award,
+  ArrowRight,
+  Star,
+  Sparkles,
+  Play,
+} from 'lucide-react';
 
 export interface AboutSectionProps {
   image?: string;
@@ -36,15 +44,15 @@ function AboutSection({
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ duration: 0.3 }}
             className='relative w-full max-w-6xl aspect-video'
-            onClick={(e) => e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
           >
-            <VideoPlayer
-              src="/home.mp4"
-              poster="/home.jpeg"
-              className="w-full h-full rounded-lg"
-              controls={true}
-              autoPlay={true}
-              muted={false}
+            <iframe
+              src='https://www.youtube.com/embed/nTHbXAEOd9M?autoplay=1&rel=0&modestbranding=1'
+              title={local === 'ar' ? 'فيديو الجامعة' : 'University Video'}
+              className='w-full h-full rounded-lg'
+              frameBorder='0'
+              allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+              allowFullScreen
             />
 
             {/* Close Button */}
@@ -61,7 +69,10 @@ function AboutSection({
         </motion.div>
       )}
 
-      <section id='about' className='py-24 bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 relative overflow-hidden'>
+      <section
+        id='about'
+        className='py-24 bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 relative overflow-hidden'
+      >
         {/* Background Photo with Overlay */}
         <div className='absolute inset-0'>
           <Image
@@ -90,12 +101,11 @@ function AboutSection({
 
         <div className='relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center'>
-
             {/* Left Column - Text Content */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
+              transition={{ duration: 0.8, ease: 'easeOut' }}
               viewport={{ once: true }}
               className='text-white'
             >
@@ -121,15 +131,13 @@ function AboutSection({
                 <p className='text-lg sm:text-xl text-white leading-relaxed'>
                   {local === 'ar'
                     ? 'جامعتنا هي مؤسسة تعليمية رائدة مصممة لقيادة الابتكار وتحقيق التميز في أربعة أبعاد أساسية: التعلم المتقدم، والبحث العلمي المبتكر، والابتكار وريادة الأعمال، والتأثير المجتمعي الإيجابي.'
-                    : 'Our university is a leading educational institution designed to lead innovation and achieve excellence in four fundamental dimensions: Advanced Learning, Innovative Research, Innovation and Entrepreneurship, and Positive Community Impact.'
-                  }
+                    : 'Our university is a leading educational institution designed to lead innovation and achieve excellence in four fundamental dimensions: Advanced Learning, Innovative Research, Innovation and Entrepreneurship, and Positive Community Impact.'}
                 </p>
 
                 <p className='text-lg sm:text-xl text-white leading-relaxed'>
                   {local === 'ar'
                     ? 'نتميز ببرامجنا الفريدة القائمة على التكنولوجيا والأعمال، ومراكزنا البحثية المتطورة، وتركيزنا على الابتكار وريادة الأعمال لمعالجة التحديات الحرجة في مجتمعنا، من خلال البحث التطبيقي المتقدم والشراكات الاستراتيجية.'
-                    : 'We feature unique technology and business-based programs, advanced research centers, and focus on innovation and entrepreneurship to address critical challenges in our society through cutting-edge applied research and strategic partnerships.'
-                  }
+                    : 'We feature unique technology and business-based programs, advanced research centers, and focus on innovation and entrepreneurship to address critical challenges in our society through cutting-edge applied research and strategic partnerships.'}
                 </p>
               </motion.div>
 
@@ -142,16 +150,44 @@ function AboutSection({
                 className='grid grid-cols-2 gap-4 mb-8'
               >
                 {[
-                  { icon: GraduationCap, text: local === 'ar' ? 'برامج أكاديمية متطورة' : 'Advanced Academic Programs' },
-                  { icon: Lightbulb, text: local === 'ar' ? 'ابتكار وريادة أعمال' : 'Innovation & Entrepreneurship' },
-                  { icon: Globe, text: local === 'ar' ? 'شراكات دولية' : 'International Partnerships' },
-                  { icon: Award, text: local === 'ar' ? 'تميز في البحث العلمي' : 'Research Excellence' }
+                  {
+                    icon: GraduationCap,
+                    text:
+                      local === 'ar'
+                        ? 'برامج أكاديمية متطورة'
+                        : 'Advanced Academic Programs',
+                  },
+                  {
+                    icon: Lightbulb,
+                    text:
+                      local === 'ar'
+                        ? 'ابتكار وريادة أعمال'
+                        : 'Innovation & Entrepreneurship',
+                  },
+                  {
+                    icon: Globe,
+                    text:
+                      local === 'ar'
+                        ? 'شراكات دولية'
+                        : 'International Partnerships',
+                  },
+                  {
+                    icon: Award,
+                    text:
+                      local === 'ar'
+                        ? 'تميز في البحث العلمي'
+                        : 'Research Excellence',
+                  },
                 ].map((feature, index) => (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, scale: 0.8 }}
                     whileInView={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.8 + index * 0.1, duration: 0.5, type: "spring" }}
+                    transition={{
+                      delay: 0.8 + index * 0.1,
+                      duration: 0.5,
+                      type: 'spring',
+                    }}
                     viewport={{ once: true }}
                     className='flex items-center gap-3 group'
                   >
@@ -179,8 +215,8 @@ function AboutSection({
                 <ArrowRight
                   size={18}
                   className={`relative z-10 transition-transform duration-300 ${local === 'ar'
-                      ? 'rotate-180 group-hover:-translate-x-1'
-                      : 'group-hover:translate-x-1'
+                    ? 'rotate-180 group-hover:-translate-x-1'
+                    : 'group-hover:translate-x-1'
                     }`}
                 />
 
@@ -193,7 +229,7 @@ function AboutSection({
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
+              transition={{ duration: 0.8, ease: 'easeOut' }}
               viewport={{ once: true }}
               className='relative'
             >
@@ -203,7 +239,9 @@ function AboutSection({
                 <div className='relative h-[500px] sm:h-[600px] w-full'>
                   <Image
                     src={image || '/home.jpeg'}
-                    alt={local === 'ar' ? 'طلاب الجامعة' : 'University Students'}
+                    alt={
+                      local === 'ar' ? 'طلاب الجامعة' : 'University Students'
+                    }
                     fill
                     className='object-cover'
                   />
@@ -214,7 +252,7 @@ function AboutSection({
                   <motion.button
                     initial={{ scale: 0 }}
                     whileInView={{ scale: 1 }}
-                    transition={{ delay: 0.8, duration: 0.6, type: "spring" }}
+                    transition={{ delay: 0.8, duration: 0.6, type: 'spring' }}
                     viewport={{ once: true }}
                     onClick={() => setIsVideoPlaying(true)}
                     className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-2xl hover:bg-white hover:scale-110 transition-all duration-300 group'
@@ -243,10 +281,14 @@ function AboutSection({
                           </span>
                         </div>
                         <h4 className='text-white font-semibold text-lg'>
-                          {local === 'ar' ? 'اكتشف جامعتنا' : 'Discover Our University'}
+                          {local === 'ar'
+                            ? 'اكتشف جامعتنا'
+                            : 'Discover Our University'}
                         </h4>
                         <p className='text-white/80 text-sm'>
-                          {local === 'ar' ? 'شاهد فيديو الجامعة' : 'Watch University Video'}
+                          {local === 'ar'
+                            ? 'جولة افتراضية في الحرم الجامعي'
+                            : 'Virtual Campus Tour'}
                         </p>
                       </motion.div>
                     </div>
@@ -258,12 +300,12 @@ function AboutSection({
               <motion.div
                 animate={{
                   y: [0, -10, 0],
-                  rotate: [0, 5, 0]
+                  rotate: [0, 5, 0],
                 }}
                 transition={{
                   duration: 6,
                   repeat: Infinity,
-                  ease: "easeInOut"
+                  ease: 'easeInOut',
                 }}
                 className='absolute -top-4 -right-4 w-16 h-16 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full flex items-center justify-center shadow-lg'
               >
@@ -273,12 +315,12 @@ function AboutSection({
               <motion.div
                 animate={{
                   y: [0, 10, 0],
-                  rotate: [0, -5, 0]
+                  rotate: [0, -5, 0],
                 }}
                 transition={{
                   duration: 8,
                   repeat: Infinity,
-                  ease: "easeInOut"
+                  ease: 'easeInOut',
                 }}
                 className='absolute -bottom-4 -left-4 w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg'
               >
