@@ -22,32 +22,7 @@ function Footer() {
       {/* Main Footer Content */}
       <div className='py-12 sm:py-16 bg-gray-900'>
         <div className='px-4 sm:px-6 lg:px-8'>
-          <div className='grid grid-cols-1 lg:grid-cols-4 gap-12'>
-            {/* First Column - Logo */}
-            <div className='flex flex-col items-center lg:items-start space-y-6'>
-              <div className='text-center lg:text-left'>
-                <div className='mb-6'>
-                  <Image
-                    src='/logo.png'
-                    alt='HNU Logo'
-                    width={200}
-                    height={200}
-                    className='w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 mx-auto lg:mx-0'
-                    priority
-                  />
-                </div>
-
-                <h3 className='text-2xl sm:text-3xl font-bold text-white mb-4'>
-                  Helwan National University
-                </h3>
-
-                <p className='text-gray-400 leading-relaxed text-sm sm:text-base max-w-xs'>
-                  Empowering minds, shaping futures through excellence in
-                  education and innovation.
-                </p>
-              </div>
-            </div>
-
+          <div className='grid grid-cols-1 lg:grid-cols-3 gap-12'>
             {/* Second Column - Map */}
             <div className='space-y-6'>
               <h3 className='text-xl sm:text-2xl font-bold text-white mb-4 text-center lg:text-left'>

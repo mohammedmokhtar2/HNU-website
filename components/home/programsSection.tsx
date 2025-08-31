@@ -1,6 +1,7 @@
 import React from 'react';
 import Reveal from '@/components/Reveal';
 import { useTranslations } from 'next-intl';
+import { BarChart3, GraduationCap } from 'lucide-react';
 
 export interface ProgramItem {
   id: string;
@@ -61,11 +62,12 @@ function ProgramsSection({
       <div className='container mx-auto px-4'>
         <div className='max-w-3xl mx-auto text-center mb-12'>
           <Reveal from='up'>
-            <h2
-              className={`text-4xl sm:text-5xl font-bold mb-4 ${accentClassName || ''}`}
-            >
-              {local === 'ar' ? title.ar : title.en}
-            </h2>
+            <div className='flex items-center justify-center mb-4 gap-4'>
+              <GraduationCap className='w-8 h-8 text-[#023e8a] mr-3 animate-pulse' />
+              <h2 className='text-4xl md:text-5xl font-bold text-gray-900'>
+                {local === 'ar' ? title.ar : title.en}{' '}
+              </h2>
+            </div>
           </Reveal>
           {subtitle && (
             <Reveal delayMs={100} from='up'>

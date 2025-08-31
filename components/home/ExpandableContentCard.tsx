@@ -14,6 +14,8 @@ import {
   ArrowRight,
   X,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useOutsideClick } from '@/hooks/useOutsideClick';
@@ -43,6 +45,7 @@ const ExpandableContentCard: React.FC<ExpandableContentCardProps> = ({
   const [active, setActive] = useState<ContentItem | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const id = useId();
+  const expandT = useTranslations('expand');
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -126,13 +129,13 @@ const ExpandableContentCard: React.FC<ExpandableContentCardProps> = ({
   const getActionButton = () => {
     switch (type) {
       case 'event':
-        return 'Register Now';
+        return expandT('register-now');
       case 'news':
-        return 'Read More';
+        return expandT('read-more');
       case 'activity':
-        return 'Join Now';
+        return expandT('join-now');
       default:
-        return 'Learn More';
+        return expandT('learn-more');
     }
   };
 
@@ -150,7 +153,14 @@ const ExpandableContentCard: React.FC<ExpandableContentCardProps> = ({
       </div>
 
       <div className='pt-4'>
-        <h4 className='font-semibold text-gray-900 mb-2'>About this {type}</h4>
+        <h4 className='font-semibold text-gray-900 mb-2'>
+          {type === 'event'
+            ? expandT('event')
+            : type === 'news'
+              ? expandT('news')
+              : expandT('activity')}
+          {expandT('About-this')}
+        </h4>
         <p className='text-gray-600 leading-relaxed'>{item.description}</p>
       </div>
 
@@ -220,7 +230,9 @@ const ExpandableContentCard: React.FC<ExpandableContentCardProps> = ({
                   <div className='absolute top-2 right-2 sm:top-4 sm:right-4'>
                     <Badge className='bg-[#023e8a] text-white border-0 flex items-center gap-1 text-xs sm:text-sm'>
                       <Star className='w-3 h-3 sm:w-4 sm:h-4' />
-                      <span className='hidden sm:inline'>Featured</span>
+                      <span className='hidden sm:inline'>
+                        {expandT('Featured')}
+                      </span>
                     </Badge>
                   </div>
                 )}
@@ -273,7 +285,7 @@ const ExpandableContentCard: React.FC<ExpandableContentCardProps> = ({
 
       {/* Image Grid */}
       <div
-        className={`grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4 ${className}`}
+        className={`grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4  ${className}`}
       >
         {items.map(item => (
           <motion.div

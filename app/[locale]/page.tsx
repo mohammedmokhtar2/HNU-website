@@ -7,13 +7,15 @@ import {
   aboutSection,
   programsSection,
   FactsAndNumbers,
+  faqRandom,
+  topNewsData,
 } from '@/data';
 import React from 'react';
 import { useLocale } from 'next-intl';
 import FcatsAndNumber from '@/components/home/FcatsAndNumber';
 import FAQ from '@/components/home/FAQ';
-import TopStudentActivities from '@/components/home/TopStudentActivities';
-import TopEvents from '@/components/home/TopEvents';
+// import TopStudentActivities from '@/components/home/TopStudentActivities';
+// import TopEvents from '@/components/home/TopEvents';
 import TopNews from '@/components/home/TopNews';
 
 function Home() {
@@ -23,11 +25,11 @@ function Home() {
       <HeroSection {...heroSection} local={locale} />
       <AboutSection {...aboutSection} local={locale} />
       <ProgramsSection {...programsSection} local={locale} />
-      <FcatsAndNumber FactsAndNumbers={FactsAndNumbers} />
-      <FAQ />
-      <TopNews />
-      <TopEvents />
-      <TopStudentActivities />
+      <FcatsAndNumber {...FactsAndNumbers} local={locale} />
+      <FAQ {...faqRandom} local={locale} />
+      <TopNews {...topNewsData} local={locale} />
+      {/* <TopEvents /> */}
+      {/* <TopStudentActivities /> */}
     </>
   );
 }
