@@ -465,45 +465,69 @@ export const footerData = {
   navigation: {
     title: 'Quick Links',
     links: [
-      { name: {
-        ar:"الرئيسية",
-        en:"Home"
-      }, href: '#home' },
-      { name: {
-        ar:"من نحن",
-        en:"About Us"
-      }, href: '#about' },
-      { name: {
-        ar:"البرامج",
-        en:"Programs"
-      }, href: '#programs' },
-      { name: {
-        ar:"القبول",
-        en:"Admissions"
-      }, href: '#admissions' },
-      { name: {
-        ar:"البحث",
-        en:"Research"
-      }, href: '#research' },
-      { name: {
-        ar:"حياة الحرم الجامعي",
-        en:"Campus Life"
-      }, href: '#campus-life' },
-      { name: {
-        ar:"اتصل بنا",
-        en:"Contact"
-      }, href: '#contact' },
-      { name: {
-        ar:"الأخبار والفعاليات",
-        en:"News & Events"
-      }, href: '#news' },
+      {
+        name: {
+          ar: 'الرئيسية',
+          en: 'Home',
+        },
+        href: '#home',
+      },
+      {
+        name: {
+          ar: 'من نحن',
+          en: 'About Us',
+        },
+        href: '#about',
+      },
+      {
+        name: {
+          ar: 'البرامج',
+          en: 'Programs',
+        },
+        href: '#programs',
+      },
+      {
+        name: {
+          ar: 'القبول',
+          en: 'Admissions',
+        },
+        href: '#admissions',
+      },
+      {
+        name: {
+          ar: 'البحث',
+          en: 'Research',
+        },
+        href: '#research',
+      },
+      {
+        name: {
+          ar: 'حياة الحرم الجامعي',
+          en: 'Campus Life',
+        },
+        href: '#campus-life',
+      },
+      {
+        name: {
+          ar: 'اتصل بنا',
+          en: 'Contact',
+        },
+        href: '#contact',
+      },
+      {
+        name: {
+          ar: 'الأخبار والفعاليات',
+          en: 'News & Events',
+        },
+        href: '#news',
+      },
     ],
   },
   contact: {
     title: 'Contact Information',
     address: {
-      ar:"حلوان، محافظة القاهرة، مصر",
-      en:"Helwan, Cairo Governorate, Egypt"
+      ar: 'حلوان، محافظة القاهرة، مصر',
+      en: 'Helwan, Cairo Governorate, Egypt',
     },
     phone: {
       // phone numbers in arabic number
@@ -530,7 +554,7 @@ export const footerData = {
     team: 'Development Team',
     credits: {
       ar: 'تم التطوير بواسطة فريق جامعة حلوان الاهلية',
-      en: 'Developed by Helwan National University Team'
+      en: 'Developed by Helwan National University Team',
     },
     year: new Date().getFullYear(),
   },

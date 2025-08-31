@@ -48,9 +48,9 @@ function AboutSection({
             onClick={e => e.stopPropagation()}
           >
             <VideoPlayer
-              src="/home.mp4"
-              poster="/home.jpeg"
-              className="w-full h-full rounded-lg"
+              src='/home.mp4'
+              poster='/home.jpeg'
+              className='w-full h-full rounded-lg'
               controls={true}
               autoPlay={true}
               muted={true}
@@ -215,10 +215,11 @@ function AboutSection({
                 </span>
                 <ArrowRight
                   size={18}
-                  className={`relative z-10 transition-transform duration-300 ${local === 'ar'
-                    ? 'rotate-180 group-hover:-translate-x-1'
-                    : 'group-hover:translate-x-1'
-                    }`}
+                  className={`relative z-10 transition-transform duration-300 ${
+                    local === 'ar'
+                      ? 'rotate-180 group-hover:-translate-x-1'
+                      : 'group-hover:translate-x-1'
+                  }`}
                 />
 
                 {/* Animated background */}

@@ -9,7 +9,7 @@ export interface FooterProps {
 }
 function Footer({ local }: FooterProps) {
   const footerT = useTranslations('footer');
-  
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -50,7 +50,9 @@ function Footer({ local }: FooterProps) {
 
               <div className='text-center lg:text-left'>
                 <p className='text-gray-400 text-sm'>
-                  {local === 'ar' ? footerData.contact.address.ar : footerData.contact.address.en}
+                  {local === 'ar'
+                    ? footerData.contact.address.ar
+                    : footerData.contact.address.en}
                 </p>
               </div>
             </div>
@@ -110,13 +112,16 @@ function Footer({ local }: FooterProps) {
           <div className='flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0 text-center lg:text-left'>
             <div>
               <p className='text-gray-400 text-sm sm:text-base'>
-                © ٢٠٢٥ {footerT('university_name')}. {footerT('rights_reserved')}
+                © ٢٠٢٥ {footerT('university_name')}.{' '}
+                {footerT('rights_reserved')}
               </p>
             </div>
 
             <div className='text-center lg:text-right'>
               <p className='text-gray-400 text-sm sm:text-base'>
-                {local === 'ar' ? footerData.development.credits.ar : footerData.development.credits.en}
+                {local === 'ar'
+                  ? footerData.development.credits.ar
+                  : footerData.development.credits.en}
               </p>
             </div>
           </div>
