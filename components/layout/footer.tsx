@@ -111,7 +111,7 @@ function Footer({ local }: FooterProps) {
         <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0 text-center lg:text-left'>
             <div>
-              <p className='text-gray-400 text-sm sm:text-base'>
+              <p className='text-gray-500 text-sm sm:text-base'>
                 © ٢٠٢٥ {footerT('university_name')}.{' '}
                 {footerT('rights_reserved')}
               </p>
