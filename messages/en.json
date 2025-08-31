@@ -45,5 +45,20 @@
     "read-more": "Read More",
     "join-now": "Join Now",
     "learn-more": "Learn More"
+  },
+
+  "footer": {
+    "Our_Location": "Our Location",
+    "Quick_Links": "Quick Links",
+    "Quick_Actions": "Quick Actions",
+    "Apply_Now": "Apply Now",
+    "Schedule_a_Visit": "Schedule a Visit",
+    "Request_Information": "Request Information",
+    "university_name": "HELWAN NATIONAL UNIVERSITY",
+    "rights_reserved": "All rights reserved.",
+    "development": {
+      "year": "2023",
+      "credits": "Developed by XYZ Team"
+    }
   }
 }

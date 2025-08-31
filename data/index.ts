@@ -465,23 +465,56 @@ export const footerData = {
   navigation: {
     title: 'Quick Links',
     links: [
-      { name: 'Home', href: '#home' },
-      { name: 'About Us', href: '#about' },
-      { name: 'Programs', href: '#programs' },
-      { name: 'Admissions', href: '#admissions' },
-      { name: 'Research', href: '#research' },
-      { name: 'Campus Life', href: '#campus-life' },
-      { name: 'Contact', href: '#contact' },
-      { name: 'News & Events', href: '#news' },
+      { name: {
+        ar:"الرئيسية",
+        en:"Home"
+      }, href: '#home' },
+      { name: {
+        ar:"من نحن",
+        en:"About Us"
+      }, href: '#about' },
+      { name: {
+        ar:"البرامج",
+        en:"Programs"
+      }, href: '#programs' },
+      { name: {
+        ar:"القبول",
+        en:"Admissions"
+      }, href: '#admissions' },
+      { name: {
+        ar:"البحث",
+        en:"Research"
+      }, href: '#research' },
+      { name: {
+        ar:"حياة الحرم الجامعي",
+        en:"Campus Life"
+      }, href: '#campus-life' },
+      { name: {
+        ar:"اتصل بنا",
+        en:"Contact"
+      }, href: '#contact' },
+      { name: {
+        ar:"الأخبار والفعاليات",
+        en:"News & Events"
+      }, href: '#news' },
     ],
   },
   contact: {
     title: 'Contact Information',
-    address: 'Helwan, Cairo Governorate, Egypt',
-    phone: '+20 2 2555 1234',
-    email: 'info@hnu.edu.eg',
-    workingHours: 'Sunday - Thursday: 8:00 AM - 4:00 PM',
-    emergency: '+20 2 2555 9999',
+    address: {
+      ar:"حلوان، محافظة القاهرة، مصر",
+      en:"Helwan, Cairo Governorate, Egypt"
+    },
+    phone: {
+      // phone numbers in arabic number
+      ar: '٠٢٠ ٢ ٢٥٥٥ ١٢٣٤',
+      en: '+20 2 2555 1234',
+    },
+    email: 'student.affairs@hnu.edu.eg',
+    workingHours: {
+      ar: 'السبت - الخميس: ٨:٠٠ ص - ٦:٠٠ م',
+      en: 'Saturday - Thursday: 8:00 AM - 6:00 PM',
+    },
   },
   location: {
     title: 'Our Location',
@@ -495,7 +528,10 @@ export const footerData = {
   },
   development: {
     team: 'Development Team',
-    credits: 'Designed & Developed by HNU Development Team',
+    credits: {
+      ar: 'تم التطوير بواسطة فريق جامعة حلوان الاهلية',
+      en: 'Developed by Helwan National University Team'
+    },
     year: new Date().getFullYear(),
   },
 };

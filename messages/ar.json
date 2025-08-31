@@ -47,5 +47,19 @@
     "read-more": "اقرأ المزيد",
     "join-now": "انضم الآن",
     "learn-more": "المزيد"
+  },
+  "footer": {
+    "Our_Location": "موقعنا",
+    "Quick_Links": "روابط سريعة",
+    "Quick_Actions": "إجراءات سريعة",
+    "Apply_Now": "قدم الآن",
+    "Schedule_a_Visit": "حدد موعدًا للزيارة",
+    "Request_Information": "طلب معلومات",
+    "university_name": "جامعة حلوان الاهلية",
+    "rights_reserved": "جميع الحقوق محفوظة.",
+    "development": {
+      "year": "2023",
+      "credits": "تم التطوير بواسطة فريق XYZ"
+    }
   }
 }
