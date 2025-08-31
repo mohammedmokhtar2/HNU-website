@@ -14,11 +14,11 @@ function TopEvents() {
           <div className='flex items-center justify-center mb-4'>
             <Calendar className='w-8 h-8 text-[#023e8a] mr-3' />
             <h2 className='text-4xl md:text-5xl font-bold text-gray-900'>
-              {topEventsData.title}
+              {topEventsData.items[0].title}
             </h2>
           </div>
           <p className='text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed'>
-            {topEventsData.subtitle}
+            {topEventsData.items[0].description}
           </p>
         </div>
 

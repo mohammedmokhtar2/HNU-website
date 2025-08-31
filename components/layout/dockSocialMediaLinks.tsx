@@ -38,20 +38,20 @@ function DockSocialMediaLinks() {
       icon: Instagram,
       color: 'hover:bg-pink-600',
     },
-    {
-      name: 'Twitter',
-      url: twitter,
-      icon: Twitter,
-      color: 'hover:bg-blue-400',
-    },
-    { name: 'YouTube', url: youtube, icon: Youtube, color: 'hover:bg-red-600' },
+    // {
+    //   name: 'Twitter',
+    //   url: twitter,
+    //   icon: Twitter,
+    //   color: 'hover:bg-blue-400',
+    // },
+    // { name: 'YouTube', url: youtube, icon: Youtube, color: 'hover:bg-red-600' },
     { name: 'TikTok', url: tiktok, icon: FaTiktok, color: 'hover:bg-black' },
-    {
-      name: 'Telegram',
-      url: telegram,
-      icon: FaTelegram,
-      color: 'hover:bg-blue-500',
-    },
+    // {
+    //   name: 'Telegram',
+    //   url: telegram,
+    //   icon: FaTelegram,
+    //   color: 'hover:bg-blue-500',
+    // },
   ].filter(link => link.url); // Only show links that have URLs
 
   const toggleDock = () => {
