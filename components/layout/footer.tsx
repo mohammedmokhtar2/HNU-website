@@ -49,7 +49,7 @@ function Footer({ local }: FooterProps) {
               </div>
 
               <div className='text-center lg:text-left'>
-                <p className='text-gray-400 text-sm'>
+                <p className='text-gray-300 text-sm'>
                   {local === 'ar'
                     ? footerData.contact.address.ar
                     : footerData.contact.address.en}
