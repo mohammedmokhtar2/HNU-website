@@ -29,7 +29,7 @@ function Footer({ local }: FooterProps) {
           <div className='grid grid-cols-1 lg:grid-cols-3 gap-12'>
             {/* Second Column - Map */}
             <div className='space-y-6'>
-              <h3 className='text-xl sm:text-2xl font-bold text-white mb-4 text-center lg:text-left'>
+              <h3 className='text-xl sm:text-3xl font-bold text-white mb-4 text-center lg:text-left'>
                 {footerT('Our_Location')}
               </h3>
 
@@ -49,7 +49,7 @@ function Footer({ local }: FooterProps) {
               </div>
 
               <div className='text-center lg:text-left'>
-                <p className='text-gray-400 text-sm'>
+                <p className='text-gray-300 text-sm'>
                   {local === 'ar'
                     ? footerData.contact.address.ar
                     : footerData.contact.address.en}
@@ -112,7 +112,7 @@ function Footer({ local }: FooterProps) {
           <div className='flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0 text-center lg:text-left'>
             <div>
               <p className='text-gray-500 text-sm sm:text-base'>
-                © ٢٠٢٥ {footerT('university_name')}.{' '}
+                © {footerT('date')} {footerT('university_name')}.{' '}
                 {footerT('rights_reserved')}
               </p>
             </div>

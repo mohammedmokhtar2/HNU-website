@@ -63,8 +63,8 @@ function ProgramsSection({
         <div className='max-w-3xl mx-auto text-center mb-12'>
           <Reveal from='up'>
             <div className='flex items-center justify-center mb-4 gap-4'>
-              <GraduationCap className='w-8 h-8 text-[#023e8a] mr-3 animate-pulse' />
-              <h2 className='text-4xl md:text-5xl font-bold text-gray-900'>
+              <GraduationCap className='w-8 h-8 text-[#023e8a] animate-pulse' />
+              <h2 className='text-2xl sm:text-4xl font-bold text-gray-900'>
                 {local === 'ar' ? title.ar : title.en}{' '}
               </h2>
             </div>

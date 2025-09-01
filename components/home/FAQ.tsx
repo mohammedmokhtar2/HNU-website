@@ -75,7 +75,7 @@ function FAQ({ title, href, local }: FaqItemProps) {
         <div className='text-center mb-8'>
           <div className='flex items-center justify-center mb-4 gap-4'>
             <HelpCircle className='w-8 h-8 text-[#023e8a] mr-3 animate-pulse' />
-            <h2 className='text-4xl md:text-5xl font-bold text-[#023e8a]'>
+            <h2 className='text-2xl sm:text-4xl font-bold text-[#023e8a]'>
               {local === 'ar' ? faqData.title.ar : faqData.title.en}
             </h2>
           </div>
