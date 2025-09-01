@@ -2,7 +2,9 @@
 
 import React from 'react';
 import { Newspaper, ArrowRight } from 'lucide-react';
-import ExpandableContentCard from './ExpandableContentCard';
+// import ExpandableContentCard from './ExpandableContentCard';
+import CoursesMarquee from '@/components/home/slider';
+import NewsMarquee from '@/components/home/slider';
 
 export interface TopNewsItem {
   id: number;
@@ -56,7 +58,7 @@ function TopNews({ title, subtitle, items, local }: TopNewsProps) {
         <div className='text-center mb-12'>
           <div className='flex items-center justify-center mb-4 gap-4'>
             <Newspaper className='w-8 h-8 text-[#023e8a] mr-3 animate-pulse' />
-            <h2 className='text-4xl md:text-5xl font-bold text-gray-900'>
+            <h2 className='text-2xl sm:text-4xl font-bold text-gray-900'>
               {local === 'ar' ? title.ar : title.en}
             </h2>
           </div>
@@ -66,7 +68,7 @@ function TopNews({ title, subtitle, items, local }: TopNewsProps) {
         </div>
 
         {/* News Expandable Cards */}
-        <ExpandableContentCard
+        {/* <ExpandableContentCard
           items={items.map(item => ({
             id: item.id,
             title: local === 'ar' ? item.title.ar : item.title.en,
@@ -81,7 +83,9 @@ function TopNews({ title, subtitle, items, local }: TopNewsProps) {
           }))}
           type='news'
           className='space-y-4'
-        />
+        /> */}
+
+        <NewsMarquee items={items} local={local} />
 
         {/* View All News CTA */}
         <div className='text-center mt-12'>
