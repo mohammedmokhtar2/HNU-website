@@ -8,7 +8,8 @@ export const heroSection = {
     ar: 'اكتشف التميز في التعليم والابتكار والمجتمع. انضم إلينا في تشكيل المستقبل من خلال المعرفة والبحث والتجارب التعليمية التحويلية.',
   },
   image: '/home.jpeg',
-  video: '/home.mp4',
+  video:
+    'https://8rqmsnrudm.ufs.sh/f/FfKyQhLpRgXUrLNAVSlWbHxLQDVq04YRpht8ku3Iw6dC7AFM',
   logo: '/logo.png',
   noBgLogo: '/logo2.png',
 };
@@ -104,8 +105,8 @@ export const programsSection = {
         ar: '٤ سنوات',
       },
       degree: {
-        en: 'B.Sc. in Computer Science',
-        ar: 'بكالوريوس في علوم الحاسوب',
+        en: 'B.Sc.',
+        ar: 'البكالوريوس',
       },
       money: {
         en: 'EGP 80,000/yr',
@@ -133,8 +134,8 @@ export const programsSection = {
         ar: '٤ سنوات',
       },
       degree: {
-        en: 'B.Sc. in Engineering',
-        ar: 'بكالوريوس في الهندسة',
+        en: 'B.Sc.',
+        ar: 'البكالوريوس',
       },
       money: {
         en: 'EGP 70,000/yr',
@@ -163,7 +164,7 @@ export const programsSection = {
       },
       degree: {
         en: 'B.B.A.',
-        ar: 'بكالوريوس في إدارة الأعمال',
+        ar: 'البكالوريوس',
       },
       money: {
         en: 'EGP 60,000/yr',
@@ -192,7 +193,7 @@ export const programsSection = {
       },
       degree: {
         en: 'LL.B.',
-        ar: 'بكالوريوس في القانون',
+        ar: 'البكالوريوس',
       },
       money: {
         en: 'EGP 50,000/yr',
@@ -221,7 +222,7 @@ export const programsSection = {
       },
       degree: {
         en: 'M.B.B.Ch.',
-        ar: 'بكالوريوس في الطب البشري',
+        ar: 'البكالوريوس',
       },
       money: {
         en: 'EGP 90,000/yr',
@@ -249,8 +250,8 @@ export const programsSection = {
         ar: '٤ سنوات',
       },
       degree: {
-        en: 'B.Sc. in Applied Health Sciences',
-        ar: 'بكالوريوس في العلوم الصحية التطبيقية',
+        en: 'B.Sc.',
+        ar: 'البكالوريوس',
       },
       money: {
         en: 'EGP 55,000/yr',
@@ -278,8 +279,8 @@ export const programsSection = {
         ar: '٤ سنوات',
       },
       degree: {
-        en: 'B.Sc. in Sciences',
-        ar: 'بكالوريوس في العلوم',
+        en: 'B.Sc.',
+        ar: 'البكالوريوس',
       },
       money: {
         en: 'EGP 60,000/yr',
@@ -307,8 +308,8 @@ export const programsSection = {
         ar: '٥ سنوات',
       },
       degree: {
-        en: 'B.Sc. in Physical Therapy',
-        ar: 'بكالوريوس في العلاج الطبيعي',
+        en: 'B.Sc.',
+        ar: 'البكالوريوس',
       },
       money: {
         en: 'EGP 105,000/yr',
@@ -336,8 +337,8 @@ export const programsSection = {
         ar: '٤ سنوات',
       },
       degree: {
-        en: 'B.F.A. (Bachelor of Fine Arts)',
-        ar: 'بكالوريوس في الفنون الجميلة',
+        en: 'B.F.A.',
+        ar: 'البكالوريوس',
       },
       money: {
         en: 'EGP 60,000/yr',
@@ -365,8 +366,8 @@ export const programsSection = {
         ar: '٥ سنوات',
       },
       degree: {
-        en: 'B.D.S. (Bachelor of Dental Surgery)',
-        ar: 'بكالوريوس في جراحة الأسنان',
+        en: 'B.D.S.',
+        ar: 'البكالوريوس',
       },
       money: {
         en: 'EGP 130,000/yr',
@@ -394,8 +395,8 @@ export const programsSection = {
         ar: '٤ سنوات',
       },
       degree: {
-        en: 'B.A. in Translation',
-        ar: 'بكالوريوس في الترجمة',
+        en: 'B.A.',
+        ar: 'البكالوريوس',
       },
       money: {
         en: 'EGP 60,000/yr',
@@ -406,8 +407,6 @@ export const programsSection = {
     },
   ],
 };
-
-export const headerData = {};
 
 export const socialMediaLinks = {
   facebook: 'https://www.facebook.com/share/1C14jESdMi/?mibextid=wwXIfr',
@@ -964,3 +963,5 @@ export const topStudentActivitiesData = {
     },
   ],
 };
+
+export const headerData = {};

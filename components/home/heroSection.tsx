@@ -150,7 +150,7 @@ const HeroSection = ({
       {/* Content Container */}
       <div className='relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center'>
         {/* Logo */}
-        <div className='mb-8 animate-fade-in-down'>
+        {/* <div className='mb-8 animate-fade-in-down'>
           <Image
             src={logo}
             alt='HNU Logo'
@@ -160,10 +160,10 @@ const HeroSection = ({
             className='w-40 h-40 mt-6 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 xl:w-60 xl:h-60 mx-auto drop-shadow-2xl'
             priority
           />
-        </div>
+        </div> */}
 
         {/* Main Title */}
-        <h1 className='text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-6 leading-tight animate-fade-in-up'>
+        <h1 className='text-2xl sm:text-4xl lg:text-6xl xl:text-7xl font-bold text-white mb-6 leading-tight animate-fade-in-up'>
           {local === 'ar' ? title.ar : title.en}
         </h1>
 

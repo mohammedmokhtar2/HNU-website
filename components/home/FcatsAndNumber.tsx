@@ -93,17 +93,17 @@ function FcatsAndNumber({ items, local }: FcatsAndNumberProps) {
   }, [isVisible]);
 
   return (
-    <section id='facts-section' className='py-5 mt-12 mb-20'>
-      <div className='container mx-auto px-4'>
+    <section id='facts-section' className='py-5 mt-12 mb-20 bg-slate-900'>
+      <div className='container mx-auto px-4 mb-8 mt-8'>
         {/* Header Section */}
         <div className='text-center mb-16'>
           <div className='flex items-center justify-center mb-4 gap-4'>
-            <BarChart3 className='w-8 h-8 text-[#023e8a] mr-3 animate-pulse' />
-            <h2 className='text-4xl md:text-5xl font-bold text-gray-900'>
+            <BarChart3 className='w-8 h-8 text-white mr-3 animate-pulse' />
+            <h2 className='text-2xl sm:text-4xl font-bold text-white'>
               {local === 'ar' ? 'إحصائيات وأرقام' : 'Facts & Numbers'}
             </h2>
           </div>
-          <p className='text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed'>
+          <p className='text-xl text-gray-200 max-w-3xl mx-auto leading-relaxed'>
             {local === 'ar'
               ? 'اكتشف الإحصائيات المثيرة للإعجاب التي تجعل مؤسستنا رائدة في التعليم والابتكار. تمثل هذه الأرقام التزامنا بالتميز ونجاح مجتمعنا.'
               : 'Discover the impressive statistics that make our institution a leader in education and innovation. These numbers represent our commitment to excellence and the success of our community.'}

@@ -276,7 +276,7 @@ function Header2() {
                 </div>
 
                 {/* Mobile Menu Button */}
-                <div className='lg:hidden'>
+                <div className='lg:hidden ml-6'>
                   <Button
                     variant='ghost'
                     size='sm'
