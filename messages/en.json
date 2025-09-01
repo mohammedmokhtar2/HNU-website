@@ -16,16 +16,17 @@
     "FOLLOW US": "FOLLOW US",
     "University's president": "University's president",
     "About the university": "About the university",
-    "Business": "Business",
-    "Law": "Law",
-    "Engineering": "Engineering",
-    "Computer Science & information technology": "Computer Science & information technology",
-    "Science": "Science",
-    "Medicine": "Medicine",
-    "Dentistry": "Dentistry",
-    "Pharmacy": "Pharmacy",
-    "Applied Health Sciences Technology": "Applied Health Sciences Technology",
-    "university_name_mobile": "HELWAN NATIONAL UNIVERSITY"
+    "Business": "Faculty of Humanities, Commerce, and Business Administration",
+    "Law": "Faculty of Law (Arabic Program)",
+    "Engineering": "Faculty of Engineering",
+    "Computer Science & information technology": "Faculty of Computer Science & Information Technology",
+    "Science": "Faculty of Science",
+    "Medicine": "Faculty of Medicine",
+    "Dentistry": "Faculty of Dentistry",
+    "Applied Health Sciences Technology": "Faculty of Applied Health Sciences Technology",
+    "university_name_mobile": "HELWAN NATIONAL UNIVERSITY",
+    "Faculty of Physical Therapy": "Faculty of Physical Therapy",
+    "Faculty of Arts & Applied Arts": "Faculty of Arts & Applied Arts"
   },
   "hero": {
     "discover_all_programs": "Discover All Programs",
@@ -33,5 +34,28 @@
   },
   "programs": {
     "learn_more": "Learn More"
+  },
+  "expand": {
+    "About-this": "About this",
+    "Featured": "Featured",
+    "activity": "Activity",
+    "news": "News",
+    "event": "Event",
+    "register-now": "Register Now",
+    "read-more": "Read More",
+    "join-now": "Join Now",
+    "learn-more": "Learn More"
+  },
+
+  "footer": {
+    "Our_Location": "Our Location",
+    "Quick_Links": "Quick Links",
+    "Quick_Actions": "Quick Actions",
+    "Apply_Now": "Apply Now",
+    "Schedule_a_Visit": "Schedule a Visit",
+    "Request_Information": "Request Information",
+    "university_name": "HELWAN NATIONAL UNIVERSITY",
+    "rights_reserved": "All rights reserved.",
+    "date": "2025"
   }
 }

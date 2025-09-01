@@ -1,15 +1,37 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Users, GraduationCap, Globe } from 'lucide-react';
+import {
+  Users,
+  GraduationCap,
+  Globe,
+  MessageCircle,
+  Newspaper,
+  BarChart3,
+} from 'lucide-react';
 
-interface StatItem {
+export interface StatItem {
   id: number;
   icon: any;
-  number: number;
-  label: string;
-  description: string;
+  number: {
+    ar: string;
+    en: string;
+  };
+  label: {
+    ar: string;
+    en: string;
+  };
+  description: {
+    ar: string;
+    en: string;
+  };
+  state: number;
   color: string;
+}
+
+export interface FcatsAndNumberProps {
+  items: StatItem[];
+  local: string;
 }
 
 const getIcon = (icon: any) => {
@@ -23,7 +45,7 @@ const getIcon = (icon: any) => {
   }
 };
 
-function FcatsAndNumber({ FactsAndNumbers }: { FactsAndNumbers: StatItem[] }) {
+function FcatsAndNumber({ items, local }: FcatsAndNumberProps) {
   const [counts, setCounts] = useState<{ [key: number]: number }>({});
   const [isVisible, setIsVisible] = useState(false);
 
@@ -53,13 +75,13 @@ function FcatsAndNumber({ FactsAndNumbers }: { FactsAndNumbers: StatItem[] }) {
     const interval = 50; // Update every 50ms
     const steps = duration / interval;
 
-    FactsAndNumbers.forEach(stat => {
-      const increment = stat.number / steps;
+    items.forEach(stat => {
+      const increment = stat.state / steps;
       let current = 0;
       const timer = setInterval(() => {
         current += increment;
-        if (current >= stat.number) {
-          current = stat.number;
+        if (current >= stat.state) {
+          current = stat.state;
           clearInterval(timer);
         }
         setCounts(prev => ({
@@ -71,23 +93,26 @@ function FcatsAndNumber({ FactsAndNumbers }: { FactsAndNumbers: StatItem[] }) {
   }, [isVisible]);
 
   return (
-    <section id='facts-section' className='py-5'>
-      <div className='container mx-auto px-4'>
+    <section id='facts-section' className='py-5 mt-12 mb-20 bg-slate-900'>
+      <div className='container mx-auto px-4 mb-8 mt-8'>
         {/* Header Section */}
         <div className='text-center mb-16'>
-          <h2 className='text-4xl md:text-5xl font-bold text-[#023e8a] mb-6'>
-            Facts & Numbers
-          </h2>
-          <p className='text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed'>
-            Discover the impressive statistics that make our institution a
-            leader in education and innovation. These numbers represent our
-            commitment to excellence and the success of our community.
+          <div className='flex items-center justify-center mb-4 gap-4'>
+            <BarChart3 className='w-8 h-8 text-white mr-3 animate-pulse' />
+            <h2 className='text-2xl sm:text-4xl font-bold text-white'>
+              {local === 'ar' ? 'إحصائيات وأرقام' : 'Facts & Numbers'}
+            </h2>
+          </div>
+          <p className='text-xl text-gray-200 max-w-3xl mx-auto leading-relaxed'>
+            {local === 'ar'
+              ? 'اكتشف الإحصائيات المثيرة للإعجاب التي تجعل مؤسستنا رائدة في التعليم والابتكار. تمثل هذه الأرقام التزامنا بالتميز ونجاح مجتمعنا.'
+              : 'Discover the impressive statistics that make our institution a leader in education and innovation. These numbers represent our commitment to excellence and the success of our community.'}
           </p>
         </div>
 
         {/* Stats Grid */}
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
-          {FactsAndNumbers.map(stat => (
+          {items.map(stat => (
             <div
               key={stat.id}
               className='group relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100'
@@ -99,7 +124,7 @@ function FcatsAndNumber({ FactsAndNumbers }: { FactsAndNumbers: StatItem[] }) {
               <div className='flex flex-col items-center justify-center'>
                 {/* Icon */}
                 <div
-                  className={`inline-flex p-4 rounded-2xl bg-gradient-to-br ${stat.color} text-white mb-6 group-hover:scale-110 transition-transform duration-300`}
+                  className={`inline-flex p-4 rounded-2xl bg-gradient-to-br ${stat.color} text-white mb-6 group-hover:scale-110 transition-transform duration-300 animate-pulse`}
                 >
                   {getIcon(stat.icon as any)}
                 </div>
@@ -107,9 +132,11 @@ function FcatsAndNumber({ FactsAndNumbers }: { FactsAndNumbers: StatItem[] }) {
                 {/* Number */}
                 <div className='mb-4'>
                   <span className='text-4xl md:text-5xl font-bold text-gray-900'>
-                    {stat.id === 6
-                      ? (counts[stat.id] || 0).toFixed(1)
-                      : counts[stat.id] || 0}
+                    {local === 'ar'
+                      ? stat.number.ar
+                      : stat.id === 6
+                        ? (counts[stat.id] || 0).toFixed(1)
+                        : counts[stat.id] || 0}
                   </span>
                   {stat.id === 6 && (
                     <span className='text-2xl text-gray-600'>/5</span>
@@ -124,12 +151,12 @@ function FcatsAndNumber({ FactsAndNumbers }: { FactsAndNumbers: StatItem[] }) {
 
                 {/* Label */}
                 <h3 className='text-xl font-semibold text-gray-900 mb-3'>
-                  {stat.label}
+                  {local === 'ar' ? stat.label.ar : stat.label.en}
                 </h3>
 
                 {/* Description */}
                 <p className='text-gray-600 leading-relaxed'>
-                  {stat.description}
+                  {local === 'ar' ? stat.description.ar : stat.description.en}
                 </p>
               </div>
 

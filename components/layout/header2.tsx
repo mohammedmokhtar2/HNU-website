@@ -79,6 +79,14 @@ function Header2() {
           href: `${basePath}/Faculties & Programs/applied-health-sciences-technology`,
           label: headerT('Applied Health Sciences Technology'),
         },
+        {
+          href: `${basePath}/Faculties & Programs/Faculty-of-Physical-Therapy`,
+          label: headerT('Faculty of Physical Therapy'),
+        },
+        {
+          href: `${basePath}/Faculties & Programs/Faculty-of-Arts-and-Applied-Arts`,
+          label: headerT('Faculty of Arts & Applied Arts'),
+        },
       ],
     },
     { href: `${basePath}/FAQ`, label: t('FAQ') },
@@ -268,7 +276,7 @@ function Header2() {
                 </div>
 
                 {/* Mobile Menu Button */}
-                <div className='lg:hidden'>
+                <div className='lg:hidden ml-6'>
                   <Button
                     variant='ghost'
                     size='sm'

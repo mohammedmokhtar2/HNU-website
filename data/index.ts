@@ -8,7 +8,8 @@ export const heroSection = {
     ar: 'اكتشف التميز في التعليم والابتكار والمجتمع. انضم إلينا في تشكيل المستقبل من خلال المعرفة والبحث والتجارب التعليمية التحويلية.',
   },
   image: '/home.jpeg',
-  video: '/home.mp4',
+  video:
+    'https://8rqmsnrudm.ufs.sh/f/FfKyQhLpRgXUrLNAVSlWbHxLQDVq04YRpht8ku3Iw6dC7AFM',
   logo: '/logo.png',
   noBgLogo: '/logo2.png',
 };
@@ -104,8 +105,8 @@ export const programsSection = {
         ar: '٤ سنوات',
       },
       degree: {
-        en: 'B.Sc. in Computer Science',
-        ar: 'بكالوريوس في علوم الحاسوب',
+        en: 'B.Sc.',
+        ar: 'البكالوريوس',
       },
       money: {
         en: 'EGP 80,000/yr',
@@ -133,8 +134,8 @@ export const programsSection = {
         ar: '٤ سنوات',
       },
       degree: {
-        en: 'B.Sc. in Engineering',
-        ar: 'بكالوريوس في الهندسة',
+        en: 'B.Sc.',
+        ar: 'البكالوريوس',
       },
       money: {
         en: 'EGP 70,000/yr',
@@ -163,7 +164,7 @@ export const programsSection = {
       },
       degree: {
         en: 'B.B.A.',
-        ar: 'بكالوريوس في إدارة الأعمال',
+        ar: 'البكالوريوس',
       },
       money: {
         en: 'EGP 60,000/yr',
@@ -192,7 +193,7 @@ export const programsSection = {
       },
       degree: {
         en: 'LL.B.',
-        ar: 'بكالوريوس في القانون',
+        ar: 'البكالوريوس',
       },
       money: {
         en: 'EGP 50,000/yr',
@@ -221,7 +222,7 @@ export const programsSection = {
       },
       degree: {
         en: 'M.B.B.Ch.',
-        ar: 'بكالوريوس في الطب البشري',
+        ar: 'البكالوريوس',
       },
       money: {
         en: 'EGP 90,000/yr',
@@ -249,8 +250,8 @@ export const programsSection = {
         ar: '٤ سنوات',
       },
       degree: {
-        en: 'B.Sc. in Applied Health Sciences',
-        ar: 'بكالوريوس في العلوم الصحية التطبيقية',
+        en: 'B.Sc.',
+        ar: 'البكالوريوس',
       },
       money: {
         en: 'EGP 55,000/yr',
@@ -278,8 +279,8 @@ export const programsSection = {
         ar: '٤ سنوات',
       },
       degree: {
-        en: 'B.Sc. in Sciences',
-        ar: 'بكالوريوس في العلوم',
+        en: 'B.Sc.',
+        ar: 'البكالوريوس',
       },
       money: {
         en: 'EGP 60,000/yr',
@@ -307,8 +308,8 @@ export const programsSection = {
         ar: '٥ سنوات',
       },
       degree: {
-        en: 'B.Sc. in Physical Therapy',
-        ar: 'بكالوريوس في العلاج الطبيعي',
+        en: 'B.Sc.',
+        ar: 'البكالوريوس',
       },
       money: {
         en: 'EGP 105,000/yr',
@@ -336,8 +337,8 @@ export const programsSection = {
         ar: '٤ سنوات',
       },
       degree: {
-        en: 'B.F.A. (Bachelor of Fine Arts)',
-        ar: 'بكالوريوس في الفنون الجميلة',
+        en: 'B.F.A.',
+        ar: 'البكالوريوس',
       },
       money: {
         en: 'EGP 60,000/yr',
@@ -365,8 +366,8 @@ export const programsSection = {
         ar: '٥ سنوات',
       },
       degree: {
-        en: 'B.D.S. (Bachelor of Dental Surgery)',
-        ar: 'بكالوريوس في جراحة الأسنان',
+        en: 'B.D.S.',
+        ar: 'البكالوريوس',
       },
       money: {
         en: 'EGP 130,000/yr',
@@ -394,8 +395,8 @@ export const programsSection = {
         ar: '٤ سنوات',
       },
       degree: {
-        en: 'B.A. in Translation',
-        ar: 'بكالوريوس في الترجمة',
+        en: 'B.A.',
+        ar: 'البكالوريوس',
       },
       money: {
         en: 'EGP 60,000/yr',
@@ -407,67 +408,136 @@ export const programsSection = {
   ],
 };
 
-export const headerData = {};
-
 export const socialMediaLinks = {
-  facebook: 'https://www.facebook.com/helwanuniversity',
-  linkedin: 'https://www.linkedin.com/school/helwan-national-university/',
-  instagram: 'https://www.instagram.com/helwanuniversity/',
-  twitter: 'https://twitter.com/helwanuniversity',
-  youtube: 'https://www.youtube.com/channel/UCXH4IPJ554hPMJg0MEY4iMA',
-  tiktok: 'https://www.tiktok.com/@helwanuniversity',
-  telegram: 'https://t.me/helwanuniversity',
+  facebook: 'https://www.facebook.com/share/1C14jESdMi/?mibextid=wwXIfr',
+  tiktok: 'https://www.tiktok.com/@helwan.national.u',
+  instagram: 'https://www.instagram.com/hnuofficial.eg?igsh=bTZ4eGs1N24wOGg0',
+  linkedin: 'https://www.linkedin.com/company/helwan-nu-egypt/',
+  twitter: '',
+  youtube: '',
+  telegram: '',
   whatsapp: '',
 };
 
-export const FactsAndNumbers = [
-  {
-    id: 1,
-    icon: 'Users',
-    number: 15000,
-    label: 'Students',
-    description: 'Enrolled students across all programs',
-    color: 'from-blue-500 to-blue-600',
-  },
-  {
-    id: 2,
-    icon: 'GraduationCap',
-    number: 250,
-    label: 'Programs',
-    description: 'Academic programs and specializations',
-    color: 'from-green-500 to-green-600',
-  },
-  {
-    id: 3,
-    icon: 'Globe',
-    number: 85,
-    label: 'Countries',
-    description: 'Students from around the world',
-    color: 'from-purple-500 to-purple-600',
-  },
-];
+export const FactsAndNumbers = {
+  items: [
+    {
+      id: 1,
+      icon: 'Users',
+      number: { ar: '١٥,٠٠٠', en: '15000' },
+      state: 15000,
+      label: { ar: 'الطلاب', en: 'Students' },
+      description: {
+        ar: 'عدد الطلاب المسجلين في جميع البرامج',
+        en: 'Enrolled students across all programs',
+      },
+      color: 'from-blue-500 to-blue-600',
+    },
+    {
+      id: 2,
+      icon: 'GraduationCap',
+      number: { ar: '٢٥', en: '25' },
+      state: 25,
+      label: { ar: 'البرامج', en: 'Programs' },
+      description: {
+        ar: 'البرامج الأكاديمية والتخصصات',
+        en: 'Academic programs and specializations',
+      },
+      color: 'from-green-500 to-green-600',
+    },
+    {
+      id: 3,
+      icon: 'Globe',
+      number: { ar: '٣', en: '3' },
+      state: 3,
+      label: { ar: 'الشركاء', en: 'Partners' },
+      description: {
+        ar: 'شركاء من جميع أنحاء العالم',
+        en: 'Partners from around the world',
+      },
+      color: 'from-purple-500 to-purple-600',
+    },
+  ],
+};
 
 export const footerData = {
   navigation: {
     title: 'Quick Links',
     links: [
-      { name: 'Home', href: '#home' },
-      { name: 'About Us', href: '#about' },
-      { name: 'Programs', href: '#programs' },
-      { name: 'Admissions', href: '#admissions' },
-      { name: 'Research', href: '#research' },
-      { name: 'Campus Life', href: '#campus-life' },
-      { name: 'Contact', href: '#contact' },
-      { name: 'News & Events', href: '#news' },
+      {
+        name: {
+          ar: 'الرئيسية',
+          en: 'Home',
+        },
+        href: '#home',
+      },
+      {
+        name: {
+          ar: 'من نحن',
+          en: 'About Us',
+        },
+        href: '#about',
+      },
+      {
+        name: {
+          ar: 'البرامج',
+          en: 'Programs',
+        },
+        href: '#programs',
+      },
+      {
+        name: {
+          ar: 'القبول',
+          en: 'Admissions',
+        },
+        href: '#admissions',
+      },
+      {
+        name: {
+          ar: 'البحث',
+          en: 'Research',
+        },
+        href: '#research',
+      },
+      {
+        name: {
+          ar: 'حياة الحرم الجامعي',
+          en: 'Campus Life',
+        },
+        href: '#campus-life',
+      },
+      {
+        name: {
+          ar: 'اتصل بنا',
+          en: 'Contact',
+        },
+        href: '#contact',
+      },
+      {
+        name: {
+          ar: 'الأخبار والفعاليات',
+          en: 'News & Events',
+        },
+        href: '#news',
+      },
     ],
   },
   contact: {
     title: 'Contact Information',
-    address: 'Helwan, Cairo Governorate, Egypt',
-    phone: '+20 2 2555 1234',
-    email: 'info@hnu.edu.eg',
-    workingHours: 'Sunday - Thursday: 8:00 AM - 4:00 PM',
-    emergency: '+20 2 2555 9999',
+    address: {
+      ar: 'حلوان، محافظة القاهرة، مصر',
+      en: 'Helwan, Cairo Governorate, Egypt',
+    },
+    phone: {
+      // phone numbers in arabic number
+      ar: '٠٢٠ ٢ ٢٥٥٥ ١٢٣٤',
+      en: '+20 2 2555 1234',
+    },
+    email: 'student.affairs@hnu.edu.eg',
+    workingHours: {
+      ar: 'السبت - الخميس: ٨:٠٠ ص - ٦:٠٠ م',
+      en: 'Saturday - Thursday: 8:00 AM - 6:00 PM',
+    },
   },
   location: {
     title: 'Our Location',
@@ -481,159 +551,172 @@ export const footerData = {
   },
   development: {
     team: 'Development Team',
-    credits: 'Designed & Developed by HNU Development Team',
+    credits: {
+      ar: 'تم التطوير بواسطة فريق جامعة حلوان الاهلية',
+      en: 'Developed by Helwan National University Team',
+    },
     year: new Date().getFullYear(),
   },
 };
 
+export const faqRandom = {
+  title: {
+    ar: 'اعرض جميع الاسئلة',
+    en: 'learn more',
+  },
+  href: '#',
+};
+
 export const faqData = {
-  title: 'Frequently Asked Questions',
-  subtitle: 'Find answers to common questions about Helwan National University',
+  title: {
+    ar: 'الأسئلة الشائعة',
+    en: 'Frequently Asked Questions',
+  },
+  subtitle: {
+    ar: 'ابحث عن إجابات للأسئلة الشائعة حول جامعة حلوان الاهلية',
+    en: 'Find answers to common questions about Helwan National University',
+  },
   categories: [
-    {
-      id: 'admissions',
-      title: 'Admissions & Applications',
-      icon: '📚',
-      items: [
-        {
-          question:
-            'What are the admission requirements for international students?',
-          answer:
-            'International students need to submit their high school transcripts, proof of English proficiency (TOEFL/IELTS), passport copy, and complete the online application form. Additional requirements may vary by program.',
-        },
-        {
-          question:
-            'When does the application period open for the next academic year?',
-          answer:
-            'Applications typically open in January for the Fall semester and in September for the Spring semester. Early applications are encouraged as some programs have limited capacity.',
-        },
-        {
-          question: 'What documents do I need to submit with my application?',
-          answer:
-            'Required documents include: completed application form, official transcripts, letters of recommendation, personal statement, resume/CV, and application fee. Specific requirements vary by program.',
-        },
-        {
-          question: 'Is there an application fee and how much is it?',
-          answer:
-            'Yes, there is a non-refundable application fee of EGP 500 for Egyptian students and $50 USD for international students. This fee covers the cost of processing your application.',
-        },
-      ],
-    },
+    // {
+    //   id: 'admissions',
+    //   title: 'Admissions & Applications',
+    //   icon: '📚',
+    //   items: [
+    //     {
+    //       question:
+    //         'What are the admission requirements for international students?',
+    //       answer:
+    //         'International students need to submit their high school transcripts, proof of English proficiency (TOEFL/IELTS), passport copy, and complete the online application form. Additional requirements may vary by program.',
+    //     },
+    //     {
+    //       question:
+    //         'When does the application period open for the next academic year?',
+    //       answer:
+    //         'Applications typically open in January for the Fall semester and in September for the Spring semester. Early applications are encouraged as some programs have limited capacity.',
+    //     },
+    //     {
+    //       question: 'What documents do I need to submit with my application?',
+    //       answer:
+    //         'Required documents include: completed application form, official transcripts, letters of recommendation, personal statement, resume/CV, and application fee. Specific requirements vary by program.',
+    //     },
+    //     {
+    //       question: 'Is there an application fee and how much is it?',
+    //       answer:
+    //         'Yes, there is a non-refundable application fee of EGP 500 for Egyptian students and $50 USD for international students. This fee covers the cost of processing your application.',
+    //     },
+    //   ],
+    // },
     {
       id: 'academics',
-      title: 'Academic Programs & Studies',
       icon: '🎓',
       items: [
         {
-          question: 'What undergraduate programs do you offer?',
-          answer:
-            'We offer programs in Engineering, Business Administration, Law, Medicine, Pharmacy, Applied Health Sciences Technology, and Computer Science. Each program is designed to meet industry standards and provide practical experience.',
+          question: {
+            ar: 'ما هي البرامج الجامعية التي تقدمها؟',
+            en: 'What undergraduate programs do you offer?',
+          },
+          answer: {
+            ar: 'نحن نقدم برامج في الهندسة وإدارة الأعمال والقانون والطب والصيدلة وتكنولوجيا العلوم الصحية التطبيقية وعلوم الحاسوب. تم تصميم كل برنامج لتلبية معايير الصناعة وتوفير خبرة عملية.',
+            en: 'We offer programs in Engineering, Business Administration, Law, Medicine, Pharmacy, Applied Health Sciences Technology, and Computer Science. Each program is designed to meet industry standards and provide practical experience.',
+          },
         },
         {
-          question: 'Can I transfer credits from another university?',
-          answer:
-            'Yes, we accept transfer credits from accredited institutions. You can transfer up to 60 credits (equivalent to 2 years) for undergraduate programs. An evaluation of your previous coursework is required.',
-        },
-        {
-          question: 'What is the typical class size?',
-          answer:
-            'Class sizes vary by program and level. Undergraduate classes typically have 25-35 students, while graduate classes are smaller with 15-25 students. This ensures personalized attention and interactive learning.',
-        },
-        {
-          question: 'Do you offer online or hybrid learning options?',
-          answer:
-            'Yes, we offer hybrid learning options for many programs, combining online and in-person instruction. Some courses are fully online, while others require campus attendance for labs and practical sessions.',
-        },
-      ],
-    },
-    {
-      id: 'campus',
-      title: 'Campus Life & Facilities',
-      icon: '🏫',
-      items: [
-        {
-          question: 'What housing options are available for students?',
-          answer:
-            'We offer on-campus dormitories for both male and female students, as well as assistance with finding off-campus housing. On-campus housing includes meal plans and 24/7 security.',
-        },
-        {
-          question: 'What sports and recreational facilities do you have?',
-          answer:
-            'Our campus features a modern sports complex with indoor and outdoor facilities including a gym, swimming pool, football field, basketball courts, tennis courts, and fitness center. We also have various student clubs and organizations.',
-        },
-        {
-          question: 'Is there on-campus dining available?',
-          answer:
-            'Yes, we have multiple dining options including a main cafeteria, coffee shops, and food courts. We offer various meal plans and accommodate dietary restrictions. The campus also has several restaurants and cafes nearby.',
-        },
-        {
-          question:
-            'What transportation options are available to and from campus?',
-          answer:
-            'The campus is well-connected with public transportation including buses and metro. We also provide shuttle services to nearby areas and offer discounted public transportation passes for students.',
+          question: {
+            ar: 'هل يمكنني تحويل الساعات المعتمدة من جامعة أخرى؟',
+            en: 'Can I transfer credits from another university?',
+          },
+          answer: {
+            ar: 'نعم، نقبل تحويل الساعات المعتمدة من مؤسسات معتمدة. يمكنك تحويل ما يصل إلى 60 ساعة معتمدة (ما يعادل سنتين) لبرامج البكالوريوس. يتطلب الأمر تقييم الدورات الدراسية السابقة الخاصة بك.',
+            en: 'Yes, we accept transfer credits from accredited institutions. You can transfer up to 60 credits (equivalent to 2 years) for undergraduate programs. An evaluation of your previous coursework is required.',
+          },
         },
       ],
     },
     {
       id: 'financial',
-      title: 'Financial Aid & Scholarships',
       icon: '💰',
       items: [
         {
-          question: 'What scholarships are available for students?',
-          answer:
-            'We offer merit-based scholarships, need-based financial aid, sports scholarships, and academic excellence awards. International students may also be eligible for specific scholarship programs.',
+          question: {
+            ar: 'ما هي المنح الدراسية المتاحة للطلاب؟',
+            en: 'What scholarships are available for students?',
+          },
+          answer: {
+            ar: 'نحن نقدم منحًا دراسية قائمة على الجدارة، ومساعدات مالية قائمة على الحاجة، ومنحًا دراسية رياضية، وجوائز تفوق أكاديمي. قد يكون الطلاب الدوليون مؤهلين أيضًا لبرامج منح دراسية محددة.',
+            en: 'We offer merit-based scholarships, need-based financial aid, sports scholarships, and academic excellence awards. International students may also be eligible for specific scholarship programs.',
+          },
         },
         {
-          question: 'How can I apply for financial aid?',
-          answer:
-            "Financial aid applications are submitted through our online portal. You'll need to provide financial documentation, complete the FAFSA equivalent form, and submit any additional required materials by the specified deadline.",
-        },
-        {
-          question: 'Do you offer work-study programs?',
-          answer:
-            'Yes, we offer work-study programs that allow students to work part-time on campus while studying. These positions provide valuable work experience and help offset educational costs.',
-        },
-        {
-          question: 'What payment plans are available for tuition?',
-          answer:
-            'We offer flexible payment plans including monthly installments, semester-based payments, and early payment discounts. Payment plans can be customized based on your financial situation.',
+          question: {
+            ar: 'كيف يمكنني التقدم للحصول على المساعدة المالية؟',
+            en: 'How can I apply for financial aid?',
+          },
+          answer: {
+            ar: 'تُقدَّم طلبات المساعدة المالية من خلال بوابتنا الإلكترونية. ستحتاج إلى تقديم مستندات مالية، وإكمال نموذج FAFSA المعادل، وتقديم أي مواد إضافية مطلوبة بحلول الموعد النهائي المحدد.',
+            en: "Financial aid applications are submitted through our online portal. You'll need to provide financial documentation, complete the FAFSA equivalent form, and submit any additional required materials by the specified deadline.",
+          },
         },
       ],
     },
-    {
-      id: 'career',
-      title: 'Career Services & Internships',
-      icon: '💼',
-      items: [
-        {
-          question: 'What career services do you provide?',
-          answer:
-            'Our career center offers resume writing assistance, interview preparation, career counseling, job fairs, networking events, and access to job boards. We also provide workshops on professional development.',
-        },
-        {
-          question: 'Do you help students find internships?',
-          answer:
-            'Yes, we have partnerships with over 200 companies and organizations. Our career center actively helps students find internships, co-op opportunities, and part-time jobs related to their field of study.',
-        },
-        {
-          question: 'What is the employment rate for graduates?',
-          answer:
-            'Our graduate employment rate is 95% within 6 months of graduation. We maintain strong relationships with employers and regularly track graduate outcomes to ensure our programs meet industry needs.',
-        },
-        {
-          question: 'Do you offer alumni networking opportunities?',
-          answer:
-            'Yes, we have an active alumni network with over 50,000 members worldwide. We host regular networking events, mentorship programs, and provide access to our alumni directory for professional connections.',
-        },
-      ],
-    },
+    // {
+    //   id: 'campus',
+    //   title: 'Campus Life & Facilities',
+    //   icon: '🏫',
+    //   items: [
+    //     {
+    //       question: 'What housing options are available for students?',
+    //       answer:
+    //         'We offer on-campus dormitories for both male and female students, as well as assistance with finding off-campus housing. On-campus housing includes meal plans and 24/7 security.',
+    //     },
+    //     {
+    //       question: 'What sports and recreational facilities do you have?',
+    //       answer:
+    //         'Our campus features a modern sports complex with indoor and outdoor facilities including a gym, swimming pool, football field, basketball courts, tennis courts, and fitness center. We also have various student clubs and organizations.',
+    //     },
+    //     {
+    //       question: 'Is there on-campus dining available?',
+    //       answer:
+    //         'Yes, we have multiple dining options including a main cafeteria, coffee shops, and food courts. We offer various meal plans and accommodate dietary restrictions. The campus also has several restaurants and cafes nearby.',
+    //     },
+    //     {
+    //       question:
+    //         'What transportation options are available to and from campus?',
+    //       answer:
+    //         'The campus is well-connected with public transportation including buses and metro. We also provide shuttle services to nearby areas and offer discounted public transportation passes for students.',
+    //     },
+    //   ],
+    // },
+    // {
+    //   id: 'career',
+    //   title: 'Career Services & Internships',
+    //   icon: '💼',
+    //   items: [
+    //     {
+    //       question: 'What career services do you provide?',
+    //       answer:
+    //         'Our career center offers resume writing assistance, interview preparation, career counseling, job fairs, networking events, and access to job boards. We also provide workshops on professional development.',
+    //     },
+    //     {
+    //       question: 'Do you help students find internships?',
+    //       answer:
+    //         'Yes, we have partnerships with over 200 companies and organizations. Our career center actively helps students find internships, co-op opportunities, and part-time jobs related to their field of study.',
+    //     },
+    //     {
+    //       question: 'What is the employment rate for graduates?',
+    //       answer:
+    //         'Our graduate employment rate is 95% within 6 months of graduation. We maintain strong relationships with employers and regularly track graduate outcomes to ensure our programs meet industry needs.',
+    //     },
+    //     {
+    //       question: 'Do you offer alumni networking opportunities?',
+    //       answer:
+    //         'Yes, we have an active alumni network with over 50,000 members worldwide. We host regular networking events, mentorship programs, and provide access to our alumni directory for professional connections.',
+    //     },
+    //   ],
+    // },
   ],
 };
 
 export const topEventsData = {
-  title: 'Top Events',
-  subtitle: 'Stay updated with the latest university events and activities',
   items: [
     {
       id: 1,
@@ -691,58 +774,138 @@ export const topEventsData = {
 };
 
 export const topNewsData = {
-  title: 'Top News',
-  subtitle: 'Latest updates and achievements from our university community',
+  title: {
+    ar: 'أخبار هامة',
+    en: 'Top News',
+  },
+  subtitle: {
+    ar: 'أحدث التحديثات والإنجازات من مجتمعنا الجامعي',
+    en: 'Latest updates and achievements from our university community',
+  },
   items: [
     {
       id: 1,
-      title: 'HNU Ranks #1 in National University Rankings',
-      description:
-        'Helwan National University has been ranked first in the latest national university rankings, recognizing our excellence in education and research.',
+      title: {
+        ar: 'الجامعة الاهلية لحلوان تتصدر التصنيفات الجامعية الاهلية',
+        en: 'HNU Ranks #1 in National University Rankings',
+      },
+      description: {
+        ar: 'تم تصنيف الجامعة الاهلية لحلوان في المرتبة الأولى في أحدث التصنيفات الجامعية الاهلية. تكريمًا لتفوقنا في التعليم والبحث العلمي.',
+        en: 'Helwan National University has been ranked first in the latest national university rankings, recognizing our excellence in education and research.',
+      },
       image: '/home.jpeg',
-      date: 'March 10, 2024',
-      author: 'University Communications',
-      category: 'Achievement',
+      date: {
+        ar: '١٠ مارس ٢٠٢٤',
+        en: 'March 10, 2024',
+      },
+      author: {
+        ar: 'إدارة الاتصال الجامعي',
+        en: 'University Communications',
+      },
+      category: {
+        ar: 'إنجاز',
+        en: 'Achievement',
+      },
       featured: true,
-      readTime: '3 min read',
+      readTime: {
+        ar: '٣ دقائق قراءة',
+        en: '3 min read',
+      },
+      href: '#',
     },
     {
       id: 2,
-      title: 'New Research Center for AI and Machine Learning',
-      description:
-        'We are excited to announce the opening of our state-of-the-art research center dedicated to artificial intelligence and machine learning innovations.',
+      title: {
+        ar: 'مركز بحثي جديد للذكاء الاصطناعي وتعلم الآلة',
+        en: 'New Research Center for AI and Machine Learning',
+      },
+      description: {
+        ar: 'يسرنا الإعلان عن افتتاح مركزنا البحثي الحديث المخصص للابتكارات في مجال الذكاء الاصطناعي وتعلم الآلة.',
+        en: 'We are excited to announce the opening of our state-of-the-art research center dedicated to artificial intelligence and machine learning innovations.',
+      },
       image: '/home.jpeg',
-      date: 'March 8, 2024',
-      author: 'Research Department',
-      category: 'Innovation',
+      date: {
+        ar: '٨ مارس ٢٠٢٤',
+        en: 'March 8, 2024',
+      },
+      author: {
+        ar: 'قسم البحث العلمي',
+        en: 'Research Department',
+      },
+      category: {
+        ar: 'ابتكار',
+        en: 'Innovation',
+      },
       featured: true,
-      readTime: '4 min read',
+      readTime: {
+        ar: '٤ دقائق قراءة',
+        en: '4 min read',
+      },
+      href: '#',
     },
     {
       id: 3,
-      title: 'Student Wins International Engineering Competition',
-      description:
-        'Congratulations to our engineering student who secured first place in the prestigious International Engineering Innovation Challenge.',
+      title: {
+        ar: 'طالب يفوز بمسابقة هندسية دولية',
+        en: 'Student Wins International Engineering Competition',
+      },
+      description: {
+        ar: 'تهانينا لطالبنا في كلية الهندسة الذي حصل على المركز الأول في مسابقة التحدي الدولي للابتكار الهندسي.',
+        en: 'Congratulations to our engineering student who secured first place in the prestigious International Engineering Innovation Challenge.',
+      },
       image: '/home.jpeg',
-      date: 'March 5, 2024',
-      author: 'Engineering Faculty',
-      category: 'Student Success',
+      date: {
+        ar: '٥ مارس ٢٠٢٤',
+        en: 'March 5, 2024',
+      },
+      author: {
+        ar: 'كلية الهندسة',
+        en: 'Engineering Faculty',
+      },
+
+      category: {
+        ar: 'نجاح الطلاب',
+        en: 'Student Success',
+      },
       featured: false,
-      readTime: '2 min read',
+      readTime: {
+        ar: 'دقيقتان قراءة',
+        en: '2 min read',
+      },
+      href: '#',
     },
     {
       id: 4,
-      title: 'Partnership with Leading Tech Companies',
-      description:
-        'HNU has signed strategic partnerships with major technology companies to enhance our curriculum and provide internship opportunities.',
+      title: {
+        ar: 'شراكة مع شركات تقنية رائدة',
+        en: 'Partnership with Leading Tech Companies',
+      },
+      description: {
+        ar: 'وقعت الجامعة الوطنية لهلوان شراكات استراتيجية مع شركات التكنولوجيا الكبرى لتعزيز مناهجنا وتوفير فرص التدريب.',
+        en: 'HNU has signed strategic partnerships with major technology companies to enhance our curriculum and provide internship opportunities.',
+      },
       image: '/home.jpeg',
-      date: 'March 1, 2024',
-      author: 'Partnerships Office',
-      category: 'Collaboration',
+      date: {
+        ar: '١ مارس ٢٠٢٤',
+        en: 'March 1, 2024',
+      },
+      author: {
+        ar: 'مكتب الشراكات',
+        en: 'Partnerships Office',
+      },
+      category: {
+        ar: 'تعاون',
+        en: 'Collaboration',
+      },
       featured: false,
-      readTime: '3 min read',
+      readTime: {
+        ar: '٣ دقائق قراءة',
+        en: '3 min read',
+      },
+      href: '#',
     },
   ],
+  href: '#',
 };
 
 export const topStudentActivitiesData = {
@@ -800,3 +963,5 @@ export const topStudentActivitiesData = {
     },
   ],
 };
+
+export const headerData = {};

@@ -53,19 +53,22 @@ function Header2() {
       href: `${basePath}/Faculties & Programs`,
       label: t('faculties_and_programs'),
       submenu: [
-        { href: '/Faculties & Programs/business', label: headerT('Business') },
+        {
+          href: '/Faculties & Programs/business',
+          label: headerT('Business Administration'),
+        },
         { href: '/Faculties & Programs/law', label: headerT('Law') },
         {
           href: '/Faculties & Programs/engineering',
           label: headerT('Engineering'),
         },
         {
-          href: `${basePath}/Faculties & Programs/computer-science-engineering`,
-          label: headerT('Computer Science & information technology'),
+          href: `${basePath}/Faculties & Programs/computer-science-it`,
+          label: headerT('Computer Science & IT'),
         },
         {
           href: `${basePath}/Faculties & Programs/science`,
-          label: headerT('Science'),
+          label: headerT('Sciences'),
         },
         {
           href: `${basePath}/Faculties & Programs/medicine`,
@@ -76,8 +79,20 @@ function Header2() {
           label: headerT('Dentistry'),
         },
         {
-          href: `${basePath}/Faculties & Programs/applied-health-sciences-technology`,
-          label: headerT('Applied Health Sciences Technology'),
+          href: `${basePath}/Faculties & Programs/applied-health-sciences`,
+          label: headerT('Applied Health Sciences'),
+        },
+        {
+          href: `${basePath}/Faculties & Programs/physical-therapy`,
+          label: headerT('Physical Therapy'),
+        },
+        {
+          href: `${basePath}/Faculties & Programs/arts`,
+          label: headerT('Arts & Applied Arts'),
+        },
+        {
+          href: `${basePath}/Faculties & Programs/translation`,
+          label: headerT('Specialized English Translation'),
         },
       ],
     },

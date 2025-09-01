@@ -43,7 +43,7 @@ export default async function LocaleLayout({
             <main className='bg-white'>
               <DecorativeWrapper>{children}</DecorativeWrapper>
             </main>
-            <Footer />
+            <Footer local={locale} />
             <DockSocialMediaLinks />
           </Providers>
         </NextIntlClientProvider>

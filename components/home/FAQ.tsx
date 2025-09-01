@@ -7,6 +7,7 @@ import {
   MessageCircle,
   ChevronDown,
   ChevronUp,
+  ArrowRight,
 } from 'lucide-react';
 import {
   Accordion,
@@ -14,9 +15,18 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { faqData } from '@/data';
+import { faqData, faqRandom } from '@/data';
 
-function FAQ() {
+export interface FaqItemProps {
+  title: {
+    ar: string;
+    en: string;
+  };
+  href: string;
+  local: string;
+}
+
+function FAQ({ title, href, local }: FaqItemProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [openItems, setOpenItems] = useState({});
@@ -25,20 +35,24 @@ function FAQ() {
   // Filter FAQ items based on search query
   const filteredFAQs = faqData.categories.flatMap(category =>
     category.items
-      .filter(
-        item =>
-          item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.answer.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+      .filter(item => {
+        const questionText =
+          local === 'ar' ? item.question.ar : item.question.en;
+        const answerText = local === 'ar' ? item.answer.ar : item.answer.en;
+
+        return searchQuery === ''
+          ? true
+          : questionText.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              answerText.toLowerCase().includes(searchQuery.toLowerCase());
+      })
       .map(item => ({
         ...item,
-        category: category.title,
         categoryId: category.id,
       }))
   );
 
   // Get unique categories for filtering
-  const categories = faqData.categories;
+  // const categories = faqData.categories;
 
   // Filter by category if not "all"
   const displayFAQs =
@@ -55,22 +69,22 @@ function FAQ() {
   };
 
   return (
-    <section id='faq' className='py-5 w-full'>
+    <section id='faq' className='py-5 w-full mt-12 mb-12'>
       <div className='w-full px-4 sm:px-6 lg:px-8 xl:px-12'>
         {/* Header Section */}
         <div className='text-center mb-8'>
-          <div className='flex items-center justify-center mb-4'>
-            <HelpCircle className='w-8 h-8 text-[#023e8a] mr-3' />
-            <h2 className='text-4xl md:text-5xl font-bold text-[#023e8a]'>
-              {faqData.title}
+          <div className='flex items-center justify-center mb-4 gap-4'>
+            <HelpCircle className='w-8 h-8 text-[#023e8a] mr-3 animate-pulse' />
+            <h2 className='text-2xl sm:text-4xl font-bold text-[#023e8a]'>
+              {local === 'ar' ? faqData.title.ar : faqData.title.en}
             </h2>
           </div>
         </div>
 
         {/* Search and Filter Section */}
-        <div className='w-full mb-12'>
-          {/* Search Bar */}
-          <div className='relative mb-8 max-w-2xl mx-auto'>
+        {/* <div className='w-full mb-12'> */}
+        {/* Search Bar */}
+        {/* <div className='relative mb-8 max-w-2xl mx-auto'>
             <Search className='absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5' />
             <input
               type='text'
@@ -79,10 +93,10 @@ function FAQ() {
               onChange={e => setSearchQuery(e.target.value)}
               className='w-full pl-12 pr-4 py-4 bg-white text-[#023e8a]! border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#023e8a] focus:border-transparent text-lg shadow-sm'
             />
-          </div>
+          </div> */}
 
-          {/* Category Filter Pills */}
-          <div className='flex flex-wrap gap-3 justify-center'>
+        {/* Category Filter Pills */}
+        {/* <div className='flex flex-wrap gap-3 justify-center'>
             <button
               onClick={() => setActiveCategory('all')}
               className={`px-6 py-3 rounded-full font-medium transition-all duration-300 ${
@@ -107,8 +121,8 @@ function FAQ() {
                 {category.title}
               </button>
             ))}
-          </div>
-        </div>
+          </div>*/}
+        {/* </div> */}
 
         {/* FAQ Content - Dynamic Grid with Accordion */}
         <div className='w-full'>
@@ -140,11 +154,10 @@ function FAQ() {
                             </div>
                             <div className='flex-1 min-w-0'>
                               <h3 className='font-semibold text-gray-900 text-base leading-relaxed mb-2'>
-                                {item.question}
+                                {local === 'ar'
+                                  ? item.question.ar
+                                  : item.question.en}
                               </h3>
-                              <p className='text-xs text-gray-500'>
-                                {item.category}
-                              </p>
                             </div>
                             <div className='flex-shrink-0 ml-2'>
                               {openItems[index as keyof typeof openItems] ? (
@@ -159,16 +172,29 @@ function FAQ() {
                           <div className='pl-9'>
                             <div className='border-l-2 border-[#023e8a] pl-4'>
                               <p className='text-gray-700 leading-relaxed text-sm'>
-                                {item.answer}
+                                {local === 'ar'
+                                  ? item.answer.ar
+                                  : item.answer.en}
                               </p>
                             </div>
                           </div>
                         </AccordionContent>
                       </AccordionItem>
                     </Accordion>
+                    {/* View All News CTA */}
                   </div>
                 ))}
               </div>
+              {faqRandom.href && (
+                <a href={faqRandom.href}>
+                  <div className='text-center mt-12'>
+                    <button className='inline-flex items-center gap-2 px-8 py-4 bg-[#023e8a] text-white font-semibold rounded-lg hover:bg-[#023e8a]/90 transition-all duration-300 transform hover:scale-105 shadow-lg'>
+                      <ArrowRight className='w-5 h-5' />
+                      {local === 'ar' ? faqRandom.title.ar : faqRandom.title.en}
+                    </button>
+                  </div>
+                </a>
+              )}
             </div>
           ) : (
             /* No Results State */

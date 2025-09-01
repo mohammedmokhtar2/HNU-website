@@ -16,15 +16,17 @@
     "FOLLOW US": "تابعنا",
     "University's president": "رئيس الجامعة",
     "About the university": "عن الجامعة",
-    "Business": "الأعمال",
-    "Law": "القانون",
-    "Engineering": "الهندسة",
-    "Computer Science & information technology": "علوم الحاسب وتكنولوجيا المعلومات",
-    "Science": "العلوم",
-    "Medicine": "الطب",
-    "Dentistry": "طب الأسنان",
-    "Applied Health Sciences Technology": "تكنولوجيا العلوم الصحية التطبيقية",
-    "university_name_mobile": "جامعة حلوان الاهلية"
+    "Business": "كلية العلوم الإنسانية والتجارة وإدارة الأعمال",
+    "Law": "كلية القانون (برنامج اللغة العربية)",
+    "Engineering": "كلية الهندسة",
+    "Computer Science & information technology": "كلية علوم الحاسب وتكنولوجيا المعلومات",
+    "Science": "كلية العلوم",
+    "Medicine": "كلية الطب",
+    "Dentistry": "كلية طب الأسنان",
+    "Applied Health Sciences Technology": "كلية تكنولوجيا العلوم الصحية التطبيقية",
+    "university_name_mobile": "جامعة حلوان الاهلية",
+    "Faculty of Physical Therapy": "كلية العلاج الطبيعي",
+    "Faculty of Arts & Applied Arts": "كلية الفنون والفنون التطبيقية"
   },
   "hero": {
     "discover_all_programs": "اكتشف جميع البرامج",
@@ -33,5 +35,28 @@
 
   "programs": {
     "learn_more": "المزيد"
+  },
+
+  "expand": {
+    "About-this": " عن هذا",
+    "Featured": "مميز",
+    "activity": "نشاط",
+    "news": "أخبار",
+    "event": "حدث",
+    "register-now": "سجل الآن",
+    "read-more": "اقرأ المزيد",
+    "join-now": "انضم الآن",
+    "learn-more": "المزيد"
+  },
+  "footer": {
+    "Our_Location": "موقعنا",
+    "Quick_Links": "روابط سريعة",
+    "Quick_Actions": "إجراءات سريعة",
+    "Apply_Now": "قدم الآن",
+    "Schedule_a_Visit": "حدد موعدًا للزيارة",
+    "Request_Information": "طلب معلومات",
+    "university_name": "جامعة حلوان الاهلية",
+    "rights_reserved": "جميع الحقوق محفوظة.",
+    "date": "٢٠٢٥"
   }
 }

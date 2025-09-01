@@ -1,11 +1,15 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
-import { MapPin, Phone, Mail, Clock, AlertCircle } from 'lucide-react';
 import { footerData } from '@/data';
+import { useTranslations } from 'next-intl';
 
-function Footer() {
+export interface FooterProps {
+  local: string;
+}
+function Footer({ local }: FooterProps) {
+  const footerT = useTranslations('footer');
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -22,36 +26,11 @@ function Footer() {
       {/* Main Footer Content */}
       <div className='py-12 sm:py-16 bg-gray-900'>
         <div className='px-4 sm:px-6 lg:px-8'>
-          <div className='grid grid-cols-1 lg:grid-cols-4 gap-12'>
-            {/* First Column - Logo */}
-            <div className='flex flex-col items-center lg:items-start space-y-6'>
-              <div className='text-center lg:text-left'>
-                <div className='mb-6'>
-                  <Image
-                    src='/logo.png'
-                    alt='HNU Logo'
-                    width={200}
-                    height={200}
-                    className='w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 mx-auto lg:mx-0'
-                    priority
-                  />
-                </div>
-
-                <h3 className='text-2xl sm:text-3xl font-bold text-white mb-4'>
-                  Helwan National University
-                </h3>
-
-                <p className='text-gray-400 leading-relaxed text-sm sm:text-base max-w-xs'>
-                  Empowering minds, shaping futures through excellence in
-                  education and innovation.
-                </p>
-              </div>
-            </div>
-
+          <div className='grid grid-cols-1 lg:grid-cols-3 gap-12'>
             {/* Second Column - Map */}
             <div className='space-y-6'>
-              <h3 className='text-xl sm:text-2xl font-bold text-white mb-4 text-center lg:text-left'>
-                Our Location
+              <h3 className='text-xl sm:text-3xl font-bold text-white mb-4 text-center lg:text-left'>
+                {footerT('Our_Location')}
               </h3>
 
               {/* Embedded Google Maps */}
@@ -70,8 +49,10 @@ function Footer() {
               </div>
 
               <div className='text-center lg:text-left'>
-                <p className='text-gray-400 text-sm'>
-                  {footerData.contact.address}
+                <p className='text-gray-300 text-sm'>
+                  {local === 'ar'
+                    ? footerData.contact.address.ar
+                    : footerData.contact.address.en}
                 </p>
               </div>
             </div>
@@ -82,7 +63,7 @@ function Footer() {
                 {/* Quick Links */}
                 <div className='space-y-4'>
                   <h3 className='text-xl sm:text-2xl font-bold text-white mb-4 text-center lg:text-left'>
-                    Quick Links
+                    {footerT('Quick_Links')}
                   </h3>
 
                   <div className='grid grid-cols-2 gap-3'>
@@ -94,7 +75,7 @@ function Footer() {
                         }
                         className='text-left text-gray-300 hover:text-white py-2 hover:translate-x-2 transform transition-all duration-300 text-sm sm:text-base'
                       >
-                        {link.name}
+                        {local === 'ar' ? link.name.ar : link.name.en}
                       </button>
                     ))}
                   </div>
@@ -106,17 +87,17 @@ function Footer() {
               {/* Quick Actions */}
               <div className='space-y-4'>
                 <h3 className='text-xl sm:text-2xl font-bold text-white mb-4 text-center lg:text-left'>
-                  Quick Actions
+                  {footerT('Quick_Actions')}
                 </h3>
                 <div className='space-y-3'>
                   <button className='w-full text-left px-4 py-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors duration-300 text-sm sm:text-base'>
-                    Apply Now
+                    {footerT('Apply_Now')}
                   </button>
                   <button className='w-full text-left px-4 py-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors duration-300 text-sm sm:text-base'>
-                    Schedule a Visit
+                    {footerT('Schedule_a_Visit')}
                   </button>
                   <button className='w-full text-left px-4 py-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors duration-300 text-sm sm:text-base'>
-                    Request Information
+                    {footerT('Request_Information')}
                   </button>
                 </div>
               </div>
@@ -130,15 +111,17 @@ function Footer() {
         <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0 text-center lg:text-left'>
             <div>
-              <p className='text-gray-400 text-sm sm:text-base'>
-                © {footerData.development.year} Helwan National University. All
-                rights reserved.
+              <p className='text-gray-500 text-sm sm:text-base'>
+                © {footerT('date')} {footerT('university_name')}.{' '}
+                {footerT('rights_reserved')}
               </p>
             </div>
 
             <div className='text-center lg:text-right'>
               <p className='text-gray-400 text-sm sm:text-base'>
-                {footerData.development.credits}
+                {local === 'ar'
+                  ? footerData.development.credits.ar
+                  : footerData.development.credits.en}
               </p>
             </div>
           </div>

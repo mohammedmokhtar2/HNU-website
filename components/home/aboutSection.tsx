@@ -48,9 +48,9 @@ function AboutSection({
             onClick={e => e.stopPropagation()}
           >
             <VideoPlayer
-              src="/home.mp4"
-              poster="/home.jpeg"
-              className="w-full h-full rounded-lg"
+              src='https://8rqmsnrudm.ufs.sh/f/FfKyQhLpRgXUcOPOo7TpnVFGNr3iK6kg5Of4PUbcX7zRDadw'
+              poster='/home.jpeg'
+              className='w-full h-full rounded-lg'
               controls={true}
               autoPlay={true}
               muted={true}
@@ -104,7 +104,7 @@ function AboutSection({
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.8 }}
                 viewport={{ once: true }}
-                className={`text-4xl sm:text-5xl lg:text-6xl font-bold mb-8 leading-tight ${titleClassName || ''} text-white`}
+                className={`text-2xl sm:text-4xl lg:text-6xl font-bold mb-8 leading-tight ${titleClassName || ''} text-white`}
               >
                 {local === 'ar' ? 'عن جامعتنا' : 'About Us'}
               </motion.h2>
@@ -203,10 +203,11 @@ function AboutSection({
                 </span>
                 <ArrowRight
                   size={18}
-                  className={`relative z-10 transition-transform duration-300 ${local === 'ar'
-                    ? 'rotate-180 group-hover:-translate-x-1'
-                    : 'group-hover:translate-x-1'
-                    }`}
+                  className={`relative z-10 transition-transform duration-300 ${
+                    local === 'ar'
+                      ? 'rotate-180 group-hover:-translate-x-1'
+                      : 'group-hover:translate-x-1'
+                  }`}
                 />
 
                 {/* Animated background */}
