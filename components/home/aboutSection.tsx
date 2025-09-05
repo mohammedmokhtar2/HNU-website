@@ -72,32 +72,20 @@ function AboutSection({
 
       <section
         id='about'
-        className='py-24 bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 relative overflow-hidden'
+        className='py-24 relative overflow-hidden w-full min-h-[calc(100vh-100px)] flex items-center justify-center'
       >
-        {/* Background Photo with Overlay */}
-        <div className='absolute inset-0'>
+        {/* Image Background */}
+        <div className='absolute inset-0 w-full h-full'>
           <Image
             src='/over.png'
             alt={local === 'ar' ? 'خلفية الجامعة' : 'University Background'}
             fill
-            className='object-cover opacity-50'
+            className='object-cover'
+            priority
           />
-          <div className='absolute inset-0 bg-gradient-to-b from-[#023e8a]/50 via-[#023e8a]/30 to-[#023e8a]/50'></div>
-        </div>
 
-        {/* Background with palm tree silhouettes */}
-        <div className='absolute inset-0 pointer-events-none'>
-          {/* Palm tree silhouettes */}
-          <div className='absolute top-0 left-0 w-full h-full opacity-10'>
-            <div className='absolute top-20 left-10 w-32 h-64 bg-gradient-to-b from-transparent to-blue-700 rounded-full transform rotate-12'></div>
-            <div className='absolute top-40 left-20 w-24 h-48 bg-gradient-to-b from-transparent to-blue-600 rounded-full transform -rotate-6'></div>
-            <div className='absolute bottom-20 right-10 w-28 h-56 bg-gradient-to-b from-transparent to-blue-700 rounded-full transform rotate-45'></div>
-            <div className='absolute bottom-40 right-20 w-20 h-40 bg-gradient-to-b from-transparent to-blue-600 rounded-full transform -rotate-12'></div>
-          </div>
-
-          {/* Subtle geometric patterns */}
-          <div className='absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(59,130,246,0.1)_0%,transparent_50%)]' />
-          <div className='absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(99,102,241,0.1)_0%,transparent_50%)]' />
+          {/* Overlay*/}
+          <div className='absolute inset-0 bg-gradient-to-b from-[#023e8a]/80 via-[#023e8a]/60 to-[#023e8a]/80' />
         </div>
 
         <div className='relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
