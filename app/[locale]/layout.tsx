@@ -4,10 +4,11 @@ import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import notFound from '../not-found';
 import { routing } from '@/i18n/routing';
 import { Providers } from '@/contexts';
-import Header2 from '@/components/layout/header2';
+import Header3 from '@/components/layout/header3';
 import DecorativeWrapper from '@/components/DecorativeWrapper';
 import DockSocialMediaLinks from '@/components/layout/dockSocialMediaLinks';
 import Footer from '@/components/layout/footer';
+import { headerData } from '@/data/index';
 
 export const metadata: Metadata = {
   title: 'Helwan National University',
@@ -39,7 +40,7 @@ export default async function LocaleLayout({
       <body suppressHydrationWarning>
         <NextIntlClientProvider locale={locale}>
           <Providers>
-            <Header2 />
+            <Header3 {...headerData} />
             <main className='bg-white'>
               <DecorativeWrapper>{children}</DecorativeWrapper>
             </main>

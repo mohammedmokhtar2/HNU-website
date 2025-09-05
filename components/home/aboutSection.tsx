@@ -77,7 +77,7 @@ function AboutSection({
         {/* Background Photo with Overlay */}
         <div className='absolute inset-0'>
           <Image
-            src={backgroundImage || image || '/home.jpeg'}
+            src='/over.png'
             alt={local === 'ar' ? 'خلفية الجامعة' : 'University Background'}
             fill
             className='object-cover opacity-50'

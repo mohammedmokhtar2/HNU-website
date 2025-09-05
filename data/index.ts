@@ -1,3 +1,6 @@
+import { Description } from '@radix-ui/react-dialog';
+import { title } from 'process';
+
 export const heroSection = {
   title: {
     en: 'Welcome to HNU Official Website',
@@ -964,4 +967,154 @@ export const topStudentActivitiesData = {
   ],
 };
 
-export const headerData = {};
+export const headerData = {
+  navigationItems: [
+    { href: '/', label: { ar: 'الرئيسية', en: 'Home' } },
+    {
+      href: '#about',
+      label: { ar: 'عن الجامعة', en: 'About' },
+      submenu: [
+        {
+          href: '/about/PresidentPage',
+          label: { ar: 'رئيس الجامعة', en: "University's president" },
+        },
+        {
+          href: '/about/university',
+          label: { ar: 'عن الجامعة', en: 'About the university' },
+        },
+      ],
+    },
+    {
+      href: '#programs',
+      label: { ar: 'الكليات والبرامج', en: 'Faculties & Programs' },
+      submenu: [
+        {
+          href: '/Faculties & Programs/business',
+          label: { ar: 'التجارة', en: 'Business' },
+        },
+        {
+          href: '/Faculties & Programs/law',
+          label: { ar: 'القانون', en: 'Law' },
+        },
+        {
+          href: '/Faculties & Programs/engineering',
+          label: { ar: 'الهندسة', en: 'Engineering' },
+        },
+        {
+          href: '/Faculties & Programs/computer-science-engineering',
+          label: {
+            ar: 'علوم الحاسب وتكنولوجيا المعلومات',
+            en: 'Computer Science & IT',
+          },
+        },
+        {
+          href: '/Faculties & Programs/science',
+          label: { ar: 'العلوم', en: 'Science' },
+        },
+        {
+          href: '/Faculties & Programs/medicine',
+          label: { ar: 'الطب', en: 'Medicine' },
+        },
+        {
+          href: '/Faculties & Programs/dentistry',
+          label: { ar: 'طب الأسنان', en: 'Dentistry' },
+        },
+        {
+          href: '/Faculties & Programs/applied-health-sciences-technology',
+          label: {
+            ar: 'علوم صحية تطبيقية',
+            en: 'Applied Health Sciences Technology',
+          },
+        },
+        {
+          href: '/Faculties & Programs/Faculty-of-Physical-Therapy',
+          label: { ar: 'العلاج الطبيعي', en: 'Physical Therapy' },
+        },
+        {
+          href: '/Faculties & Programs/Faculty-of-Arts-and-Applied-Arts',
+          label: { ar: 'الفنون والتطبيقية', en: 'Arts & Applied Arts' },
+        },
+      ],
+    },
+    { href: '/FAQ', label: { ar: 'الأسئلة الشائعة', en: 'FAQ' } },
+    { href: '/media', label: { ar: 'الإعلام', en: 'Media' } },
+    { href: '/contact', label: { ar: 'اتصل بنا', en: 'Contact' } },
+  ],
+
+  languages: [
+    { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'ar', name: 'العربية', flag: '🇸🇦' },
+  ],
+};
+
+export const presidentData = {
+  name: {
+    en: 'Prof.Dr. El-Sayed Ibrahim Kandil',
+    ar: 'أ.د/ السيد إبراهيم قنديل',
+  },
+  title: {
+    en: 'President of Helwan National University',
+    ar: 'رئيس جامعة حلوان الاهلية',
+  },
+  image: '/president.jpeg',
+  TalkofPresident: {
+    en: 'On behalf of myself and all members of Helwan National University, I am pleased to welcome you to this pioneering educational institution. Our university strives to provide a comprehensive learning environment that combines academic excellence, scientific research, and innovation, while focusing on developing students’ skills and preparing them to compete effectively in local and global job markets.\n\nOur vision is centered on achieving excellence in all areas of education and training, enhancing communication among all members of the university community to ensure integrated services, and supporting students throughout their academic and personal journey.\n\nWe place great emphasis on developing our human resources and improving their competencies through specialized training programs, ensuring their ability to face the challenges of the modern era and the demands of the labor market.\n\nAt Helwan National University, we firmly believe that investing in our students is an investment in the future of society. We aspire for our graduates to exemplify excellence and professionalism, contributing effectively to both community and global development.',
+    ar: 'باسمي وباسم جميع العاملين في جامعة حلوان الأهلية، يسرني أن أرحب بكم في هذا الصرح التعليمي الرائد. تسعى جامعتنا لتقديم بيئة تعليمية متكاملة تجمع بين التميز الأكاديمي، البحث العلمي، والابتكار، مع الحرص على تطوير مهارات الطلاب وإعدادهم لسوق العمل المحلي والدولي بكفاءة عالية.\n\nإن رؤيتنا ترتكز على تحقيق التميز في جميع مجالات التعليم والتدريب، وتعزيز التواصل بين جميع أعضاء المجتمع الجامعي لضمان تقديم خدمات متكاملة، ودعم الطلاب في رحلتهم العلمية والشخصية.\n\nكما نولي اهتمامًا كبيرًا بتطوير الكوادر البشرية، ورفع كفاءتهم من خلال برامج تدريبية متخصصة، بما يضمن القدرة على مواجهة تحديات العصر ومتطلبات سوق العمل.\n\nنحن في جامعة حلوان الأهلية نؤمن بأن الاستثمار في طلابنا هو استثمار في مستقبل المجتمع، ونطمح أن يكون خريجونا مثالًا للتميز والاحترافية، قادرين على المساهمة الفعّالة في التنمية المجتمعية والعالمية.',
+  },
+  cvhref: '#',
+  cvdata: {
+    en: 'Click to view CV',
+    ar: 'انقر لعرض السيرة الذاتية',
+  },
+  vices: [
+    {
+      vice: {
+        en: 'Vice Presidents',
+        ar: 'نواب رئيس الجامعة',
+      },
+      name: {
+        en: 'Prof.Dr. Ahmed Abdelaziz',
+        ar: 'أ.د/ أحمد عبد العزيز',
+      },
+      title: {
+        en: 'Vice President for Student Affairs and Community Service',
+        ar: 'نائب رئيس الجامعة لشؤون الطلاب وخدمة المجتمع',
+      },
+      description: {
+        en: 'Prof.Dr. Ahmed Abdelaziz has over 20 years of experience in higher education administration, focusing on student development and community engagement. He has led numerous initiatives to enhance student services and foster partnerships with local organizations.',
+        ar: 'يتمتع أ.د/ أحمد عبد العزيز بخبرة تزيد عن 20 عامًا في إدارة التعليم العالي، مع التركيز على تطوير الطلاب والمشاركة المجتمعية. قاد العديد من المبادرات لتعزيز خدمات الطلاب وتعزيز الشراكات مع المنظمات المحلية.',
+      },
+      image: '/president.jpeg',
+    },
+    {
+      name: {
+        en: 'Prof.Dr. Hossam El Din Mohamed',
+        ar: 'أ.د/ حسام الدين محمد',
+      },
+      title: {
+        en: 'Vice President for Graduate Studies and Research',
+        ar: 'نائب رئيس الجامعة للدراسات العليا والبحوث',
+      },
+      description: {
+        en: 'Prof.Dr. Hossam El Din Mohamed is a distinguished academic with extensive experience in graduate education and research. He has published numerous papers in reputable journals and has been involved in various research projects aimed at advancing knowledge in his field.',
+        ar: 'أ.د/ حسام الدين محمد أكاديمي متميز ذو خبرة واسعة في التعليم العالي والبحوث. نشر العديد من الأوراق في مجلات مرموقة وشارك في مشاريع بحثية تهدف إلى تعزيز المعرفة في مجاله.',
+      },
+      image: '/president.jpeg',
+    },
+    {
+      name: {
+        en: 'Prof.Dr. Mohamed El Sayed El Kady',
+        ar: 'أ.د/ محمد السيد القاضي',
+      },
+      title: {
+        en: 'Vice President for Education and Student Affairs',
+        ar: 'نائب رئيس الجامعة لشؤون التعليم والطلاب',
+      },
+      description: {
+        en: 'Prof.Dr. Mohamed El Sayed El Kady has a strong background in educational leadership and student affairs. He has implemented various programs to improve the quality of education and enhance the overall student experience at the university.',
+        ar: 'يتمتع أ.د/ محمد السيد القاضي بخلفية قوية في القيادة التعليمية وشؤون الطلاب. نفذ العديد من البرامج لتحسين جودة التعليم وتعزيز تجربة الطلاب بشكل عام في الجامعة.',
+      },
+      image: '/president.jpeg',
+    },
+  ],
+};

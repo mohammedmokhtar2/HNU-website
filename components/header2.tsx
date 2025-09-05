@@ -17,7 +17,7 @@ import {
   FaTiktok,
   FaInstagram,
 } from 'react-icons/fa';
-import MobileMenu from './layout/MobileMenu';
+// import MobileMenu from './MobileMenu';
 
 function Header2() {
   const t = useTranslations('navigation');
@@ -53,22 +53,19 @@ function Header2() {
       href: `${basePath}/Faculties & Programs`,
       label: t('faculties_and_programs'),
       submenu: [
-        {
-          href: '/Faculties & Programs/business',
-          label: headerT('Business Administration'),
-        },
+        { href: '/Faculties & Programs/business', label: headerT('Business') },
         { href: '/Faculties & Programs/law', label: headerT('Law') },
         {
           href: '/Faculties & Programs/engineering',
           label: headerT('Engineering'),
         },
         {
-          href: `${basePath}/Faculties & Programs/computer-science-it`,
-          label: headerT('Computer Science & IT'),
+          href: `${basePath}/Faculties & Programs/computer-science-engineering`,
+          label: headerT('Computer Science & information technology'),
         },
         {
           href: `${basePath}/Faculties & Programs/science`,
-          label: headerT('Sciences'),
+          label: headerT('Science'),
         },
         {
           href: `${basePath}/Faculties & Programs/medicine`,
@@ -79,20 +76,16 @@ function Header2() {
           label: headerT('Dentistry'),
         },
         {
-          href: `${basePath}/Faculties & Programs/applied-health-sciences`,
-          label: headerT('Applied Health Sciences'),
+          href: `${basePath}/Faculties & Programs/applied-health-sciences-technology`,
+          label: headerT('Applied Health Sciences Technology'),
         },
         {
-          href: `${basePath}/Faculties & Programs/physical-therapy`,
-          label: headerT('Physical Therapy'),
+          href: `${basePath}/Faculties & Programs/Faculty-of-Physical-Therapy`,
+          label: headerT('Faculty of Physical Therapy'),
         },
         {
-          href: `${basePath}/Faculties & Programs/arts`,
-          label: headerT('Arts & Applied Arts'),
-        },
-        {
-          href: `${basePath}/Faculties & Programs/translation`,
-          label: headerT('Specialized English Translation'),
+          href: `${basePath}/Faculties & Programs/Faculty-of-Arts-and-Applied-Arts`,
+          label: headerT('Faculty of Arts & Applied Arts'),
         },
       ],
     },
@@ -155,38 +148,38 @@ function Header2() {
               >
                 {headerT('FOLLOW US')}
               </Badge>
-              <a
+              <Link
                 href='https://www.facebook.com/share/1C14jESdMi/?mibextid=wwXIfr'
                 target='_blank'
                 rel='noopener noreferrer'
                 className='hover:text-blue-400 transition-colors p-1 rounded'
               >
                 <FaFacebook className='text-sm' />
-              </a>
-              <a
+              </Link>
+              <Link
                 href='https://www.linkedin.com/company/helwan-nu-egypt/'
                 target='_blank'
                 rel='noopener noreferrer'
                 className='hover:text-blue-400 transition-colors p-1 rounded'
               >
                 <FaLinkedin className='text-sm' />
-              </a>
-              <a
+              </Link>
+              <Link
                 href='https://www.tiktok.com/@helwan.national.u'
                 target='_blank'
                 rel='noopener noreferrer'
                 className='hover:text-blue-400 transition-colors p-1 rounded'
               >
                 <FaTiktok className='text-sm' />
-              </a>
-              <a
+              </Link>
+              <Link
                 href='https://www.instagram.com/hnuofficial.eg?igsh=bTZ4eGs1N24wOGg0'
                 target='_blank'
                 rel='noopener noreferrer'
                 className='hover:text-blue-400 transition-colors p-1 rounded'
               >
                 <FaInstagram className='text-sm' />
-              </a>
+              </Link>
             </div>
 
             {/* Language Button */}
@@ -218,21 +211,25 @@ function Header2() {
                 {/* Logo and University Name */}
                 <div className='flex items-center space-x-3 sm:space-x-4 lg:space-x-6 flex-shrink-0'>
                   <div className='relative'>
-                    <div className='h-12 w-12 ml-6 sm:h-16 sm:w-16 lg:h-20 lg:w-20 rounded-full flex items-center justify-center shadow-xl border-2 border-white bg-white overflow-hidden'>
+                    <div className='h-12 w-12 ml-6 sm:h-16 sm:w-16 lg:h-20 lg:w-20 rounded-full flex items-center justify-center border-2 border-white bg-white overflow-hidden'>
                       <Image
                         src='/logo2.png'
                         alt='HNU Logo'
                         width={48}
                         height={48}
-                        className='w-full h-full object-cover rounded-full'
+                        className='w-full h-full object-cover rounded-full shadow-md'
                       />
                     </div>
-                    <div className='absolute -top-2 -right-3 h-4 w-4 bg-blue-500 rounded-full border-2 border-white shadow-lg animate-bounce'></div>
-                    <div className='absolute -bottom-2 left-2 h-4 w-4 bg-blue-950 rounded-full border-2 animate-pulse shadow-md'></div>
                   </div>
                   <div className='hidden sm:block'>
-                    <h1 className='text-base sm:text-lg lg:text-xl font-bold bg-gradient-to-r from-blue-950 to-blue-600 bg-clip-text text-transparent leading-tight'>
+                    <h1 className='text-base sm:text-lg lg:text-xl font-bold bg-blue-950 bg-clip-text text-transparent leading-tight'>
                       {headerT('university_name')}
+                    </h1>
+                  </div>
+
+                  <div className='block sm:hidden'>
+                    <h1 className='text-sm font-bold bg-gradient-to-r from-blue-950 to-blue-700 bg-clip-text text-transparent leading-tight'>
+                      {headerT('university_name_mobile')}
                     </h1>
                   </div>
                 </div>
@@ -277,7 +274,7 @@ function Header2() {
                 </div>
 
                 {/* Mobile Menu Button */}
-                <div className='lg:hidden'>
+                <div className='lg:hidden ml-6'>
                   <Button
                     variant='ghost'
                     size='sm'
@@ -294,7 +291,7 @@ function Header2() {
       </nav>
 
       {/* Mobile Menu */}
-      <MobileMenu
+      {/* <MobileMenu
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}
         navigationItems={navigationItems}
@@ -303,7 +300,7 @@ function Header2() {
         nextLanguage={nextLanguage}
         onLanguageChange={handleLanguageChange}
         headerT={headerT}
-      />
+      /> */}
 
       {/* Spacer to prevent content from going under fixed header */}
       <div className='h-28 sm:h-32 lg:h-40'></div>

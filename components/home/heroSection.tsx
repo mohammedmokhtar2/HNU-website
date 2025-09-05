@@ -121,7 +121,7 @@ const HeroSection = ({
       {video && (
         <button
           onClick={toggleMute}
-          className='absolute top-6 right-6 z-20 p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 group'
+          className='absolute top-6 right-6 z-20 p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 group mt-26'
           aria-label={isMuted ? 'Unmute video' : 'Mute video'}
         >
           {isMuted ? (
@@ -145,7 +145,7 @@ const HeroSection = ({
       )}
 
       {/* Overlay */}
-      <div className='absolute inset-0 bg-gradient-to-b from-[#023e8a]/80 via-[#023e8a]/60 to-[#023e8a]/80' />
+      <div className='absolute inset-0 bg-black/30' />
 
       {/* Content Container */}
       <div className='relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center'>
