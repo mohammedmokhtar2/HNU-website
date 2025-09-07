@@ -1,6 +1,3 @@
-import { Description } from '@radix-ui/react-dialog';
-import { title } from 'process';
-
 export const heroSection = {
   title: {
     en: 'Welcome to HNU Official Website',
