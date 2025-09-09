@@ -9,6 +9,7 @@ export default function ChatWidget() {
   const [isMobile, setIsMobile] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(true);
   const [messages, setMessages] = useState<{ from: string; text: string }[]>(
     []
   );
@@ -82,6 +83,37 @@ export default function ChatWidget() {
         </svg>
       </Button>
 
+      {showTooltip && !isOpen && (
+        <div className='fixed bottom-36 right-10 max-w-xs bg-white border border-gray-300 text-black rounded-lg shadow-lg p-4 text-sm z-50 animate-fade-in'>
+          <div className='flex justify-between items-start gap-2'>
+            <span>
+              {/* مرشد مهني مدعوم بالذكاء الاصطناعي! أهلاً، أنا مرشدك الوظيفي،
+              يسعدني مساعدتك، إسألني الآن! */}
+
+              {locale === 'ar' ? (
+                <div>
+                  <p className='font-bold'>مرشد مهني مدعوم بالذكاء الاصطناعي!</p>
+                  <p>أهلاً، أنا زقزوقي، مساعدك الافتراضي.</p>
+                  <p className='font-bold'>كيف يمكنني مساعدتك اليوم؟</p>
+                </div>
+              ) : (
+                <div>
+                  <p className='font-bold'>AI-powered career guide!</p>
+                  <p>Hi, I am Zaqzouqi, your virtual assistant.</p>
+                  <p className='font-bold'>How can I help you today?</p>
+                </div>
+              )}
+            </span>
+            <button
+              onClick={() => setShowTooltip(false)}
+              className='text-gray-400 hover:text-gray-600'
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Chat box */}
       {isOpen && (
         <div
@@ -122,10 +154,7 @@ export default function ChatWidget() {
                 <path d='M15 13v2'></path>
                 <path d='M9 13v2'></path>
               </svg>
-                                {locale === 'ar'
-                    ? 'المساعد زقزوقي'
-                    : 'Zaqzouqi Assistant'
-                  }
+              {locale === 'ar' ? 'المساعد زقزوقي' : 'Zaqzouqi Assistant'}
               <span className='font-medium'></span>
             </div>
 
@@ -168,7 +197,7 @@ export default function ChatWidget() {
                   viewBox='0 0 24 24'
                   fill='none'
                   stroke='currentColor'
-                  stroke-width='2'
+                  strokeWidth='2'
                   stroke-linecap='round'
                   stroke-linejoin='round'
                   aria-hidden='true'
@@ -195,7 +224,7 @@ export default function ChatWidget() {
                   viewBox='0 0 24 24'
                   fill='none'
                   stroke='currentColor'
-                  stroke-width='2'
+                  strokeWidth='2'
                   stroke-linecap='round'
                   stroke-linejoin='round'
                   className='lucide lucide-x w-4 h-4'
@@ -213,15 +242,16 @@ export default function ChatWidget() {
             {messages.length === 0 ? (
               <div className='text-center text-gray-500 py-8'>
                 {/* use locale to translate */}
-                <p className='text-sm'>                  {locale === 'ar'
+                <p className='text-sm'>
+                  {' '}
+                  {locale === 'ar'
                     ? 'اهلا بيك انا زقزوقي! موجود هنا لمساعدتك. اسألني أي شيء عن الجامعة!'
-                    : 'Hi there! I am Zaqzouqi. Ask me anything about University!'
-                  }</p>
+                    : 'Hi there! I am Zaqzouqi. Ask me anything about University!'}
+                </p>
                 <p className='text-xs mt-2'>
                   {locale === 'ar'
                     ? 'يمكنني المساعدة في الكورسات، القبول، الكليات والاقسام، والمزيد.'
-                    : 'I can help with courses, admissions, campus facilities, and more.'
-                  }
+                    : 'I can help with courses, admissions, campus facilities, and more.'}
                 </p>
               </div>
             ) : (
@@ -249,7 +279,11 @@ export default function ChatWidget() {
             <div className='flex gap-2'>
               <input
                 className='flex-1 border rounded-md px-3 py-1 text-base outline-none'
-                placeholder={locale === 'ar' ? 'اسأل عن الجامعة...' : 'Ask about University...'}
+                placeholder={
+                  locale === 'ar'
+                    ? 'اسأل عن الجامعة...'
+                    : 'Ask about University...'
+                }
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && sendMessage()}
@@ -265,8 +299,7 @@ export default function ChatWidget() {
             <p className='text-xs text-gray-500 mt-2 text-center'>
               {locale === 'ar'
                 ? 'قد ينتج الذكاء الاصطناعي زقزوقي معلومات غير دقيقة .'
-                : 'Zaqzouqi AI may produce inaccurate information.'
-              }
+                : 'Zaqzouqi AI may produce inaccurate information.'}
             </p>
           </div>
         </div>
