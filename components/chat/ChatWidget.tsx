@@ -86,10 +86,6 @@ export default function ChatWidget() {
       {showTooltip && !isOpen && (
         <div className='fixed bottom-36 right-10 max-w-xs bg-white border border-gray-300 text-black rounded-lg shadow-lg p-4 text-sm z-50 animate-fade-in'>
           <div className='flex justify-between items-start gap-2'>
-            <span>
-              {/* مرشد مهني مدعوم بالذكاء الاصطناعي! أهلاً، أنا مرشدك الوظيفي،
-              يسعدني مساعدتك، إسألني الآن! */}
-
               {locale === 'ar' ? (
                 <div>
                   <p className='font-bold'>مرشد مهني مدعوم بالذكاء الاصطناعي!</p>
@@ -103,7 +99,6 @@ export default function ChatWidget() {
                   <p className='font-bold'>How can I help you today?</p>
                 </div>
               )}
-            </span>
             <button
               onClick={() => setShowTooltip(false)}
               className='text-gray-400 hover:text-gray-600'
