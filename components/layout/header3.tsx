@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocale } from 'next-intl';
 import { Link, usePathname } from '@/i18n/navigation';
-import { ChevronDown,  MenuIcon } from 'lucide-react';
+import { ChevronDown, MenuIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 
@@ -110,10 +110,9 @@ function Header3({ navigationItems = [] }: HeaderData) {
     <>
       {/* Top Navbar */}
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled
-          ? 'shadow-xl h-30 bg-white/50'
-          : 'bg-transparent h-30'
-          }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+          isScrolled ? 'shadow-xl h-30 bg-white/50' : 'bg-transparent h-30'
+        }`}
       >
         <div className='h-full w-full'>
           <div className='flex justify-between items-center h-full mx-auto'>
@@ -197,8 +196,9 @@ function Header3({ navigationItems = [] }: HeaderData) {
       >
         {/* Header */}
         <div
-          className={`p-4 flex justify-between items-center border-b border-white/20 ${isRTL ? 'flex-row-reverse' : ''
-            }`}
+          className={`p-4 flex justify-between items-center border-b border-white/20 ${
+            isRTL ? 'flex-row-reverse' : ''
+          }`}
         >
           <div className='flex-shrink-0'>
             <Link
@@ -239,10 +239,11 @@ function Header3({ navigationItems = [] }: HeaderData) {
                     <Link
                       href={item.href}
                       onClick={closeSidebar}
-                      className={`flex-1 block px-4 py-3 rounded-lg text-white transition-all duration-200 hover:bg-white/10 focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/20 ${isActivePath(item.href)
-                        ? 'bg-white/20 font-semibold'
-                        : ''
-                        } ${isRTL ? 'text-right' : 'text-left'}`}
+                      className={`flex-1 block px-4 py-3 rounded-lg text-white transition-all duration-200 hover:bg-white/10 focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/20 ${
+                        isActivePath(item.href)
+                          ? 'bg-white/20 font-semibold'
+                          : ''
+                      } ${isRTL ? 'text-right' : 'text-left'}`}
                     >
                       <span className='text-sm font-medium'>
                         {item.label[currentLocale]}
@@ -253,15 +254,18 @@ function Header3({ navigationItems = [] }: HeaderData) {
                       <Button
                         onClick={() => toggleSubmenu(item.href)}
                         onKeyDown={e => handleSubmenuKeyDown(e, item.href)}
-                        className={`p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 bg-transparent ${isRTL ? 'mr-2' : 'ml-2'
-                          }`}
+                        className={`p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 bg-transparent ${
+                          isRTL ? 'mr-2' : 'ml-2'
+                        }`}
                         aria-expanded={openSubmenus.has(item.href)}
-                        aria-label={`${openSubmenus.has(item.href) ? 'Collapse' : 'Expand'
-                          } ${item.label[currentLocale]} submenu`}
+                        aria-label={`${
+                          openSubmenus.has(item.href) ? 'Collapse' : 'Expand'
+                        } ${item.label[currentLocale]} submenu`}
                       >
                         <ChevronDown
-                          className={`h-4 w-4 transition-transform duration-200 ${openSubmenus.has(item.href) ? 'rotate-180' : ''
-                            }`}
+                          className={`h-4 w-4 transition-transform duration-200 ${
+                            openSubmenus.has(item.href) ? 'rotate-180' : ''
+                          }`}
                         />
                       </Button>
                     )}
@@ -269,24 +273,27 @@ function Header3({ navigationItems = [] }: HeaderData) {
 
                   {item.submenu && item.submenu.length > 0 && (
                     <div
-                      className={`overflow-y-auto transition-all duration-300 ease-in-out ${openSubmenus.has(item.href)
-                        ? 'max-h-96 opacity-100 mt-2'
-                        : 'max-h-0 opacity-0'
-                        }`}
+                      className={`overflow-y-auto transition-all duration-300 ease-in-out ${
+                        openSubmenus.has(item.href)
+                          ? 'max-h-96 opacity-100 mt-2'
+                          : 'max-h-0 opacity-0'
+                      }`}
                     >
                       <ul
-                        className={`space-y-1 ${isRTL ? 'pr-4' : 'pl-4'
-                          } border-l-2 border-white/20`}
+                        className={`space-y-1 ${
+                          isRTL ? 'pr-4' : 'pl-4'
+                        } border-l-2 border-white/20`}
                       >
                         {item.submenu.map(subItem => (
                           <li key={subItem.href}>
                             <Link
                               href={subItem.href}
                               onClick={closeSidebar}
-                              className={`block px-4 py-2 rounded-lg text-white/80 text-sm transition-all duration-200 hover:bg-white/10 hover:text-white focus:bg-white/10 focus:text-white focus:outline-none focus:ring-2 focus:ring-white/20 ${isActivePath(subItem.href)
-                                ? 'bg-white/15 text-white font-medium'
-                                : ''
-                                } ${isRTL ? 'text-right' : 'text-left'}`}
+                              className={`block px-4 py-2 rounded-lg text-white/80 text-sm transition-all duration-200 hover:bg-white/10 hover:text-white focus:bg-white/10 focus:text-white focus:outline-none focus:ring-2 focus:ring-white/20 ${
+                                isActivePath(subItem.href)
+                                  ? 'bg-white/15 text-white font-medium'
+                                  : ''
+                              } ${isRTL ? 'text-right' : 'text-left'}`}
                             >
                               {subItem.label[currentLocale]}
                             </Link>
@@ -304,8 +311,9 @@ function Header3({ navigationItems = [] }: HeaderData) {
         {/* Footer */}
         <div className='p-4 border-t border-white/20'>
           <div
-            className={`flex items-center justify-center gap-4 ${isRTL ? 'flex-row-reverse' : ''
-              }`}
+            className={`flex items-center justify-center gap-4 ${
+              isRTL ? 'flex-row-reverse' : ''
+            }`}
           >
             <Link
               href={pathname}
@@ -316,8 +324,9 @@ function Header3({ navigationItems = [] }: HeaderData) {
                 variant='outline'
                 size='sm'
                 className='border-white/30 text-white hover:bg-white/10 transition-all duration-300'
-                aria-label={`Switch to ${currentLocale === 'en' ? 'Arabic' : 'English'
-                  }`}
+                aria-label={`Switch to ${
+                  currentLocale === 'en' ? 'Arabic' : 'English'
+                }`}
               >
                 <span className='text-lg mr-2'>
                   {currentLocale === 'en' ? '🇸🇦' : '🇬🇧'}
