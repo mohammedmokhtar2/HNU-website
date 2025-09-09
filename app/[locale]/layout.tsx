@@ -9,6 +9,7 @@ import DecorativeWrapper from '@/components/DecorativeWrapper';
 import DockSocialMediaLinks from '@/components/layout/dockSocialMediaLinks';
 import Footer from '@/components/layout/footer';
 import { headerData } from '@/data/index';
+import ChatWidget from '@/components/chat/ChatWidget';
 
 export const metadata: Metadata = {
   title: 'Helwan National University',
@@ -45,7 +46,8 @@ export default async function LocaleLayout({
               <DecorativeWrapper>{children}</DecorativeWrapper>
             </main>
             <Footer local={locale} />
-            <DockSocialMediaLinks />
+            {/* <DockSocialMediaLinks /> */}
+            <ChatWidget />
           </Providers>
         </NextIntlClientProvider>
       </body>
