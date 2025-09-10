@@ -422,14 +422,14 @@ function UsersPage() {
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </TableCell>
-                                    <TableCell>
+                                    {/* <TableCell>
                                         <div className="flex items-center gap-2">
                                             <span className="font-medium">
                                                 {user._count?.collegesCreated || user.collegesCreated?.length || 0}
                                             </span>
                                             <span className="text-muted-foreground">collages</span>
                                         </div>
-                                    </TableCell>
+                                    </TableCell> */}
                                     {/* <TableCell>
                                         <div className="text-sm text-muted-foreground">
                                             {user.collegeId ? <>
