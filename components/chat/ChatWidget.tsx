@@ -1,43 +1,26 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
-import { Expand } from 'lucide-react';
+import { Expand, Loader2 } from 'lucide-react';
 import { useLocale } from 'next-intl';
+import { useBot } from '../../hooks/use-bot';
 
 export default function ChatWidget() {
   //add code to on click in large device open chat with large size and in small device open full screen
   const [isMobile, setIsMobile] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(true);
-  const [messages, setMessages] = useState<{ from: string; text: string }[]>(
-    []
-  );
   const [input, setInput] = useState('');
   const locale = useLocale();
 
-  const sendMessage = async () => {
-    if (!input) return;
+  // Use the custom bot hook
+  const { messages, isLoading, error, sendMessage, clearMessages, clearSession } = useBot();
 
-    setMessages(prev => [...prev, { from: 'user', text: input }]);
-    const userMessage = input;
+  const handleSendMessage = () => {
+    if (!input.trim()) return;
+
+    sendMessage(input);
     setInput('');
-
-    try {
-      const res = await fetch('https://YOUR-N8N-WEBHOOK-URL', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userMessage }),
-      });
-
-      const data = await res.json();
-      setMessages(prev => [...prev, { from: 'bot', text: data.reply }]);
-    } catch (err) {
-      setMessages(prev => [
-        ...prev,
-        { from: 'bot', text: 'An error occurred while connecting.' },
-      ]);
-    }
   };
 
   useEffect(() => {
@@ -87,14 +70,13 @@ export default function ChatWidget() {
       {isOpen && (
         <div
           className={`
-            ${
-              isMobile
-                ? isExpanded
-                  ? 'fixed top-0 left-0 w-full h-full'
-                  : 'fixed bottom-20 right-5 w-90 h-96'
-                : isExpanded
-                  ? 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2/4 h-3/4'
-                  : 'fixed bottom-20 right-5 w-90 h-96'
+            ${isMobile
+              ? isExpanded
+                ? 'fixed top-0 left-0 w-full h-full'
+                : 'fixed bottom-20 right-5 w-90 h-96'
+              : isExpanded
+                ? 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2/4 h-3/4'
+                : 'fixed bottom-20 right-5 w-90 h-96'
             }
                bg-white rounded-xl shadow-lg flex flex-col z-50
                   transition-all duration-300
@@ -133,7 +115,7 @@ export default function ChatWidget() {
                 className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all cursor-pointer disabled:pointer-events-none disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-white hover:text-accent-foreground dark:hover:bg-white/30 h-8 rounded-md gap-1.5 has-[&gt;svg]:px-2.5 p-2"
                 title='Clear conversation history'
                 disabled={messages.length === 0}
-                onClick={() => setMessages([])}
+                onClick={clearMessages}
               >
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -181,7 +163,7 @@ export default function ChatWidget() {
                 title='Clear conversation history'
                 className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all cursor-pointer disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:bg-white hover:text-accent-foreground dark:hover:bg-white/30 h-8 rounded-md gap-1.5 has-[&gt;svg]:px-2.5 p-2"
                 onClick={() => {
-                  setMessages([]);
+                  clearSession();
                   setIsOpen(false);
                   setIsExpanded(false);
                 }}
@@ -224,22 +206,33 @@ export default function ChatWidget() {
                 </p>
               </div>
             ) : (
-              messages.map((msg, i) => (
-                <div
-                  key={i}
-                  className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <span
-                    className={`px-3 py-2 rounded-lg max-w-[75%] text-sm ${
-                      msg.from === 'user'
+              <>
+                {messages.map((msg, i) => (
+                  <div
+                    key={i}
+                    className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <span
+                      className={`px-3 py-2 rounded-lg max-w-[75%] text-sm ${msg.from === 'user'
                         ? 'bg-slate-800 text-white rounded-br-none'
                         : 'bg-gray-200 text-gray-800 rounded-bl-none'
-                    }`}
-                  >
-                    {msg.text}
-                  </span>
-                </div>
-              ))
+                        }`}
+                    >
+                      {msg.text}
+                    </span>
+                  </div>
+                ))}
+                {isLoading && (
+                  <div className='flex justify-start'>
+                    <div className='bg-gray-200 text-gray-800 rounded-lg px-3 py-2 flex items-center gap-2'>
+                      <Loader2 className='w-4 h-4 animate-spin' />
+                      <span className='text-sm'>
+                        {locale === 'ar' ? 'جاري الكتابة...' : 'Typing...'}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
 
@@ -255,11 +248,11 @@ export default function ChatWidget() {
                 }
                 value={input}
                 onChange={e => setInput(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && sendMessage()}
+                onKeyDown={e => e.key === 'Enter' && handleSendMessage()}
               />
               <Button
-                onClick={sendMessage}
-                disabled={!input}
+                onClick={handleSendMessage}
+                disabled={!input || isLoading}
                 className='px-3 bg-slate-900 hover:bg-slate-700 text-white rounded-md disabled:opacity-50'
               >
                 ➤
@@ -270,6 +263,13 @@ export default function ChatWidget() {
                 ? 'قد ينتج الذكاء الاصطناعي زقزوقي معلومات غير دقيقة .'
                 : 'Zaqzouqi AI may produce inaccurate information.'}
             </p>
+            {error && (
+              <p className='text-xs text-red-500 mt-1 text-center'>
+                {locale === 'ar'
+                  ? 'حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.'
+                  : 'Connection error. Please try again.'}
+              </p>
+            )}
           </div>
         </div>
       )}
