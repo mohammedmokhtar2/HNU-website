@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     // const includeCollege = searchParams.get("includeCollege") === "true";
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "100");
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '100');
     const skip = (page - 1) * limit;
 
     const [users, totalCount] = await Promise.all([
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
         //     collegesCreated: true,
         //   }),
         // },
-        orderBy: { createdAt: "desc" },
+        orderBy: { createdAt: 'desc' },
         skip,
         take: limit,
       }),
@@ -34,9 +34,9 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error fetching all users:", error);
+    console.error('Error fetching all users:', error);
     return NextResponse.json(
-      { error: "Failed to fetch users" },
+      { error: 'Failed to fetch users' },
       { status: 500 }
     );
   }

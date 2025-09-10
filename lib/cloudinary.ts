@@ -7,5 +7,3 @@ cloudinary.config({
 });
 
 export { cloudinary };
-
-

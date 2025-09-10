@@ -1,5 +1,5 @@
-import { db } from "@/lib/db";
-import { NextRequest, NextResponse } from "next/server";
+import { db } from '@/lib/db';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
   request: NextRequest,
@@ -12,14 +12,14 @@ export async function GET(
     });
 
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     return NextResponse.json(user);
   } catch (error) {
-    console.error("Error fetching user by clerk ID:", error);
+    console.error('Error fetching user by clerk ID:', error);
     return NextResponse.json(
-      { error: "Failed to fetch user" },
+      { error: 'Failed to fetch user' },
       { status: 500 }
     );
   }
