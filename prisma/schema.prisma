@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// prisma/schema.prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserType {
+  ADMIN
+  SUPERADMIN
+  GUEST
+  OWNER
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String // e.g., "CREATE_COLLEGE", "DELETE_USER"
+  entity    String // e.g., "College", "User", "FormSection"
+  entityId  String? // optional reference to the entity’s ID
+  metadata  Json? // any extra data you want to store (e.g., fields changed)
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+  createdAt DateTime @default(now())
+}
+
+// MODELS
+model User {
+  id        String     @id @default(cuid())
+  clerkId   String?    @unique
+  name      String?
+  email     String     @unique
+  role      UserType   @default(GUEST)
+  image     String?
+  auditLogs AuditLog[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@map("users")
+}
