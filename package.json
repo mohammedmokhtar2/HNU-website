@@ -17,8 +17,6 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@fortawesome/free-solid-svg-icons": "^7.0.1",
-    "@fortawesome/react-fontawesome": "^3.0.2",
     "@clerk/nextjs": "^6.31.10",
     "@fortawesome/free-solid-svg-icons": "^7.0.1",
     "@fortawesome/react-fontawesome": "^3.0.2",

@@ -72,7 +72,7 @@ function AboutSection({
 
       <section
         id='about'
-        className='py-24 relative overflow-hidden w-full min-h-[calc(100vh-100px)] flex items-center justify-center'
+        className='py-24 relative overflow-hidden w-full min-h-screen flex items-center justify-center'
       >
         {/* Image Background */}
         <div className='absolute inset-0 w-full h-full'>
