@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { getUserIdHeader } from './auth-headers';
 
-// Create axios instance with default config
-export const api = axios.create({
+// Create server-side axios instance with default config
+export const serverApi = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api/',
   timeout: 10000,
   headers: {
@@ -9,23 +10,20 @@ export const api = axios.create({
   },
 });
 
-// Request interceptor
-api.interceptors.request.use(
-  config => {
-    // You can add auth tokens here
-    // const token = localStorage.getItem('token')
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`
-    // }
+// Request interceptor for server-side requests
+serverApi.interceptors.request.use(
+  async config => {
+    const userId = await getUserIdHeader();
+    if (userId) {
+      config.headers['x-user-id'] = userId;
+    }
     return config;
   },
-  error => {
-    return Promise.reject(error);
-  }
+  error => Promise.reject(error)
 );
 
 // Response interceptor
-api.interceptors.response.use(
+serverApi.interceptors.response.use(
   response => {
     return response;
   },
@@ -45,14 +43,3 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-// Set custom header - client-side only
-export const setUserIdHeader = (userId: string | null) => {
-  if (userId) {
-    api.defaults.headers.common['x-user-id'] = userId;
-  } else {
-    delete api.defaults.headers.common['x-user-id'];
-  }
-};
-
-export default api;
