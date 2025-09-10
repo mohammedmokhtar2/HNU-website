@@ -6,7 +6,7 @@ export interface User {
   email: string;
   name?: string;
   image?: string;
-  role: "ADMIN" | "SUPERADMIN" | "GUEST" | "OWNER";
+  role: 'ADMIN' | 'SUPERADMIN' | 'GUEST' | 'OWNER';
   // collegeId?: string;
   // collegesCreated?: College[];
   createdAt: Date;

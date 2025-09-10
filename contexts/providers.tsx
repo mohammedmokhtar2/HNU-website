@@ -38,9 +38,7 @@ export function Providers({ children }: ProvidersProps) {
           disableTransitionOnChange
         >
           <ThemeProvider>
-            <UserProvider>
-              {children}
-            </UserProvider>
+            <UserProvider>{children}</UserProvider>
           </ThemeProvider>
         </NextThemeProvider>
       </QueryClientProvider>

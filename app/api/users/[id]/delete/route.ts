@@ -1,5 +1,5 @@
-import { db } from "@/lib/db";
-import { NextRequest, NextResponse } from "next/server";
+import { db } from '@/lib/db';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function DELETE(
   request: NextRequest,
@@ -11,17 +11,19 @@ export async function DELETE(
       where: { id: id },
     });
 
-    return NextResponse.json({ message: "User deleted successfully" });
+    return NextResponse.json({ message: 'User deleted successfully' });
   } catch (error) {
-    console.error("Error deleting user:", error);
-    if (typeof error === "object" &&
+    console.error('Error deleting user:', error);
+    if (
+      typeof error === 'object' &&
       error !== null &&
-      "code" in error &&
-      (error as { code?: string }).code === "P2025") {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      'code' in error &&
+      (error as { code?: string }).code === 'P2025'
+    ) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
     return NextResponse.json(
-      { error: "Failed to delete user" },
+      { error: 'Failed to delete user' },
       { status: 500 }
     );
   }

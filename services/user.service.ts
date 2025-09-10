@@ -1,5 +1,5 @@
-import { api } from "@/lib/axios";
-import { UserType } from "@prisma/client";
+import { api } from '@/lib/axios';
+import { UserType } from '@prisma/client';
 
 export class UserService {
   static async getUsers(params?: {
@@ -7,7 +7,7 @@ export class UserService {
     page?: number;
     limit?: number;
   }) {
-    const res = await api.get("/users/all", { params });
+    const res = await api.get('/users/all', { params });
     return res.data;
   }
 
@@ -17,7 +17,7 @@ export class UserService {
   }
 
   static async findOrCreateUser(clerkId: string) {
-    const res = await api.post("/users/find-or-create", { clerkId });
+    const res = await api.post('/users/find-or-create', { clerkId });
     return res.data;
   }
 
@@ -37,7 +37,7 @@ export class UserService {
   }
 
   static async getSuperAdmins() {
-    const res = await api.get("/users/superadmins");
+    const res = await api.get('/users/superadmins');
     return res.data;
   }
 
@@ -47,7 +47,9 @@ export class UserService {
   }
 
   static async moveUserToCollage(userId: string, collageId: string) {
-    const res = await api.patch(`/users/${userId}/move-to-collage`, { collageId });
+    const res = await api.patch(`/users/${userId}/move-to-collage`, {
+      collageId,
+    });
     return res.data;
   }
 }

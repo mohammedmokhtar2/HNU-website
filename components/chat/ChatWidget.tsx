@@ -123,10 +123,7 @@ export default function ChatWidget() {
                 <path d='M15 13v2'></path>
                 <path d='M9 13v2'></path>
               </svg>
-                                {locale === 'ar'
-                    ? 'المساعد زقزوقي'
-                    : 'Zaqzouqi Assistant'
-                  }
+              {locale === 'ar' ? 'المساعد زقزوقي' : 'Zaqzouqi Assistant'}
               <span className='font-medium'></span>
             </div>
 
@@ -214,15 +211,16 @@ export default function ChatWidget() {
             {messages.length === 0 ? (
               <div className='text-center text-gray-500 py-8'>
                 {/* use locale to translate */}
-                <p className='text-sm'>                  {locale === 'ar'
+                <p className='text-sm'>
+                  {' '}
+                  {locale === 'ar'
                     ? 'اهلا بيك انا زقزوقي! موجود هنا لمساعدتك. اسألني أي شيء عن الجامعة!'
-                    : 'Hi there! I am Zaqzouqi. Ask me anything about University!'
-                  }</p>
+                    : 'Hi there! I am Zaqzouqi. Ask me anything about University!'}
+                </p>
                 <p className='text-xs mt-2'>
                   {locale === 'ar'
                     ? 'يمكنني المساعدة في الكورسات، القبول، الكليات والاقسام، والمزيد.'
-                    : 'I can help with courses, admissions, campus facilities, and more.'
-                  }
+                    : 'I can help with courses, admissions, campus facilities, and more.'}
                 </p>
               </div>
             ) : (
@@ -250,7 +248,11 @@ export default function ChatWidget() {
             <div className='flex gap-2'>
               <input
                 className='flex-1 border rounded-md px-3 py-1 text-base outline-none'
-                placeholder={locale === 'ar' ? 'اسأل عن الجامعة...' : 'Ask about University...'}
+                placeholder={
+                  locale === 'ar'
+                    ? 'اسأل عن الجامعة...'
+                    : 'Ask about University...'
+                }
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && sendMessage()}
@@ -266,8 +268,7 @@ export default function ChatWidget() {
             <p className='text-xs text-gray-500 mt-2 text-center'>
               {locale === 'ar'
                 ? 'قد ينتج الذكاء الاصطناعي زقزوقي معلومات غير دقيقة .'
-                : 'Zaqzouqi AI may produce inaccurate information.'
-              }
+                : 'Zaqzouqi AI may produce inaccurate information.'}
             </p>
           </div>
         </div>

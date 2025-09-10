@@ -1,5 +1,5 @@
-import { NextRequest } from "next/server";
-import { AuditAction, logAction } from "@/utils/auditLogger";
+import { NextRequest } from 'next/server';
+import { AuditAction, logAction } from '@/utils/auditLogger';
 
 type WithAuditOptions = {
   action: AuditAction;
