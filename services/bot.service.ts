@@ -46,6 +46,13 @@ class BotService {
       localStorage.removeItem('bot_session_id');
     }
   }
+
+  // Clear messages for a specific session
+  static clearSessionMessages(sessionId: string): void {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(`bot_messages_${sessionId}`);
+    }
+  }
 }
 
 export default BotService;

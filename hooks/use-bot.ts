@@ -1,6 +1,6 @@
 'use client';
 import { useMutation } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import BotService, { AiBotResponse } from '../services/bot.service';
 
 export interface ChatMessage {
@@ -22,11 +22,47 @@ export function useBot(): UseBotReturn {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [sessionId, setSessionId] = useState<string>('');
 
-  // Initialize session ID on mount
+  // Save messages to localStorage
+  const saveMessages = useCallback(
+    (messagesToSave: ChatMessage[]) => {
+      if (sessionId && typeof window !== 'undefined') {
+        localStorage.setItem(
+          `bot_messages_${sessionId}`,
+          JSON.stringify(messagesToSave)
+        );
+      }
+    },
+    [sessionId]
+  );
+
+  // Initialize session ID and load messages on mount
   useEffect(() => {
     const id = BotService.getSessionId();
     setSessionId(id);
+
+    // Load saved messages from localStorage
+    const savedMessages = localStorage.getItem(`bot_messages_${id}`);
+    if (savedMessages) {
+      try {
+        const parsedMessages = JSON.parse(savedMessages);
+        // Convert timestamp strings back to Date objects
+        const messagesWithDates = parsedMessages.map((msg: any) => ({
+          ...msg,
+          timestamp: new Date(msg.timestamp),
+        }));
+        setMessages(messagesWithDates);
+      } catch (error) {
+        console.error('Failed to load saved messages:', error);
+      }
+    }
   }, []);
+
+  // Save messages to localStorage whenever messages change
+  useEffect(() => {
+    if (sessionId && messages.length > 0) {
+      saveMessages(messages);
+    }
+  }, [messages, sessionId, saveMessages]);
 
   // Mutation for sending messages to the bot
   const sendMessageMutation = useMutation<AiBotResponse, Error, string>({
@@ -77,9 +113,18 @@ export function useBot(): UseBotReturn {
 
   const clearMessages = () => {
     setMessages([]);
+    if (sessionId) {
+      BotService.clearSessionMessages(sessionId);
+    }
   };
 
   const clearSession = () => {
+    // Clear current session messages
+    if (sessionId) {
+      BotService.clearSessionMessages(sessionId);
+    }
+
+    // Generate new session
     BotService.clearSessionId();
     const newSessionId = BotService.getSessionId();
     setSessionId(newSessionId);
