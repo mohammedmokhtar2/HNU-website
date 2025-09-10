@@ -5,6 +5,7 @@ import { ThemeProvider as NextThemeProvider } from 'next-themes';
 import { ReactNode, useState } from 'react';
 import { ThemeProvider } from './theme-context';
 import { UserProvider } from './userContext';
+import { ClerkProviderWrapper } from '@/components/providers/ClerkProvider';
 
 interface ProvidersProps {
   children: ReactNode;
@@ -28,21 +29,21 @@ export function Providers({ children }: ProvidersProps) {
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <NextThemeProvider
-        attribute='class'
-        defaultTheme='system'
-        enableSystem
-        disableTransitionOnChange
-      >
-        <ThemeProvider>
-          <UserProvider>
-
-            {children}
-          </UserProvider>
-
-        </ThemeProvider>
-      </NextThemeProvider>
-    </QueryClientProvider>
+    <ClerkProviderWrapper>
+      <QueryClientProvider client={queryClient}>
+        <NextThemeProvider
+          attribute='class'
+          defaultTheme='system'
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ThemeProvider>
+            <UserProvider>
+              {children}
+            </UserProvider>
+          </ThemeProvider>
+        </NextThemeProvider>
+      </QueryClientProvider>
+    </ClerkProviderWrapper>
   );
 }
