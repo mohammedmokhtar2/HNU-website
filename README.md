@@ -369,3 +369,103 @@ This project is private and proprietary. All rights reserved by Helwan National 
 
 ### test the new cicid for vercel
 
+
+```
+hnu-offical-website
+├─ .prettierignore
+├─ .prettierrc
+├─ app
+│  ├─ favicon.ico
+│  ├─ layout.tsx
+│  ├─ not-found.tsx
+│  └─ [locale]
+│     ├─ collages
+│     │  ├─ page.tsx
+│     │  └─ [slug]
+│     │     └─ page.tsx
+│     ├─ globals.css
+│     ├─ layout.tsx
+│     ├─ page.tsx
+│     └─ soon
+│        └─ page.tsx
+├─ CHANGELOG.md
+├─ components
+│  ├─ DecorativeWrapper.tsx
+│  ├─ header.tsx
+│  ├─ header2.tsx
+│  ├─ home
+│  │  ├─ aboutSection.tsx
+│  │  ├─ ContentCard.tsx
+│  │  ├─ ExpandableContentCard.tsx
+│  │  ├─ FAQ.tsx
+│  │  ├─ FcatsAndNumber.tsx
+│  │  ├─ heroSection.tsx
+│  │  ├─ MediaCenter.tsx
+│  │  ├─ programsSection.tsx
+│  │  ├─ slider.tsx
+│  │  ├─ TopEvents.tsx
+│  │  ├─ TopNews.tsx
+│  │  └─ TopStudentActivities.tsx
+│  ├─ layout
+│  │  ├─ dockSocialMediaLinks.tsx
+│  │  ├─ footer.tsx
+│  │  ├─ header3.tsx
+│  │  └─ MobileMenu.tsx
+│  ├─ Reveal.tsx
+│  └─ ui
+│     ├─ accordion.tsx
+│     ├─ badge.tsx
+│     ├─ button.tsx
+│     ├─ card.tsx
+│     ├─ dropdown-menu.tsx
+│     ├─ index.ts
+│     ├─ separator.tsx
+│     ├─ sheet.tsx
+│     └─ video-player.tsx
+├─ components.json
+├─ contexts
+│  ├─ index.ts
+│  ├─ providers.tsx
+│  ├─ README.md
+│  └─ theme-context.tsx
+├─ CONTRIBUTING.md
+├─ data
+│  └─ index.ts
+├─ DEPLOYMENT.md
+├─ eslint.config.mjs
+├─ GITHUB_SETUP.md
+├─ hooks
+│  └─ useOutsideClick.tsx
+├─ i18n
+│  ├─ navigation.ts
+│  ├─ request.ts
+│  └─ routing.ts
+├─ i18n.ts
+├─ lib
+│  ├─ axios.ts
+│  └─ utils.ts
+├─ Makefile
+├─ Makefile.help
+├─ messages
+│  ├─ ar.json
+│  └─ en.json
+├─ middleware.ts
+├─ next.config.ts
+├─ package-lock.json
+├─ package.json
+├─ postcss.config.mjs
+├─ PROJECT_SETUP_DOCUMENTATION.md
+├─ public
+│  ├─ home.jpeg
+│  ├─ logo-hnu-web2.png
+│  ├─ logossss.png
+│  ├─ new_logo.png
+│  ├─ over.png
+│  ├─ president.jpeg
+│  └─ with_bg.jpg
+├─ QUICK_REFERENCE.md
+├─ README.md
+├─ tsconfig.json
+└─ VERSIONING.md
+
+```

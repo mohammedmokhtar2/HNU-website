@@ -220,7 +220,7 @@ const HeroSection = ({
 
       {/* Content Container */}
       <div
-        className={`relative top-90 z-10 w-full h-full flex items-end px-4 sm:px-6 lg:px-8 justify-start`}
+        className={`relative top-60 z-10 w-full h-full flex items-end px-4 sm:px-6 lg:px-8 justify-start`}
       >
         <div
           className={`max-w-2xl ${local === 'ar' ? 'text-right' : 'text-left'}`}
