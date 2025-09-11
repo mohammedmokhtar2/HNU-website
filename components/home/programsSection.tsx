@@ -85,20 +85,20 @@ function ProgramsSection({
                 className='group relative bg-white rounded-3xl border border-gray-100 shadow-md hover:shadow-2xl active:shadow-2xl focus-within:shadow-2xl transition-all duration-300 overflow-hidden hover:-translate-y-2 active:-translate-y-2 focus-within:-translate-y-2 ring-1 ring-transparent hover:ring-[#023e8a]/50 focus-within:ring-[#023e8a]/50 h-full flex flex-col'
               >
                 <div className='relative overflow-hidden h-52'>
-                    {program.image ? (
+                  {program.image ? (
                     <Image
                       src={program.image}
                       alt={local === 'ar' ? program.title.ar : program.title.en}
                       fill
                       className='object-cover transition-all duration-500 group-hover:scale-110 group-hover:opacity-80 group-active:opacity-80 group-focus-within:opacity-80'
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
                       priority={index < 3}
                     />
-                    ) : (
+                  ) : (
                     <div className='absolute inset-0 bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center'>
                       <BookOpen className='w-16 h-16 text-[#023e8a]/30' />
                     </div>
-                    )}
+                  )}
                   {program.money && (
                     <div className='absolute inset-0 bg-black/5 backdrop-blur-[2px] opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-active:opacity-100 group-focus-within:opacity-100'>
                       <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-3 w-[130%] transform-gpu'>
@@ -132,14 +132,16 @@ function ProgramsSection({
                       ? program.description.ar
                       : program.description.en}
                   </p>
-                  
+
                   {/* Program details with icons */}
                   <div className='space-y-3 mb-5'>
                     {program.degree && (
                       <div className='flex items-center gap-2 text-sm'>
                         <Award className='w-4 h-4 text-[#023e8a]' />
                         <span className='text-gray-700'>
-                          {local === 'ar' ? program.degree.ar : program.degree.en}
+                          {local === 'ar'
+                            ? program.degree.ar
+                            : program.degree.en}
                         </span>
                       </div>
                     )}
@@ -147,12 +149,14 @@ function ProgramsSection({
                       <div className='flex items-center gap-2 text-sm'>
                         <Clock className='w-4 h-4 text-[#023e8a]' />
                         <span className='text-gray-700'>
-                          {local === 'ar' ? program.duration.ar : program.duration.en}
+                          {local === 'ar'
+                            ? program.duration.ar
+                            : program.duration.en}
                         </span>
                       </div>
                     )}
                   </div>
-                  
+
                   <div className='h-px w-full bg-gradient-to-r from-transparent via-gray-200 to-transparent mb-5'></div>
 
                   <div className='mt-auto'>

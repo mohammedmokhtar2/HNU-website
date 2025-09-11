@@ -365,25 +365,56 @@ export const AdminAuthGuard: React.FC<AdminAuthGuardProps> = ({
   requireSuperAdmin = false,
 }) => {
   const { isSignedIn, isLoaded: clerkLoaded } = useAuth();
-  const { user, loading: userLoading } = useUser();
+  const { user, loading: userLoading, error: userError } = useUser();
   const router = useRouter();
   const [showSuccess, setShowSuccess] = useState(false);
+  const [authState, setAuthState] = useState<
+    'loading' | 'checking' | 'success' | 'denied' | 'error'
+  >('loading');
 
   useEffect(() => {
-    if (clerkLoaded && isSignedIn && !userLoading && user) {
+    // Reset auth state when dependencies change
+    setAuthState('checking');
+
+    if (!clerkLoaded) {
+      setAuthState('loading');
+      return;
+    }
+
+    if (!isSignedIn) {
+      setAuthState('denied');
+      return;
+    }
+
+    if (userLoading) {
+      setAuthState('loading');
+      return;
+    }
+
+    if (userError) {
+      setAuthState('error');
+      return;
+    }
+
+    if (isSignedIn && !user) {
+      setAuthState('denied');
+      return;
+    }
+
+    if (user) {
       // Check admin permissions
       if (requireSuperAdmin && user.role !== 'SUPERADMIN') {
-        // Don't redirect, just show access denied screen
+        setAuthState('denied');
         return;
       }
 
       if (requireAdmin && user.role === 'GUEST') {
-        // Don't redirect, just show access denied screen
+        setAuthState('denied');
         return;
       }
 
       // If we reach here, user has proper permissions
-      // Show success screen briefly before rendering children
+      setAuthState('success');
       setShowSuccess(true);
       setTimeout(() => {
         setShowSuccess(false);
@@ -394,18 +425,18 @@ export const AdminAuthGuard: React.FC<AdminAuthGuardProps> = ({
     isSignedIn,
     userLoading,
     user,
+    userError,
     requireAdmin,
     requireSuperAdmin,
-    router,
   ]);
 
   // Show loading while checking authentication
-  if (!clerkLoaded || userLoading) {
+  if (authState === 'loading' || !clerkLoaded || userLoading) {
     return <AuthLoadingScreen message='Verifying your identity...' />;
   }
 
   // Show access denied screen if not signed in
-  if (!isSignedIn) {
+  if (authState === 'denied' && !isSignedIn) {
     return (
       <AccessDeniedScreen
         title='Authentication Required'
@@ -415,7 +446,7 @@ export const AdminAuthGuard: React.FC<AdminAuthGuardProps> = ({
   }
 
   // Show access denied screen if user not found in database
-  if (isSignedIn && !user) {
+  if (authState === 'denied' && isSignedIn && !user) {
     return (
       <AccessDeniedScreen
         title='Account Setup Required'
@@ -425,29 +456,49 @@ export const AdminAuthGuard: React.FC<AdminAuthGuardProps> = ({
   }
 
   // Check final permissions and show access denied if needed
-  if (requireSuperAdmin && user && user.role !== 'SUPERADMIN') {
-    return (
-      <AccessDeniedScreen
-        title='Access Denied'
-        message='You need super admin privileges to access this page.'
-      />
-    );
+  if (authState === 'denied' && user) {
+    if (requireSuperAdmin && user.role !== 'SUPERADMIN') {
+      return (
+        <AccessDeniedScreen
+          title='Access Denied'
+          message='You need super admin privileges to access this page.'
+        />
+      );
+    }
+
+    if (requireAdmin && user.role === 'GUEST') {
+      return (
+        <AccessDeniedScreen
+          title='Access Denied'
+          message='You need admin privileges to access this page.'
+        />
+      );
+    }
   }
 
-  if (requireAdmin && user && user.role === 'GUEST') {
+  // Show error screen if there's an error
+  if (authState === 'error') {
     return (
       <AccessDeniedScreen
-        title='Access Denied'
-        message='You need admin privileges to access this page.'
+        title='Authentication Error'
+        message={
+          userError ||
+          'An error occurred while verifying your identity. Please try again.'
+        }
       />
     );
   }
 
   // Show success screen if user has proper permissions
-  if (showSuccess && user) {
+  if (showSuccess && user && authState === 'success') {
     return <AccessGrantedScreen role={user.role} />;
   }
 
   // User is authenticated and has proper permissions
-  return <>{children}</>;
+  if (authState === 'success' && user) {
+    return <>{children}</>;
+  }
+
+  // Fallback loading state
+  return <AuthLoadingScreen message='Finalizing authentication...' />;
 };

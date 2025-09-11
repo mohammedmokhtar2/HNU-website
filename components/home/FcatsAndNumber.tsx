@@ -23,7 +23,6 @@ export interface StatItem {
 }
 
 export interface FcatsAndNumberProps {
-
   items: StatItem[];
   local: string;
 }
@@ -39,7 +38,17 @@ const getIcon = (icon: any) => {
   }
 };
 
-function FcatsAndNumber({ items, local, title, subtitle, description }: FcatsAndNumberProps & { title: { ar: string; en: string }, subtitle?: { ar: string; en: string }, description?: { ar: string; en: string } }) {
+function FcatsAndNumber({
+  items,
+  local,
+  title,
+  subtitle,
+  description,
+}: FcatsAndNumberProps & {
+  title: { ar: string; en: string };
+  subtitle?: { ar: string; en: string };
+  description?: { ar: string; en: string };
+}) {
   const [counts, setCounts] = useState<{ [key: number]: number }>({});
   const [isVisible, setIsVisible] = useState(false);
 

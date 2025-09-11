@@ -60,16 +60,27 @@ export async function logAction({
     return;
   }
 
+  // Convert Clerk userId to database userId if needed
+  let dbUserId = userId;
+  if (userId && !userId.startsWith('cm')) {
+    // This looks like a Clerk ID, find the corresponding database user
+    const user = await db.user.findUnique({
+      where: { clerkId: userId },
+      select: { id: true },
+    });
+    dbUserId = user?.id || undefined;
+  }
+
   await db.auditLog.create({
     data: {
       action,
       entity: entity || 'Unknown',
       entityId: entityId || undefined,
-      userId,
+      userId: dbUserId,
       metadata,
     },
   });
-  console.log('Audit log created');
+  console.log('Audit log created with userId:', dbUserId);
 }
 
 // Example usage

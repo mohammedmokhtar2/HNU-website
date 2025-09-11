@@ -3,14 +3,14 @@ import { db } from '@/lib/db';
 import { withAuditLog } from '@/lib/middleware/withAuditLog';
 
 interface Params {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export async function GET(req: Request, { params }: Params) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     const statistic = await db.statistic.findUnique({
       where: { id },
@@ -39,7 +39,7 @@ export async function GET(req: Request, { params }: Params) {
 export const PATCH = withAuditLog(
   async (req: Request, { params }: Params) => {
     try {
-      const { id } = params;
+      const { id } = await params;
       const body = await req.json();
       const { label, collageId } = body;
 
@@ -84,7 +84,7 @@ export const PATCH = withAuditLog(
 export const DELETE = withAuditLog(
   async (req: Request, { params }: Params) => {
     try {
-      const { id } = params;
+      const { id } = await params;
 
       // Check if statistic exists
       const existingStatistic = await db.statistic.findUnique({

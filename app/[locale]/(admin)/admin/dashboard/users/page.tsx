@@ -21,7 +21,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import {
   Select,
@@ -48,35 +47,31 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
-  Eye,
   Edit,
   Crown,
   Shield,
   User as UserIcon,
   Search,
-  Filter,
   RefreshCw,
   Building2,
 } from 'lucide-react';
 import { UserService } from '@/services/user.service';
-// import { CollegeService } from '@/services/collage.service'
-import { User } from '@/types/user';
-// import { College } from '@/types/Collage'
+import { UserResponse } from '@/types/user';
 import { toast } from 'sonner';
 import { useAuthStatus } from '@/hooks/use-auth';
-import { UserType } from '@prisma/client';
+import { UserType } from '@/types/enums';
 
-interface UserWithCollages extends User {
-  // collegesCreated?: College[]
+interface UserWithCollages extends UserResponse {
+  College?: any[];
   _count?: {
-    collegesCreated: number;
+    College: number;
   };
 }
 
 interface EditUserData {
   name: string;
   email: string;
-  userType: 'ADMIN' | 'SUPERADMIN' | 'GUEST' | 'OWNER';
+  role: UserType;
 }
 
 function UsersPage() {
@@ -88,10 +83,8 @@ function UsersPage() {
   const [editData, setEditData] = useState<EditUserData>({
     name: '',
     email: '',
-    userType: 'GUEST',
+    role: UserType.GUEST,
   });
-  const [viewingUserCollages, setViewingUserCollages] =
-    useState<UserWithCollages | null>(null);
   const [assigningUserToCollage, setAssigningUserToCollage] =
     useState<UserWithCollages | null>(null);
   const [selectedCollageId, setSelectedCollageId] = useState<string>('');
@@ -102,7 +95,6 @@ function UsersPage() {
     data: usersData,
     isLoading,
     isError,
-    error,
     refetch,
   } = useQuery({
     queryKey: ['users', 'all'],
@@ -111,7 +103,9 @@ function UsersPage() {
     gcTime: 1000 * 60 * 10, // 10 minutes
   });
 
-  const users = usersData?.users || [];
+  console.log('usersData', usersData);
+
+  const users = usersData?.data || [];
 
   // // Fetch user collages with React Query
   // const {
@@ -192,11 +186,6 @@ function UsersPage() {
     },
   });
 
-  // Handle view collages
-  const handleViewCollages = (user: UserWithCollages) => {
-    setViewingUserCollages(user);
-  };
-
   // Handle assign user to collage
   const handleAssignToCollage = (user: UserWithCollages) => {
     setAssigningUserToCollage(user);
@@ -234,7 +223,7 @@ function UsersPage() {
     setEditData({
       name: user.name || '',
       email: user.email,
-      userType: user.role,
+      role: user.role,
     });
   };
 
@@ -244,21 +233,21 @@ function UsersPage() {
     updateUserMutation.mutate({ userId: editingUser.id, updates: editData });
   };
 
-  const getRoleIcon = (userType: string) => {
-    switch (userType) {
-      case 'OWNER':
+  const getRoleIcon = (role: UserType) => {
+    switch (role) {
+      case UserType.OWNER:
         return (
           <Shield className='w-5 h-5 text-white bg-gradient-to-br from-blue-600 to-blue-800 p-1 rounded-lg shadow-md' />
         );
-      case 'SUPERADMIN':
+      case UserType.SUPERADMIN:
         return (
           <Crown className='w-5 h-5 text-white bg-gradient-to-br from-yellow-500 to-yellow-700 p-1 rounded-lg shadow-md' />
         );
-      case 'ADMIN':
+      case UserType.ADMIN:
         return (
           <Shield className='w-4.5 h-4.5 text-white bg-gradient-to-br from-purple-600 to-purple-800 p-1 rounded-md shadow-sm' />
         );
-      case 'GUEST':
+      case UserType.GUEST:
         return (
           <UserIcon className='w-4 h-4 text-gray-600 bg-gray-100 p-1 rounded-full' />
         );
@@ -269,15 +258,15 @@ function UsersPage() {
     }
   };
 
-  const getRoleBadge = (userType: string) => {
-    switch (userType) {
-      case 'OWNER':
+  const getRoleBadge = (role: UserType) => {
+    switch (role) {
+      case UserType.OWNER:
         return (
           <Badge variant='default' className='bg-blue-500 hover:bg-blue-600'>
             Owner
           </Badge>
         );
-      case 'SUPERADMIN':
+      case UserType.SUPERADMIN:
         return (
           <Badge
             variant='default'
@@ -286,9 +275,9 @@ function UsersPage() {
             Super Admin
           </Badge>
         );
-      case 'ADMIN':
+      case UserType.ADMIN:
         return <Badge variant='secondary'>Admin</Badge>;
-      case 'GUEST':
+      case UserType.GUEST:
         return <Badge variant='outline'>Guest</Badge>;
       default:
         return <Badge variant='outline'>User</Badge>;
@@ -367,10 +356,12 @@ function UsersPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value='all'>All Roles</SelectItem>
-                  <SelectItem value='OWNER'>Owner</SelectItem>
-                  <SelectItem value='SUPERADMIN'>Super Admin</SelectItem>
-                  <SelectItem value='ADMIN'>Admin</SelectItem>
-                  <SelectItem value='GUEST'>Guest</SelectItem>
+                  <SelectItem value={UserType.OWNER}>Owner</SelectItem>
+                  <SelectItem value={UserType.SUPERADMIN}>
+                    Super Admin
+                  </SelectItem>
+                  <SelectItem value={UserType.ADMIN}>Admin</SelectItem>
+                  <SelectItem value={UserType.GUEST}>Guest</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -440,13 +431,17 @@ function UsersPage() {
                         <DropdownMenuLabel>Change Role</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
-                          onClick={() => handleRoleChange(user.id, 'GUEST')}
+                          onClick={() =>
+                            handleRoleChange(user.id, UserType.GUEST)
+                          }
                         >
                           <div className='flex items-center gap-2'>
-                            {getRoleIcon('GUEST')}
+                            {getRoleIcon(UserType.GUEST)}
                             <span
                               className={
-                                user.role === 'GUEST' ? 'font-semibold' : ''
+                                user.role === UserType.GUEST
+                                  ? 'font-semibold'
+                                  : ''
                               }
                             >
                               Guest
@@ -454,13 +449,17 @@ function UsersPage() {
                           </div>
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => handleRoleChange(user.id, 'ADMIN')}
+                          onClick={() =>
+                            handleRoleChange(user.id, UserType.ADMIN)
+                          }
                         >
                           <div className='flex items-center gap-2'>
-                            {getRoleIcon('ADMIN')}
+                            {getRoleIcon(UserType.ADMIN)}
                             <span
                               className={
-                                user.role === 'ADMIN' ? 'font-semibold' : ''
+                                user.role === UserType.ADMIN
+                                  ? 'font-semibold'
+                                  : ''
                               }
                             >
                               Admin
@@ -469,14 +468,14 @@ function UsersPage() {
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() =>
-                            handleRoleChange(user.id, 'SUPERADMIN')
+                            handleRoleChange(user.id, UserType.SUPERADMIN)
                           }
                         >
                           <div className='flex items-center gap-2'>
-                            {getRoleIcon('SUPERADMIN')}
+                            {getRoleIcon(UserType.SUPERADMIN)}
                             <span
                               className={
-                                user.role === 'SUPERADMIN'
+                                user.role === UserType.SUPERADMIN
                                   ? 'font-semibold'
                                   : ''
                               }
@@ -486,13 +485,17 @@ function UsersPage() {
                           </div>
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => handleRoleChange(user.id, 'OWNER')}
+                          onClick={() =>
+                            handleRoleChange(user.id, UserType.OWNER)
+                          }
                         >
                           <div className='flex items-center gap-2'>
-                            {getRoleIcon('OWNER')}
+                            {getRoleIcon(UserType.OWNER)}
                             <span
                               className={
-                                user.role === 'OWNER' ? 'font-semibold' : ''
+                                user.role === UserType.OWNER
+                                  ? 'font-semibold'
+                                  : ''
                               }
                             >
                               Owner
@@ -502,29 +505,40 @@ function UsersPage() {
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
-                  {/* <TableCell>
-                                        <div className="flex items-center gap-2">
-                                            <span className="font-medium">
-                                                {user._count?.collegesCreated || user.collegesCreated?.length || 0}
-                                            </span>
-                                            <span className="text-muted-foreground">collages</span>
-                                        </div>
-                                    </TableCell> */}
-                  {/* <TableCell>
-                                        <div className="text-sm text-muted-foreground">
-                                            {user.collegeId ? <>
-                                                <div className='flex items-center gap-2'>
-                                                    {allCollages?.find((collage) => collage.id === user.collegeId)?.slug}
-                                                    <Avatar className="w-6 h-6">
-                                                        <AvatarImage src={allCollages?.find((collage) => collage.id === user.collegeId)?.logoUrl || ''} alt={allCollages?.find((collage) => collage.id === user.collegeId)?.name || ''} />
-                                                        <AvatarFallback>
-                                                            {allCollages?.find((collage) => collage.id === user.collegeId)?.name?.charAt(0) || 'N/A'}
-                                                        </AvatarFallback>
-                                                    </Avatar>
-                                                </div>
-                                            </> : 'N/A'}
-                                        </div>
-                                    </TableCell> */}
+                  <TableCell>
+                    <div className='flex items-center gap-2'>
+                      <span className='font-medium'>
+                        {user.College?.length || 0}
+                      </span>
+                      <span className='text-muted-foreground'>colleges</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className='text-sm text-muted-foreground'>
+                      {user.College && user.College.length > 0 ? (
+                        <div className='flex flex-wrap gap-1'>
+                          {user.College.slice(0, 2).map((college: any) => (
+                            <Badge
+                              key={college.id}
+                              variant='outline'
+                              className='text-xs'
+                            >
+                              {typeof college.name === 'string'
+                                ? college.name
+                                : college.name?.en || 'N/A'}
+                            </Badge>
+                          ))}
+                          {user.College.length > 2 && (
+                            <Badge variant='outline' className='text-xs'>
+                              +{user.College.length - 2} more
+                            </Badge>
+                          )}
+                        </div>
+                      ) : (
+                        'No colleges'
+                      )}
+                    </div>
+                  </TableCell>
                   <TableCell>
                     <div className='text-sm text-muted-foreground'>
                       {new Date(user.createdAt).toLocaleDateString(locale)}
@@ -532,61 +546,6 @@ function UsersPage() {
                   </TableCell>
                   <TableCell className='text-right'>
                     <div className='flex items-center justify-end gap-2'>
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button
-                            variant='outline'
-                            size='sm'
-                            onClick={() => handleViewCollages(user)}
-                          >
-                            <Eye className='w-4 h-4 mr-1' />
-                            View
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className='max-w-4xl'>
-                          <DialogHeader>
-                            <DialogTitle>
-                              Collages by {user.name || user.email}
-                            </DialogTitle>
-                            <DialogDescription>
-                              View all collages created by this user
-                            </DialogDescription>
-                          </DialogHeader>
-                          {/* <div className="max-h-96 overflow-y-auto">
-                                                        {collagesLoading ? (
-                                                            <div className="flex items-center justify-center py-8">
-                                                                <RefreshCw className="w-6 h-6 animate-spin" />
-                                                            </div>
-                                                        ) : userCollages && userCollages.length > 0 ? (
-                                                            <div className="grid gap-4">
-                                                                {userCollages.map((collage) => (
-                                                                    <Card key={collage.id}>
-                                                                        <CardContent className="p-4">
-                                                                            <div className="flex items-center justify-between">
-                                                                                <div>
-                                                                                    <h4 className="font-medium">{collage.name}</h4>
-                                                                                    <p className="text-sm text-muted-foreground">
-                                                                                        {collage.slug}
-                                                                                    </p>
-                                                                                    <p className="text-xs text-muted-foreground">
-                                                                                        Created: {new Date(collage.createdAt).toLocaleDateString(locale)}
-                                                                                    </p>
-                                                                                </div>
-                                                                                <Badge variant="outline">{collage.type}</Badge>
-                                                                            </div>
-                                                                        </CardContent>
-                                                                    </Card>
-                                                                ))}
-                                                            </div>
-                                                        ) : (
-                                                            <div className="text-center py-8 text-muted-foreground">
-                                                                No collages created yet
-                                                            </div>
-                                                        )}
-                                                    </div> */}
-                        </DialogContent>
-                      </Dialog>
-
                       <Button
                         variant='outline'
                         size='sm'
@@ -655,36 +614,36 @@ function UsersPage() {
             <div>
               <Label htmlFor='role'>Role</Label>
               <Select
-                value={editData.userType}
-                onValueChange={(
-                  value: 'ADMIN' | 'SUPERADMIN' | 'GUEST' | 'OWNER'
-                ) => setEditData({ ...editData, userType: value })}
+                value={editData.role}
+                onValueChange={(value: UserType) =>
+                  setEditData({ ...editData, role: value })
+                }
               >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value='OWNER'>
+                  <SelectItem value={UserType.OWNER}>
                     <div className='flex items-center gap-2'>
-                      {getRoleIcon('OWNER')}
+                      {getRoleIcon(UserType.OWNER)}
                       Owner
                     </div>
                   </SelectItem>
-                  <SelectItem value='SUPERADMIN'>
+                  <SelectItem value={UserType.SUPERADMIN}>
                     <div className='flex items-center gap-2'>
-                      {getRoleIcon('SUPERADMIN')}
+                      {getRoleIcon(UserType.SUPERADMIN)}
                       Super Admin
                     </div>
                   </SelectItem>
-                  <SelectItem value='ADMIN'>
+                  <SelectItem value={UserType.ADMIN}>
                     <div className='flex items-center gap-2'>
-                      {getRoleIcon('ADMIN')}
+                      {getRoleIcon(UserType.ADMIN)}
                       Admin
                     </div>
                   </SelectItem>
-                  <SelectItem value='GUEST'>
+                  <SelectItem value={UserType.GUEST}>
                     <div className='flex items-center gap-2'>
-                      {getRoleIcon('GUEST')}
+                      {getRoleIcon(UserType.GUEST)}
                       Guest
                     </div>
                   </SelectItem>

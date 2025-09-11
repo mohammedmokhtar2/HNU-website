@@ -3,7 +3,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider as NextThemeProvider } from 'next-themes';
 import { ReactNode, useState } from 'react';
-import { ThemeProvider } from './theme-context';
 import { UserProvider } from './userContext';
 import { ClerkProviderWrapper } from '@/components/providers/ClerkProvider';
 
@@ -37,9 +36,7 @@ export function Providers({ children }: ProvidersProps) {
           enableSystem
           disableTransitionOnChange
         >
-          <ThemeProvider>
-            <UserProvider>{children}</UserProvider>
-          </ThemeProvider>
+          <UserProvider>{children}</UserProvider>
         </NextThemeProvider>
       </QueryClientProvider>
     </ClerkProviderWrapper>

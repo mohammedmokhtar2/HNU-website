@@ -1,6 +1,5 @@
 // Export all providers
 export { Providers } from './providers';
-export { ThemeProvider, useThemeContext } from './theme-context';
 
 // Export axios instance
 export { api } from '../lib/axios';

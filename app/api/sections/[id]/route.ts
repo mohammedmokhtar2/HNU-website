@@ -3,14 +3,14 @@ import { db } from '@/lib/db';
 import { withAuditLog } from '@/lib/middleware/withAuditLog';
 
 interface Params {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export async function GET(req: Request, { params }: Params) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     const section = await db.section.findUnique({
       where: { id },
@@ -37,7 +37,7 @@ export async function GET(req: Request, { params }: Params) {
 export const PATCH = withAuditLog(
   async (req: Request, { params }: Params) => {
     try {
-      const { id } = params;
+      const { id } = await params;
       const body = await req.json();
       const { type, title, content, mediaUrl, order, collageId, universityId } =
         body;
@@ -94,7 +94,7 @@ export const PATCH = withAuditLog(
 export const DELETE = withAuditLog(
   async (req: Request, { params }: Params) => {
     try {
-      const { id } = params;
+      const { id } = await params;
 
       // Check if section exists
       const existingSection = await db.section.findUnique({

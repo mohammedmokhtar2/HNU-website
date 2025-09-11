@@ -50,40 +50,21 @@ export interface UserWithRelationsResponse extends UserResponse {
   permissions?: any[];
   College?: any[];
 }
-updatedAt: Date;
 
-// User creation input type
-export interface CreateUserInput {
-  clerkId?: string;
-  name?: string;
-  email: string;
-  role?: UserType;
-  image?: string;
+// API Error response type
+export interface ApiErrorResponse {
+  error: string;
+  message?: string;
+  statusCode?: number;
 }
 
-// User update input type
-export interface UpdateUserInput {
-  name?: string;
-  email?: string;
-  role?: UserType;
-  image?: string;
-}
-
-// User response type (for API responses)
-export interface UserResponse {
-  id: string;
-  clerkId?: string;
-  name?: string;
-  email: string;
-  role: UserType;
-  image?: string;
-  createdAt: string; // ISO string for JSON serialization
-  updatedAt: string; // ISO string for JSON serialization
-}
-
-// User with relations response type
-export interface UserWithRelationsResponse extends UserResponse {
-  auditLogs?: any[];
-  permissions?: any[];
-  College?: any[];
+// Pagination response type
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
 }

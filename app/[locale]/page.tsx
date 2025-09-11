@@ -26,11 +26,11 @@ function Home() {
       <HeroSection {...heroSection} local={locale} />
       <AboutSection {...aboutSection} local={locale} />
       <div className='relative py-20 bg-gradient-to-br from-blue-100 via-white to-blue-200 overflow-hidden'>
-      <ProgramsSection {...programsSection} local={locale} />
-      <FcatsAndNumber {...FactsAndNumbers} local={locale} />
-      {/* <FAQ {...faqRandom} local={locale} /> */}
-      <TopNews {...topNewsData} local={locale} />
-      {/* <TopEvents /> */}
+        <ProgramsSection {...programsSection} local={locale} />
+        <FcatsAndNumber {...FactsAndNumbers} local={locale} />
+        {/* <FAQ {...faqRandom} local={locale} /> */}
+        <TopNews {...topNewsData} local={locale} />
+        {/* <TopEvents /> */}
         {/* <TopStudentActivities /> */}
       </div>
     </>

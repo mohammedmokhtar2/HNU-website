@@ -2,14 +2,14 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
 interface Params {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export async function GET(req: Request, { params }: Params) {
   try {
-    const { slug } = params;
+    const { slug } = await params;
 
     const university = await db.university.findUnique({
       where: { slug },

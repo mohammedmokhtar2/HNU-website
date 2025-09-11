@@ -3,15 +3,15 @@ import { db } from '@/lib/db';
 import { withAuditLog } from '@/lib/middleware/withAuditLog';
 
 interface Params {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export const GET = withAuditLog(
   async (req: Request, { params }: Params) => {
     try {
-      const { slug } = params;
+      const { slug } = await params;
 
       const college = await db.college.findUnique({
         where: { slug },

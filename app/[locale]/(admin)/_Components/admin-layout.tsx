@@ -20,6 +20,9 @@ import {
   FileText,
   ChevronDown,
   Building2,
+  Shield,
+  ClipboardList,
+  TestTube,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -147,6 +150,13 @@ const navigationSections: NavSection[] = [
         roles: ['OWNER'],
       },
       {
+        title: 'Permissions',
+        href: '/admin/dashboard/permissions',
+        icon: Shield,
+        description: 'Manage permissions',
+        roles: ['OWNER', 'SUPERADMIN'],
+      },
+      {
         title: 'Database',
         href: '/admin/database',
         icon: Database,
@@ -179,6 +189,16 @@ const navigationSections: NavSection[] = [
         title: 'Profile',
         href: '/admin/profile',
         icon: User,
+      },
+      {
+        title: 'Audit Logs',
+        href: '/admin/audit-logs',
+        icon: ClipboardList,
+      },
+      {
+        title: 'Test',
+        href: '/admin/dashboard/rbac-test',
+        icon: TestTube,
       },
     ],
   },
