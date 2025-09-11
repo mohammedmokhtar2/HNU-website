@@ -14,7 +14,14 @@ export default function ChatWidget() {
   const locale = useLocale();
 
   // Use the custom bot hook
-  const { messages, isLoading, error, sendMessage, clearMessages, clearSession } = useBot();
+  const {
+    messages,
+    isLoading,
+    error,
+    sendMessage,
+    clearMessages,
+    clearSession,
+  } = useBot();
 
   const handleSendMessage = () => {
     if (!input.trim()) return;
@@ -70,13 +77,14 @@ export default function ChatWidget() {
       {isOpen && (
         <div
           className={`
-            ${isMobile
-              ? isExpanded
-                ? 'fixed top-0 left-0 w-full h-full'
-                : 'fixed bottom-20 right-5 w-90 h-96'
-              : isExpanded
-                ? 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2/4 h-3/4'
-                : 'fixed bottom-20 right-5 w-90 h-96'
+            ${
+              isMobile
+                ? isExpanded
+                  ? 'fixed top-0 left-0 w-full h-full'
+                  : 'fixed bottom-20 right-5 w-90 h-96'
+                : isExpanded
+                  ? 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2/4 h-3/4'
+                  : 'fixed bottom-20 right-5 w-90 h-96'
             }
                bg-white rounded-xl shadow-lg flex flex-col z-50
                   transition-all duration-300
@@ -213,10 +221,11 @@ export default function ChatWidget() {
                     className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
                     <span
-                      className={`px-3 py-2 rounded-lg max-w-[75%] text-sm ${msg.from === 'user'
-                        ? 'bg-slate-800 text-white rounded-br-none'
-                        : 'bg-gray-200 text-gray-800 rounded-bl-none'
-                        }`}
+                      className={`px-3 py-2 rounded-lg max-w-[75%] text-sm ${
+                        msg.from === 'user'
+                          ? 'bg-slate-800 text-white rounded-br-none'
+                          : 'bg-gray-200 text-gray-800 rounded-bl-none'
+                      }`}
                     >
                       {msg.text}
                     </span>
