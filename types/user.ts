@@ -49,8 +49,8 @@ export interface UserWithRelationsResponse extends UserResponse {
   auditLogs?: any[];
   permissions?: any[];
   College?: any[];
-}  updatedAt: Date;
-
+}
+updatedAt: Date;
 
 // User creation input type
 export interface CreateUserInput {
