@@ -1,15 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import {
-  Users,
-  GraduationCap,
-  Globe,
-  MessageCircle,
-  Newspaper,
-  BarChart3,
-} from 'lucide-react';
-
+import { Users, GraduationCap, Globe } from 'lucide-react';
+import Reveal from '@/components/Reveal';
 export interface StatItem {
   id: number;
   icon: any;
@@ -30,6 +23,7 @@ export interface StatItem {
 }
 
 export interface FcatsAndNumberProps {
+
   items: StatItem[];
   local: string;
 }
@@ -45,7 +39,7 @@ const getIcon = (icon: any) => {
   }
 };
 
-function FcatsAndNumber({ items, local }: FcatsAndNumberProps) {
+function FcatsAndNumber({ items, local, title, subtitle, description }: FcatsAndNumberProps & { title: { ar: string; en: string }, subtitle?: { ar: string; en: string }, description?: { ar: string; en: string } }) {
   const [counts, setCounts] = useState<{ [key: number]: number }>({});
   const [isVisible, setIsVisible] = useState(false);
 
@@ -90,24 +84,28 @@ function FcatsAndNumber({ items, local }: FcatsAndNumberProps) {
         }));
       }, interval);
     });
-  }, [isVisible]);
+  }, [isVisible, items]);
 
   return (
-    <section id='facts-section' className='py-5 mt-12 mb-20 bg-slate-900'>
-      <div className='container mx-auto px-4 mb-8 mt-8'>
+    <section id='facts-section' className='py-16'>
+      <div className='container mx-auto px-4 relative'>
         {/* Header Section */}
-        <div className='text-center mb-16'>
-          <div className='flex items-center justify-center mb-4 gap-4'>
-            <BarChart3 className='w-8 h-8 text-white mr-3 animate-pulse' />
-            <h2 className='text-2xl sm:text-4xl font-bold text-white'>
-              {local === 'ar' ? 'إحصائيات وأرقام' : 'Facts & Numbers'}
-            </h2>
-          </div>
-          <p className='text-xl text-gray-200 max-w-3xl mx-auto leading-relaxed'>
-            {local === 'ar'
-              ? 'اكتشف الإحصائيات المثيرة للإعجاب التي تجعل مؤسستنا رائدة في التعليم والابتكار. تمثل هذه الأرقام التزامنا بالتميز ونجاح مجتمعنا.'
-              : 'Discover the impressive statistics that make our institution a leader in education and innovation. These numbers represent our commitment to excellence and the success of our community.'}
-          </p>
+        <div className='max-w-3xl mx-auto text-center mb-16 relative z-10'>
+          <Reveal from='up'>
+            <div className='flex items-start justify-center mb-4 gap-4'>
+              <span className='relative'>
+                <span className='absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full animate-ping opacity-75'></span>
+              </span>
+              <h2 className='text-4xl sm:text-5xl font-extrabold text-[#023e8a] drop-shadow-lg tracking-tight mb-2'>
+                {local === 'ar' ? title.ar : title.en}
+              </h2>
+            </div>
+          </Reveal>
+          {subtitle && (
+            <p className='text-lg sm:text-2xl text-gray-700 max-w-3xl mx-auto mt-4 font-medium'>
+              {local === 'ar' ? subtitle.ar : subtitle.en}
+            </p>
+          )}
         </div>
 
         {/* Stats Grid */}
