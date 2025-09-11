@@ -76,8 +76,8 @@ export const aboutSection = {
 
 export const programsSection = {
   title: {
-    en: 'Programs & Faculties',
-    ar: 'البرامج والكليات',
+    en: 'University Faculties',
+    ar: 'كليات الجامعة',
   },
   subtitle: {
     en: 'Explore our diverse academic programs across faculties',
@@ -420,6 +420,18 @@ export const socialMediaLinks = {
 };
 
 export const FactsAndNumbers = {
+  title: {
+    ar: 'إحصائيات وأرقام',
+    en: 'Facts & Numbers',
+  },
+  subtitle: {
+    ar: 'نظرة عامة على جامعة حلوان الاهلية',
+    en: 'An overview of Helwan National University',
+  },
+  description: {
+    ar: 'اكتشف الإحصائيات المثيرة للإعجاب التي تجعل مؤسستنا رائدة في التعليم والابتكار. تمثل هذه الأرقام التزامنا بالتميز ونجاح مجتمعنا.',
+    en: 'Discover the impressive statistics that make our institution a leader in education and innovation. These numbers represent our commitment to excellence and the success of our community.',
+  },
   items: [
     {
       id: 1,
@@ -905,7 +917,6 @@ export const topNewsData = {
       href: '#',
     },
   ],
-  href: '#',
 };
 
 export const topStudentActivitiesData = {
