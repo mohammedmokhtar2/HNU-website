@@ -1,7 +1,7 @@
 // Section and College types will be imported when needed
 
-import { College } from "./college";
-import { Section } from "./section";
+import { College } from './college';
+import { Section } from './section';
 
 // Base University interface
 export interface University {
