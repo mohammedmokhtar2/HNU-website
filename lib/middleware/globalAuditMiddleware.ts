@@ -8,7 +8,6 @@ import { getUserIdHeader } from '@/lib/auth-headers';
 const AUDIT_CONFIG = {
   // Routes that should be audited
   auditableRoutes: [
-    /^\/api\/permissions/,
     /^\/api\/users/,
     /^\/api\/colleges/,
     /^\/api\/sections/,
@@ -28,11 +27,6 @@ const AUDIT_CONFIG = {
 
   // Custom action mappings for specific routes
   customActions: {
-    '/api/permissions': {
-      POST: 'CREATE_PERMISSION',
-      PUT: 'UPDATE_PERMISSION',
-      DELETE: 'DELETE_PERMISSION',
-    },
     '/api/users': {
       POST: 'CREATE_USER',
       PUT: 'UPDATE_USER',

@@ -2,7 +2,6 @@
 
 import React, { useState, useCallback, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { usePermissions } from '@/contexts/PermissionContext';
 import {
   Card,
   CardContent,
@@ -139,7 +138,7 @@ const LogsAPI = {
 };
 
 export default function LogsPage() {
-  const { isOwner, isSuperAdmin } = usePermissions();
+  // Note: Permission checks removed - all users can access logs for now
   const queryClient = useQueryClient();
 
   // State
@@ -273,21 +272,7 @@ export default function LogsPage() {
     }
   }, [deleteMode, selectedLogs, queryParams, deleteLogsMutation]);
 
-  // Check access
-  if (!isOwner() && !isSuperAdmin()) {
-    return (
-      <div className='flex items-center justify-center min-h-[400px]'>
-        <div className='text-center'>
-          <h2 className='text-2xl font-bold text-red-500 mb-4'>
-            Access Denied
-          </h2>
-          <p className='text-muted-foreground'>
-            You need owner or super admin privileges to access audit logs.
-          </p>
-        </div>
-      </div>
-    );
-  }
+  // Note: Access control removed - all users can access logs for now
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString();

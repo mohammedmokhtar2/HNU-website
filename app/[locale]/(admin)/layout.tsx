@@ -3,7 +3,6 @@ import type React from 'react';
 import { Providers } from '@/contexts';
 import { AdminAuthGuard } from './_Components/AdminAuthGuard';
 import { AdminLayout } from './_Components/admin-layout';
-import { PermissionProvider } from '@/contexts/PermissionContext';
 
 interface AdminLayoutWrapperProps {
   children: React.ReactNode;
@@ -17,14 +16,12 @@ export default function AdminLayoutWrapper({
       <Providers>
         <AdminAuthGuard requireAdmin={true}>
           <AdminLayout>
-            <PermissionProvider>
-              <div className='relative min-h-screen overflow-hidden'>
-                {/* Main content container */}
-                <div className='relative z-10 min-h-screen'>
-                  <div className='min-h-screen'>{children}</div>
-                </div>
+            <div className='relative min-h-screen overflow-hidden'>
+              {/* Main content container */}
+              <div className='relative z-10 min-h-screen'>
+                <div className='min-h-screen'>{children}</div>
               </div>
-            </PermissionProvider>
+            </div>
           </AdminLayout>
         </AdminAuthGuard>
       </Providers>

@@ -36,9 +36,6 @@ export type AuditAction =
   | 'CREATE_STATISTIC'
   | 'UPDATE_STATISTIC'
   | 'DELETE_STATISTIC'
-  | 'CREATE_PERMISSION'
-  | 'UPDATE_PERMISSION'
-  | 'DELETE_PERMISSION'
   | 'CUSTOM'
   | `${string}_${string}`;
 
