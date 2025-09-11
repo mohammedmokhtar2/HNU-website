@@ -5,4 +5,3 @@ export * from './university.service';
 export * from './college.service';
 export * from './section.service';
 export * from './statistic.service';
-export * from './permission.service';

@@ -7,7 +7,6 @@ export * from './university';
 export * from './college';
 export * from './section';
 export * from './audit';
-export * from './permission';
 export * from './statistic';
 
 // Re-export commonly used types for convenience
@@ -49,14 +48,6 @@ export type {
   AuditLogResponse,
   AuditLogWithRelationsResponse,
 } from './audit';
-
-export type {
-  Permission,
-  CreatePermissionInput,
-  UpdatePermissionInput,
-  PermissionResponse,
-  PermissionWithRelationsResponse,
-} from './permission';
 
 export type {
   Statistic,
