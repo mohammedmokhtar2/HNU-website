@@ -5,3 +5,4 @@ export * from './university.service';
 export * from './collage.service';
 export * from './section.service';
 export * from './statistic.service';
+export * from './file.service';

@@ -1,4 +1,5 @@
 import { CollegeType } from './enums';
+import { Page } from './page';
 import { Section } from './section';
 import { Statistic } from './statistic';
 import { University } from './university';
@@ -15,8 +16,11 @@ export interface College {
   User?: User[]; // Will be properly typed when imported
   sections?: Section[]; // Will be properly typed when imported
   statistics?: Statistic[]; // Will be properly typed when imported
+  createdBy?: User; // Will be properly typed when imported
+  createdById?: string;
   universityId?: string;
   University?: University; // Will be properly typed when imported
+  Page?: Page[]; // Will be properly typed when imported
   createdAt: Date;
   updatedAt: Date;
 }
@@ -27,6 +31,7 @@ export interface CreateCollegeInput {
   name: Record<string, any>;
   config?: CollegeConfig;
   type: CollegeType;
+  createdById?: string;
   universityId?: string;
 }
 
@@ -36,6 +41,7 @@ export interface UpdateCollegeInput {
   name?: Record<string, any>;
   config?: CollegeConfig;
   type?: CollegeType;
+  createdById?: string;
   universityId?: string;
 }
 
@@ -46,6 +52,7 @@ export interface CollegeResponse {
   name: Record<string, any>;
   config?: CollegeConfig;
   type: CollegeType;
+  createdById?: string;
   universityId?: string;
   createdAt: string; // ISO string for JSON serialization
   updatedAt: string; // ISO string for JSON serialization
@@ -56,7 +63,9 @@ export interface CollegeWithRelationsResponse extends CollegeResponse {
   User?: User[]; // Will be properly typed when imported
   sections?: Section[]; // Will be properly typed when imported
   statistics?: Statistic[]; // Will be properly typed when imported
+  createdBy?: User; // Will be properly typed when imported
   University?: University; // Will be properly typed when imported
+  Page?: Page[]; // Will be properly typed when imported
 }
 
 export interface CollegeConfig {

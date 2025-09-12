@@ -41,6 +41,6 @@ export interface UniversityResponse {
 
 // University with relations response type
 export interface UniversityWithRelationsResponse extends UniversityResponse {
-  sections?: any[]; // Will be properly typed when imported
-  colleges?: any[]; // Will be properly typed when imported
+  sections?: Section[]; // Will be properly typed when imported
+  colleges?: College[]; // Will be properly typed when imported
 }

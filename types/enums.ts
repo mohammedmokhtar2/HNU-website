@@ -26,6 +26,18 @@ export enum SectionType {
   CUSTOM = 'CUSTOM',
 }
 
+export enum PageType {
+  HOME = 'HOME',
+  ABOUT = 'ABOUT',
+  CONTACT = 'CONTACT',
+  PRIVACY = 'PRIVACY',
+  TERMS = 'TERMS',
+  BLOGS = 'BLOGS',
+  STUDENT_ACTIVITIES = 'STUDENT_ACTIVITIES',
+  STUDENT_UNIONS = 'STUDENT_UNIONS',
+  CUSTOM = 'CUSTOM',
+}
+
 export enum Action {
   VIEW = 'VIEW',
   EDIT = 'EDIT',

@@ -1,11 +1,13 @@
 // College type will be imported when needed
 
+import { College } from './college';
+
 // Base Statistic interface
 export interface Statistic {
   id: string;
   label: Record<string, any>; // { ar: "عدد الطلاب", en: "Students" }
   collageId?: string;
-  collage?: any;
+  collage?: College;
 }
 
 // Statistic creation input type
@@ -29,5 +31,5 @@ export interface StatisticResponse {
 
 // Statistic with relations response type
 export interface StatisticWithRelationsResponse extends StatisticResponse {
-  collage?: any;
+  collage?: College;
 }

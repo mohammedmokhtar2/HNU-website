@@ -1,4 +1,7 @@
+import { AuditLog } from './audit';
+import { College } from './college';
 import { UserType } from './enums';
+import { Permission } from './permission';
 
 // Base User interface
 export interface User {
@@ -8,9 +11,11 @@ export interface User {
   email: string;
   role: UserType;
   image?: string;
-  auditLogs?: any[];
-  permissions?: any[];
-  College?: any[];
+  auditLogs?: AuditLog[];
+  permissions?: Permission[];
+  College?: College;
+  collegeId?: string;
+  collegesCreated?: College[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -22,6 +27,7 @@ export interface CreateUserInput {
   email: string;
   role?: UserType;
   image?: string;
+  collegeId?: string;
 }
 
 // User update input type
@@ -30,6 +36,7 @@ export interface UpdateUserInput {
   email?: string;
   role?: UserType;
   image?: string;
+  collegeId?: string;
 }
 
 // User response type (for API responses)
@@ -40,15 +47,17 @@ export interface UserResponse {
   email: string;
   role: UserType;
   image?: string;
+  collegeId?: string;
   createdAt: string; // ISO string for JSON serialization
   updatedAt: string; // ISO string for JSON serialization
 }
 
 // User with relations response type
 export interface UserWithRelationsResponse extends UserResponse {
-  auditLogs?: any[];
-  permissions?: any[];
-  College?: any[];
+  auditLogs?: AuditLog[];
+  permissions?: Permission[];
+  College?: College;
+  collegesCreated?: College[];
 }
 
 // API Error response type

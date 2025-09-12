@@ -8,6 +8,9 @@ export * from './college';
 export * from './section';
 export * from './audit';
 export * from './statistic';
+export * from './permission';
+export * from './page';
+export * from './file';
 
 // Re-export commonly used types for convenience
 export type {
@@ -56,3 +59,19 @@ export type {
   StatisticResponse,
   StatisticWithRelationsResponse,
 } from './statistic';
+
+export type {
+  Permission,
+  CreatePermissionInput,
+  UpdatePermissionInput,
+  PermissionResponse,
+  PermissionWithRelationsResponse,
+} from './permission';
+
+export type {
+  Page,
+  CreatePageInput,
+  UpdatePageInput,
+  PageResponse,
+  PageWithRelationsResponse,
+} from './page';

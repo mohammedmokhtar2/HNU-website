@@ -22,7 +22,8 @@ import {
   Building2,
   Shield,
   ClipboardList,
-  TestTube,
+  Book,
+  File,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -110,7 +111,7 @@ const navigationSections: NavSection[] = [
     ],
   },
   {
-    title: 'Portfolios Management',
+    title: 'Dashboard Management',
     items: [
       {
         title: 'University Config',
@@ -144,21 +145,21 @@ const navigationSections: NavSection[] = [
     items: [
       {
         title: 'User Management',
-        href: '/admin/dashboard/users',
+        href: '/admin/system/users',
         icon: Users,
         description: 'Manage admin users and permissions',
         roles: ['OWNER'],
       },
       {
         title: 'Permissions',
-        href: '/admin/dashboard/permissions',
+        href: '/admin/system/permissions',
         icon: Shield,
         description: 'Manage permissions',
         roles: ['OWNER', 'SUPERADMIN'],
       },
       {
         title: 'Database',
-        href: '/admin/database',
+        href: '/admin/system/database',
         icon: Database,
         description: 'System database administration and logs',
         roles: ['OWNER'],
@@ -166,7 +167,7 @@ const navigationSections: NavSection[] = [
       },
       {
         title: 'Settings',
-        href: '/admin/settings',
+        href: '/admin/system/settings',
         icon: Settings,
         description: 'System configuration',
         roles: ['OWNER'],
@@ -174,9 +175,24 @@ const navigationSections: NavSection[] = [
       },
       {
         title: 'Forms',
-        href: '/admin/dashboard/forms',
+        href: '/admin/system/forms',
         icon: FileText,
         description: 'Manage forms',
+        roles: ['OWNER'],
+        badge: 'Soon',
+      },
+      {
+        title: 'Storage',
+        href: '/admin/system/storage',
+        icon: File,
+        description: 'Manage storage',
+        roles: ['OWNER'],
+      },
+      {
+        title: 'Blogs',
+        href: '/admin/system/blogs',
+        icon: Book,
+        description: 'Manage blogs',
         roles: ['OWNER'],
         badge: 'Soon',
       },
@@ -274,7 +290,7 @@ function SidebarContent({
 
   // Update the navigation sections to include collages as a dropdown
   const navigationSectionsWithCollages = navigationSections.map(section => {
-    if (section.title === 'Portfolios Management') {
+    if (section.title === 'Dashboard Management') {
       return {
         ...section,
         items: section.items.map(item => {
