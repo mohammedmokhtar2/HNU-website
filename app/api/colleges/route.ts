@@ -1,15 +1,41 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuditLog } from '@/lib/middleware/withAuditLog';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const type = searchParams.get('type');
+    const createdById = searchParams.get('createdById');
+    const assignedToUserId = searchParams.get('assignedToUserId');
+
+    // Build where clause based on query parameters
+    const whereClause: any = {};
+
+    if (type) {
+      whereClause.type = type;
+    }
+
+    if (createdById) {
+      whereClause.createdById = createdById;
+    }
+
+    if (assignedToUserId) {
+      whereClause.User = {
+        some: {
+          id: assignedToUserId,
+        },
+      };
+    }
+
     const colleges = await db.college.findMany({
+      where: whereClause,
       orderBy: { createdAt: 'desc' },
       include: {
         sections: true,
         statistics: true,
         University: true,
+        User: true, // Include users assigned to this college
       },
     });
 
@@ -22,56 +48,3 @@ export async function GET() {
     );
   }
 }
-
-export const POST = withAuditLog(
-  async (req: Request) => {
-    try {
-      const body = await req.json();
-      const { name, slug, type, config, universityId } = body;
-
-      if (!name || !slug || !type) {
-        return NextResponse.json(
-          { error: 'Name, slug, and type are required' },
-          { status: 400 }
-        );
-      }
-
-      const exists = await db.college.findUnique({
-        where: { slug },
-      });
-
-      if (exists) {
-        return NextResponse.json(
-          { error: 'College with this slug already exists' },
-          { status: 400 }
-        );
-      }
-
-      const college = await db.college.create({
-        data: {
-          name,
-          slug,
-          type,
-          config: config || {},
-          universityId: universityId || null,
-        },
-      });
-
-      return NextResponse.json(college);
-    } catch (error) {
-      console.error('Error creating college:', error);
-      return NextResponse.json(
-        { error: 'Failed to create college' },
-        { status: 500 }
-      );
-    }
-  },
-  {
-    action: 'CREATE_COLLEGE',
-    extract: () => {
-      return {
-        entity: 'College',
-      };
-    },
-  }
-);

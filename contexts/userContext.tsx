@@ -152,6 +152,11 @@ export const useIsSuperAdmin = (): boolean => {
   return user?.role === 'SUPERADMIN';
 };
 
+export const useIsOwner = (): boolean => {
+  const { user } = useUser();
+  return user?.role === 'OWNER';
+};
+
 // Additional React Query hooks for advanced use cases
 export const useUserQuery = () => {
   const { user: clerkUser, isLoaded: clerkLoaded } = useClerkUser();

@@ -3,12 +3,14 @@
 import React from 'react';
 import { footerData } from '@/data';
 import { useTranslations } from 'next-intl';
+import { usePathname } from 'next/navigation';
 
 export interface FooterProps {
   local: string;
 }
 function Footer({ local }: FooterProps) {
   const footerT = useTranslations('footer');
+  const pathname = usePathname();
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -20,6 +22,11 @@ function Footer({ local }: FooterProps) {
       });
     }
   };
+
+  // if the rotues starts with /admin, then show the admin header
+  if (pathname.startsWith('en/admin') || pathname.startsWith('ar/admin')) {
+    return null;
+  }
 
   return (
     <footer className='bg-gray-900 text-white'>

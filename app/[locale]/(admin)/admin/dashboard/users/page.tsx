@@ -56,8 +56,9 @@ import {
   Building2,
 } from 'lucide-react';
 import { UserService } from '@/services/user.service';
+import { CollegeService } from '@/services/collage.service';
 import { UserResponse } from '@/types/user';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 import { useAuthStatus } from '@/hooks/use-auth';
 import { UserType } from '@/types/enums';
 
@@ -77,6 +78,7 @@ interface EditUserData {
 function UsersPage() {
   const locale = useLocale();
   const queryClient = useQueryClient();
+  const { success, error, warning, info, loading } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [editingUser, setEditingUser] = useState<UserWithCollages | null>(null);
@@ -118,15 +120,12 @@ function UsersPage() {
   //     staleTime: 1000 * 60 * 2, // 2 minutes
   // })
 
-  // // featching the collages to use them when moving user to collage
-  // const {
-  //     data: allCollages,
-  //     isLoading: allCollagesLoading
-  // } = useQuery({
-  //     queryKey: ['all-collages'],
-  //     queryFn: () => CollegeService.getColleges(),
-  //     staleTime: 1000 * 60 * 2, // 2 minutes
-  // })
+  // Fetching the collages to use them when moving user to collage
+  const { data: allCollages, isLoading: allCollagesLoading } = useQuery({
+    queryKey: ['all-collages'],
+    queryFn: () => CollegeService.getColleges(),
+    staleTime: 1000 * 60 * 2, // 2 minutes
+  });
 
   // Update user mutation
   const updateUserMutation = useMutation({
@@ -137,15 +136,21 @@ function UsersPage() {
       userId: string;
       updates: EditUserData;
     }) => UserService.updateUser(userId, updates),
-    onSuccess: () => {
-      toast.success('User updated successfully');
+    onSuccess: data => {
+      success('User updated successfully', {
+        description: `${data.name} has been updated successfully`,
+      });
       setEditingUser(null);
       // Invalidate and refetch users
       queryClient.invalidateQueries({ queryKey: ['users', 'all'] });
     },
     onError: (error: any) => {
       console.error('Error updating user:', error);
-      toast.error(error.response?.data?.error || 'Failed to update user');
+      error('Failed to update user', {
+        description:
+          error.response?.data?.error ||
+          'An unexpected error occurred while updating the user',
+      });
     },
   });
 
@@ -158,17 +163,21 @@ function UsersPage() {
       userId: string;
       collageId: string;
     }) => UserService.moveUserToCollage(userId, collageId),
-    onSuccess: () => {
-      toast.success('User moved to collage successfully');
+    onSuccess: data => {
+      success('User moved to collage successfully', {
+        description: `${data.name} has been assigned to the selected college`,
+      });
       setAssigningUserToCollage(null);
       setSelectedCollageId('');
       queryClient.invalidateQueries({ queryKey: ['users', 'all'] });
     },
     onError: (error: any) => {
       console.error('Error moving user to collage:', error);
-      toast.error(
-        error.response?.data?.error || 'Failed to move user to collage'
-      );
+      error('Failed to move user to collage', {
+        description:
+          error.response?.data?.error ||
+          'An unexpected error occurred while assigning the user to the college',
+      });
     },
   });
 
@@ -176,13 +185,19 @@ function UsersPage() {
   const toggleUserRoleMutation = useMutation({
     mutationFn: ({ userId, role }: { userId: string; role: UserType }) =>
       UserService.toggleUserRole(userId, role),
-    onSuccess: () => {
-      toast.success('User role updated successfully');
+    onSuccess: data => {
+      success('User role updated successfully', {
+        description: `${data.name}'s role has been changed to ${data.role}`,
+      });
       queryClient.invalidateQueries({ queryKey: ['users', 'all'] });
     },
     onError: (error: any) => {
       console.error('Error updating user role:', error);
-      toast.error(error.response?.data?.error || 'Failed to update user role');
+      error('Failed to update user role', {
+        description:
+          error.response?.data?.error ||
+          'An unexpected error occurred while updating the user role',
+      });
     },
   });
 
@@ -686,57 +701,79 @@ function UsersPage() {
               a collage
             </DialogDescription>
           </DialogHeader>
-          {/* <div className="space-y-4">
-                        {allCollagesLoading ? (
-                            <div className="flex items-center justify-center py-8">
-                                <RefreshCw className="w-6 h-6 animate-spin" />
-                                <span className="ml-2">Loading collages...</span>
-                            </div>
-                        ) : allCollages && allCollages.length > 0 ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto">
-                                {allCollages.map((collage) => (
-                                    <Card
-                                        key={collage.id}
-                                        className={`cursor-pointer transition-all duration-200 hover:shadow-md ${selectedCollageId === collage.id
-                                            ? 'border-2 border-blue-500'
-                                            : 'hover:bg-slate-700'
-                                            }`}
-                                        onClick={() => setSelectedCollageId(collage.id)}
-                                    >
-                                        <CardContent className="p-4">
-                                            <div className="flex items-center justify-between">
-                                                <div className="flex flex-col items-center gap-3">
-                                                    <div className={`p-2 rounded-lg ${selectedCollageId === collage.id
-                                                        ? 'bg-blue-100'
-                                                        : 'bg-gray-100'
-                                                        }`}>
-                                                        <Building2 className={`w-5 h-5 ${selectedCollageId === collage.id
-                                                            ? 'text-blue-600'
-                                                            : 'text-gray-600'
-                                                            }`} />
-                                                    </div>
-                                                    <div className="text-center justify-center items-center">
-                                                        <h4 className="font-medium">{collage.name}</h4>
-                                                    </div>
-                                                </div>
-                                                {selectedCollageId === collage.id && (
-                                                    <div className="text-blue-600">
-                                                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                                        </svg>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="text-center py-8 text-muted-foreground">
-                                No collages available
-                            </div>
+          <div className='space-y-4'>
+            {allCollagesLoading ? (
+              <div className='flex items-center justify-center py-8'>
+                <RefreshCw className='w-6 h-6 animate-spin' />
+                <span className='ml-2'>Loading collages...</span>
+              </div>
+            ) : allCollages && allCollages.length > 0 ? (
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto'>
+                {allCollages.map(collage => (
+                  <Card
+                    key={collage.id}
+                    className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
+                      selectedCollageId === collage.id
+                        ? 'border-2 border-blue-500'
+                        : 'hover:bg-slate-700'
+                    }`}
+                    onClick={() => setSelectedCollageId(collage.id)}
+                  >
+                    <CardContent className='p-4'>
+                      <div className='flex items-center justify-between'>
+                        <div className='flex flex-col items-center gap-3'>
+                          <div
+                            className={`p-2 rounded-lg ${
+                              selectedCollageId === collage.id
+                                ? 'bg-blue-100'
+                                : 'bg-gray-100'
+                            }`}
+                          >
+                            <Building2
+                              className={`w-5 h-5 ${
+                                selectedCollageId === collage.id
+                                  ? 'text-blue-600'
+                                  : 'text-gray-600'
+                              }`}
+                            />
+                          </div>
+                          <div className='text-center justify-center items-center'>
+                            <h4 className='font-medium'>
+                              {typeof collage.name === 'string'
+                                ? collage.name
+                                : collage.name?.en || 'N/A'}
+                            </h4>
+                            <p className='text-sm text-muted-foreground'>
+                              {collage.slug}
+                            </p>
+                          </div>
+                        </div>
+                        {selectedCollageId === collage.id && (
+                          <div className='text-blue-600'>
+                            <svg
+                              className='w-5 h-5'
+                              fill='currentColor'
+                              viewBox='0 0 20 20'
+                            >
+                              <path
+                                fillRule='evenodd'
+                                d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
+                                clipRule='evenodd'
+                              />
+                            </svg>
+                          </div>
                         )}
-                    </div> */}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className='text-center py-8 text-muted-foreground'>
+                No collages available
+              </div>
+            )}
+          </div>
           <DialogFooter>
             <Button
               variant='outline'

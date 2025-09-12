@@ -35,11 +35,6 @@ export async function POST(request: NextRequest) {
     // First, try to find existing user
     let user = await db.user.findUnique({
       where: { clerkId: clerkId },
-      include: {
-        auditLogs: true,
-        permissions: true,
-        College: true,
-      },
     });
 
     // If user doesn't exist, create them

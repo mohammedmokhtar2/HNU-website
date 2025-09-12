@@ -43,9 +43,9 @@ import {
 import { Header } from './header';
 import { useLocale } from 'next-intl';
 import { useCurrentUser } from '@/contexts/userContext';
-// import { CollegeService } from "@/services/collage.service"
-// import { useQuery } from "@tanstack/react-query"
-// import { CollageWithMemberResponse } from "@/types/Collage"
+import { CollegeService } from '@/services/collage.service';
+import { useQuery } from '@tanstack/react-query';
+import { College } from '@/types/college';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -57,7 +57,7 @@ interface NavItem {
   icon: React.ComponentType<{ className?: string }>;
   badge?: string;
   description?: string;
-  dynamicBadge?: boolean;
+  dynamicBadge?: boolean | string;
   roles?: ('ADMIN' | 'SUPERADMIN' | 'OWNER')[];
   subItems?: SubItem[];
   hasSubItems?: boolean;
@@ -121,13 +121,13 @@ const navigationSections: NavSection[] = [
         badge: 'Soon',
       },
       {
-        title: 'Collage',
+        title: 'Collage Studio',
         href: '/admin/dashboard/collages',
         icon: FolderOpen,
-        description: 'Collage portfolios',
+        description: 'Collage portfolios and management',
         roles: ['OWNER', 'SUPERADMIN', 'ADMIN'],
         dynamicBadge: true,
-        badge: 'Soon',
+        hasSubItems: true,
       },
       {
         title: 'Department',
@@ -192,14 +192,14 @@ const navigationSections: NavSection[] = [
       },
       {
         title: 'Audit Logs',
-        href: '/admin/audit-logs',
+        href: '/admin/logs',
         icon: ClipboardList,
       },
-      {
-        title: 'Test',
-        href: '/admin/dashboard/rbac-test',
-        icon: TestTube,
-      },
+      // {
+      //   title: 'Test',
+      //   href: '/admin/dashboard/rbac-test',
+      //   icon: TestTube,
+      // },
     ],
   },
 ];
@@ -215,56 +215,85 @@ function SidebarContent({
 }) {
   const pathname = usePathname();
   const user = useCurrentUser();
-  const [openCollages, setOpenCollages] = useState(false);
+  const [openCollageStudio, setOpenCollageStudio] = useState(false);
 
-  // Fetch collages based on user type
-  // const {
-  //     data: collageData,
-  // } = useQuery({
-  //     queryKey: ["displayCollages", user?.id],
-  //     queryFn: () => {
-  //         if (!user?.id) throw new Error("User ID is required");
-  //         return CollegeService.getDisplayCollages(user.id);
-  //     },
-  //     enabled: !!user?.id,
-  //     staleTime: 1000 * 60 * 5,
-  //     gcTime: 1000 * 60 * 10,
-  // })
+  // Fetch collages based on user type and role
+  const { data: allCollages, isLoading: allCollagesLoading } = useQuery({
+    queryKey: ['collages', 'all'],
+    queryFn: () => CollegeService.getColleges(),
+    enabled: user?.role === 'OWNER',
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
+  });
 
-  // function normalizeCollages(collageData: CollageWithMemberResponse | undefined) {
-  //     // make new array to contain createdCollages and memberCollages
-  //     const newArray = [...(collageData?.data?.createdCollages?.collages || []), ...(collageData?.data?.memberCollages?.collages || [])]
-  //     return newArray
-  // }
+  const { data: createdCollages, isLoading: createdLoading } = useQuery({
+    queryKey: ['collages', 'created', user?.id],
+    queryFn: () => {
+      if (!user?.id) throw new Error('User ID is required');
+      return CollegeService.getColleges({ createdById: user.id });
+    },
+    enabled: user?.role !== 'OWNER' && !!user?.id,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
+  });
 
-  // // Create collages navigation item with subitems
-  // const collagesSubItems: (SubItem & { logoUrl?: string })[] = normalizeCollages(collageData?.data)?.map((collage) => ({
-  //     title: collage.name,
-  //     href: `/admin/dashboard/collages/${collage.slug}`,
-  //     icon: FolderOpen,
-  //     logoUrl: collage.logoUrl, // <-- add this line
-  //     roles: ['OWNER', 'SUPERADMIN', 'ADMIN']
-  // })) || []
+  const { data: memberCollages, isLoading: memberLoading } = useQuery({
+    queryKey: ['collages', 'member', user?.id],
+    queryFn: () => {
+      if (!user?.id) throw new Error('User ID is required');
+      return CollegeService.getColleges({ assignedToUserId: user.id });
+    },
+    enabled: user?.role !== 'OWNER' && !!user?.id,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
+  });
+
+  // Combine collages based on user role
+  const userCollages =
+    user?.role === 'OWNER'
+      ? allCollages || []
+      : [...(createdCollages || []), ...(memberCollages || [])];
+
+  // Remove duplicates and create subitems
+  const uniqueCollages = userCollages.filter(
+    (college, index, self) => index === self.findIndex(c => c.id === college.id)
+  );
+
+  // Create collages navigation item with subitems
+  const collagesSubItems: (SubItem & { logoUrl?: string })[] =
+    uniqueCollages.map(college => ({
+      title:
+        typeof college.name === 'string'
+          ? college.name
+          : college.name?.en || college.name?.ar || 'Unknown College',
+      href: `/admin/dashboard/collages/${college.slug}`,
+      icon: FolderOpen,
+      logoUrl: college.config?.logoUrl,
+      roles: ['OWNER', 'SUPERADMIN', 'ADMIN'],
+    }));
 
   // Update the navigation sections to include collages as a dropdown
-  // const navigationSectionsWithCollages = navigationSections.map((section) => {
-  //     if (section.title === "Portfolios Management") {
-  //         return {
-  //             ...section,
-  //             items: section.items.map((item) => {
-  //                 if (item.title === "Collage") {
-  //                     return {
-  //                         ...item,
-  //                         subItems: collagesSubItems,
-  //                         hasSubItems: true
-  //                     }
-  //                 }
-  //                 return item
-  //             })
-  //         }
-  //     }
-  //     return section
-  // })
+  const navigationSectionsWithCollages = navigationSections.map(section => {
+    if (section.title === 'Portfolios Management') {
+      return {
+        ...section,
+        items: section.items.map(item => {
+          if (item.title === 'Collage Studio') {
+            return {
+              ...item,
+              subItems: collagesSubItems,
+              hasSubItems: true,
+              dynamicBadge: collagesSubItems.length.toString(),
+            };
+          }
+          return item;
+        }),
+      };
+    }
+    return section;
+  });
+
+  const globalLoading = allCollagesLoading || createdLoading || memberLoading;
 
   return (
     <div className='flex h-full flex-col bg-gray-950'>
@@ -287,7 +316,7 @@ function SidebarContent({
       {/* Navigation */}
       <div className='flex-1 overflow-y-auto py-4 bg-gray-950'>
         <nav className='space-y-6 px-3'>
-          {navigationSections.map((section: NavSection) => {
+          {navigationSectionsWithCollages.map((section: NavSection) => {
             // Filter items based on user role
             const filteredItems = section.items.filter(
               (item: NavItem) =>
@@ -316,8 +345,13 @@ function SidebarContent({
 
                     // Get the badge value - either static or dynamic
                     let badgeValue = item.badge;
-                    if (item.dynamicBadge && item.title === 'Collage') {
-                      badgeValue = '0';
+                    if (item.dynamicBadge && item.title === 'Collage Studio') {
+                      badgeValue =
+                        typeof item.dynamicBadge === 'string'
+                          ? item.dynamicBadge
+                          : globalLoading
+                            ? '...'
+                            : collagesSubItems.length.toString();
                     }
 
                     if (collapsed) {
@@ -354,8 +388,8 @@ function SidebarContent({
                       return (
                         <div key={item.href}>
                           <Collapsible
-                            open={openCollages}
-                            onOpenChange={setOpenCollages}
+                            open={openCollageStudio}
+                            onOpenChange={setOpenCollageStudio}
                           >
                             <div className='flex items-center'>
                               {/* Main item link */}
@@ -408,7 +442,7 @@ function SidebarContent({
                                   <ChevronDown
                                     className={cn(
                                       'h-4 w-4 transition-transform',
-                                      openCollages && 'rotate-180'
+                                      openCollageStudio && 'rotate-180'
                                     )}
                                   />
                                 </Button>

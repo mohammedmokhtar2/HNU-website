@@ -40,6 +40,18 @@ enum SectionType {
   CUSTOM
 }
 
+enum PageType {
+  HOME
+  ABOUT
+  CONTACT
+  PRIVACY
+  TERMS
+  BLOGS
+  STUDENT_ACTIVITIES
+  STUDENT_UNIONS
+  CUSTOM
+}
+
 model AuditLog {
   id        String   @id @default(cuid())
   action    String // e.g., "CREATE_COLLEGE", "DELETE_USER"
@@ -63,64 +75,74 @@ model User {
   permissions Permission[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
-  College     College[]
+
+  College College? @relation(fields: [collegeId], references: [id])
+
+  collegeId String?
+
+  collegesCreated College[] @relation("CollegeCreatedBy")
 
   @@map("users")
 }
 
 model University {
-  id          String    @id @default(cuid())
-  name        Json
-  slug        String    @unique
-  sections    Section[]
-  colleges    College[]
+  id       String    @id @default(cuid())
+  name     Json
+  slug     String    @unique
+  sections Section[]
+  colleges College[]
 
-  config      Json? // for the logo and social media links
+  config Json? // for the logo and social media links
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("universities")
 }
 
 model College {
-  id           String      @id @default(cuid())
-  slug         String      @unique
-  name         Json
-  config       Json? // for the logo and social media links
-  type         CollegeType
+  id     String      @id @default(cuid())
+  slug   String      @unique
+  name   Json
+  config Json? // for the logo and social media links
+  type   CollegeType
 
-  User         User[]
-  sections     Section[]
-  statistics   Statistic[]
+  User       User[]
+  sections   Section[]
+  statistics Statistic[]
+
+  createdBy   User?   @relation("CollegeCreatedBy", fields: [createdById], references: [id])
+  createdById String?
 
   universityId String?
   University   University? @relation(fields: [universityId], references: [id])
 
+  Page Page[]
 
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("colleges")
 }
 
 model Section {
-  id        String      @id @default(cuid())
-  type      SectionType
-  
-  title     Json
-  content   Json // flexible content (paragraphs, numbers, etc.)
-  mediaUrl  String? // صورة أو فيديو
- 
-  order     Int // ترتيب القسم في الصفحة
-  
+  id   String      @id @default(cuid())
+  type SectionType
+
+  title    Json?
+  content  Json? // flexible content (paragraphs, numbers, etc.)
+  mediaUrl Json? // صورة أو فيديو
+
+  order Int // ترتيب القسم في الصفحة
+
   collageId String? // لو section خاص بكلية
-  collage   College?    @relation(fields: [collageId], references: [id])
+  collage   College? @relation(fields: [collageId], references: [id])
 
   University   University? @relation(fields: [universityId], references: [id])
   universityId String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 }
 
 model Statistic {
@@ -131,18 +153,32 @@ model Statistic {
 }
 
 model Permission {
-  id        String  @id @default(cuid())
-  userId    String
-  action    Action // e.g. VIEW, EDIT, DELETE
-  resource  String // e.g. "SECTION", "COLLAGE"
-  title     String
+  id          String   @id @default(cuid())
+  userId      String
+  action      Action // e.g. VIEW, EDIT, DELETE
+  resource    String // e.g. "SECTION", "COLLAGE"
+  title       String
   description String?
-  isActive  Boolean @default(true)
-  metadata  Json?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  isActive    Boolean  @default(true)
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id])
+}
+
+model Page {
+  id        String   @id @default(cuid())
+  type      PageType
+  title     Json
+  content   Json
+  config    Json?
+  isActive  Boolean  @default(true)
+  slug      String   @unique
+  collageId String?
+  collage   College? @relation(fields: [collageId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Action {
