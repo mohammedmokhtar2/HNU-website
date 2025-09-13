@@ -24,7 +24,7 @@ export function useLoadingState(
   const [error, setError] = useState<string | null>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(initialLoading);
   const [retryCount, setRetryCount] = useState(0);
-  const retryTimeoutRef = useRef<NodeJS.Timeout>();
+  const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const setLoading = useCallback(
     (loading: boolean) => {
@@ -36,7 +36,7 @@ export function useLoadingState(
     [isInitialLoad]
   );
 
-  const setError = useCallback((error: string | null) => {
+  const setErrorState = useCallback((error: string | null) => {
     setError(error);
     if (error) {
       setIsLoading(false);
@@ -45,12 +45,12 @@ export function useLoadingState(
 
   const retry = useCallback(() => {
     if (retryCount >= MAX_RETRY_ATTEMPTS) {
-      setError('Maximum retry attempts reached');
+      setErrorState('Maximum retry attempts reached');
       return;
     }
 
     setRetryCount(prev => prev + 1);
-    setError(null);
+    setErrorState(null);
     setIsLoading(true);
 
     // Clear any existing timeout
@@ -62,18 +62,18 @@ export function useLoadingState(
     retryTimeoutRef.current = setTimeout(() => {
       // This will be handled by the component using this hook
     }, RETRY_DELAY);
-  }, [retryCount]);
+  }, [retryCount, setErrorState]);
 
   const reset = useCallback(() => {
     setIsLoading(initialLoading);
-    setError(null);
+    setErrorState(null);
     setIsInitialLoad(initialLoading);
     setRetryCount(0);
 
     if (retryTimeoutRef.current) {
       clearTimeout(retryTimeoutRef.current);
     }
-  }, [initialLoading]);
+  }, [initialLoading, setErrorState]);
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -90,7 +90,7 @@ export function useLoadingState(
     isInitialLoad,
     retryCount,
     setLoading,
-    setError,
+    setError: setErrorState,
     retry,
     reset,
   };
