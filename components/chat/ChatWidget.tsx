@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { Button } from '../ui/button';
 import {
   Expand,
@@ -22,9 +22,36 @@ export default function ChatWidget() {
   const [input, setInput] = useState('');
   const [isAnimating, setIsAnimating] = useState(false);
   const [newMessage, setNewMessage] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [currentTooltipIndex, setCurrentTooltipIndex] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const tooltipIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const locale = useLocale();
+
+  // Tooltip messages
+  const tooltips = [
+    {
+      ar: 'مرحباً! أنا زقزوقي، مساعدك الذكي. اسألني عن الكليات والبرامج!',
+      en: 'Hi! I am Zaqzouqi, your smart assistant. Ask me about colleges and programs!'
+    },
+    {
+      ar: 'يمكنني مساعدتك في معلومات القبول والتسجيل في الجامعة',
+      en: 'I can help you with admission and registration information'
+    },
+    {
+      ar: 'اسألني عن المواعيد المهمة والأنشطة الطلابية',
+      en: 'Ask me about important dates and student activities'
+    },
+    {
+      ar: 'أحتاج مساعدتك في اختيار التخصص المناسب؟ أنا هنا!',
+      en: 'Need help choosing the right major? I am here!'
+    },
+    {
+      ar: 'اكتشف خدمات الجامعة والمرافق المتاحة',
+      en: 'Discover university services and available facilities'
+    }
+  ];
 
   // Use the custom bot hook
   const {
@@ -51,6 +78,33 @@ export default function ChatWidget() {
     }, 500);
   };
 
+  // Tooltip management functions
+  const startTooltipCycle = useCallback(() => {
+    if (tooltipIntervalRef.current) {
+      clearInterval(tooltipIntervalRef.current);
+    }
+
+    tooltipIntervalRef.current = setInterval(() => {
+      if (!isOpen) {
+        setShowTooltip(true);
+        setCurrentTooltipIndex(prev => (prev + 1) % tooltips.length);
+
+        // Hide tooltip after 4 seconds
+        setTimeout(() => {
+          setShowTooltip(false);
+        }, 1000);
+      }
+    }, 6000); // Show new tooltip every 6 seconds
+  }, [isOpen, tooltips.length]);
+
+  const stopTooltipCycle = useCallback(() => {
+    if (tooltipIntervalRef.current) {
+      clearInterval(tooltipIntervalRef.current);
+      tooltipIntervalRef.current = null;
+    }
+    setShowTooltip(false);
+  }, []);
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -66,15 +120,33 @@ export default function ChatWidget() {
     return () => window.removeEventListener('resize', checkScreen);
   }, []);
 
+  // Start tooltip cycle when component mounts
+  useEffect(() => {
+    startTooltipCycle();
+    return () => stopTooltipCycle();
+  }, [startTooltipCycle, stopTooltipCycle]);
+
+  // Stop tooltips when chat is open, restart when closed
+  useEffect(() => {
+    if (isOpen) {
+      stopTooltipCycle();
+    } else {
+      // Start tooltip cycle after a delay when chat is closed
+      const timeoutId = setTimeout(() => {
+        startTooltipCycle();
+      }, 3000);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isOpen, startTooltipCycle, stopTooltipCycle]);
+
   return (
     <div>
       {/* Enhanced Floating Action Button */}
       <div
-        className={`fixed bottom-6 z-50 transition-all duration-500 ease-out ${
-          isOpen
-            ? 'opacity-0 scale-0 pointer-events-none'
-            : 'opacity-100 scale-100'
-        } ${locale === 'ar' ? 'left-6' : 'right-6'}`}
+        className={`fixed bottom-6 z-50 transition-all duration-500 ease-out ${isOpen
+          ? 'opacity-0 scale-0 pointer-events-none'
+          : 'opacity-100 scale-100'
+          } ${locale === 'ar' ? 'left-6' : 'right-6'}`}
       >
         <Button
           className='chat-button group relative bg-gradient-to-r from-blue-600 to-gray-900 hover:from-blue-700 hover:to-gray-900 text-white rounded-full w-16 h-16 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-110 active:scale-95 border-0'
@@ -98,18 +170,54 @@ export default function ChatWidget() {
         </Button>
       </div>
 
+      {/* Tooltip Display */}
+      {showTooltip && !isOpen && (
+        <div
+          className={`fixed bottom-26 max-w-xs bg-white border border-gray-300 text-black rounded-lg shadow-lg p-4 text-sm z-50 transition-all duration-500 ease-in-out transform ${showTooltip ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+            } ${locale === 'ar' ? 'left-6' : 'right-6'}`}
+        >
+          <div
+            className={`flex items-start gap-3 ${locale === 'ar' ? 'flex-row-reverse' : 'flex-row'
+              }`}
+          >
+            <div className='flex-1'>
+              <div className='flex items-center gap-2 mb-2'>
+                <Bot className='w-4 h-4 text-blue-500' />
+                <span className='font-semibold text-blue-600'>
+                  {locale === 'ar' ? 'زقزوقي' : 'Zaqzouqi'}
+                </span>
+              </div>
+              <p className={`text-gray-700 ${locale === 'ar' ? 'text-right' : 'text-left'}`}>
+                {tooltips[currentTooltipIndex][locale as 'ar' | 'en']}
+              </p>
+            </div>
+            <button
+              onClick={() => setShowTooltip(false)}
+              className='text-gray-400 hover:text-gray-600 transition-colors duration-200 text-lg leading-none'
+              aria-label={locale === 'ar' ? 'إغلاق' : 'Close'}
+            >
+              ×
+            </button>
+          </div>
+          {/* Arrow pointing to the chat button */}
+          <div
+            className={`absolute w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-white ${locale === 'ar' ? 'left-8' : 'right-8'
+              } -bottom-1`}
+          ></div>
+        </div>
+      )}
+
       {/* Enhanced Chat Box */}
       {isOpen && (
         <div
           className={`
-            ${
-              isMobile
-                ? isExpanded
-                  ? 'fixed top-0 left-0 w-full h-full'
-                  : `fixed bottom-20 w-80 h-[32rem] ${locale === 'ar' ? 'left-4' : 'right-4'}`
-                : isExpanded
-                  ? 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2/4 h-4/5 max-w-4xl'
-                  : `fixed bottom-20 w-80 h-[32rem] ${locale === 'ar' ? 'left-4' : 'right-4'}`
+            ${isMobile
+              ? isExpanded
+                ? 'fixed top-0 left-0 w-full h-full'
+                : `fixed bottom-20 w-80 h-[32rem] ${locale === 'ar' ? 'left-4' : 'right-4'}`
+              : isExpanded
+                ? 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2/4 h-4/5 max-w-4xl'
+                : `fixed bottom-20 w-80 h-[32rem] ${locale === 'ar' ? 'left-4' : 'right-4'}`
             }
             bg-white rounded-2xl shadow-2xl flex flex-col z-50
             transition-all duration-500 ease-out
@@ -209,11 +317,10 @@ export default function ChatWidget() {
                     style={{ animationDelay: `${i * 100}ms` }}
                   >
                     <div
-                      className={`message-bubble px-4 py-3 rounded-2xl max-w-[80%] text-sm shadow-sm transition-all duration-200 hover:shadow-md ${
-                        msg.from === 'user'
-                          ? `bg-gradient-to-r from-blue-500 to-gray-900 text-white ${locale === 'ar' ? 'rounded-bl-md' : 'rounded-br-md'}`
-                          : `bg-white text-gray-800 border border-gray-200 ${locale === 'ar' ? 'rounded-br-md' : 'rounded-bl-md'}`
-                      }`}
+                      className={`message-bubble px-4 py-3 rounded-2xl max-w-[80%] text-sm shadow-sm transition-all duration-200 hover:shadow-md ${msg.from === 'user'
+                        ? `bg-gradient-to-r from-blue-500 to-gray-900 text-white ${locale === 'ar' ? 'rounded-bl-md' : 'rounded-br-md'}`
+                        : `bg-white text-gray-800 border border-gray-200 ${locale === 'ar' ? 'rounded-br-md' : 'rounded-bl-md'}`
+                        }`}
                     >
                       <p
                         className={`whitespace-pre-wrap ${locale === 'ar' ? 'text-right' : 'text-left'}`}
@@ -275,11 +382,10 @@ export default function ChatWidget() {
               <Button
                 onClick={handleSendMessage}
                 disabled={!input.trim() || isLoading}
-                className={`px-4 py-3 rounded-xl transition-all duration-200 ${
-                  input.trim() && !isLoading
-                    ? 'bg-gradient-to-r from-blue-500 to-gray-900 hover:from-blue-600 hover:to-gray-900 text-white shadow-lg hover:shadow-xl transform hover:scale-105'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                }`}
+                className={`px-4 py-3 rounded-xl transition-all duration-200 ${input.trim() && !isLoading
+                  ? 'bg-gradient-to-r from-blue-500 to-gray-900 hover:from-blue-600 hover:to-gray-900 text-white shadow-lg hover:shadow-xl transform hover:scale-105'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
               >
                 {isLoading ? (
                   <Loader2 className='w-4 h-4 animate-spin' />
