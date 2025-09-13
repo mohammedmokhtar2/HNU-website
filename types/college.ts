@@ -11,6 +11,7 @@ export interface College {
   id: string;
   slug: string;
   name: Record<string, any>;
+  description?: Record<string, any>;
   config?: CollegeConfig; // JSON config for logo and social media links
   type: CollegeType;
   User?: User[]; // Will be properly typed when imported
@@ -29,6 +30,7 @@ export interface College {
 export interface CreateCollegeInput {
   slug: string;
   name: Record<string, any>;
+  description?: Record<string, any>;
   config?: CollegeConfig;
   type: CollegeType;
   createdById?: string;
@@ -39,6 +41,7 @@ export interface CreateCollegeInput {
 export interface UpdateCollegeInput {
   slug?: string;
   name?: Record<string, any>;
+  description?: Record<string, any>;
   config?: CollegeConfig;
   type?: CollegeType;
   createdById?: string;
@@ -50,6 +53,7 @@ export interface CollegeResponse {
   id: string;
   slug: string;
   name: Record<string, any>;
+  description?: Record<string, any>;
   config?: CollegeConfig;
   type: CollegeType;
   createdById?: string;

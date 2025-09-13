@@ -36,6 +36,7 @@ import type { College, CreateCollegeInput } from '@/types/college';
 import { useCurrentUser } from '@/contexts/userContext';
 import Image from 'next/image';
 import { CollegeType } from '@/types';
+import { Textarea } from '@/components/ui/textarea';
 
 const collegeSchema = z.object({
   name: z.object({
@@ -47,6 +48,10 @@ const collegeSchema = z.object({
       .string()
       .min(1, 'Name is required')
       .max(100, 'Name must be less than 100 characters'),
+  }),
+  description: z.object({
+    en: z.string().optional(),
+    ar: z.string().optional(),
   }),
   slug: z
     .string()
@@ -99,6 +104,10 @@ export function CollegeFormDialog({
         en: '',
         ar: '',
       },
+      description: {
+        en: '',
+        ar: '',
+      },
       slug: '',
       type: CollegeType.TECHNICAL,
       theme: '{}',
@@ -114,6 +123,7 @@ export function CollegeFormDialog({
       if (college) {
         form.reset({
           name: college.name,
+          description: college.description,
           slug: college.slug,
           type: college.type,
           universityId: college.universityId || '',
@@ -127,6 +137,10 @@ export function CollegeFormDialog({
           name: {
             ar: '',
             en: '',
+          },
+          description: {
+            en: '',
+            ar: '',
           },
           slug: '',
           type: CollegeType.TECHNICAL,
@@ -256,6 +270,7 @@ export function CollegeFormDialog({
     try {
       const submitData = {
         name: data.name,
+        description: data.description,
         slug: data.slug,
         type: data.type,
         config: {
@@ -413,6 +428,42 @@ export function CollegeFormDialog({
                       <Input
                         value={field.value?.ar || ''}
                         placeholder='e.g., كلية الهندسة'
+                        onChange={e => {
+                          field.onChange({
+                            ...field.value,
+                            ar: e.target.value,
+                          });
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='description'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>College Description (English)</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        value={field.value?.en || ''}
+                        placeholder='e.g., College description'
+                        onChange={e => {
+                          field.onChange({
+                            ...field.value,
+                            en: e.target.value,
+                          });
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                    <FormLabel>College Description (Arabic)</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        value={field.value?.ar || ''}
+                        placeholder='e.g., وصف الكلية'
                         onChange={e => {
                           field.onChange({
                             ...field.value,

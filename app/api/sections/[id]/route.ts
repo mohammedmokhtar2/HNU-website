@@ -39,8 +39,7 @@ export const PATCH = withAuditLog(
     try {
       const { id } = await params;
       const body = await req.json();
-      const { type, title, content, mediaUrl, order, collageId, universityId } =
-        body;
+      const { type, content, order, collageId, universityId } = body;
 
       const existingSection = await db.section.findUnique({
         where: { id },
@@ -57,9 +56,7 @@ export const PATCH = withAuditLog(
         where: { id },
         data: {
           type: type !== undefined ? type : undefined,
-          title: title !== undefined ? title : undefined,
           content: content !== undefined ? content : undefined,
-          mediaUrl: mediaUrl !== undefined ? mediaUrl : undefined,
           order: order !== undefined ? order : undefined,
           collageId: collageId !== undefined ? collageId : undefined,
           universityId: universityId !== undefined ? universityId : undefined,

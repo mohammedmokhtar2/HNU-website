@@ -32,7 +32,7 @@ enum SectionType {
   HEADER
   HERO
   ABOUT
-  COLLAGES
+  ACTIONS
   NUMBERS
   STUDENT_UNION
   EGYPT_STUDENT_GROUP
@@ -41,14 +41,12 @@ enum SectionType {
 }
 
 enum PageType {
-  HOME
   ABOUT
   CONTACT
-  PRIVACY
-  TERMS
   BLOGS
   STUDENT_ACTIVITIES
   STUDENT_UNIONS
+  FOR_EGUPT_GROUP
   CUSTOM
 }
 
@@ -102,11 +100,12 @@ model University {
 }
 
 model College {
-  id     String      @id @default(cuid())
-  slug   String      @unique
-  name   Json
-  config Json? // for the logo and social media links
-  type   CollegeType
+  id          String      @id @default(cuid())
+  slug        String      @unique
+  name        Json
+  description Json?
+  config      Json? // for the logo and social media links
+  type        CollegeType
 
   User       User[]
   sections   Section[]

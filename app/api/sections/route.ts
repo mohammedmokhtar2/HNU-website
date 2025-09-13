@@ -30,12 +30,11 @@ export const POST = withAuditLog(
   async (req: Request) => {
     try {
       const body = await req.json();
-      const { type, title, content, mediaUrl, order, collageId, universityId } =
-        body;
+      const { type, content, order, collageId, universityId } = body;
 
-      if (!type || !title || !content) {
+      if (!type || !content) {
         return NextResponse.json(
-          { error: 'Type, title, and content are required' },
+          { error: 'Type and content are required' },
           { status: 400 }
         );
       }
@@ -51,9 +50,7 @@ export const POST = withAuditLog(
       const section = await db.section.create({
         data: {
           type,
-          title,
           content,
-          mediaUrl,
           order: order || 0,
           collageId,
           universityId,

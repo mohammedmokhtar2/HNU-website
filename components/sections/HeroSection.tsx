@@ -1,80 +1,33 @@
 'use client';
 import Image from 'next/image';
 import React, { useState, useRef } from 'react';
-// import { socialMediaLinks } from '@/data';
-// import { Facebook, Linkedin, Instagram, Twitter, Youtube } from 'lucide-react';
-// import { FaTelegram, FaTiktok } from 'react-icons/fa';
 import { useTranslations } from 'next-intl';
+import { Section, HeroContent } from '@/types/section';
 
-export interface HeroSectionProps {
-  title: {
-    ar: string;
-    en: string;
-  };
-  description: {
-    ar: string;
-    en: string;
-  };
-  video: string;
-  image?: string;
-  local: string;
+interface HeroSectionProps {
+  section: Section;
+  locale: string;
 }
 
-const HeroSection = ({
-  title,
-  description,
-  video,
-  image,
-  local,
-}: HeroSectionProps) => {
-  // const [isMuted, setIsMuted] = useState(true);
+export function HeroSection({ section, locale }: HeroSectionProps) {
+  // Cast content to HeroContent type for type safety
+  const content = section.content as HeroContent;
   const [mediaType, setMediaType] = useState<'video' | 'image'>('video');
   const [isTransitioning, setIsTransitioning] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
-  // const { facebook, linkedin, instagram, twitter, youtube, tiktok, telegram } =
-  // socialMediaLinks;
 
-  // const socialLinks = [
-  //   {
-  //     name: 'Facebook',
-  //     url: facebook,
-  //     icon: Facebook,
-  //     color: 'hover:bg-blue-600',
-  //   },
-  //   {
-  //     name: 'LinkedIn',
-  //     url: linkedin,
-  //     icon: Linkedin,
-  //     color: 'hover:bg-blue-700',
-  //   },
-  //   {
-  //     name: 'Instagram',
-  //     url: instagram,
-  //     icon: Instagram,
-  //     color: 'hover:bg-pink-600',
-  //   },
-  //   {
-  //     name: 'Twitter',
-  //     url: twitter,
-  //     icon: Twitter,
-  //     color: 'hover:bg-blue-400',
-  //   },
-  //   { name: 'YouTube', url: youtube, icon: Youtube, color: 'hover:bg-red-600' },
-  //   { name: 'TikTok', url: tiktok, icon: FaTiktok, color: 'hover:bg-black' },
-  //   {
-  //     name: 'Telegram',
-  //     url: telegram,
-  //     icon: FaTelegram,
-  //     color: 'hover:bg-blue-500',
-  //   },
-  // ].filter(link => link.url);
-
-  // const toggleMute = () => {
-  //   if (videoRef.current) {
-  //     videoRef.current.muted = !isMuted;
-  //     setIsMuted(!isMuted);
-  //   }
-  // };
+  const heroData = {
+    title: {
+      en: content.title?.en || 'Welcome',
+      ar: content.title?.ar || 'مرحباً',
+    },
+    description: {
+      en: content.content?.en || 'Welcome to our website',
+      ar: content.content?.ar || 'مرحباً بكم في موقعنا',
+    },
+    imageUrl: content.imageUrl || '',
+    videoUrl: content.videoUrl || '',
+  };
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -99,8 +52,8 @@ const HeroSection = ({
     }, 300);
   };
 
-  const canSwitchToVideo = video && image;
-  const canSwitchToImage = video && image;
+  const canSwitchToVideo = heroData.videoUrl && heroData.imageUrl;
+  const canSwitchToImage = heroData.videoUrl && heroData.imageUrl;
   const heroT = useTranslations('hero');
 
   return (
@@ -110,10 +63,10 @@ const HeroSection = ({
     >
       {/* Background Video/Image */}
       <div className='absolute inset-0 w-full h-full'>
-        {video && mediaType === 'video' && (
+        {heroData.videoUrl && mediaType === 'video' && (
           <video
             ref={videoRef}
-            src={video}
+            src={heroData.videoUrl}
             autoPlay
             loop
             muted={true}
@@ -123,9 +76,9 @@ const HeroSection = ({
             }`}
           />
         )}
-        {image && mediaType === 'image' && (
+        {heroData.imageUrl && mediaType === 'image' && (
           <Image
-            src={image}
+            src={heroData.imageUrl}
             alt='Hero background'
             fill
             className={`object-cover transition-all duration-500 ${
@@ -185,34 +138,6 @@ const HeroSection = ({
         </div>
       )}
 
-      {/* Mute/Unmute Button - Only show when video is active */}
-      {/* {video && mediaType === 'video' && (
-        <button
-          onClick={toggleMute}
-          className='absolute top-6 right-6 z-20 p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 group'
-          style={{ marginTop: canSwitchToVideo && canSwitchToImage ? '200px' : '0' }}
-          aria-label={isMuted ? 'Unmute video' : 'Mute video'}
-        >
-          {isMuted ? (
-            <svg
-              className='w-6 h-6 text-white'
-              fill='currentColor'
-              viewBox='0 0 24 24'
-            >
-              <path d='M16.5 12c0-1.77-1.02-3.31-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z' />
-            </svg>
-          ) : (
-            <svg
-              className='w-6 h-6 text-white'
-              fill='currentColor'
-              viewBox='0 0 24 24'
-            >
-              <path d='M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.31-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z' />
-            </svg>
-          )}
-        </button>
-      )} */}
-
       {/* Overlay */}
       <div className='absolute inset-0 bg-black/30' />
 
@@ -221,25 +146,28 @@ const HeroSection = ({
         className={`relative top-60 z-10 w-full h-full flex items-end px-4 sm:px-6 lg:px-8 justify-start`}
       >
         <div
-          className={`max-w-2xl ${local === 'ar' ? 'text-right' : 'text-left'}`}
+          className={`max-w-2xl ${locale === 'ar' ? 'text-right' : 'text-left'}`}
         >
           {/* Main Title */}
           <h1
-            className={`text-2xl sm:text-4xl lg:text-6xl xl:text-7xl font-bold text-white mb-6 leading-tight animate-fade-in-up ${local === 'ar' ? 'text-right' : 'text-left'}`}
+            className={`text-2xl sm:text-4xl lg:text-6xl xl:text-7xl font-bold text-white mb-6 leading-tight animate-fade-in-up ${locale === 'ar' ? 'text-right' : 'text-left'}`}
           >
-            {local === 'ar' ? title.ar : title.en}
+            {heroData.title[locale as keyof typeof heroData.title] ||
+              heroData.title.en}
           </h1>
 
           {/* Description */}
           <p
-            className={`text-lg sm:text-xl lg:text-2xl text-white/90 mb-8 leading-relaxed animate-fade-in-up animation-delay-200 ${local === 'ar' ? 'text-right' : 'text-left'}`}
+            className={`text-lg sm:text-xl lg:text-2xl text-white/90 mb-8 leading-relaxed animate-fade-in-up animation-delay-200 ${locale === 'ar' ? 'text-right' : 'text-left'}`}
           >
-            {local === 'ar' ? description.ar : description.en}
+            {heroData.description[
+              locale as keyof typeof heroData.description
+            ] || heroData.description.en}
           </p>
 
           {/* Call to Action Buttons */}
           <div
-            className={`flex flex-col ${local === 'ar' ? 'justify-end' : 'justify-start'} sm:flex-row gap-4 animate-fade-in-up animation-delay-400 ${local === 'ar' ? 'sm:flex-row-reverse' : 'sm:flex-row'}`}
+            className={`flex flex-col ${locale === 'ar' ? 'justify-end' : 'justify-start'} sm:flex-row gap-4 animate-fade-in-up animation-delay-400 ${locale === 'ar' ? 'sm:flex-row-reverse' : 'sm:flex-row'}`}
           >
             <button
               onClick={() => scrollToSection('programs')}
@@ -262,6 +190,4 @@ const HeroSection = ({
       <div className='absolute bottom-20 right-10 w-16 h-16 border border-white/20 rounded-full animate-pulse'></div>
     </section>
   );
-};
-
-export default HeroSection;
+}

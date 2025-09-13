@@ -1,23 +1,72 @@
+'use client';
+
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { Star, Sparkles, Play } from 'lucide-react';
 import { VideoPlayer } from '@/components/ui';
+import { useUniversity } from '@/contexts/UniversityContext';
+import { SectionType } from '@/types/enums';
+import { AboutContent } from '@/types/section';
+import { useLocale } from 'next-intl';
 
-export interface AboutSectionProps {
-  image?: string;
-  backgroundImage?: string;
-  titleClassName?: string;
-  local: string;
+interface AboutSectionProps {
+  sectionId?: string;
 }
 
-function AboutSection({
-  image,
-  backgroundImage,
-  titleClassName,
-  local,
-}: AboutSectionProps) {
+export function AboutSection({ sectionId }: AboutSectionProps) {
+  const { sections, loading, error } = useUniversity();
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const locale = useLocale();
+  // Find the about section
+  const aboutSection = sections.find(
+    s => s.type === SectionType.ABOUT && (!sectionId || s.id === sectionId)
+  );
+
+  if (loading) {
+    return (
+      <section className='py-24 relative overflow-hidden w-full min-h-screen flex items-center justify-center'>
+        <div className='text-center'>
+          <div className='animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto'></div>
+          <p className='mt-4 text-gray-600'>Loading...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (error || !aboutSection) {
+    return (
+      <section className='py-24 relative overflow-hidden w-full min-h-screen flex items-center justify-center'>
+        <div className='text-center'>
+          <p className='text-red-600'>Error loading about section</p>
+        </div>
+      </section>
+    );
+  }
+
+  // Cast content to AboutContent type for type safety
+  const content = aboutSection.content as AboutContent;
+
+  const aboutData = {
+    title: {
+      en: content.title?.en || 'About Us',
+      ar: content.title?.ar || 'معلومات عنا',
+    },
+    image: content.backgroundImage || '/home.jpeg',
+    subtitle: {
+      en: content.subtitle?.en || 'Learn More About Us',
+      ar: content.subtitle?.ar || 'تعرف علينا أكثر',
+    },
+    description: {
+      en:
+        content.content?.en ||
+        'Our university is a leading educational institution designed to lead innovation and achieve excellence.',
+      ar:
+        content.content?.ar ||
+        'جامعتنا هي مؤسسة تعليمية رائدة مصممة لقيادة الابتكار وتحقيق التميز.',
+    },
+    videoUrl: content.videoUrl || '',
+  };
 
   return (
     <>
@@ -39,7 +88,7 @@ function AboutSection({
             onClick={e => e.stopPropagation()}
           >
             <VideoPlayer
-              src='https://8rqmsnrudm.ufs.sh/f/FfKyQhLpRgXUcOPOo7TpnVFGNr3iK6kg5Of4PUbcX7zRDadw'
+              src={aboutData.videoUrl}
               poster='/home.jpeg'
               className='w-full h-full rounded-lg'
               controls={true}
@@ -68,8 +117,8 @@ function AboutSection({
         {/* Image Background */}
         <div className='absolute inset-0 w-full h-full'>
           <Image
-            src='/over.png'
-            alt={local === 'ar' ? 'خلفية الجامعة' : 'University Background'}
+            src={aboutData.image || '/home.jpeg'}
+            alt={locale === 'ar' ? 'خلفية الجامعة' : 'University Background'}
             fill
             className='object-cover'
             priority
@@ -95,9 +144,9 @@ function AboutSection({
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.8 }}
                 viewport={{ once: true }}
-                className={`text-2xl sm:text-4xl lg:text-6xl font-bold mb-8 leading-tight ${titleClassName || ''} text-white`}
+                className={`text-2xl sm:text-4xl lg:text-6xl font-bold mb-8 leading-tight  text-white`}
               >
-                {local === 'ar' ? 'عن جامعتنا' : 'About Us'}
+                {aboutData.title[locale as keyof typeof aboutData.title]}
               </motion.h2>
 
               {/* Description Paragraphs */}
@@ -109,15 +158,11 @@ function AboutSection({
                 className='space-y-6 mb-8'
               >
                 <p className='text-lg sm:text-xl text-white leading-relaxed'>
-                  {local === 'ar'
-                    ? 'جامعتنا هي مؤسسة تعليمية رائدة مصممة لقيادة الابتكار وتحقيق التميز في أربعة أبعاد أساسية: التعلم المتقدم، والبحث العلمي المبتكر، والابتكار وريادة الأعمال، والتأثير المجتمعي الإيجابي.'
-                    : 'Our university is a leading educational institution designed to lead innovation and achieve excellence in four fundamental dimensions: Advanced Learning, Innovative Research, Innovation and Entrepreneurship, and Positive Community Impact.'}
-                </p>
-
-                <p className='text-lg sm:text-xl text-white leading-relaxed'>
-                  {local === 'ar'
-                    ? 'نتميز ببرامجنا الفريدة القائمة على التكنولوجيا والأعمال، ومراكزنا البحثية المتطورة، وتركيزنا على الابتكار وريادة الأعمال لمعالجة التحديات الحرجة في مجتمعنا، من خلال البحث التطبيقي المتقدم والشراكات الاستراتيجية.'
-                    : 'We feature unique technology and business-based programs, advanced research centers, and focus on innovation and entrepreneurship to address critical challenges in our society through cutting-edge applied research and strategic partnerships.'}
+                  {
+                    aboutData.description[
+                      locale as keyof typeof aboutData.description
+                    ]
+                  }
                 </p>
               </motion.div>
             </motion.div>
@@ -135,9 +180,9 @@ function AboutSection({
                 {/* Background Image/Video */}
                 <div className='relative h-[500px] sm:h-[600px] w-full'>
                   <Image
-                    src={image || '/home.jpeg'}
+                    src={aboutData.image || '/home.jpeg'}
                     alt={
-                      local === 'ar' ? 'طلاب الجامعة' : 'University Students'
+                      locale === 'ar' ? 'طلاب الجامعة' : 'University Students'
                     }
                     fill
                     className='object-cover'
@@ -174,16 +219,16 @@ function AboutSection({
                         <div className='flex items-center gap-3 mb-2'>
                           <div className='w-3 h-3 bg-blue-500 rounded-full animate-pulse'></div>
                           <span className='text-white/90 text-sm font-medium'>
-                            {local === 'ar' ? 'فيديو جديد' : 'New Video'}
+                            {locale === 'ar' ? 'فيديو جديد' : 'New Video'}
                           </span>
                         </div>
                         <h4 className='text-white font-semibold text-lg'>
-                          {local === 'ar'
+                          {locale === 'ar'
                             ? 'اكتشف جامعتنا'
                             : 'Discover Our University'}
                         </h4>
                         <p className='text-white/80 text-sm'>
-                          {local === 'ar'
+                          {locale === 'ar'
                             ? 'جولة افتراضية في الحرم الجامعي'
                             : 'Virtual Campus Tour'}
                         </p>
@@ -230,5 +275,3 @@ function AboutSection({
     </>
   );
 }
-
-export default AboutSection;

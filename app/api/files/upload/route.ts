@@ -8,17 +8,50 @@ import {
 import { z } from 'zod';
 
 // Validation schema for upload request
-const uploadSchema = z.object({
-  folder: z.string().min(1, 'Folder name is required'),
-  public_id: z.string().optional(),
-  tags: z.array(z.string()).optional(),
-  context: z.record(z.string(), z.string()).optional(),
-  resource_type: z
-    .enum(['image', 'video', 'raw', 'auto'])
-    .optional()
-    .default('auto'),
-  transformation: z.record(z.string(), z.any()).optional(),
-});
+const uploadSchema = z
+  .object({
+    folder: z.string().min(1, 'Folder name is required'),
+    public_id: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+    context: z.record(z.string(), z.string()).optional(),
+    resource_type: z
+      .enum(['image', 'video', 'raw', 'auto'])
+      .optional()
+      .default('auto'),
+    transformation: z.record(z.string(), z.any()).optional(),
+  })
+  .refine(
+    data => {
+      // Ensure no quality-reducing transformations are applied
+      if (
+        data.transformation &&
+        typeof data.transformation === 'object' &&
+        Object.keys(data.transformation).length > 0
+      ) {
+        const forbiddenKeys = [
+          'quality',
+          'q',
+          'width',
+          'height',
+          'crop',
+          'gravity',
+          'format',
+        ];
+        const hasForbiddenTransform = Object.keys(data.transformation).some(
+          key =>
+            forbiddenKeys.some(forbidden =>
+              key.toLowerCase().includes(forbidden.toLowerCase())
+            )
+        );
+        return !hasForbiddenTransform;
+      }
+      return true;
+    },
+    {
+      message:
+        'Transformations that affect quality, dimensions, or cropping are not allowed. Files will be uploaded in their original quality and dimensions.',
+    }
+  );
 
 export async function POST(request: NextRequest) {
   try {
@@ -84,9 +117,10 @@ export async function POST(request: NextRequest) {
     let parsedTransformation: Record<string, any> | undefined;
 
     try {
-      if (tags) parsedTags = JSON.parse(tags);
-      if (context) parsedContext = JSON.parse(context);
-      if (transformation) parsedTransformation = JSON.parse(transformation);
+      if (tags && tags.trim()) parsedTags = JSON.parse(tags);
+      if (context && context.trim()) parsedContext = JSON.parse(context);
+      if (transformation && transformation.trim())
+        parsedTransformation = JSON.parse(transformation);
     } catch (error) {
       return NextResponse.json<UploadFileResponse>(
         {
@@ -123,7 +157,8 @@ export async function POST(request: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Upload to Cloudinary
+    // Upload to Cloudinary with quality preservation settings
+    // This ensures images and videos are uploaded without any quality loss or cropping
     const uploadResult = await new Promise((resolve, reject) => {
       cloudinary.uploader
         .upload_stream(
@@ -133,7 +168,10 @@ export async function POST(request: NextRequest) {
             tags: validatedData.tags,
             context: validatedData.context,
             resource_type: validatedData.resource_type,
-            transformation: validatedData.transformation,
+            // Preserve original quality and dimensions
+            quality: 'auto:best', // Use best quality available
+            // Don't apply any transformations that could affect quality
+            transformation: validatedData.transformation || {},
           },
           (error, result) => {
             if (error) reject(error);

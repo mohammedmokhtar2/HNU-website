@@ -6,7 +6,7 @@ export const POST = withAuditLog(
   async (req: Request) => {
     try {
       const body = await req.json();
-      const { name, slug, type, config, createdById } = body;
+      const { name, slug, type, config, createdById, description } = body;
 
       if (!name || !slug || !type) {
         return NextResponse.json(
@@ -31,6 +31,7 @@ export const POST = withAuditLog(
           name,
           slug,
           type,
+          description,
           config: config || {},
           createdById: createdById || null,
           // universityId: universityId || null,

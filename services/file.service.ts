@@ -7,8 +7,7 @@ import {
   DeleteFileResponse,
   CloudinaryFile,
 } from '@/types/file';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
+import { api } from '@/lib/axios';
 
 export class FileService {
   /**
@@ -28,12 +27,13 @@ export class FileService {
       if (input.transformation)
         formData.append('transformation', JSON.stringify(input.transformation));
 
-      const response = await fetch(`${API_BASE_URL}/api/files/upload`, {
-        method: 'POST',
-        body: formData,
+      const response = await api.post('/files/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
 
-      const result = await response.json();
+      const result = response.data;
 
       if (!result.success) {
         return {
@@ -46,10 +46,10 @@ export class FileService {
         success: true,
         data: result.data,
       };
-    } catch (error) {
+    } catch (error: any) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Upload failed',
+        error: error.response?.data?.error || error.message || 'Upload failed',
       };
     }
   }
@@ -61,19 +61,15 @@ export class FileService {
     input: ListFilesInput = {}
   ): Promise<ListFilesResponse> {
     try {
-      const params = new URLSearchParams();
-      if (input.folder) params.append('folder', input.folder);
-      if (input.resource_type)
-        params.append('resource_type', input.resource_type);
-      if (input.max_results)
-        params.append('max_results', input.max_results.toString());
-      if (input.next_cursor) params.append('next_cursor', input.next_cursor);
-      if (input.tags) params.append('tags', input.tags.join(','));
+      const params: any = {};
+      if (input.folder) params.folder = input.folder;
+      if (input.resource_type) params.resource_type = input.resource_type;
+      if (input.max_results) params.max_results = input.max_results;
+      if (input.next_cursor) params.next_cursor = input.next_cursor;
+      if (input.tags) params.tags = input.tags.join(',');
 
-      const response = await fetch(
-        `${API_BASE_URL}/api/files/list?${params.toString()}`
-      );
-      const result = await response.json();
+      const response = await api.get('/files/list', { params });
+      const result = response.data;
 
       if (!result.success) {
         return {
@@ -86,10 +82,13 @@ export class FileService {
         success: true,
         data: result.data,
       };
-    } catch (error) {
+    } catch (error: any) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to list files',
+        error:
+          error.response?.data?.error ||
+          error.message ||
+          'Failed to list files',
       };
     }
   }
@@ -99,19 +98,11 @@ export class FileService {
    */
   static async deleteFile(input: DeleteFileInput): Promise<DeleteFileResponse> {
     try {
-      const params = new URLSearchParams();
-      params.append('public_id', input.public_id);
-      if (input.resource_type)
-        params.append('resource_type', input.resource_type);
+      const params: any = { public_id: input.public_id };
+      if (input.resource_type) params.resource_type = input.resource_type;
 
-      const response = await fetch(
-        `${API_BASE_URL}/api/files/delete?${params.toString()}`,
-        {
-          method: 'DELETE',
-        }
-      );
-
-      const result = await response.json();
+      const response = await api.delete('/files/delete', { params });
+      const result = response.data;
 
       if (!result.success) {
         return {
@@ -124,10 +115,13 @@ export class FileService {
         success: true,
         data: result.data,
       };
-    } catch (error) {
+    } catch (error: any) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to delete file',
+        error:
+          error.response?.data?.error ||
+          error.message ||
+          'Failed to delete file',
       };
     }
   }
@@ -137,17 +131,19 @@ export class FileService {
    */
   static async getUsage(): Promise<any> {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/files/usage`);
-      const result = await response.json();
+      const response = await api.get('/files/usage');
+      const result = response.data;
 
       if (!result.success) {
         throw new Error(result.error || 'Failed to fetch usage data');
       }
 
       return result.data;
-    } catch (error) {
+    } catch (error: any) {
       throw new Error(
-        error instanceof Error ? error.message : 'Failed to fetch usage data'
+        error.response?.data?.error ||
+          error.message ||
+          'Failed to fetch usage data'
       );
     }
   }

@@ -10,8 +10,6 @@ export const heroSection = {
   image: '/home.jpeg',
   video:
     'https://8rqmsnrudm.ufs.sh/f/FfKyQhLpRgXUrLNAVSlWbHxLQDVq04YRpht8ku3Iw6dC7AFM',
-  logo: '/logo.png',
-  noBgLogo: '/logo2.png',
 };
 
 export const aboutSection = {

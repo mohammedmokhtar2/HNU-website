@@ -119,7 +119,6 @@ const navigationSections: NavSection[] = [
         icon: Building2,
         description: 'University configuration and settings',
         roles: ['OWNER'],
-        badge: 'Soon',
       },
       {
         title: 'Collage Studio',
