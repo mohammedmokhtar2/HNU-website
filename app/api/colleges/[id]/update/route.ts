@@ -13,7 +13,7 @@ export const PUT = withAuditLog(
     try {
       const { id } = await params;
       const body = await req.json();
-      const { name, slug, type, config, universityId } = body;
+      const { name, slug, type, config, description, universityId } = body;
 
       const existingCollege = await db.college.findUnique({
         where: { id },
@@ -47,6 +47,7 @@ export const PUT = withAuditLog(
           slug: slug !== undefined ? slug : undefined,
           type: type !== undefined ? type : undefined,
           config: config !== undefined ? config : undefined,
+          description: description !== undefined ? description : undefined,
           // universityId: universityId !== undefined ? universityId : undefined,
         },
         include: {

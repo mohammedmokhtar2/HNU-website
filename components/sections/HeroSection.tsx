@@ -167,7 +167,7 @@ export function HeroSection({ section, locale }: HeroSectionProps) {
 
           {/* Call to Action Buttons */}
           <div
-            className={`flex flex-col ${locale === 'ar' ? 'justify-end' : 'justify-start'} sm:flex-row gap-4 animate-fade-in-up animation-delay-400 ${locale === 'ar' ? 'sm:flex-row-reverse' : 'sm:flex-row'}`}
+            className={`flex flex-col ${locale === 'ar' ? 'justify-end' : 'justify-start'} sm:flex-row gap-4 animate-fade-in-up animation-delay-400 ${locale === 'ar' ? 'sm:flex-row-reverse' : 'sm:flex-row'} mb-26`}
           >
             <button
               onClick={() => scrollToSection('programs')}

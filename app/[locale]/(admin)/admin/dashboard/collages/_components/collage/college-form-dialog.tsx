@@ -62,9 +62,6 @@ const collegeSchema = z.object({
       'Slug can only contain lowercase letters, numbers, and hyphens'
     ),
   type: z.enum(CollegeType),
-  theme: z.string().optional(),
-  galleryImages: z.string().optional(),
-  faq: z.string().optional(),
   universityId: z.string().optional(),
   logoUrl: z.string().optional(),
 });
@@ -110,9 +107,6 @@ export function CollegeFormDialog({
       },
       slug: '',
       type: CollegeType.TECHNICAL,
-      theme: '{}',
-      galleryImages: '[]',
-      faq: '[]',
       universityId: university?.id || '',
       logoUrl: logoUrl || '',
     },
@@ -144,9 +138,6 @@ export function CollegeFormDialog({
           },
           slug: '',
           type: CollegeType.TECHNICAL,
-          theme: '{}',
-          galleryImages: '[]',
-          faq: '[]',
           universityId: university?.id || '',
           logoUrl: '',
         });
@@ -274,11 +265,6 @@ export function CollegeFormDialog({
         slug: data.slug,
         type: data.type,
         config: {
-          theme: data.theme ? JSON.parse(data.theme) : {},
-          galleryImages: data.galleryImages
-            ? JSON.parse(data.galleryImages)
-            : [],
-          faq: data.faq ? JSON.parse(data.faq) : [],
           logoUrl: data.logoUrl,
         },
         createdById: user?.id, // Always use the current user's ID

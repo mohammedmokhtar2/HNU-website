@@ -89,12 +89,12 @@ export default function ChatWidget() {
         setShowTooltip(true);
         setCurrentTooltipIndex(prev => (prev + 1) % tooltips.length);
 
-        // Hide tooltip after 4 seconds
+        // Hide tooltip after 10 seconds
         setTimeout(() => {
           setShowTooltip(false);
-        }, 1000);
+        }, 10000);
       }
-    }, 6000); // Show new tooltip every 6 seconds
+    }, 6000); // Show new tooltip every 10 seconds
   }, [isOpen, tooltips.length]);
 
   const stopTooltipCycle = useCallback(() => {
@@ -142,6 +142,7 @@ export default function ChatWidget() {
   return (
     <div>
       {/* Enhanced Floating Action Button */}
+
       <div
         className={`fixed bottom-6 z-50 transition-all duration-500 ease-out ${isOpen
           ? 'opacity-0 scale-0 pointer-events-none'

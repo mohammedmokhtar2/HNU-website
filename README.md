@@ -369,38 +369,173 @@ This project is private and proprietary. All rights reserved by Helwan National 
 
 ### test the new cicid for vercel
 
-
 ```
 hnu-offical-website
 ├─ .prettierignore
 ├─ .prettierrc
 ├─ app
+│  ├─ api
+│  │  ├─ colleges
+│  │  │  ├─ create
+│  │  │  │  └─ route.ts
+│  │  │  ├─ route.ts
+│  │  │  ├─ slug
+│  │  │  │  └─ [slug]
+│  │  │  │     └─ route.ts
+│  │  │  └─ [id]
+│  │  │     ├─ delete
+│  │  │     │  └─ route.ts
+│  │  │     ├─ route.ts
+│  │  │     └─ update
+│  │  │        └─ route.ts
+│  │  ├─ files
+│  │  │  ├─ delete
+│  │  │  │  └─ route.ts
+│  │  │  ├─ list
+│  │  │  │  └─ route.ts
+│  │  │  ├─ upload
+│  │  │  │  └─ route.ts
+│  │  │  └─ usage
+│  │  │     └─ route.ts
+│  │  ├─ logs
+│  │  │  ├─ route.ts
+│  │  │  ├─ search
+│  │  │  │  └─ route.ts
+│  │  │  └─ stats
+│  │  │     └─ route.ts
+│  │  ├─ permission-templates
+│  │  │  └─ route.ts
+│  │  ├─ sections
+│  │  │  ├─ college
+│  │  │  │  └─ [collegeId]
+│  │  │  │     └─ route.ts
+│  │  │  ├─ reorder
+│  │  │  │  └─ route.ts
+│  │  │  ├─ route.ts
+│  │  │  ├─ university
+│  │  │  │  └─ [universityId]
+│  │  │  │     └─ route.ts
+│  │  │  └─ [id]
+│  │  │     └─ route.ts
+│  │  ├─ statistics
+│  │  │  ├─ route.ts
+│  │  │  └─ [id]
+│  │  │     └─ route.ts
+│  │  ├─ test-cors
+│  │  │  └─ route.ts
+│  │  ├─ university
+│  │  │  ├─ route.ts
+│  │  │  ├─ slug
+│  │  │  │  └─ [slug]
+│  │  │  │     └─ route.ts
+│  │  │  └─ [id]
+│  │  │     └─ route.ts
+│  │  └─ users
+│  │     ├─ all
+│  │     │  └─ route.ts
+│  │     ├─ clerk
+│  │     │  └─ [clerkId]
+│  │     │     └─ route.ts
+│  │     ├─ create
+│  │     │  └─ route.ts
+│  │     ├─ find-or-create
+│  │     │  └─ route.ts
+│  │     ├─ route.ts
+│  │     ├─ search
+│  │     │  └─ route.ts
+│  │     ├─ simple
+│  │     │  └─ route.ts
+│  │     ├─ superadmins
+│  │     │  └─ route.ts
+│  │     └─ [id]
+│  │        ├─ delete
+│  │        │  └─ route.ts
+│  │        ├─ move-to-collage
+│  │        │  └─ route.ts
+│  │        ├─ route.ts
+│  │        ├─ toggle-role
+│  │        │  └─ route.ts
+│  │        └─ update
+│  │           └─ route.ts
 │  ├─ favicon.ico
 │  ├─ layout.tsx
 │  ├─ not-found.tsx
 │  └─ [locale]
-│     ├─ collages
-│     │  ├─ page.tsx
-│     │  └─ [slug]
+│     ├─ (admin)
+│     │  ├─ admin
+│     │  │  ├─ dashboard
+│     │  │  │  ├─ collages
+│     │  │  │  │  ├─ page.tsx
+│     │  │  │  │  └─ _components
+│     │  │  │  │     └─ collage
+│     │  │  │  │        ├─ CollageCard.tsx
+│     │  │  │  │        ├─ college-form-dialog.tsx
+│     │  │  │  │        └─ delete-college-dialog.tsx
+│     │  │  │  └─ uni
+│     │  │  │     └─ page.tsx
+│     │  │  ├─ page.tsx
+│     │  │  ├─ profile
+│     │  │  │  ├─ page.tsx
+│     │  │  │  └─ _components
+│     │  │  │     └─ UserProfile.tsx
+│     │  │  └─ system
+│     │  │     ├─ logs
+│     │  │     │  └─ page.tsx
+│     │  │     ├─ storage
+│     │  │     │  └─ page.tsx
+│     │  │     └─ users
+│     │  │        └─ page.tsx
+│     │  ├─ layout.tsx
+│     │  └─ _Components
+│     │     ├─ admin-layout.tsx
+│     │     ├─ AdminAuthGuard.tsx
+│     │     ├─ header.tsx
+│     │     └─ sidebar.tsx
+│     ├─ (auth)
+│     │  ├─ login
+│     │  │  └─ [[...sign-in]]
+│     │  │     └─ page.tsx
+│     │  └─ sign-up
+│     │     └─ [[...sign-up]]
+│     │        └─ page.tsx
+│     ├─ (root)
+│     │  ├─ collages
+│     │  │  ├─ page.tsx
+│     │  │  └─ [slug]
+│     │  │     └─ page.tsx
+│     │  └─ soon
 │     │     └─ page.tsx
 │     ├─ globals.css
 │     ├─ layout.tsx
-│     ├─ page.tsx
-│     └─ soon
-│        └─ page.tsx
+│     └─ page.tsx
+├─ BRANCH_SUMMARY.md
 ├─ CHANGELOG.md
+├─ CLOUDINARY_USAGE_TRACKING.md
+├─ COLLAGE_DROPDOWN_IMPLEMENTATION.md
 ├─ components
+│  ├─ admin
+│  │  └─ SectionManager.tsx
+│  ├─ auth
+│  │  └─ AuthButton.tsx
+│  ├─ chat
+│  │  ├─ chat-widget.css
+│  │  └─ ChatWidget.tsx
+│  ├─ collages
 │  ├─ DecorativeWrapper.tsx
+│  ├─ file-manager
+│  │  ├─ FileDetailsDialog.tsx
+│  │  ├─ FileManager.tsx
+│  │  └─ UploadDialog.tsx
 │  ├─ header.tsx
 │  ├─ header2.tsx
 │  ├─ home
 │  │  ├─ aboutSection.tsx
+│  │  ├─ ContactUsSection.tsx
 │  │  ├─ ContentCard.tsx
 │  │  ├─ ExpandableContentCard.tsx
 │  │  ├─ FAQ.tsx
 │  │  ├─ FcatsAndNumber.tsx
 │  │  ├─ heroSection.tsx
-│  │  ├─ MediaCenter.tsx
 │  │  ├─ programsSection.tsx
 │  │  ├─ slider.tsx
 │  │  ├─ TopEvents.tsx
@@ -410,31 +545,74 @@ hnu-offical-website
 │  │  ├─ dockSocialMediaLinks.tsx
 │  │  ├─ footer.tsx
 │  │  ├─ header3.tsx
-│  │  └─ MobileMenu.tsx
+│  │  ├─ MobileMenu.tsx
+│  │  └─ README.md
+│  ├─ providers
+│  │  └─ ClerkProvider.tsx
 │  ├─ Reveal.tsx
+│  ├─ sections
+│  │  ├─ AboutSection.tsx
+│  │  ├─ CollagesSection.tsx
+│  │  ├─ CustomSection.tsx
+│  │  ├─ DynamicHomePage.tsx
+│  │  ├─ HeroSection.tsx
+│  │  └─ SectionRenderer.tsx
 │  └─ ui
 │     ├─ accordion.tsx
+│     ├─ alert.tsx
+│     ├─ avatar.tsx
 │     ├─ badge.tsx
 │     ├─ button.tsx
 │     ├─ card.tsx
+│     ├─ checkbox.tsx
+│     ├─ collapsible.tsx
+│     ├─ context-menu.tsx
+│     ├─ dialog.tsx
 │     ├─ dropdown-menu.tsx
+│     ├─ error-boundary.tsx
+│     ├─ form.tsx
+│     ├─ image-selector-modal.tsx
 │     ├─ index.ts
+│     ├─ input.tsx
+│     ├─ label.tsx
+│     ├─ menu-builder.tsx
+│     ├─ scroll-area.tsx
+│     ├─ select.tsx
 │     ├─ separator.tsx
 │     ├─ sheet.tsx
-│     └─ video-player.tsx
+│     ├─ skeleton.tsx
+│     ├─ sonner.tsx
+│     ├─ switch.tsx
+│     ├─ table.tsx
+│     ├─ tabs.tsx
+│     ├─ textarea.tsx
+│     ├─ tooltip.tsx
+│     ├─ video-player.tsx
+│     └─ ViewModeToggle.tsx
 ├─ components.json
 ├─ contexts
+│  ├─ AdminAuthProvider.tsx
 │  ├─ index.ts
 │  ├─ providers.tsx
+│  ├─ QueryClientProvider.tsx
 │  ├─ README.md
-│  └─ theme-context.tsx
+│  ├─ UniversityContext.tsx
+│  ├─ userContext.tsx
+│  └─ ViewModeContext.tsx
 ├─ CONTRIBUTING.md
 ├─ data
 │  └─ index.ts
-├─ DEPLOYMENT.md
 ├─ eslint.config.mjs
-├─ GITHUB_SETUP.md
 ├─ hooks
+│  ├─ use-auth.ts
+│  ├─ use-bot.ts
+│  ├─ use-cloudinary-usage.ts
+│  ├─ use-file-queries.ts
+│  ├─ use-file-upload.ts
+│  ├─ use-loading-state.ts
+│  ├─ use-performance.ts
+│  ├─ use-sections.ts
+│  ├─ use-toast.ts
 │  └─ useOutsideClick.tsx
 ├─ i18n
 │  ├─ navigation.ts
@@ -442,10 +620,22 @@ hnu-offical-website
 │  └─ routing.ts
 ├─ i18n.ts
 ├─ lib
+│  ├─ auth-headers.ts
 │  ├─ axios.ts
+│  ├─ cloudinary-client.ts
+│  ├─ cloudinary-server.ts
+│  ├─ cloudinary.ts
+│  ├─ cors.ts
+│  ├─ db.ts
+│  ├─ middleware
+│  │  ├─ autoAuditLog.ts
+│  │  ├─ autoWrapRoutes.ts
+│  │  ├─ globalAuditMiddleware.ts
+│  │  ├─ README.md
+│  │  ├─ routeWrapper.ts
+│  │  └─ withAuditLog.ts
+│  ├─ server-axios.ts
 │  └─ utils.ts
-├─ Makefile
-├─ Makefile.help
 ├─ messages
 │  ├─ ar.json
 │  └─ en.json
@@ -453,10 +643,73 @@ hnu-offical-website
 ├─ next.config.ts
 ├─ package-lock.json
 ├─ package.json
+├─ PERFORMANCE_OPTIMIZATIONS.md
 ├─ postcss.config.mjs
+├─ prisma
+│  └─ schema.prisma
 ├─ PROJECT_SETUP_DOCUMENTATION.md
 ├─ public
 │  ├─ home.jpeg
+│  ├─ images
+│  │  ├─ Activity
+│  │  │  ├─ architectural and engineering projects.jpg
+│  │  │  ├─ engineering companies.jpg
+│  │  │  ├─ Engineering Innovation Challenge.jpg
+│  │  │  ├─ graduation-cap-earth-globe.jpg
+│  │  │  ├─ hack.jpg
+│  │  │  ├─ Research Symposium.jpg
+│  │  │  ├─ Robotics Club.jpg
+│  │  │  └─ Startup Incubator Program.jpg
+│  │  ├─ exec
+│  │  │  ├─ Bassel.png
+│  │  │  ├─ Habeba.png
+│  │  │  ├─ Habiba.png
+│  │  │  ├─ Mai.png
+│  │  │  ├─ Malak.png
+│  │  │  ├─ Mariam.png
+│  │  │  ├─ Mazen.png
+│  │  │  ├─ Mostafa.png
+│  │  │  ├─ Mounir.png
+│  │  │  ├─ Remah.png
+│  │  │  ├─ Roaa.png
+│  │  │  ├─ Salma.png
+│  │  │  ├─ Salma2.png
+│  │  │  ├─ Shaza.png
+│  │  │  ├─ Soha.png
+│  │  │  └─ youssef.png
+│  │  ├─ gallery
+│  │  │  ├─ 1.jpg
+│  │  │  ├─ 2.jpg
+│  │  │  ├─ 3.jpg
+│  │  │  ├─ 4.jpg
+│  │  │  ├─ 5.jpg
+│  │  │  ├─ 6.jpg
+│  │  │  ├─ 7.jpg
+│  │  │  ├─ 8.jpg
+│  │  │  └─ 9.jpg
+│  │  ├─ Logos
+│  │  │  ├─ home.jpeg
+│  │  │  ├─ logo-hnu-web2.png
+│  │  │  ├─ logossss.png
+│  │  │  ├─ new_logo.png
+│  │  │  ├─ over.png
+│  │  │  ├─ president.jpeg
+│  │  │  └─ with_bg.jpg
+│  │  ├─ news
+│  │  │  ├─ 1.jpg
+│  │  │  ├─ 2.jpg
+│  │  │  ├─ 3.jpg
+│  │  │  └─ 4.jpg
+│  │  ├─ Placehold
+│  │  │  ├─ Campus.png
+│  │  │  ├─ Graduation.png
+│  │  │  ├─ Research.png
+│  │  │  └─ Student.png
+│  │  └─ programs
+│  │     ├─ Architecture.jpg
+│  │     ├─ Cybersecurity.jpg
+│  │     ├─ ISE.jpg
+│  │     └─ Mechatronics.jpg
 │  ├─ logo-hnu-web2.png
 │  ├─ logossss.png
 │  ├─ new_logo.png
@@ -465,7 +718,30 @@ hnu-offical-website
 │  └─ with_bg.jpg
 ├─ QUICK_REFERENCE.md
 ├─ README.md
+├─ services
+│  ├─ bot.service.ts
+│  ├─ collage.service.ts
+│  ├─ file.service.ts
+│  ├─ index.ts
+│  ├─ section.service.ts
+│  ├─ statistic.service.ts
+│  ├─ university.service.ts
+│  └─ user.service.ts
+├─ TOAST_IMPLEMENTATION.md
 ├─ tsconfig.json
-└─ VERSIONING.md
+├─ types
+│  ├─ audit.ts
+│  ├─ college.ts
+│  ├─ enums.ts
+│  ├─ file.ts
+│  ├─ index.ts
+│  ├─ page.ts
+│  ├─ permission.ts
+│  ├─ section.ts
+│  ├─ statistic.ts
+│  ├─ university.ts
+│  └─ user.ts
+└─ utils
+   └─ auditLogger.ts
 
 ```
