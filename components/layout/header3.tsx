@@ -145,7 +145,7 @@ function Header3({ navigationItems = [] }: HeaderData) {
                   variant={isScrolled ? 'default' : 'outline'}
                   size={isMobile ? 'sm' : 'lg'}
                   className={`rounded-lg border-white/30 text-white transition-all duration-300
-                    h-10 w-10 text-xs
+                    h-10 w-10 text-xs bg-transparent
                     ${isScrolled ? 'bg-slate-900 hover:bg-slate-900/80' : 'hover:bg-slate-900/80'}`}
                   aria-label={`Switch to ${currentLocale === 'en' ? 'Arabic' : 'English'}`}
                 >
@@ -168,7 +168,7 @@ function Header3({ navigationItems = [] }: HeaderData) {
                 variant={isScrolled ? 'default' : 'outline'}
                 size={isMobile ? 'sm' : 'lg'}
                 className={`rounded-lg border-white/30 text-white transition-all duration-300
-                  h-10 w-10 text-xs sm:text-sm
+                  h-10 w-10 text-xs sm:text-sm bg-transparent
                   ${isScrolled ? 'bg-slate-900 hover:bg-slate-900/80' : 'hover:bg-slate-900/80'}`}
                 aria-label='Open navigation menu'
                 aria-expanded={open}
