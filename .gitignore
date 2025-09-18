@@ -44,3 +44,24 @@ next-env.d.ts
 
 # clerk configuration (can include secrets)
 /.clerk/
+
+# Database files and migrations
+*.db
+*.sqlite
+*.sqlite3
+prisma/migrations/
+prisma/dev.db
+prisma/prod.db
+prisma/*.db
+.env.local
+.env.production
+.env.development
+
+# Database backup files
+*.dump
+*.sql
+*.backup
+
+# Logs
+*.log
+logs/

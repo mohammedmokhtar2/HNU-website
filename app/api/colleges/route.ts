@@ -8,6 +8,7 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get('type');
     const createdById = searchParams.get('createdById');
     const assignedToUserId = searchParams.get('assignedToUserId');
+    const universityId = searchParams.get('universityId');
 
     // Build where clause based on query parameters
     const whereClause: any = {};
@@ -26,6 +27,10 @@ export async function GET(request: NextRequest) {
           id: assignedToUserId,
         },
       };
+    }
+
+    if (universityId) {
+      whereClause.universityId = universityId;
     }
 
     const colleges = await db.college.findMany({

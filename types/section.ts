@@ -48,6 +48,28 @@ export interface EgyptStudentGroupContent {
   items: string[]; // Array of strings to be defined later
 }
 
+export interface OurMissionContent {
+  title: BaseContent;
+  description: BaseContent;
+  imageUrl: string;
+  buttonText: BaseContent;
+}
+
+export interface CollegesContent {
+  title: BaseContent;
+  subtitle: BaseContent;
+  displaySettings: {
+    showFees: boolean;
+    showStudentCount: boolean;
+    showProgramsCount: boolean;
+    showFacultyCount: boolean;
+  };
+  defaultFees?: {
+    ar: string;
+    en: string;
+  };
+}
+
 export interface CustomContent {
   [key: string]: any; // Flexible content for custom sections
 }
@@ -60,7 +82,9 @@ export type SectionContent =
   | { type: SectionType.NUMBERS; content: NumbersContent }
   | { type: SectionType.STUDENT_UNION; content: StudentUnionContent }
   | { type: SectionType.EGYPT_STUDENT_GROUP; content: EgyptStudentGroupContent }
+  | { type: SectionType.COLLEGES; content: CollegesContent }
   | { type: SectionType.HEADER; content: CustomContent }
+  | { type: SectionType.OUR_MISSION; content: OurMissionContent }
   | { type: SectionType.CUSTOM; content: CustomContent };
 
 export interface Section {
@@ -210,6 +234,21 @@ export function getContentForSectionType(type: SectionType): any {
         description: { ar: '', en: '' },
         items: [],
       } as EgyptStudentGroupContent;
+    case SectionType.COLLEGES:
+      return {
+        title: { ar: 'كلياتنا', en: 'Our Colleges' },
+        subtitle: {
+          ar: 'اكتشف مجموعة متنوعة من الكليات والتخصصات المتاحة في جامعتنا',
+          en: 'Discover the diverse range of colleges and specializations available at our university',
+        },
+        displaySettings: {
+          showFees: true,
+          showStudentCount: false,
+          showProgramsCount: true,
+          showFacultyCount: true,
+        },
+        defaultFees: { ar: '٥٠،٠٠٠ ج.م', en: '$2,500' },
+      } as CollegesContent;
     case SectionType.HEADER:
     case SectionType.CUSTOM:
       return {} as CustomContent;

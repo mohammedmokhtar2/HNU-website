@@ -33,6 +33,7 @@ enum SectionType {
   HERO
   ABOUT
   ACTIONS
+  OUR_MISSION
   NUMBERS
   STUDENT_UNION
   EGYPT_STUDENT_GROUP
@@ -106,6 +107,13 @@ model College {
   description Json?
   config      Json? // for the logo and social media links
   type        CollegeType
+  fees        Json? // University fees in different languages {"en": "EGP 80,000/yr", "ar": "٨٠٠٠٠ جنيه/سنة"}
+  
+  // College Statistics
+  studentsCount    Int? // Number of students enrolled
+  programsCount    Int? // Number of academic programs
+  facultyCount     Int? // Number of faculty members
+  establishedYear  Int? // Year the college was established
 
   User       User[]
   sections   Section[]

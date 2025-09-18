@@ -1,6 +1,7 @@
 // Export all providers
 export { Providers } from './providers';
 export { UniversityProvider, useUniversity } from './UniversityContext';
+export { CollegeProvider, useCollege } from './CollegeContext';
 
 // Export axios instance
 export { api } from '../lib/axios';

@@ -146,7 +146,7 @@ function Header3({ navigationItems = [] }: HeaderData) {
                   size={isMobile ? 'sm' : 'lg'}
                   className={`rounded-lg border-white/30 text-white transition-all duration-300
                     h-10 w-10 text-xs bg-transparent
-                    ${isScrolled ? 'bg-slate-900 hover:bg-slate-900/80' : 'hover:bg-slate-300/80'}`}
+                    ${isScrolled ? 'bg-slate-900 hover:bg-slate-900/80' : 'hover:bg-slate-200/80'}`}
                   aria-label={`Switch to ${currentLocale === 'en' ? 'Arabic' : 'English'}`}
                 >
                   {currentLocale === 'en' ? (
@@ -169,7 +169,7 @@ function Header3({ navigationItems = [] }: HeaderData) {
                 size={isMobile ? 'sm' : 'lg'}
                 className={`rounded-lg border-white/30 text-white transition-all duration-300
                   h-10 w-10 text-xs sm:text-sm bg-transparent
-                  ${isScrolled ? 'bg-slate-900 hover:bg-slate-900/80' : 'hover:bg-slate-300/80'}`}
+                  ${isScrolled ? 'bg-slate-900 hover:bg-slate-900/80' : 'hover:bg-slate-200/80'}`}
                 aria-label='Open navigation menu'
                 aria-expanded={open}
               >
@@ -224,7 +224,7 @@ function Header3({ navigationItems = [] }: HeaderData) {
             onClick={closeSidebar}
             variant='outline'
             size='lg'
-            className='h-10 w-32 text-xs border-white/30 text-white hover:bg-slate-300/80 transition-all duration-300 bg-transparent'
+            className='h-10 w-32 text-xs border-white/30 text-white hover:bg-slate-200/80 transition-all duration-300 bg-transparent'
             aria-label='Close navigation menu'
           >
             <span className='font-bold text-sm'>
@@ -328,7 +328,7 @@ function Header3({ navigationItems = [] }: HeaderData) {
               <Button
                 variant='outline'
                 size='sm'
-                className='border-white/30 text-white hover:bg-slate-300/80 transition-all duration-300 bg-transparent'
+                className='border-white/30 text-white hover:bg-slate-200/80 transition-all duration-300 bg-transparent'
                 aria-label={`Switch to ${
                   currentLocale === 'en' ? 'Arabic' : 'English'
                 }`}

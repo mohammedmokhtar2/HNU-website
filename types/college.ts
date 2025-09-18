@@ -14,6 +14,11 @@ export interface College {
   description?: Record<string, any>;
   config?: CollegeConfig; // JSON config for logo and social media links
   type: CollegeType;
+  fees?: Record<string, string>; // University fees in different currencies/languages {"en": "$5000", "ar": "٥٠٠٠ ر.س"}
+  studentsCount?: number; // Number of students enrolled
+  programsCount?: number; // Number of academic programs
+  facultyCount?: number; // Number of faculty members
+  establishedYear?: number; // Year the college was established
   User?: User[]; // Will be properly typed when imported
   sections?: Section[]; // Will be properly typed when imported
   statistics?: Statistic[]; // Will be properly typed when imported

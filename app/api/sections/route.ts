@@ -1,10 +1,31 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuditLog } from '@/lib/middleware/withAuditLog';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const universityId = searchParams.get('universityId');
+    const collegeId = searchParams.get('collegeId');
+    const type = searchParams.get('type');
+
+    // Build where clause based on query parameters
+    const whereClause: any = {};
+
+    if (universityId) {
+      whereClause.universityId = universityId;
+    }
+
+    if (collegeId) {
+      whereClause.collageId = collegeId;
+    }
+
+    if (type) {
+      whereClause.type = type;
+    }
+
     const sections = await db.section.findMany({
+      where: whereClause,
       orderBy: [
         { universityId: 'asc' },
         { collageId: 'asc' },

@@ -6,7 +6,19 @@ export const POST = withAuditLog(
   async (req: Request) => {
     try {
       const body = await req.json();
-      const { name, slug, type, config, createdById, description } = body;
+      const {
+        name,
+        slug,
+        type,
+        config,
+        createdById,
+        description,
+        fees,
+        studentsCount,
+        programsCount,
+        facultyCount,
+        establishedYear,
+      } = body;
 
       if (!name || !slug || !type) {
         return NextResponse.json(
@@ -33,6 +45,11 @@ export const POST = withAuditLog(
           type,
           description,
           config: config || {},
+          fees: fees || null,
+          studentsCount: studentsCount || null,
+          programsCount: programsCount || null,
+          facultyCount: facultyCount || null,
+          establishedYear: establishedYear || null,
           createdById: createdById || null,
           // universityId: universityId || null,
         },

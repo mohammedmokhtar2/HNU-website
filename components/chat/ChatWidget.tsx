@@ -33,24 +33,24 @@ export default function ChatWidget() {
   const tooltips = [
     {
       ar: 'مرحباً! أنا زقزوقي، مساعدك الذكي. اسألني عن الكليات والبرامج!',
-      en: 'Hi! I am Zaqzouqi, your smart assistant. Ask me about colleges and programs!'
+      en: 'Hi! I am Zaqzouqi, your smart assistant. Ask me about colleges and programs!',
     },
     {
       ar: 'يمكنني مساعدتك في معلومات القبول والتسجيل في الجامعة',
-      en: 'I can help you with admission and registration information'
+      en: 'I can help you with admission and registration information',
     },
     {
       ar: 'اسألني عن المواعيد المهمة والأنشطة الطلابية',
-      en: 'Ask me about important dates and student activities'
+      en: 'Ask me about important dates and student activities',
     },
     {
       ar: 'أحتاج مساعدتك في اختيار التخصص المناسب؟ أنا هنا!',
-      en: 'Need help choosing the right major? I am here!'
+      en: 'Need help choosing the right major? I am here!',
     },
     {
       ar: 'اكتشف خدمات الجامعة والمرافق المتاحة',
-      en: 'Discover university services and available facilities'
-    }
+      en: 'Discover university services and available facilities',
+    },
   ];
 
   // Use the custom bot hook
@@ -89,12 +89,12 @@ export default function ChatWidget() {
         setShowTooltip(true);
         setCurrentTooltipIndex(prev => (prev + 1) % tooltips.length);
 
-        // Hide tooltip after 10 seconds
+        // Hide tooltip after 4 seconds
         setTimeout(() => {
           setShowTooltip(false);
         }, 10000);
       }
-    }, 6000); // Show new tooltip every 10 seconds
+    }, 6000); // Show new tooltip every 6 seconds
   }, [isOpen, tooltips.length]);
 
   const stopTooltipCycle = useCallback(() => {
@@ -142,12 +142,12 @@ export default function ChatWidget() {
   return (
     <div>
       {/* Enhanced Floating Action Button */}
-
       <div
-        className={`fixed bottom-6 z-50 transition-all duration-500 ease-out ${isOpen
-          ? 'opacity-0 scale-0 pointer-events-none'
-          : 'opacity-100 scale-100'
-          } ${locale === 'ar' ? 'left-6' : 'right-6'}`}
+        className={`fixed bottom-6 z-50 transition-all duration-500 ease-out ${
+          isOpen
+            ? 'opacity-0 scale-0 pointer-events-none'
+            : 'opacity-100 scale-100'
+        } ${locale === 'ar' ? 'left-6' : 'right-6'}`}
       >
         <Button
           className='chat-button group relative bg-gradient-to-r from-blue-600 to-gray-900 hover:from-blue-700 hover:to-gray-900 text-white rounded-full w-16 h-16 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-110 active:scale-95 border-0'
@@ -174,12 +174,16 @@ export default function ChatWidget() {
       {/* Tooltip Display */}
       {showTooltip && !isOpen && (
         <div
-          className={`fixed bottom-26 max-w-xs bg-white border border-gray-300 text-black rounded-lg shadow-lg p-4 text-sm z-50 transition-all duration-500 ease-in-out transform ${showTooltip ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
-            } ${locale === 'ar' ? 'left-6' : 'right-6'}`}
+          className={`fixed bottom-26 max-w-xs bg-white border border-gray-300 text-black rounded-lg shadow-lg p-4 text-sm z-50 transition-all duration-500 ease-in-out transform ${
+            showTooltip
+              ? 'opacity-100 translate-y-0'
+              : 'opacity-0 translate-y-2'
+          } ${locale === 'ar' ? 'left-6' : 'right-6'}`}
         >
           <div
-            className={`flex items-start gap-3 ${locale === 'ar' ? 'flex-row-reverse' : 'flex-row'
-              }`}
+            className={`flex items-start gap-3 ${
+              locale === 'ar' ? 'flex-row-reverse' : 'flex-row'
+            }`}
           >
             <div className='flex-1'>
               <div className='flex items-center gap-2 mb-2'>
@@ -188,7 +192,9 @@ export default function ChatWidget() {
                   {locale === 'ar' ? 'زقزوقي' : 'Zaqzouqi'}
                 </span>
               </div>
-              <p className={`text-gray-700 ${locale === 'ar' ? 'text-right' : 'text-left'}`}>
+              <p
+                className={`text-gray-700 ${locale === 'ar' ? 'text-right' : 'text-left'}`}
+              >
                 {tooltips[currentTooltipIndex][locale as 'ar' | 'en']}
               </p>
             </div>
@@ -202,8 +208,9 @@ export default function ChatWidget() {
           </div>
           {/* Arrow pointing to the chat button */}
           <div
-            className={`absolute w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-white ${locale === 'ar' ? 'left-8' : 'right-8'
-              } -bottom-1`}
+            className={`absolute w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-white ${
+              locale === 'ar' ? 'left-8' : 'right-8'
+            } -bottom-1`}
           ></div>
         </div>
       )}
@@ -212,13 +219,14 @@ export default function ChatWidget() {
       {isOpen && (
         <div
           className={`
-            ${isMobile
-              ? isExpanded
-                ? 'fixed top-0 left-0 w-full h-full'
-                : `fixed bottom-20 w-80 h-[32rem] ${locale === 'ar' ? 'left-4' : 'right-4'}`
-              : isExpanded
-                ? 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2/4 h-4/5 max-w-4xl'
-                : `fixed bottom-20 w-80 h-[32rem] ${locale === 'ar' ? 'left-4' : 'right-4'}`
+            ${
+              isMobile
+                ? isExpanded
+                  ? 'fixed top-0 left-0 w-full h-full'
+                  : `fixed bottom-20 w-96 h-[36rem] ${locale === 'ar' ? 'left-4' : 'right-4'}`
+                : isExpanded
+                  ? 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2/4 h-4/5 max-w-4xl'
+                  : `fixed bottom-20 w-96 h-[36rem] ${locale === 'ar' ? 'left-4' : 'right-4'}`
             }
             bg-white rounded-2xl shadow-2xl flex flex-col z-50
             transition-all duration-500 ease-out
@@ -239,7 +247,9 @@ export default function ChatWidget() {
               </div>
               <div className={locale === 'ar' ? 'text-right' : 'text-left'}>
                 <h3 className='font-semibold text-sm'>
-                  {locale === 'ar' ? 'المساعد زقزوقي' : 'Zaqzouqi Assistant'}
+                  {locale === 'ar'
+                    ? 'مساعد جامعة حلوان الاهلية'
+                    : 'HNU Assistant'}
                 </h3>
                 <p className='text-xs text-gray-300'>
                   {locale === 'ar' ? 'متاح الآن' : 'Online'}
@@ -293,15 +303,16 @@ export default function ChatWidget() {
           <div className='messages-container flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50/50'>
             {messages.length === 0 ? (
               <div
-                className={`text-center text-gray-500 py-12 animate-fade-in ${locale === 'ar' ? 'text-right' : 'text-left'}`}
+                className={`text-center text-gray-500 py-12 animate-fade-in ${locale === 'ar' ? 'text-right' : 'text-left'} flex items-center justify-center flex-col gap-4 px-4`}
               >
                 <div className='mb-4'>
                   <Bot className='w-12 h-12 mx-auto text-blue-500 animate-bounce' />
                 </div>
                 <p className='text-sm font-medium mb-2'>
                   {locale === 'ar'
-                    ? 'اهلا بيك انا زقزوقي! موجود هنا لمساعدتك. اسألني أي شيء عن الجامعة!'
-                    : 'Hi there! I am Zaqzouqi. Ask me anything about University!'}
+                    ? 'اهلا بيك انا مساعدك الشخصي موجود هنا لمساعدتك. اسألني أي شيء عن جامعة حلوان الاهلية !'
+                    : // translate to english
+                      'Welcome! I am your personal assistant here to help you. Ask me anything about Helwan National University!'}
                 </p>
                 <p className='text-xs text-gray-400'>
                   {locale === 'ar'
@@ -318,10 +329,11 @@ export default function ChatWidget() {
                     style={{ animationDelay: `${i * 100}ms` }}
                   >
                     <div
-                      className={`message-bubble px-4 py-3 rounded-2xl max-w-[80%] text-sm shadow-sm transition-all duration-200 hover:shadow-md ${msg.from === 'user'
-                        ? `bg-gradient-to-r from-blue-500 to-gray-900 text-white ${locale === 'ar' ? 'rounded-bl-md' : 'rounded-br-md'}`
-                        : `bg-white text-gray-800 border border-gray-200 ${locale === 'ar' ? 'rounded-br-md' : 'rounded-bl-md'}`
-                        }`}
+                      className={`message-bubble px-4 py-3 rounded-2xl max-w-[80%] text-sm shadow-sm transition-all duration-200 hover:shadow-md ${
+                        msg.from === 'user'
+                          ? `bg-gradient-to-r from-blue-500 to-gray-900 text-white ${locale === 'ar' ? 'rounded-bl-md' : 'rounded-br-md'}`
+                          : `bg-white text-gray-800 border border-gray-200 ${locale === 'ar' ? 'rounded-br-md' : 'rounded-bl-md'}`
+                      }`}
                     >
                       <p
                         className={`whitespace-pre-wrap ${locale === 'ar' ? 'text-right' : 'text-left'}`}
@@ -383,10 +395,11 @@ export default function ChatWidget() {
               <Button
                 onClick={handleSendMessage}
                 disabled={!input.trim() || isLoading}
-                className={`px-4 py-3 rounded-xl transition-all duration-200 ${input.trim() && !isLoading
-                  ? 'bg-gradient-to-r from-blue-500 to-gray-900 hover:from-blue-600 hover:to-gray-900 text-white shadow-lg hover:shadow-xl transform hover:scale-105'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  }`}
+                className={`px-4 py-3 rounded-xl transition-all duration-200 ${
+                  input.trim() && !isLoading
+                    ? 'bg-gradient-to-r from-blue-500 to-gray-900 hover:from-blue-600 hover:to-gray-900 text-white shadow-lg hover:shadow-xl transform hover:scale-105'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
               >
                 {isLoading ? (
                   <Loader2 className='w-4 h-4 animate-spin' />

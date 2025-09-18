@@ -102,7 +102,9 @@ const sectionTypeIcons = {
   [SectionType.ACTIONS]: GraduationCap,
   [SectionType.NUMBERS]: BarChart3,
   [SectionType.STUDENT_UNION]: Users,
+  [SectionType.OUR_MISSION]: Crown,
   [SectionType.EGYPT_STUDENT_GROUP]: Users,
+  [SectionType.COLLEGES]: Building2,
   [SectionType.CUSTOM]: FileText,
 };
 
@@ -113,7 +115,9 @@ const sectionTypeLabels = {
   [SectionType.ACTIONS]: 'Actions',
   [SectionType.NUMBERS]: 'Numbers',
   [SectionType.STUDENT_UNION]: 'Student Union',
+  [SectionType.OUR_MISSION]: 'Our Mission',
   [SectionType.EGYPT_STUDENT_GROUP]: 'Egypt Student Group',
+  [SectionType.COLLEGES]: 'Colleges',
   [SectionType.CUSTOM]: 'Custom',
 };
 
@@ -163,6 +167,17 @@ function SortableSectionItem({
       case SectionType.NUMBERS:
         if (isNumbersContent(content)) {
           return `${content.title?.en || content.title?.ar || 'Numbers'}: ${content.number}`;
+        }
+        break;
+      case SectionType.OUR_MISSION:
+        if (
+          content &&
+          typeof content.title === 'object' &&
+          typeof content.description === 'object' &&
+          typeof content.buttonText === 'object' &&
+          typeof content.imageUrl === 'string'
+        ) {
+          return `${content.title?.en || content.title?.ar || 'Our Mission'}: ${content.description?.en || content.description?.ar || ''}: ${content.buttonText?.en || content.buttonText?.ar || 'Read more'}}`;
         }
         break;
       case SectionType.STUDENT_UNION:
@@ -1122,7 +1137,154 @@ function SectionForm({
             </div>
           </div>
         );
-
+      case SectionType.OUR_MISSION:
+        return (
+          <div className='space-y-4'>
+            <div>
+              <Label>Title (English)</Label>
+              <Input
+                value={content.title?.en || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      title: { ...content.title, en: e.target.value },
+                    },
+                  })
+                }
+                placeholder='Enter English title'
+              />
+            </div>
+            <div>
+              <Label>Title (Arabic)</Label>
+              <Input
+                value={content.title?.ar || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      title: { ...content.title, ar: e.target.value },
+                    },
+                  })
+                }
+                placeholder='Enter Arabic title'
+              />
+            </div>
+            <div>
+              <Label>Description (English)</Label>
+              <Textarea
+                value={content.description?.en || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      description: {
+                        ...content.description,
+                        en: e.target.value,
+                      },
+                    },
+                  })
+                }
+                placeholder='Enter English description'
+              />
+            </div>
+            <div>
+              <Label>Description (Arabic)</Label>
+              <Textarea
+                value={content.description?.ar || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      description: {
+                        ...content.description,
+                        ar: e.target.value,
+                      },
+                    },
+                  })
+                }
+                placeholder='Enter Arabic description'
+              />
+            </div>
+            {/* add button text in 2 language */}
+            <div>
+              <Label>Button text (English)</Label>
+              <Textarea
+                value={content.buttonText?.en || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      buttonText: {
+                        ...content.buttonText,
+                        en: e.target.value,
+                      },
+                    },
+                  })
+                }
+                placeholder='Enter English button Text'
+              />
+            </div>
+            <div>
+              <Label>Button text (Arabic)</Label>
+              <Textarea
+                value={content.buttonText?.ar || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      buttonText: {
+                        ...content.buttonText,
+                        ar: e.target.value,
+                      },
+                    },
+                  })
+                }
+                placeholder='Enter Arabic button Text'
+              />
+            </div>
+            <div>
+              <Label>Image URL</Label>
+              <div className='flex gap-2'>
+                <Input
+                  value={content.imageUrl || ''}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      content: { ...content, imageUrl: e.target.value },
+                    })
+                  }
+                  placeholder='Image URL'
+                />
+                <Button
+                  type='button'
+                  variant='outline'
+                  size='sm'
+                  onClick={() => onImageSelect('imageUrl')}
+                >
+                  <ImageIcon className='h-4 w-4' />
+                </Button>
+              </div>
+              {content.imageUrl && (
+                <div className='mt-2'>
+                  <Image
+                    width={100}
+                    height={100}
+                    src={content.imageUrl}
+                    alt='Preview'
+                    className='w-32 h-24 object-cover rounded border'
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        );
       case SectionType.STUDENT_UNION:
       case SectionType.EGYPT_STUDENT_GROUP:
         return (

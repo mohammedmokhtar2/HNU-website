@@ -4,11 +4,14 @@ import { useLocale } from 'next-intl';
 import { UniversityService } from '@/services/university.service';
 import { DynamicHomePage } from '@/components/sections/DynamicHomePage';
 import { UniversityProvider } from '@/contexts/UniversityContext';
+import { CollegeProvider } from '@/contexts/CollegeContext';
 import { PageSkeleton } from '@/components/ui/skeleton';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
 import HeroSection from '@/components/home/heroSection';
 import AboutSection from '@/components/home/aboutSection';
 import ProgramsSection from '@/components/home/programsSection';
+import { CollegeSection } from '@/components/sections/CollagesSection';
+import {} from '@/components/sections/OurMissionSection';
 import {
   heroSection,
   aboutSection,
@@ -32,9 +35,15 @@ const LazyAboutSection = React.lazy(() =>
   }))
 );
 
-const LazyProgramsSection = React.lazy(() =>
-  import('@/components/home/programsSection').then(module => ({
-    default: module.default,
+const LazyOurMissionSection = React.lazy(() =>
+  import('@/components/sections/OurMissionSection').then(module => ({
+    default: module.OurMissionSection,
+  }))
+);
+
+const LazyCollegeSection = React.lazy(() =>
+  import('@/components/sections/CollagesSection').then(module => ({
+    default: module.CollegeSection,
   }))
 );
 
@@ -51,27 +60,42 @@ const LazyTopNews = React.lazy(() =>
 );
 
 // Memoized static content component
-const StaticContent = React.memo(({ locale }: { locale: string }) => (
-  <>
-    <Suspense fallback={<PageSkeleton />}>
-      <LazyHeroSection {...heroSection} local={locale} />
-    </Suspense>
-    <Suspense fallback={<PageSkeleton />}>
-      <LazyAboutSection {...aboutSection} local={locale} />
-    </Suspense>
-    <div className='relative py-20 bg-gradient-to-br from-blue-100 via-white to-blue-200 overflow-hidden'>
+const StaticContent = React.memo(
+  ({
+    locale,
+    universityId,
+  }: {
+    locale: string;
+    universityId?: string | null;
+  }) => (
+    <>
       <Suspense fallback={<PageSkeleton />}>
-        <LazyProgramsSection {...programsSection} local={locale} />
+        <LazyHeroSection {...heroSection} local={locale} />
       </Suspense>
       <Suspense fallback={<PageSkeleton />}>
-        <LazyFactsAndNumber {...FactsAndNumbers} local={locale} />
+        <LazyAboutSection {...aboutSection} local={locale} />
       </Suspense>
-      <Suspense fallback={<PageSkeleton />}>
-        <LazyTopNews {...topNewsData} local={locale} />
-      </Suspense>
-    </div>
-  </>
-));
+      <div className='relative py-20 overflow-hidden'>
+        <Suspense fallback={<PageSkeleton />}>
+          <CollegeProvider universityId={universityId || undefined}>
+            <LazyCollegeSection universityId={universityId || undefined} />
+          </CollegeProvider>
+        </Suspense>
+
+        {/* <Suspense fallback={<PageSkeleton />}>
+          <LazyOurMissionSection />
+        </Suspense> */}
+
+        <Suspense fallback={<PageSkeleton />}>
+          <LazyFactsAndNumber {...FactsAndNumbers} local={locale} />
+        </Suspense>
+        <Suspense fallback={<PageSkeleton />}>
+          <LazyTopNews {...topNewsData} local={locale} />
+        </Suspense>
+      </div>
+    </>
+  )
+);
 
 StaticContent.displayName = 'StaticContent';
 
@@ -89,10 +113,14 @@ function Home() {
         setError(null);
 
         const universities = await UniversityService.getUniversities();
+        console.log('Loaded universities:', universities);
         if (universities && universities.length > 0) {
+          console.log('Setting universityId to:', universities[0].id);
           setUniversityId(universities[0].id);
           // Check if university has sections configured
           setUseDynamicSections(true);
+        } else {
+          console.log('No universities found');
         }
       } catch (error) {
         console.error('Error loading university:', error);
@@ -120,7 +148,7 @@ function Home() {
     console.warn('Falling back to static content due to error:', error);
     return (
       <ErrorBoundary>
-        <StaticContent locale={locale} />
+        <StaticContent locale={locale} universityId={universityId} />
       </ErrorBoundary>
     );
   }
@@ -139,7 +167,7 @@ function Home() {
   // Fallback to static content
   return (
     <ErrorBoundary>
-      <StaticContent locale={locale} />
+      <StaticContent locale={locale} universityId={universityId} />
     </ErrorBoundary>
   );
 }

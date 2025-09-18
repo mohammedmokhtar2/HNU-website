@@ -4,11 +4,13 @@ import React, { useMemo, Suspense } from 'react';
 import { SectionRenderer } from './SectionRenderer';
 import { useLocale } from 'next-intl';
 import { useUniversity } from '@/contexts/UniversityContext';
+import { CollegeProvider } from '@/contexts/CollegeContext';
 import { PageSkeleton, SectionSkeleton } from '@/components/ui/skeleton';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { programsSection, FactsAndNumbers, topNewsData } from '@/data';
+import { CollegeSection } from './CollagesSection';
 
 interface DynamicHomePageProps {
   universityId: string;
@@ -21,12 +23,25 @@ const LazyProgramsSection = React.lazy(() =>
   }))
 );
 
+const LazyOurMissionSection = React.lazy(() =>
+  import('../sections/OurMissionSection').then(module => ({
+    default: module.OurMissionSection,
+  }))
+);
+
 const LazyFactsAndNumber = React.lazy(() =>
   import('../home/FcatsAndNumber').then(module => ({ default: module.default }))
 );
 
 const LazyTopNews = React.lazy(() =>
   import('../home/TopNews').then(module => ({ default: module.default }))
+);
+
+// Lazy load college section
+const LazyCollegeSection = React.lazy(() =>
+  import('./CollagesSection').then(module => ({
+    default: module.CollegeSection,
+  }))
 );
 
 // Memoized section component for better performance
@@ -76,19 +91,24 @@ export function DynamicHomePage({ universityId }: DynamicHomePageProps) {
   // Memoize additional sections to prevent unnecessary re-renders
   const additionalSections = useMemo(
     () => (
-      <div className='relative py-20 bg-gradient-to-br from-blue-100 via-white to-blue-200 overflow-hidden'>
-        <Suspense fallback={<SectionSkeleton />}>
-          <LazyProgramsSection {...programsSection} local={locale} />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton />}>
-          <LazyFactsAndNumber {...FactsAndNumbers} local={locale} />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton />}>
-          <LazyTopNews {...topNewsData} local={locale} />
-        </Suspense>
-      </div>
+      <>
+        <div className='relative py-20 overflow-hidden'>
+          {/* College Section */}
+          <Suspense fallback={<SectionSkeleton />}>
+            <CollegeProvider universityId={universityId}>
+              <LazyCollegeSection universityId={universityId} />
+            </CollegeProvider>
+          </Suspense>
+          <Suspense fallback={<SectionSkeleton />}>
+            <LazyFactsAndNumber {...FactsAndNumbers} local={locale} />
+          </Suspense>
+          <Suspense fallback={<SectionSkeleton />}>
+            <LazyTopNews {...topNewsData} local={locale} />
+          </Suspense>
+        </div>
+      </>
     ),
-    [locale]
+    [locale, universityId]
   );
 
   // Show skeleton only on initial load
