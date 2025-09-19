@@ -2,14 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     universityId: string;
-  };
+  }>;
 }
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
-    const { universityId } = params;
+    const { universityId } = await params;
     const { searchParams } = new URL(request.url);
 
     // Parse query parameters

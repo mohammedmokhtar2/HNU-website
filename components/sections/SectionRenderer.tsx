@@ -8,7 +8,6 @@ import { HeroSection } from './HeroSection';
 import { useLocale } from 'next-intl';
 import { SectionSkeleton } from '@/components/ui/skeleton';
 
-
 interface SectionRendererProps {
   section: Section;
   locale: string;
@@ -50,9 +49,7 @@ export const SectionRenderer = React.memo(
         case SectionType.ABOUT:
           return <LazyAboutSection sectionId={section.id} />;
         case SectionType.COLLEGES_SECTION:
-          return (
-            <LazyCollegeSection sectionId={section.id} />
-          );
+          return <LazyCollegeSection sectionId={section.id} />;
         case SectionType.OUR_MISSION:
           return <LazyOurMissionSection sectionId={section.id} />;
         case SectionType.BLOGS:

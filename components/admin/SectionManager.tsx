@@ -297,17 +297,17 @@ function SortableSectionItem({
                   (section.content as any)?.videoUrl) ||
                   (section.type === 'ABOUT' &&
                     (section.content as any)?.videoUrl)) && (
-                    <div className='flex items-center gap-2'>
-                      <video
-                        width={100}
-                        height={100}
-                        src={(section.content as any).videoUrl}
-                        className='w-16 h-12 object-cover rounded border'
-                        muted
-                      />
-                      <span className='text-xs text-gray-500'>Video</span>
-                    </div>
-                  )}
+                  <div className='flex items-center gap-2'>
+                    <video
+                      width={100}
+                      height={100}
+                      src={(section.content as any).videoUrl}
+                      className='w-16 h-12 object-cover rounded border'
+                      muted
+                    />
+                    <span className='text-xs text-gray-500'>Video</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -1842,7 +1842,7 @@ function SectionForm({
 
       {/* Submit Button */}
       <div className='flex justify-end gap-2'>
-        <Button type='button' variant='outline' onClick={() => { }}>
+        <Button type='button' variant='outline' onClick={() => {}}>
           Cancel
         </Button>
         <Button onClick={onSubmit} className='bg-blue-600 hover:bg-blue-700'>

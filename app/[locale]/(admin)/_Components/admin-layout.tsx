@@ -155,6 +155,7 @@ const navigationSections: NavSection[] = [
         icon: Shield,
         description: 'Manage permissions',
         roles: ['OWNER', 'SUPERADMIN'],
+        badge: 'Soon',
       },
       {
         title: 'Database',

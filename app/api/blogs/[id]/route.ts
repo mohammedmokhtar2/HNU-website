@@ -3,14 +3,14 @@ import { db } from '@/lib/db';
 import { UpdateBlogInput } from '@/types/blog';
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     const blog = await db.blogs.findUnique({
       where: { id },
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body: UpdateBlogInput = await request.json();
 
     // Check if blog exists
@@ -81,7 +81,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     // Check if blog exists
     const existingBlog = await db.blogs.findUnique({
