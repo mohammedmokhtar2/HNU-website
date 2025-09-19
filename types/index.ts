@@ -11,6 +11,7 @@ export * from './statistic';
 export * from './permission';
 export * from './page';
 export * from './file';
+export * from './blog';
 
 // Re-export commonly used types for convenience
 export type {
@@ -75,3 +76,14 @@ export type {
   PageResponse,
   PageWithRelationsResponse,
 } from './page';
+
+export type {
+  Blog,
+  CreateBlogInput,
+  UpdateBlogInput,
+  BlogResponse,
+  BlogWithRelationsResponse,
+  BlogQueryParams,
+  PaginatedBlogResponse,
+  BlogStats,
+} from './blog';

@@ -14,6 +14,7 @@ import { Section } from '@/types/section';
 
 interface UniversityContextType {
   university: University | null;
+  universities: University[];
   sections: Section[];
   loading: boolean;
   error: string | null;
@@ -42,6 +43,7 @@ export function UniversityProvider({
   universityId,
 }: UniversityProviderProps) {
   const [university, setUniversity] = useState<University | null>(null);
+  const [universities, setUniversities] = useState<University[]>([]);
   const [sections, setSections] = useState<Section[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -49,32 +51,39 @@ export function UniversityProvider({
 
   const fetchUniversityData = useCallback(
     async (forceRefresh = false) => {
-      if (!universityId) {
-        setLoading(false);
-        setIsInitialLoad(false);
-        return;
-      }
-
-      // Check cache first
-      const cacheKey = `university-${universityId}`;
-      const cachedData = dataCache.get(cacheKey);
-      const now = Date.now();
-
-      if (
-        !forceRefresh &&
-        cachedData &&
-        now - cachedData.timestamp < CACHE_DURATION
-      ) {
-        setUniversity(cachedData.university);
-        setSections(cachedData.sections);
-        setLoading(false);
-        setIsInitialLoad(false);
-        return;
-      }
-
       try {
         setLoading(true);
         setError(null);
+
+        // Always fetch all universities first
+        const universitiesResponse = await fetch('/api/university');
+        if (universitiesResponse.ok) {
+          const universitiesData = await universitiesResponse.json();
+          setUniversities(universitiesData);
+        }
+
+        if (!universityId) {
+          setLoading(false);
+          setIsInitialLoad(false);
+          return;
+        }
+
+        // Check cache first
+        const cacheKey = `university-${universityId}`;
+        const cachedData = dataCache.get(cacheKey);
+        const now = Date.now();
+
+        if (
+          !forceRefresh &&
+          cachedData &&
+          now - cachedData.timestamp < CACHE_DURATION
+        ) {
+          setUniversity(cachedData.university);
+          setSections(cachedData.sections);
+          setLoading(false);
+          setIsInitialLoad(false);
+          return;
+        }
 
         // Use Promise.all for parallel requests
         const [uniResponse, sectionsResponse] = await Promise.all([
@@ -126,13 +135,14 @@ export function UniversityProvider({
   const value: UniversityContextType = useMemo(
     () => ({
       university,
+      universities,
       sections,
       loading,
       error,
       refetch,
       isInitialLoad,
     }),
-    [university, sections, loading, error, refetch, isInitialLoad]
+    [university, universities, sections, loading, error, refetch, isInitialLoad]
   );
 
   return (

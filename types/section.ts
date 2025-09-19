@@ -48,6 +48,12 @@ export interface EgyptStudentGroupContent {
   items: string[]; // Array of strings to be defined later
 }
 
+export interface BlogsContent {
+  title: BaseContent;
+  description: BaseContent;
+  items: string[]; // Array of strings to be defined later
+}
+
 // here
 export interface CollegeSectionContent {
   title: BaseContent;
@@ -95,6 +101,7 @@ export type SectionContent =
   | { type: SectionType.COLLEGES_SECTION; content: CollegeSectionContent }
   | { type: SectionType.HEADER; content: CustomContent }
   | { type: SectionType.OUR_MISSION; content: OurMissionContent }
+  | { type: SectionType.BLOGS; content: BlogsContent }
   | { type: SectionType.CUSTOM; content: CustomContent };
 
 export interface Section {

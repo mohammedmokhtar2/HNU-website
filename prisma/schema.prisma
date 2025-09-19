@@ -39,6 +39,7 @@ enum SectionType {
   COLLEGES_SECTION
   EGYPT_STUDENT_GROUP
   PRESIDENT
+  BLOGS
   CUSTOM
 }
 
@@ -81,6 +82,7 @@ model User {
   collegeId String?
 
   collegesCreated College[] @relation("CollegeCreatedBy")
+  createdBlogs    Blogs[]
 
   @@map("users")
 }
@@ -97,6 +99,7 @@ model University {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Blogs     Blogs[]
 
   @@map("universities")
 }
@@ -109,12 +112,12 @@ model College {
   config      Json? // for the logo and social media links
   type        CollegeType
   fees        Json? // University fees in different languages {"en": "EGP 80,000/yr", "ar": "٨٠٠٠٠ جنيه/سنة"}
-  
+
   // College Statistics
-  studentsCount    Int? // Number of students enrolled
-  programsCount    Int? // Number of academic programs
-  facultyCount     Int? // Number of faculty members
-  establishedYear  Int? // Year the college was established
+  studentsCount   Int? // Number of students enrolled
+  programsCount   Int? // Number of academic programs
+  facultyCount    Int? // Number of faculty members
+  establishedYear Int? // Year the college was established
 
   User       User[]
   sections   Section[]
@@ -130,6 +133,7 @@ model College {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Blogs     Blogs[]
 
   @@map("colleges")
 }
@@ -197,4 +201,42 @@ enum Action {
   EDIT
   DELETE
   CREATE
+}
+
+model Blogs {
+  id      String   @id @default(cuid())
+  title   Json
+  content Json
+  image   String[]
+  tags    String[]
+
+  // Status and visibility
+  isFeatured  Boolean @default(false)
+  isPublished Boolean @default(true) // eg published or draft
+
+  // SEO and navigation
+  slug String @unique
+
+  // Publishing
+  publishedAt DateTime? // When it was published
+  scheduledAt DateTime? // For scheduled posts
+
+  // Content organization
+  order Int @default(0) // For ordering featured content
+
+  // Relationships
+  universityId String?
+  University   University? @relation(fields: [universityId], references: [id])
+
+  createdBy   User?   @relation(fields: [createdById], references: [id])
+  createdById String?
+
+  collageId String?
+  collage   College? @relation(fields: [collageId], references: [id])
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("blogs")
 }

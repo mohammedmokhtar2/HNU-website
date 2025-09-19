@@ -26,6 +26,7 @@ export enum SectionType {
   EGYPT_STUDENT_GROUP = 'EGYPT_STUDENT_GROUP',
   COLLEGES = 'COLLEGES',
   CUSTOM = 'CUSTOM',
+  BLOGS = 'BLOGS',
 }
 
 export enum PageType {
