@@ -51,7 +51,10 @@ export interface EgyptStudentGroupContent {
 export interface BlogsContent {
   title: BaseContent;
   description: BaseContent;
-  items: string[]; // Array of strings to be defined later
+  showFeaturedOnly?: boolean;
+  maxItems?: number;
+  showUniversityBlogs?: boolean;
+  showCollegeBlogs?: boolean;
 }
 
 // here
@@ -91,16 +94,16 @@ export interface CustomContent {
 
 // Discriminated union for section content based on type
 export type SectionContent =
+  | { type: SectionType.HEADER; content: CustomContent }
   | { type: SectionType.HERO; content: HeroContent }
   | { type: SectionType.ABOUT; content: AboutContent }
   | { type: SectionType.ACTIONS; content: ActionsContent }
+  | { type: SectionType.OUR_MISSION; content: OurMissionContent }
   | { type: SectionType.NUMBERS; content: NumbersContent }
   | { type: SectionType.STUDENT_UNION; content: StudentUnionContent }
-  | { type: SectionType.EGYPT_STUDENT_GROUP; content: EgyptStudentGroupContent }
-  | { type: SectionType.COLLEGES; content: CollegesContent }
   | { type: SectionType.COLLEGES_SECTION; content: CollegeSectionContent }
-  | { type: SectionType.HEADER; content: CustomContent }
-  | { type: SectionType.OUR_MISSION; content: OurMissionContent }
+  | { type: SectionType.EGYPT_STUDENT_GROUP; content: EgyptStudentGroupContent }
+  | { type: SectionType.PRESIDENT; content: CustomContent }
   | { type: SectionType.BLOGS; content: BlogsContent }
   | { type: SectionType.CUSTOM; content: CustomContent };
 
@@ -251,21 +254,20 @@ export function getContentForSectionType(type: SectionType): any {
         description: { ar: '', en: '' },
         items: [],
       } as EgyptStudentGroupContent;
-    case SectionType.COLLEGES:
+    case SectionType.PRESIDENT:
+      return {} as CustomContent;
+    case SectionType.BLOGS:
       return {
-        title: { ar: 'كلياتنا', en: 'Our Colleges' },
-        subtitle: {
-          ar: 'اكتشف مجموعة متنوعة من الكليات والتخصصات المتاحة في جامعتنا',
-          en: 'Discover the diverse range of colleges and specializations available at our university',
+        title: { ar: 'أحدث المقالات', en: 'Latest Blogs' },
+        description: {
+          ar: 'ابق على اطلاع بأحدث الأخبار والرؤى والإعلانات',
+          en: 'Stay updated with our latest news, insights, and announcements',
         },
-        displaySettings: {
-          showFees: true,
-          showStudentCount: false,
-          showProgramsCount: true,
-          showFacultyCount: true,
-        },
-        defaultFees: { ar: '٥٠،٠٠٠ ج.م', en: '$2,500' },
-      } as CollegesContent;
+        showFeaturedOnly: false,
+        maxItems: 6,
+        showUniversityBlogs: true,
+        showCollegeBlogs: true,
+      } as BlogsContent;
     case SectionType.HEADER:
     case SectionType.CUSTOM:
       return {} as CustomContent;

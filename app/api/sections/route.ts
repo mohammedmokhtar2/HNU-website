@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuditLog } from '@/lib/middleware/withAuditLog';
+import { SectionType } from '@/types/enums';
 
 export async function GET(request: NextRequest) {
   try {
@@ -47,52 +48,52 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export const POST = withAuditLog(
-  async (req: Request) => {
-    try {
-      const body = await req.json();
-      const { type, content, order, collageId, universityId } = body;
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+    const { type, content, order, collageId, universityId } = body;
 
-      if (!type || !content) {
-        return NextResponse.json(
-          { error: 'Type and content are required' },
-          { status: 400 }
-        );
-      }
-
-      // Validate that section belongs to either university or college
-      if (!universityId && !collageId) {
-        return NextResponse.json(
-          { error: 'Section must belong to either a university or a college' },
-          { status: 400 }
-        );
-      }
-
-      const section = await db.section.create({
-        data: {
-          type,
-          content,
-          order: order || 0,
-          collageId,
-          universityId,
-        },
-      });
-
-      return NextResponse.json(section);
-    } catch (error) {
-      console.error('Error creating section:', error);
+    if (!type || !content) {
       return NextResponse.json(
-        { error: 'Failed to create section' },
-        { status: 500 }
+        { error: 'Type and content are required' },
+        { status: 400 }
       );
     }
-  },
-  {
-    action: 'CREATE_SECTION',
-    extract: () => {
-      return {
-        entity: 'Section',
-      };
-    },
+
+    // Validate that type is a valid SectionType
+    if (!Object.values(SectionType).includes(type)) {
+      return NextResponse.json(
+        {
+          error: `Invalid section type: ${type}. Valid types are: ${Object.values(SectionType).join(', ')}`,
+        },
+        { status: 400 }
+      );
+    }
+
+    // Validate that section belongs to either university or college
+    if (!universityId && !collageId) {
+      return NextResponse.json(
+        { error: 'Section must belong to either a university or a college' },
+        { status: 400 }
+      );
+    }
+
+    const section = await db.section.create({
+      data: {
+        type,
+        content,
+        order: order || 0,
+        collageId,
+        universityId,
+      },
+    });
+
+    return NextResponse.json(section);
+  } catch (error) {
+    console.error('Error creating section:', error);
+    return NextResponse.json(
+      { error: 'Failed to create section' },
+      { status: 500 }
+    );
   }
-);
+}

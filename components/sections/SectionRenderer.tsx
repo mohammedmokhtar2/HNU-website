@@ -35,6 +35,12 @@ const LazyOurMissionSection = React.lazy(() =>
   }))
 );
 
+const LazyBlogSection = React.lazy(() =>
+  import('./BlogSection').then(module => ({
+    default: module.BlogSection,
+  }))
+);
+
 export const SectionRenderer = React.memo(
   ({ section, locale }: SectionRendererProps) => {
     const renderSection = useMemo(() => {
@@ -45,10 +51,20 @@ export const SectionRenderer = React.memo(
           return <LazyAboutSection sectionId={section.id} />;
         case SectionType.COLLEGES_SECTION:
           return (
-              <LazyCollegeSection sectionId={section.id} />
+            <LazyCollegeSection sectionId={section.id} />
           );
         case SectionType.OUR_MISSION:
           return <LazyOurMissionSection sectionId={section.id} />;
+        case SectionType.BLOGS:
+          return (
+            <LazyBlogSection
+              sectionId={section.id}
+              universityId={section.universityId}
+              collegeId={section.collageId}
+              locale={locale}
+              content={section.content as any}
+            />
+          );
         default:
           return (
             <div className='p-8 text-center text-gray-500'>

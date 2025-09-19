@@ -9,17 +9,17 @@ import { QueryClientProviderWrapper } from '@/contexts/QueryClientProvider';
 import { BlogManagementPage } from '@/components/admin/blog/BlogManagementPage';
 
 export default function AdminBlogsPage() {
-    return (
-        <QueryClientProviderWrapper>
-            <UserProvider>
-                <UniversityProvider>
-                    <CollegeProvider>
-                        <BlogProvider>
-                            <BlogManagementPage />
-                        </BlogProvider>
-                    </CollegeProvider>
-                </UniversityProvider>
-            </UserProvider>
-        </QueryClientProviderWrapper>
-    );
+  return (
+    <QueryClientProviderWrapper>
+      <UserProvider>
+        <UniversityProvider>
+          <CollegeProvider>
+            <BlogProvider>
+              <BlogManagementPage />
+            </BlogProvider>
+          </CollegeProvider>
+        </UniversityProvider>
+      </UserProvider>
+    </QueryClientProviderWrapper>
+  );
 }

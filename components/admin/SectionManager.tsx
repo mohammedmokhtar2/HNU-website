@@ -101,12 +101,13 @@ const sectionTypeIcons = {
   [SectionType.HERO]: Star,
   [SectionType.ABOUT]: Building2,
   [SectionType.ACTIONS]: GraduationCap,
+  [SectionType.OUR_MISSION]: Crown,
   [SectionType.NUMBERS]: BarChart3,
   [SectionType.STUDENT_UNION]: Users,
   [SectionType.COLLEGES_SECTION]: Building2,
-  [SectionType.OUR_MISSION]: Crown,
   [SectionType.EGYPT_STUDENT_GROUP]: Users,
-  [SectionType.COLLEGES]: Building2,
+  [SectionType.PRESIDENT]: Crown,
+  [SectionType.BLOGS]: FileText,
   [SectionType.CUSTOM]: FileText,
 };
 
@@ -114,13 +115,14 @@ const sectionTypeLabels = {
   [SectionType.HEADER]: 'Header',
   [SectionType.HERO]: 'Hero',
   [SectionType.ABOUT]: 'About',
-  [SectionType.COLLEGES_SECTION]: 'Colleges Section',
   [SectionType.ACTIONS]: 'Actions',
+  [SectionType.OUR_MISSION]: 'Our Mission',
   [SectionType.NUMBERS]: 'Numbers',
   [SectionType.STUDENT_UNION]: 'Student Union',
-  [SectionType.OUR_MISSION]: 'Our Mission',
+  [SectionType.COLLEGES_SECTION]: 'Colleges Section',
   [SectionType.EGYPT_STUDENT_GROUP]: 'Egypt Student Group',
-  [SectionType.COLLEGES]: 'Colleges',
+  [SectionType.PRESIDENT]: 'President',
+  [SectionType.BLOGS]: 'Blogs',
   [SectionType.CUSTOM]: 'Custom',
 };
 
@@ -195,6 +197,15 @@ function SortableSectionItem({
           return `${content.title?.en || content.title?.ar || 'College Programs'}: ${content.subtitle?.en || content.subtitle?.ar || 'Studying at Helwan National University'}: ${content.description?.en || content.description?.ar || ''}: ${content.buttonText?.en || content.buttonText?.ar || 'View all Programs'}`;
         }
         break;
+      case SectionType.BLOGS:
+        if (
+          content &&
+          typeof content.title === 'object' &&
+          typeof content.description === 'object'
+        ) {
+          return `${content.title?.en || content.title?.ar || 'Blogs'}: ${content.description?.en || content.description?.ar || 'Latest blog posts'}`;
+        }
+        break;
       case SectionType.STUDENT_UNION:
       case SectionType.EGYPT_STUDENT_GROUP:
         if (
@@ -204,6 +215,8 @@ function SortableSectionItem({
           return content.title?.en || content.title?.ar || 'Student Section';
         }
         break;
+      case SectionType.PRESIDENT:
+        return 'President Section';
       default:
         return 'Custom Section';
     }
@@ -284,17 +297,17 @@ function SortableSectionItem({
                   (section.content as any)?.videoUrl) ||
                   (section.type === 'ABOUT' &&
                     (section.content as any)?.videoUrl)) && (
-                  <div className='flex items-center gap-2'>
-                    <video
-                      width={100}
-                      height={100}
-                      src={(section.content as any).videoUrl}
-                      className='w-16 h-12 object-cover rounded border'
-                      muted
-                    />
-                    <span className='text-xs text-gray-500'>Video</span>
-                  </div>
-                )}
+                    <div className='flex items-center gap-2'>
+                      <video
+                        width={100}
+                        height={100}
+                        src={(section.content as any).videoUrl}
+                        className='w-16 h-12 object-cover rounded border'
+                        muted
+                      />
+                      <span className='text-xs text-gray-500'>Video</span>
+                    </div>
+                  )}
               </div>
             </div>
           </div>
@@ -1487,6 +1500,156 @@ function SectionForm({
             </div>
           </div>
         );
+      case SectionType.BLOGS:
+        return (
+          <div className='space-y-4'>
+            <div>
+              <Label>Title (English)</Label>
+              <Input
+                value={content.title?.en || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      title: { ...content.title, en: e.target.value },
+                    },
+                  })
+                }
+                placeholder='Enter English title'
+              />
+            </div>
+            <div>
+              <Label>Title (Arabic)</Label>
+              <Input
+                value={content.title?.ar || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      title: { ...content.title, ar: e.target.value },
+                    },
+                  })
+                }
+                placeholder='Enter Arabic title'
+              />
+            </div>
+            <div>
+              <Label>Description (English)</Label>
+              <Textarea
+                value={content.description?.en || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      description: {
+                        ...content.description,
+                        en: e.target.value,
+                      },
+                    },
+                  })
+                }
+                placeholder='Enter English description'
+                rows={3}
+              />
+            </div>
+            <div>
+              <Label>Description (Arabic)</Label>
+              <Textarea
+                value={content.description?.ar || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      description: {
+                        ...content.description,
+                        ar: e.target.value,
+                      },
+                    },
+                  })
+                }
+                placeholder='Enter Arabic description'
+                rows={3}
+              />
+            </div>
+            <div>
+              <Label>Maximum Items to Display</Label>
+              <Input
+                type='number'
+                value={content.maxItems || 6}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      maxItems: parseInt(e.target.value) || 6,
+                    },
+                  })
+                }
+                placeholder='Number of blogs to display'
+                min='1'
+                max='20'
+              />
+            </div>
+            <div className='space-y-2'>
+              <Label>Display Options</Label>
+              <div className='space-y-2'>
+                <label className='flex items-center gap-2'>
+                  <input
+                    type='checkbox'
+                    checked={content.showFeaturedOnly || false}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          showFeaturedOnly: e.target.checked,
+                        },
+                      })
+                    }
+                  />
+                  <span className='text-sm'>Show only featured blogs</span>
+                </label>
+                <label className='flex items-center gap-2'>
+                  <input
+                    type='checkbox'
+                    checked={content.showUniversityBlogs || false}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          showUniversityBlogs: e.target.checked,
+                        },
+                      })
+                    }
+                  />
+                  <span className='text-sm'>Show university blogs</span>
+                </label>
+                <label className='flex items-center gap-2'>
+                  <input
+                    type='checkbox'
+                    checked={content.showCollegeBlogs || false}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          showCollegeBlogs: e.target.checked,
+                        },
+                      })
+                    }
+                  />
+                  <span className='text-sm'>Show college blogs</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        );
+
       case SectionType.STUDENT_UNION:
       case SectionType.EGYPT_STUDENT_GROUP:
         return (
@@ -1584,6 +1747,34 @@ function SectionForm({
             </div>
           </div>
         );
+      case SectionType.PRESIDENT:
+        return (
+          <div className='space-y-4'>
+            <div>
+              <Label>Custom Content (JSON)</Label>
+              <Textarea
+                value={JSON.stringify(content, null, 2)}
+                onChange={e => {
+                  try {
+                    const parsed = JSON.parse(e.target.value);
+                    setFormData({
+                      ...formData,
+                      content: parsed,
+                    });
+                  } catch (error) {
+                    // Invalid JSON, keep the text as is
+                    setFormData({
+                      ...formData,
+                      content: e.target.value,
+                    });
+                  }
+                }}
+                placeholder='Enter custom content as JSON'
+                rows={6}
+              />
+            </div>
+          </div>
+        );
       default:
         return (
           <div className='space-y-4'>
@@ -1651,7 +1842,7 @@ function SectionForm({
 
       {/* Submit Button */}
       <div className='flex justify-end gap-2'>
-        <Button type='button' variant='outline' onClick={() => {}}>
+        <Button type='button' variant='outline' onClick={() => { }}>
           Cancel
         </Button>
         <Button onClick={onSubmit} className='bg-blue-600 hover:bg-blue-700'>

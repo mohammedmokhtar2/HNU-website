@@ -9,9 +9,5 @@ interface AdminLayoutWrapperProps {
 export default function AdminLayoutWrapper({
   children,
 }: AdminLayoutWrapperProps) {
-  return (
-    <BlogProvider>
-        {children}
-    </BlogProvider>
-  );
+  return <BlogProvider>{children}</BlogProvider>;
 }

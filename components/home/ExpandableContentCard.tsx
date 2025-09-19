@@ -64,7 +64,7 @@ const ExpandableContentCard: React.FC<ExpandableContentCardProps> = ({
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [active]);
 
-  useOutsideClick(ref as RefObject<HTMLElement>, () => setActive(null));
+  useOutsideClick(ref as RefObject<HTMLDivElement>, () => setActive(null));
 
   const getCategoryColor = (category: string) => {
     const colors: { [key: string]: string } = {
