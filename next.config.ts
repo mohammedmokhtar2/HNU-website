@@ -34,18 +34,24 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: [
     "http://localhost:3000",
     `${process.env.NEXT_PUBLIC_API_URL}`,
-    "https://ahlan-hnu.vercel.app/"
+    "https://hnu-seven.vercel.app/"
   ],
   images: {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "res.cloudinary.com",
+        hostname: "**",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "http",
+        hostname: "**",
         port: "",
         pathname: "/**",
       },
     ],
-    domains: ["res.cloudinary.com"],
+    unoptimized: true,
   },
 };
 

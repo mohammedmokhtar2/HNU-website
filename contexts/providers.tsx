@@ -5,6 +5,7 @@ import { ThemeProvider as NextThemeProvider } from 'next-themes';
 import { ReactNode, useState } from 'react';
 import { UserProvider } from './userContext';
 import { UniversityProvider } from './UniversityContext';
+import { CollegeProvider } from './CollegeContext';
 import { ClerkProviderWrapper } from '@/components/providers/ClerkProvider';
 
 interface ProvidersProps {
@@ -39,7 +40,9 @@ export function Providers({ children, universityId }: ProvidersProps) {
           disableTransitionOnChange
         >
           <UniversityProvider universityId={universityId}>
-            <UserProvider>{children}</UserProvider>
+            <CollegeProvider>
+              <UserProvider>{children}</UserProvider>
+            </CollegeProvider>
           </UniversityProvider>
         </NextThemeProvider>
       </QueryClientProvider>

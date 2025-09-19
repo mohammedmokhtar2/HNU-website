@@ -53,6 +53,20 @@ const collegeSchema = z.object({
     en: z.string().optional(),
     ar: z.string().optional(),
   }),
+  fees: z
+    .object({
+      en: z.string().optional(),
+      ar: z.string().optional(),
+    })
+    .optional(),
+  studentsCount: z.number().min(0).optional(),
+  programsCount: z.number().min(0).optional(),
+  facultyCount: z.number().min(0).optional(),
+  establishedYear: z
+    .number()
+    .min(1800)
+    .max(new Date().getFullYear())
+    .optional(),
   slug: z
     .string()
     .min(1, 'Slug is required')
@@ -62,6 +76,9 @@ const collegeSchema = z.object({
       'Slug can only contain lowercase letters, numbers, and hyphens'
     ),
   type: z.enum(CollegeType),
+  theme: z.string().optional(),
+  galleryImages: z.string().optional(),
+  faq: z.string().optional(),
   universityId: z.string().optional(),
   logoUrl: z.string().optional(),
 });
@@ -105,8 +122,19 @@ export function CollegeFormDialog({
         en: '',
         ar: '',
       },
+      fees: {
+        en: '',
+        ar: '',
+      },
+      studentsCount: undefined,
+      programsCount: undefined,
+      facultyCount: undefined,
+      establishedYear: undefined,
       slug: '',
       type: CollegeType.TECHNICAL,
+      theme: '{}',
+      galleryImages: '[]',
+      faq: '[]',
       universityId: university?.id || '',
       logoUrl: logoUrl || '',
     },
@@ -118,6 +146,11 @@ export function CollegeFormDialog({
         form.reset({
           name: college.name,
           description: college.description,
+          fees: college.fees,
+          studentsCount: college.studentsCount,
+          programsCount: college.programsCount,
+          facultyCount: college.facultyCount,
+          establishedYear: college.establishedYear,
           slug: college.slug,
           type: college.type,
           universityId: college.universityId || '',
@@ -136,8 +169,15 @@ export function CollegeFormDialog({
             en: '',
             ar: '',
           },
+          fees: {
+            en: '',
+            ar: '',
+          },
           slug: '',
           type: CollegeType.TECHNICAL,
+          theme: '{}',
+          galleryImages: '[]',
+          faq: '[]',
           universityId: university?.id || '',
           logoUrl: '',
         });
@@ -191,21 +231,41 @@ export function CollegeFormDialog({
     },
   });
 
-  // const uploadLogoMutation = useMutation({
-  //     mutationFn: (file: File) => new UploadService().uploadFile(file, {
-  //         context: "college",
-  //         subContext: "logo",
-  //         fieldName: "logo"
-  //     }),
-  //     onSuccess: (data: any) => {
-  //         form.setValue("logoUrl", data.url)
-  //         setLogoUrl(data.url)
-  //         toast.success("Logo uploaded successfully")
-  //     },
-  //     onError: (error: any) => {
-  //         toast.error(error.response?.data?.error || "Failed to upload logo")
-  //     },
-  // })
+  const uploadLogoMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('folder', 'colleges/logos');
+      formData.append('resource_type', 'image');
+
+      const response = await fetch('/api/files/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to upload logo');
+      }
+
+      return response.json();
+    },
+    onSuccess: (data: any) => {
+      if (data.success && data.data) {
+        form.setValue('logoUrl', data.data.secure_url);
+        setLogoUrl(data.data.secure_url);
+        setLogoPreview(data.data.secure_url);
+        success('Logo uploaded successfully', {
+          description: 'Your college logo has been uploaded and saved.',
+        });
+      }
+    },
+    onError: (error: any) => {
+      error('Failed to upload logo', {
+        description:
+          'There was an error uploading your logo. Please try again.',
+      });
+    },
+  });
 
   const handleLogoFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -241,7 +301,7 @@ export function CollegeFormDialog({
 
     setIsUploadingLogo(true);
     try {
-      // await uploadLogoMutation.mutateAsync(selectedLogoFile)
+      await uploadLogoMutation.mutateAsync(selectedLogoFile);
       setSelectedLogoFile(null);
     } catch (error) {
       console.error('Logo upload failed:', error);
@@ -253,6 +313,7 @@ export function CollegeFormDialog({
   const clearLogo = () => {
     setSelectedLogoFile(null);
     setLogoPreview(null);
+    setLogoUrl('');
     form.setValue('logoUrl', '');
   };
 
@@ -262,9 +323,19 @@ export function CollegeFormDialog({
       const submitData = {
         name: data.name,
         description: data.description,
+        fees: data.fees,
+        studentsCount: data.studentsCount,
+        programsCount: data.programsCount,
+        facultyCount: data.facultyCount,
+        establishedYear: data.establishedYear,
         slug: data.slug,
         type: data.type,
         config: {
+          theme: data.theme ? JSON.parse(data.theme) : {},
+          galleryImages: data.galleryImages
+            ? JSON.parse(data.galleryImages)
+            : [],
+          faq: data.faq ? JSON.parse(data.faq) : [],
           logoUrl: data.logoUrl,
         },
         createdById: user?.id, // Always use the current user's ID
@@ -299,7 +370,7 @@ export function CollegeFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='sm:max-w-md'>
+      <DialogContent className='sm:max-w-4xl max-h-[90vh] overflow-y-auto'>
         <DialogHeader>
           <DialogTitle className='text-center'>
             {isEditing ? 'Edit College' : 'Create New College'}
@@ -354,6 +425,8 @@ export function CollegeFormDialog({
                           <button
                             type='button'
                             onClick={clearLogo}
+                            title='Remove logo'
+                            aria-label='Remove logo'
                             className='absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors'
                           >
                             <X className='w-3 h-3' />
@@ -462,6 +535,147 @@ export function CollegeFormDialog({
                   </FormItem>
                 )}
               />
+
+              {/* Fees Fields */}
+              <FormField
+                control={form.control}
+                name='fees'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>University Fees (English)</FormLabel>
+                    <FormControl>
+                      <Input
+                        value={field.value?.en || ''}
+                        placeholder='e.g., EGP 80,000/yr'
+                        onChange={e => {
+                          field.onChange({
+                            ...field.value,
+                            en: e.target.value,
+                          });
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                    <FormLabel>University Fees (Arabic)</FormLabel>
+                    <FormControl>
+                      <Input
+                        value={field.value?.ar || ''}
+                        placeholder='e.g., ٨٠٠٠٠ جنيه/سنة'
+                        onChange={e => {
+                          field.onChange({
+                            ...field.value,
+                            ar: e.target.value,
+                          });
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* College Statistics */}
+              <div className='grid grid-cols-2 gap-4'>
+                <FormField
+                  control={form.control}
+                  name='studentsCount'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Students Count</FormLabel>
+                      <FormControl>
+                        <Input
+                          type='number'
+                          placeholder='e.g., 1500'
+                          value={field.value || ''}
+                          onChange={e =>
+                            field.onChange(
+                              e.target.value
+                                ? parseInt(e.target.value)
+                                : undefined
+                            )
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name='programsCount'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Programs Count</FormLabel>
+                      <FormControl>
+                        <Input
+                          type='number'
+                          placeholder='e.g., 15'
+                          value={field.value || ''}
+                          onChange={e =>
+                            field.onChange(
+                              e.target.value
+                                ? parseInt(e.target.value)
+                                : undefined
+                            )
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name='facultyCount'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Faculty Members Count</FormLabel>
+                      <FormControl>
+                        <Input
+                          type='number'
+                          placeholder='e.g., 75'
+                          value={field.value || ''}
+                          onChange={e =>
+                            field.onChange(
+                              e.target.value
+                                ? parseInt(e.target.value)
+                                : undefined
+                            )
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name='establishedYear'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Established Year</FormLabel>
+                      <FormControl>
+                        <Input
+                          type='number'
+                          placeholder='e.g., 1995'
+                          value={field.value || ''}
+                          onChange={e =>
+                            field.onChange(
+                              e.target.value
+                                ? parseInt(e.target.value)
+                                : undefined
+                            )
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <FormField
                 control={form.control}

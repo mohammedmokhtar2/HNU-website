@@ -48,6 +48,15 @@ export interface EgyptStudentGroupContent {
   items: string[]; // Array of strings to be defined later
 }
 
+// here
+export interface CollegeSectionContent {
+  title: BaseContent;
+  subtitle: BaseContent;
+  description: BaseContent;
+  buttonText: BaseContent;
+  collegeIds: string[]; // Array of selected college IDs
+}
+
 export interface OurMissionContent {
   title: BaseContent;
   description: BaseContent;
@@ -83,6 +92,7 @@ export type SectionContent =
   | { type: SectionType.STUDENT_UNION; content: StudentUnionContent }
   | { type: SectionType.EGYPT_STUDENT_GROUP; content: EgyptStudentGroupContent }
   | { type: SectionType.COLLEGES; content: CollegesContent }
+  | { type: SectionType.COLLEGES_SECTION; content: CollegeSectionContent }
   | { type: SectionType.HEADER; content: CustomContent }
   | { type: SectionType.OUR_MISSION; content: OurMissionContent }
   | { type: SectionType.CUSTOM; content: CustomContent };

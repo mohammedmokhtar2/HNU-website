@@ -10,7 +10,7 @@ import { ErrorBoundary } from '@/components/ui/error-boundary';
 import HeroSection from '@/components/home/heroSection';
 import AboutSection from '@/components/home/aboutSection';
 import ProgramsSection from '@/components/home/programsSection';
-import { CollegeSection } from '@/components/sections/CollagesSection';
+import { CollageSection } from '@/components/sections/CollagesSection';
 import {} from '@/components/sections/OurMissionSection';
 import {
   heroSection,
@@ -43,7 +43,7 @@ const LazyOurMissionSection = React.lazy(() =>
 
 const LazyCollegeSection = React.lazy(() =>
   import('@/components/sections/CollagesSection').then(module => ({
-    default: module.CollegeSection,
+    default: module.CollageSection,
   }))
 );
 
@@ -78,7 +78,7 @@ const StaticContent = React.memo(
       <div className='relative py-20 overflow-hidden'>
         <Suspense fallback={<PageSkeleton />}>
           <CollegeProvider universityId={universityId || undefined}>
-            <LazyCollegeSection universityId={universityId || undefined} />
+            <LazyCollegeSection />
           </CollegeProvider>
         </Suspense>
 

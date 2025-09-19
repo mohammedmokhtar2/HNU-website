@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { CollegeProvider } from '@/contexts/CollegeContext';
-import { CollegeSection } from './CollagesSection';
+import { CollageSection } from './CollagesSection';
 
 interface CollegeSectionWrapperProps {
   universityId?: string;
@@ -15,7 +15,7 @@ export function CollegeSectionWrapper({
 }: CollegeSectionWrapperProps) {
   return (
     <CollegeProvider universityId={universityId}>
-      <CollegeSection universityId={universityId} sectionId={sectionId} />
+      <CollageSection sectionId={sectionId} />
     </CollegeProvider>
   );
 }

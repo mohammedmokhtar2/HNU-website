@@ -14,6 +14,7 @@ import {
 import { useLocale } from 'next-intl';
 import { useBot } from '../../hooks/use-bot';
 import './chat-widget.css';
+import { usePathname } from 'next/navigation';
 
 export default function ChatWidget() {
   const [isMobile, setIsMobile] = useState(false);
@@ -28,6 +29,7 @@ export default function ChatWidget() {
   const inputRef = useRef<HTMLInputElement>(null);
   const tooltipIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const locale = useLocale();
+  const pathname = usePathname();
 
   // Tooltip messages
   const tooltips = [
@@ -138,6 +140,10 @@ export default function ChatWidget() {
       return () => clearTimeout(timeoutId);
     }
   }, [isOpen, startTooltipCycle, stopTooltipCycle]);
+
+  if (pathname.includes('/admin')) {
+    return null;
+  }
 
   return (
     <div>

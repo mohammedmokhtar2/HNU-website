@@ -5,7 +5,7 @@ import { Section } from '@/types/section';
 import { SectionType } from '@/types/enums';
 import { AboutSection } from './AboutSection';
 import { HeroSection } from './HeroSection';
-import { CollegeSection } from './CollagesSection';
+import { CollageSection } from './CollagesSection';
 import { CollegeProvider } from '@/contexts/CollegeContext';
 import { useLocale } from 'next-intl';
 import { SectionSkeleton } from '@/components/ui/skeleton';
@@ -26,7 +26,7 @@ const LazyAboutSection = React.lazy(() =>
 
 const LazyCollegeSection = React.lazy(() =>
   import('./CollagesSection').then(module => ({
-    default: module.CollegeSection,
+    default: module.CollageSection,
   }))
 );
 
@@ -50,9 +50,9 @@ export const SectionRenderer = React.memo(
             <CollegeProvider>
               <LazyCollegeSection
                 sectionId={section.id}
-                title={collegesContent?.title}
-                subtitle={collegesContent?.subtitle}
-                content={collegesContent}
+                // title={collegesContent?.title}
+                // subtitle={collegesContent?.subtitle}
+                // content={collegesContent}
               />
             </CollegeProvider>
           );

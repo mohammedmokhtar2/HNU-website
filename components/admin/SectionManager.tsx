@@ -90,6 +90,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import Image from 'next/image';
 
+import { useCollege } from '@/contexts/CollegeContext';
 interface SectionManagerProps {
   universityId: string;
   onSectionsChange?: (sections: Section[]) => void;
@@ -102,6 +103,7 @@ const sectionTypeIcons = {
   [SectionType.ACTIONS]: GraduationCap,
   [SectionType.NUMBERS]: BarChart3,
   [SectionType.STUDENT_UNION]: Users,
+  [SectionType.COLLEGES_SECTION]: Building2,
   [SectionType.OUR_MISSION]: Crown,
   [SectionType.EGYPT_STUDENT_GROUP]: Users,
   [SectionType.COLLEGES]: Building2,
@@ -112,6 +114,7 @@ const sectionTypeLabels = {
   [SectionType.HEADER]: 'Header',
   [SectionType.HERO]: 'Hero',
   [SectionType.ABOUT]: 'About',
+  [SectionType.COLLEGES_SECTION]: 'Colleges Section',
   [SectionType.ACTIONS]: 'Actions',
   [SectionType.NUMBERS]: 'Numbers',
   [SectionType.STUDENT_UNION]: 'Student Union',
@@ -178,6 +181,18 @@ function SortableSectionItem({
           typeof content.imageUrl === 'string'
         ) {
           return `${content.title?.en || content.title?.ar || 'Our Mission'}: ${content.description?.en || content.description?.ar || ''}: ${content.buttonText?.en || content.buttonText?.ar || 'Read more'}}`;
+        }
+        break;
+      case SectionType.COLLEGES_SECTION:
+        if (
+          content &&
+          typeof content.title === 'object' &&
+          typeof content.subtitle === 'object' &&
+          typeof content.description === 'object' &&
+          typeof content.buttonText === 'object' &&
+          Array.isArray(content.collegeIds)
+        ) {
+          return `${content.title?.en || content.title?.ar || 'College Programs'}: ${content.subtitle?.en || content.subtitle?.ar || 'Studying at Helwan National University'}: ${content.description?.en || content.description?.ar || ''}: ${content.buttonText?.en || content.buttonText?.ar || 'View all Programs'}`;
         }
         break;
       case SectionType.STUDENT_UNION:
@@ -315,6 +330,11 @@ export function SectionManager({
   const [imageField, setImageField] = useState<string>('image');
   const { success, error: showError } = useToast();
 
+  const collegeContext = useCollege();
+  const colleges = collegeContext.colleges.map(college => ({
+    id: college.id,
+    name: college.name.en || college.name.ar || '', // Choose the language you want to display
+  }));
   // Use refs to store the latest callback functions to avoid stale closures
   const onSectionsChangeRef = useRef(onSectionsChange);
   const showErrorRef = useRef(showError);
@@ -532,6 +552,7 @@ export function SectionManager({
               onSubmit={handleCreate}
               onImageSelect={openImageModal}
               submitLabel='Create Section'
+              colleges={colleges}
             />
           </DialogContent>
         </Dialog>
@@ -592,6 +613,7 @@ export function SectionManager({
             onSubmit={handleUpdate}
             onImageSelect={openImageModal}
             submitLabel='Update Section'
+            colleges={colleges}
           />
         </DialogContent>
       </Dialog>
@@ -618,6 +640,7 @@ interface SectionFormProps {
   onSubmit: () => void;
   onImageSelect: (field: string) => void;
   submitLabel: string;
+  colleges: Array<{ id: string; name: string }>;
 }
 
 function SectionForm({
@@ -627,6 +650,7 @@ function SectionForm({
   onSubmit,
   onImageSelect,
   submitLabel,
+  colleges,
 }: SectionFormProps) {
   const renderContentFields = () => {
     const { type, content } = formData;
@@ -767,6 +791,184 @@ function SectionForm({
                   />
                 </div>
               )}
+            </div>
+          </div>
+        );
+
+      case SectionType.COLLEGES_SECTION:
+        // colleges يجب أن تكون متاحة من الأعلى (props أو context)
+        // مثال: const colleges = useCollegesContext() أو تأتي من props
+        return (
+          <div className='space-y-4'>
+            <div>
+              <Label>Title (English)</Label>
+              <Input
+                value={content.title?.en || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      title: { ...content.title, en: e.target.value },
+                    },
+                  })
+                }
+                placeholder='Enter English title'
+              />
+            </div>
+            <div>
+              <Label>Title (Arabic)</Label>
+              <Input
+                value={content.title?.ar || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      title: { ...content.title, ar: e.target.value },
+                    },
+                  })
+                }
+                placeholder='Enter Arabic title'
+              />
+            </div>
+            <div>
+              <Label>Subtitle (English)</Label>
+              <Input
+                value={content.subtitle?.en || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      subtitle: { ...content.subtitle, en: e.target.value },
+                    },
+                  })
+                }
+                placeholder='Enter English subtitle'
+              />
+            </div>
+            <div>
+              <Label>Subtitle (Arabic)</Label>
+              <Input
+                value={content.subtitle?.ar || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      subtitle: { ...content.subtitle, ar: e.target.value },
+                    },
+                  })
+                }
+                placeholder='Enter Arabic subtitle'
+              />
+            </div>
+            <div>
+              <Label>Description (English)</Label>
+              <Textarea
+                value={content.description?.en || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      description: {
+                        ...content.description,
+                        en: e.target.value,
+                      },
+                    },
+                  })
+                }
+                placeholder='Enter English description'
+                rows={3}
+              />
+            </div>
+            <div>
+              <Label>Description (Arabic)</Label>
+              <Textarea
+                value={content.description?.ar || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      description: {
+                        ...content.description,
+                        ar: e.target.value,
+                      },
+                    },
+                  })
+                }
+                placeholder='Enter Arabic description'
+                rows={3}
+              />
+            </div>
+            <div>
+              <Label>Button Text (English)</Label>
+              <Input
+                value={content.buttonText?.en || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      buttonText: { ...content.buttonText, en: e.target.value },
+                    },
+                  })
+                }
+                placeholder='Enter English button text'
+              />
+            </div>
+            <div>
+              <Label>Button Text (Arabic)</Label>
+              <Input
+                value={content.buttonText?.ar || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      buttonText: { ...content.buttonText, ar: e.target.value },
+                    },
+                  })
+                }
+                placeholder='Enter Arabic button text'
+              />
+            </div>
+            <div>
+              <Label>Select Colleges</Label>
+              <div className='flex flex-col gap-2'>
+                {colleges.map(college => (
+                  <label key={college.id} className='flex items-center gap-2'>
+                    <input
+                      type='checkbox'
+                      checked={
+                        content.collegeIds?.includes(college.id) || false
+                      }
+                      onChange={e => {
+                        const checked = e.target.checked;
+                        let newIds = content.collegeIds
+                          ? [...content.collegeIds]
+                          : [];
+                        if (checked) {
+                          newIds.push(college.id);
+                        } else {
+                          newIds = newIds.filter(id => id !== college.id);
+                        }
+                        setFormData({
+                          ...formData,
+                          content: {
+                            ...content,
+                            collegeIds: newIds,
+                          },
+                        });
+                      }}
+                    />
+                    {college.name}
+                  </label>
+                ))}
+              </div>
             </div>
           </div>
         );
@@ -1382,7 +1584,6 @@ function SectionForm({
             </div>
           </div>
         );
-
       default:
         return (
           <div className='space-y-4'>

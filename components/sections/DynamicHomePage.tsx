@@ -10,7 +10,7 @@ import { ErrorBoundary } from '@/components/ui/error-boundary';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { programsSection, FactsAndNumbers, topNewsData } from '@/data';
-import { CollegeSection } from './CollagesSection';
+import { CollageSection } from './CollagesSection';
 
 interface DynamicHomePageProps {
   universityId: string;
@@ -40,7 +40,7 @@ const LazyTopNews = React.lazy(() =>
 // Lazy load college section
 const LazyCollegeSection = React.lazy(() =>
   import('./CollagesSection').then(module => ({
-    default: module.CollegeSection,
+    default: module.CollageSection,
   }))
 );
 
@@ -96,7 +96,7 @@ export function DynamicHomePage({ universityId }: DynamicHomePageProps) {
           {/* College Section */}
           <Suspense fallback={<SectionSkeleton />}>
             <CollegeProvider universityId={universityId}>
-              <LazyCollegeSection universityId={universityId} />
+              <LazyCollegeSection />
             </CollegeProvider>
           </Suspense>
           <Suspense fallback={<SectionSkeleton />}>
