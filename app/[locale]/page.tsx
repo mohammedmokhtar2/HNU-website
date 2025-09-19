@@ -76,11 +76,11 @@ const StaticContent = React.memo(
         <LazyAboutSection {...aboutSection} local={locale} />
       </Suspense>
       <div className='relative py-20 overflow-hidden'>
-        <Suspense fallback={<PageSkeleton />}>
+        {/* <Suspense fallback={<PageSkeleton />}>
           <CollegeProvider universityId={universityId || undefined}>
-            <LazyCollegeSection />
+            <LazyCollegeSection universityId={universityId || undefined} />
           </CollegeProvider>
-        </Suspense>
+        </Suspense> */}
 
         {/* <Suspense fallback={<PageSkeleton />}>
           <LazyOurMissionSection />
