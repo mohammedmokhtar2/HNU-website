@@ -93,12 +93,6 @@ export function DynamicHomePage({ universityId }: DynamicHomePageProps) {
     () => (
       <>
         <div className='relative py-20 overflow-hidden'>
-          {/* College Section */}
-          <Suspense fallback={<SectionSkeleton />}>
-            <CollegeProvider universityId={universityId}>
-              <LazyCollegeSection />
-            </CollegeProvider>
-          </Suspense>
           <Suspense fallback={<SectionSkeleton />}>
             <LazyFactsAndNumber {...FactsAndNumbers} local={locale} />
           </Suspense>
@@ -108,7 +102,7 @@ export function DynamicHomePage({ universityId }: DynamicHomePageProps) {
         </div>
       </>
     ),
-    [locale, universityId]
+    [locale]
   );
 
   // Show skeleton only on initial load
