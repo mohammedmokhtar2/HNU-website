@@ -24,7 +24,7 @@ function Footer({ local }: FooterProps) {
   };
 
   // if the rotues starts with /admin, then show the admin header
-  if (pathname.startsWith('en/admin') || pathname.startsWith('ar/admin')) {
+  if (pathname.includes('/admin')) {
     return null;
   }
 

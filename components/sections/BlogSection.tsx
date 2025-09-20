@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useId } from 'react';
 import { useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,12 +15,14 @@ import {
   Star,
   Building,
   GraduationCap,
+  X,
 } from 'lucide-react';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { BlogWithRelations } from '@/types/blog';
 import { getMultilingualText } from '@/utils/multilingual';
 import { useOutsideClick } from '@/hooks/useOutsideClick';
+import { AnimatePresence, motion } from 'motion/react';
 
 interface BlogSectionProps {
   sectionId: string;
@@ -44,9 +46,26 @@ interface BlogCardProps {
   onViewAll: () => void;
 }
 
-const BlogCard = ({ blog, locale, onViewBlog, onViewAll }: BlogCardProps) => {
+const BlogCard = ({ blog, locale, onViewBlog, onViewAll, id }: BlogCardProps & { id: string }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsExpanded(false);
+      }
+    }
+
+    if (isExpanded) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isExpanded]);
 
   useOutsideClick(cardRef as React.RefObject<HTMLDivElement>, () => {
     if (isExpanded) {
@@ -102,147 +121,215 @@ const BlogCard = ({ blog, locale, onViewBlog, onViewAll }: BlogCardProps) => {
   const blogContent = getBlogContent(blog);
   const blogImage = getBlogImage(blog);
   const associatedEntity = getAssociatedEntity(blog);
-  const excerpt =
-    blogContent.length > 150
-      ? blogContent.substring(0, 150) + '...'
-      : blogContent;
 
   return (
-    <Card
-      ref={cardRef}
-      className={`group cursor-pointer transition-all duration-300 hover:shadow-xl ${
-        isExpanded ? 'shadow-2xl scale-105 z-10' : 'hover:scale-105'
-      } ${blog.isFeatured ? 'ring-2 ring-yellow-400 bg-yellow-50/50' : ''}`}
-      onClick={() => setIsExpanded(!isExpanded)}
-    >
-      <div className='relative'>
-        {/* Blog Image */}
-        {blogImage ? (
-          <div className='aspect-video w-full relative overflow-hidden rounded-t-lg'>
-            <Image
-              src={blogImage}
-              alt={blogTitle}
-              fill
-              className='object-cover group-hover:scale-110 transition-transform duration-300'
-            />
-            <div className='absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent' />
+    <>
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/20 h-full w-full z-10"
+          />
+        )}
+      </AnimatePresence>
 
-            {/* Status Badges */}
-            <div className='absolute top-3 right-3 flex flex-col gap-1'>
-              {blog.isFeatured && (
-                <Badge variant='default' className='text-xs'>
-                  <Star className='h-3 w-3 mr-1' />
-                  Featured
-                </Badge>
-              )}
-              <Badge
-                variant={blog.isPublished ? 'default' : 'secondary'}
-                className='text-xs'
-              >
-                {blog.isPublished ? (
-                  <>
-                    <Eye className='h-3 w-3 mr-1' />
-                    Published
-                  </>
+      <AnimatePresence>
+        {isExpanded ? (
+          <div className="fixed inset-0 grid place-items-center z-[100]">
+            <motion.button
+              key={`button-${blog.id}-${id}`}
+              layout
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="flex absolute top-2 right-2 lg:hidden items-center justify-center bg-white rounded-full h-6 w-6"
+              onClick={() => setIsExpanded(false)}
+            >
+              <X className="h-4 w-4 text-black" />
+            </motion.button>
+
+            <motion.div
+              layoutId={`card-${blog.id}-${id}`}
+              ref={cardRef}
+              className="w-full max-w-[500px] h-full md:h-fit md:max-h-[90%] flex flex-col bg-white dark:bg-neutral-900 sm:rounded-3xl overflow-hidden"
+            >
+              <motion.div layoutId={`image-${blog.id}-${id}`}>
+                {blogImage ? (
+                  <Image
+                    width={500}
+                    height={320}
+                    src={blogImage}
+                    alt={blogTitle}
+                    className="w-full h-80 lg:h-80 sm:rounded-tr-lg sm:rounded-tl-lg object-cover object-center"
+                  />
                 ) : (
-                  'Draft'
+                  <div className="w-full h-80 bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
+                    <span className="text-muted-foreground">No Image</span>
+                  </div>
                 )}
-              </Badge>
-            </div>
+              </motion.div>
+
+              <div>
+                <div className="flex justify-between items-start p-4">
+                  <div className="flex-1">
+                    <motion.h3
+                      layoutId={`title-${blog.id}-${id}`}
+                      className="font-bold text-neutral-700 dark:text-neutral-200 text-lg"
+                    >
+                      {blogTitle}
+                    </motion.h3>
+                    <motion.p
+                      layoutId={`description-${blog.id}-${id}`}
+                      className="text-neutral-600 dark:text-neutral-400 text-sm mt-1"
+                    >
+                      {associatedEntity?.name || 'Blog Post'}
+                    </motion.p>
+                  </div>
+
+                  <motion.button
+                    layoutId={`button-${blog.id}-${id}`}
+                    onClick={() => onViewBlog(blog.slug)}
+                    className="px-4 py-3 text-sm rounded-full font-bold bg-green-500 text-white hover:bg-green-600 transition-colors"
+                  >
+                    View Blog
+                  </motion.button>
+                </div>
+
+                <div className="pt-4 relative px-4">
+                  <motion.div
+                    layout
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="text-neutral-600 text-xs md:text-sm lg:text-base h-40 md:h-fit pb-10 flex flex-col items-start gap-4 overflow-auto dark:text-neutral-400 [mask:linear-gradient(to_bottom,white,white,transparent)] [scrollbar-width:none] [-ms-overflow-style:none] [-webkit-overflow-scrolling:touch]"
+                  >
+                    <p className="whitespace-pre-wrap">{blogContent}</p>
+
+                    {/* Tags */}
+                    {blog.tags && blog.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {blog.tags.map((tag, index) => (
+                          <Badge key={index} variant="secondary" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Meta Information */}
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        {format(new Date(blog.createdAt), 'MMM dd, yyyy')}
+                      </div>
+                      {blog.createdBy && (
+                        <div className="flex items-center gap-1">
+                          <User className="h-3 w-3" />
+                          {blog.createdBy.name || blog.createdBy.email}
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                </div>
+              </div>
+            </motion.div>
           </div>
-        ) : (
-          <div className='aspect-video w-full bg-muted rounded-t-lg flex items-center justify-center'>
-            <span className='text-muted-foreground text-sm'>No Image</span>
-          </div>
-        )}
+        ) : null}
+      </AnimatePresence>
 
-        {/* Associated Entity */}
-        {associatedEntity && (
-          <div className='absolute top-3 left-3'>
-            <Badge variant='secondary' className='text-xs'>
-              {associatedEntity.type === 'university' ? (
-                <Building className='h-3 w-3 mr-1' />
-              ) : (
-                <GraduationCap className='h-3 w-3 mr-1' />
-              )}
-              {associatedEntity.name}
-            </Badge>
-          </div>
-        )}
-      </div>
-
-      <CardHeader className='pb-3'>
-        <CardTitle className='text-lg line-clamp-2 group-hover:text-primary transition-colors'>
-          {blogTitle}
-        </CardTitle>
-      </CardHeader>
-
-      <CardContent className='space-y-4'>
-        {/* Content Preview */}
-        <div className='space-y-3'>
-          <p className='text-sm text-muted-foreground line-clamp-3'>
-            {isExpanded ? blogContent : excerpt}
-          </p>
-
-          {/* Tags */}
-          {blog.tags && blog.tags.length > 0 && (
-            <div className='flex flex-wrap gap-1'>
-              {blog.tags.slice(0, 3).map((tag, index) => (
-                <Badge key={index} variant='secondary' className='text-xs'>
-                  {tag}
-                </Badge>
-              ))}
-              {blog.tags.length > 3 && (
-                <Badge variant='outline' className='text-xs'>
-                  +{blog.tags.length - 3} more
-                </Badge>
-              )}
+      {/* Main Image Card */}
+      <motion.div
+        layoutId={`card-${blog.id}-${id}`}
+        onClick={() => setIsExpanded(true)}
+        className="group cursor-pointer transition-all duration-300 hover:scale-105"
+      >
+        <div className="relative aspect-video w-full overflow-hidden rounded-lg">
+          {blogImage ? (
+            <motion.div layoutId={`image-${blog.id}-${id}`}>
+              <Image
+                src={blogImage}
+                alt={blogTitle}
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+            </motion.div>
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
+              <span className="text-muted-foreground text-sm">No Image</span>
             </div>
           )}
 
-          {/* Meta Information */}
-          <div className='flex items-center justify-between text-xs text-muted-foreground'>
-            <div className='flex items-center gap-3'>
-              <div className='flex items-center gap-1'>
-                <Calendar className='h-3 w-3' />
-                {format(new Date(blog.createdAt), 'MMM dd, yyyy')}
-              </div>
-              {blog.createdBy && (
-                <div className='flex items-center gap-1'>
-                  <User className='h-3 w-3' />
-                  {blog.createdBy.name || blog.createdBy.email}
-                </div>
-              )}
+          {/* Overlay with title on hover */}
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-300 flex items-center justify-center">
+            <div className="text-center px-4">
+              <motion.h3
+                layoutId={`title-${blog.id}-${id}`}
+                className="text-white text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300 line-clamp-2"
+              >
+                {blogTitle}
+              </motion.h3>
+              <motion.p
+                layoutId={`description-${blog.id}-${id}`}
+                className="text-white/80 text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-1"
+              >
+                {associatedEntity?.name || 'Blog Post'}
+              </motion.p>
             </div>
           </div>
-        </div>
 
-        {/* Action Buttons */}
-        <div className='flex items-center gap-2 pt-2'>
-          <Button
-            size='sm'
-            onClick={e => {
+          {/* Status Badges */}
+          <div className="absolute top-2 right-2 flex flex-col gap-1">
+            {blog.isFeatured && (
+              <Badge variant="default" className="text-xs bg-yellow-500 hover:bg-yellow-600 px-2 py-1">
+                <Star className="h-3 w-3 mr-1" />
+                Featured
+              </Badge>
+            )}
+            <Badge
+              variant={blog.isPublished ? "default" : "secondary"}
+              className="text-xs px-2 py-1"
+            >
+              {blog.isPublished ? (
+                <>
+                  <Eye className="h-3 w-3 mr-1" />
+                  Published
+                </>
+              ) : (
+                'Draft'
+              )}
+            </Badge>
+          </div>
+
+          {/* Associated Entity */}
+          {associatedEntity && (
+            <div className="absolute top-2 left-2">
+              <Badge variant="secondary" className="text-xs bg-white/90 text-black px-2 py-1">
+                {associatedEntity.type === 'university' ? (
+                  <Building className="h-3 w-3 mr-1" />
+                ) : (
+                  <GraduationCap className="h-3 w-3 mr-1" />
+                )}
+                {associatedEntity.name}
+              </Badge>
+            </div>
+          )}
+
+          {/* CTA Button */}
+          <motion.button
+            layoutId={`button-${blog.id}-${id}`}
+            className="absolute bottom-2 right-2 px-3 py-1 text-xs rounded-full font-bold bg-gray-100 hover:bg-green-500 hover:text-white text-black transition-colors opacity-0 group-hover:opacity-100"
+            onClick={(e) => {
               e.stopPropagation();
               onViewBlog(blog.slug);
             }}
-            className='flex-1'
           >
-            <ExternalLink className='h-4 w-4 mr-1' />
             View Blog
-          </Button>
-          <Button
-            size='sm'
-            variant='outline'
-            onClick={e => {
-              e.stopPropagation();
-              onViewAll();
-            }}
-          >
-            <ArrowRight className='h-4 w-4' />
-          </Button>
+          </motion.button>
         </div>
-      </CardContent>
-    </Card>
+      </motion.div>
+    </>
   );
 };
 
@@ -257,6 +344,7 @@ export const BlogSection = ({
   const [blogs, setBlogs] = useState<BlogWithRelations[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const id = useId();
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -305,14 +393,14 @@ export const BlogSection = ({
 
   const sectionTitle = content?.title
     ? content.title[locale as keyof typeof content.title] ||
-      content.title.en ||
-      'Latest Blogs'
+    content.title.en ||
+    'Latest Blogs'
     : 'Latest Blogs';
 
   const sectionDescription = content?.description
     ? content.description[locale as keyof typeof content.description] ||
-      content.description.en ||
-      'Stay updated with our latest news, insights, and announcements'
+    content.description.en ||
+    'Stay updated with our latest news, insights, and announcements'
     : 'Stay updated with our latest news, insights, and announcements';
 
   if (loading) {
@@ -323,9 +411,9 @@ export const BlogSection = ({
             <div className='animate-pulse'>
               <div className='h-8 bg-muted rounded w-1/3 mx-auto mb-4'></div>
               <div className='h-4 bg-muted rounded w-1/2 mx-auto mb-8'></div>
-              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-                {[1, 2, 3].map(i => (
-                  <div key={i} className='bg-muted rounded-lg h-80'></div>
+              <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4'>
+                {[1, 2, 3, 4, 5, 6].map(i => (
+                  <div key={i} className='bg-muted rounded-lg aspect-video'></div>
                 ))}
               </div>
             </div>
@@ -366,7 +454,7 @@ export const BlogSection = ({
   }
 
   return (
-    <div className='py-16 bg-muted/30'>
+    <div className='py-16'>
       <div className='container mx-auto px-4'>
         <div className='text-center mb-12'>
           <h2 className='text-3xl font-bold mb-4'>{sectionTitle}</h2>
@@ -375,7 +463,7 @@ export const BlogSection = ({
           </p>
         </div>
 
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8'>
+        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-8'>
           {blogs.map(blog => (
             <BlogCard
               key={blog.id}
@@ -383,6 +471,7 @@ export const BlogSection = ({
               locale={locale}
               onViewBlog={handleViewBlog}
               onViewAll={handleViewAll}
+              id={id}
             />
           ))}
         </div>
