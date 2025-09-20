@@ -15,6 +15,8 @@ import { useLocale } from 'next-intl';
 import { useBot } from '../../hooks/use-bot';
 import './chat-widget.css';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
 
 export default function ChatWidget() {
   const [isMobile, setIsMobile] = useState(false);
@@ -25,6 +27,11 @@ export default function ChatWidget() {
   const [newMessage, setNewMessage] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [currentTooltipIndex, setCurrentTooltipIndex] = useState(0);
+
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragPosition, setDragPosition] = useState({ x: 0, y: 0 });
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 }); // Offset between mouse and button top-left corner
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const tooltipIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -64,6 +71,40 @@ export default function ChatWidget() {
     clearMessages,
     clearSession,
   } = useBot();
+
+  // Function to detect if text is Arabic
+  const isArabicText = (text: string) => {
+    const arabicRegex = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]/;
+    return arabicRegex.test(text);
+  };
+
+  // Mouse event handlers للسحب
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!isExpanded) return; // السحب يشتغل بس لما تكون expanded
+
+    setIsDragging(true);
+    const rect = e.currentTarget.getBoundingClientRect();
+    setDragOffset({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!isDragging || !isExpanded) return;
+
+      setDragPosition({
+        x: e.clientX - dragOffset.x,
+        y: e.clientY - dragOffset.y,
+      });
+    },
+    [isDragging, dragOffset, isExpanded]
+  );
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
 
   const handleSendMessage = () => {
     if (!input.trim()) return;
@@ -122,6 +163,42 @@ export default function ChatWidget() {
     return () => window.removeEventListener('resize', checkScreen);
   }, []);
 
+  // useEffect للـ mouse events أثناء السحب
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, handleMouseMove, handleMouseUp]);
+
+  // حفظ آخر موقع في localStorage
+  useEffect(() => {
+    if (isExpanded && dragPosition.x !== 0 && dragPosition.y !== 0) {
+      localStorage.setItem('chatWindowPosition', JSON.stringify(dragPosition));
+    }
+  }, [dragPosition, isExpanded]);
+
+  // استرجاع آخر موقع عند فتح النافذة
+  useEffect(() => {
+    if (isExpanded && !isMobile) {
+      const savedPosition = localStorage.getItem('chatWindowPosition');
+      if (savedPosition) {
+        const position = JSON.parse(savedPosition);
+        setDragPosition(position);
+      } else {
+        // Default position (center of screen)
+        const defaultX = (window.innerWidth - 800) / 2; // 800 = w-2/4 approximate width
+        const defaultY = (window.innerHeight - 600) / 2; // 600 = h-4/5 approximate height
+        setDragPosition({ x: Math.max(0, defaultX), y: Math.max(0, defaultY) });
+      }
+    }
+  }, [isExpanded, isMobile]);
+
   // Start tooltip cycle when component mounts
   useEffect(() => {
     startTooltipCycle();
@@ -155,26 +232,47 @@ export default function ChatWidget() {
             : 'opacity-100 scale-100'
         } ${locale === 'ar' ? 'left-6' : 'right-6'}`}
       >
-        <Button
-          className='chat-button group relative bg-gradient-to-r from-blue-600 to-gray-900 hover:from-blue-700 hover:to-gray-900 text-white rounded-full w-16 h-16 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-110 active:scale-95 border-0'
+        <div
           onClick={() => {
             setIsOpen(true);
             setTimeout(() => inputRef.current?.focus(), 300);
           }}
           aria-label='Open chat'
+          className='relative cursor-pointer'
         >
-          <Bot className='w-8 h-8 transition-transform duration-300 group-hover:rotate-12' />
+          {/* صورة البوت مع أنيميشن */}
+          <motion.div
+            animate={{
+              y: [0, -6, 0], // floating effect
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+            whileHover={{ scale: 1.15, rotate: 5 }}
+            whileTap={{ scale: 0.9 }}
+            className='relative'
+          >
+            <Image
+              src='/chat_bot_logo.jpg'
+              alt='Alternative Bot'
+              width={70}
+              height={70}
+              className='rounded-full object-cover shadow-xl'
+            />
 
-          {/* Pulse animation */}
-          <div className='absolute inset-0 rounded-full bg-gradient-to-r from-blue-600 to-gray-900 animate-ping opacity-20'></div>
+            {/* Pulse animation */}
+            {/* <div className='absolute inset-0 rounded-full animate-ping opacity-20 bg-blue-600'></div> */}
 
-          {/* Notification dot */}
-          {messages.length > 0 && (
-            <div className='absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold animate-bounce'>
-              {messages.length}
-            </div>
-          )}
-        </Button>
+            {/* Notification dot */}
+            {messages.length > 0 && (
+              <div className='absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold animate-bounce'>
+                {messages.length}
+              </div>
+            )}
+          </motion.div>
+        </div>
       </div>
 
       {/* Tooltip Display */}
@@ -195,7 +293,9 @@ export default function ChatWidget() {
               <div className='flex items-center gap-2 mb-2'>
                 <Bot className='w-4 h-4 text-blue-500' />
                 <span className='font-semibold text-blue-600'>
-                  {locale === 'ar' ? 'زقزوقي' : 'Zaqzouqi'}
+                  {locale === 'ar'
+                    ? 'مساعد جامعة حلوان الاهلية'
+                    : 'HNU Assistant'}
                 </span>
               </div>
               <p
@@ -231,24 +331,43 @@ export default function ChatWidget() {
                   ? 'fixed top-0 left-0 w-full h-full'
                   : `fixed bottom-20 w-96 h-[36rem] ${locale === 'ar' ? 'left-4' : 'right-4'}`
                 : isExpanded
-                  ? 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2/4 h-4/5 max-w-4xl'
+                  ? 'fixed w-2/4 h-4/5 max-w-4xl'
                   : `fixed bottom-20 w-96 h-[36rem] ${locale === 'ar' ? 'left-4' : 'right-4'}`
             }
             bg-white rounded-2xl shadow-2xl flex flex-col z-50
             transition-all duration-500 ease-out
             ${isOpen ? 'animate-in slide-in-from-bottom-4 fade-in-0 zoom-in-95' : ''}
             border border-gray-200/50 backdrop-blur-sm
+            ${isExpanded && !isMobile ? 'draggable-window' : ''}
           `}
+          {...(isExpanded &&
+            !isMobile && {
+              style: {
+                left: `${dragPosition.x}px`,
+                top: `${dragPosition.y}px`,
+                transform: 'none',
+              },
+            })}
         >
           {/* Enhanced Header */}
           <div
-            className={`flex items-center justify-between p-4 border-b border-gray-200/50 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-t-2xl ${locale === 'ar' ? 'flex-row-reverse' : ''}`}
+            className={`flex items-center justify-between p-4 border-b border-gray-200/50 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-t-2xl ${
+              locale === 'ar' ? 'flex-row-reverse' : ''
+            } ${isExpanded && !isMobile ? 'cursor-move' : ''}`}
+            onMouseDown={handleMouseDown}
           >
             <div
               className={`flex items-center gap-3 ${locale === 'ar' ? 'flex-row-reverse' : ''}`}
             >
               <div className='relative'>
-                <Bot className='w-6 h-6 animate-pulse' />
+                {/* <Bot className='w-6 h-6 animate-pulse' /> */}
+                <Image
+                  src='/chat_bot_logo.jpg'
+                  alt='Alternative Bot'
+                  width={36}
+                  height={36}
+                  className='rounded-full object-cover animate-pulse'
+                />
                 <div className='absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-ping'></div>
               </div>
               <div className={locale === 'ar' ? 'text-right' : 'text-left'}>
@@ -312,7 +431,14 @@ export default function ChatWidget() {
                 className={`text-center text-gray-500 py-12 animate-fade-in ${locale === 'ar' ? 'text-right' : 'text-left'} flex items-center justify-center flex-col gap-4 px-4`}
               >
                 <div className='mb-4'>
-                  <Bot className='w-12 h-12 mx-auto text-blue-500 animate-bounce' />
+                  {/* <Bot className='w-12 h-12 mx-auto text-blue-500 animate-bounce' /> */}
+                  <Image
+                    src='/chat_bot_logo.jpg'
+                    alt='Alternative Bot'
+                    width={70}
+                    height={70}
+                    className='rounded-full object-cover'
+                  />
                 </div>
                 <p className='text-sm font-medium mb-2'>
                   {locale === 'ar'
@@ -328,27 +454,46 @@ export default function ChatWidget() {
               </div>
             ) : (
               <>
-                {messages.map((msg, i) => (
-                  <div
-                    key={i}
-                    className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'} animate-in slide-in-from-bottom-2 fade-in-0 duration-300`}
-                    style={{ animationDelay: `${i * 100}ms` }}
-                  >
+                {messages.map((msg, i) => {
+                  const messageIsArabic = isArabicText(msg.text);
+                  return (
                     <div
-                      className={`message-bubble px-4 py-3 rounded-2xl max-w-[80%] text-sm shadow-sm transition-all duration-200 hover:shadow-md ${
-                        msg.from === 'user'
-                          ? `bg-gradient-to-r from-blue-500 to-gray-900 text-white ${locale === 'ar' ? 'rounded-bl-md' : 'rounded-br-md'}`
-                          : `bg-white text-gray-800 border border-gray-200 ${locale === 'ar' ? 'rounded-br-md' : 'rounded-bl-md'}`
-                      }`}
+                      key={i}
+                      className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'} animate-in slide-in-from-bottom-2 fade-in-0 duration-300 message-delay-${Math.min(i, 9)}`}
                     >
-                      <p
-                        className={`whitespace-pre-wrap ${locale === 'ar' ? 'text-right' : 'text-left'}`}
+                      <div
+                        className={`message-bubble px-4 py-3 rounded-2xl max-w-[80%] text-sm shadow-sm transition-all duration-200 hover:shadow-md ${
+                          msg.from === 'user'
+                            ? `bg-gradient-to-r from-blue-500 to-gray-900 text-white ${locale === 'ar' ? 'rounded-bl-md' : 'rounded-br-md'}`
+                            : `bg-white text-gray-800 border border-gray-200 ${locale === 'ar' ? 'rounded-br-md' : 'rounded-bl-md'}`
+                        }`}
                       >
-                        {msg.text}
-                      </p>
+                        <p
+                          className={`whitespace-pre-wrap ${
+                            msg.from === 'user'
+                              ? locale === 'ar'
+                                ? 'text-right'
+                                : 'text-left'
+                              : messageIsArabic
+                                ? 'text-right'
+                                : 'text-left'
+                          }`}
+                          dir={
+                            msg.from === 'user'
+                              ? locale === 'ar'
+                                ? 'rtl'
+                                : 'ltr'
+                              : messageIsArabic
+                                ? 'rtl'
+                                : 'ltr'
+                          }
+                        >
+                          {msg.text}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
                 {isLoading && (
                   <div className='flex justify-start animate-in slide-in-from-bottom-2 fade-in-0'>
                     <div className='bg-white text-gray-800 rounded-2xl px-4 py-3 flex items-center gap-3 shadow-sm border border-gray-200'>
@@ -418,8 +563,8 @@ export default function ChatWidget() {
             <div className='mt-3 text-center'>
               <p className='text-xs text-gray-400'>
                 {locale === 'ar'
-                  ? 'قد ينتج الذكاء الاصطناعي زقزوقي معلومات غير دقيقة.'
-                  : 'Zaqzouqi AI may produce inaccurate information.'}
+                  ? 'قد ينتج مساعد جامعة حلوان الاهلية معلومات غير دقيقة.'
+                  : 'HNU Assistant may produce inaccurate information.'}
               </p>
               {error && (
                 <p className='text-xs text-red-500 mt-1 animate-pulse'>

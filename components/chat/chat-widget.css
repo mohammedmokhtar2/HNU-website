@@ -131,3 +131,49 @@
     background-position: 200% 0;
   }
 }
+
+/* Animation delay classes */
+.message-delay-0 {
+  animation-delay: 0ms;
+}
+.message-delay-1 {
+  animation-delay: 100ms;
+}
+.message-delay-2 {
+  animation-delay: 200ms;
+}
+.message-delay-3 {
+  animation-delay: 300ms;
+}
+.message-delay-4 {
+  animation-delay: 400ms;
+}
+.message-delay-5 {
+  animation-delay: 500ms;
+}
+.message-delay-6 {
+  animation-delay: 600ms;
+}
+.message-delay-7 {
+  animation-delay: 700ms;
+}
+.message-delay-8 {
+  animation-delay: 800ms;
+}
+.message-delay-9 {
+  animation-delay: 900ms;
+}
+
+/* Draggable window class */
+.draggable-window {
+  transition: none !important; /* إلغاء الـ transitions أثناء السحب */
+}
+
+/* Cursor styles للسحب */
+.cursor-move {
+  cursor: move;
+}
+
+.cursor-move:active {
+  cursor: grabbing;
+}
