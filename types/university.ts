@@ -46,7 +46,7 @@ export interface UniversityConfig {
         en: string;
         ar: string;
       };
-      type: 'customSection' | 'quickLinks';
+      type: 'customSection' | 'quickLinks' | 'quickActions';
       items: {
         title: {
           en: string;
@@ -55,12 +55,11 @@ export interface UniversityConfig {
         href?: string;
       }[];
     }[];
-    // Legacy support - will be moved to dynamicSections
     quickActions?: {
       title: {
         en: string;
         ar: string;
-      } | string; // Support both old and new format
+      };
       href: string;
     }[];
   };

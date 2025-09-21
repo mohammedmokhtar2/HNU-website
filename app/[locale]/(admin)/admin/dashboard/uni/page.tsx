@@ -53,6 +53,16 @@ function UniversityConfigPage() {
   const [selectedExistingSection, setSelectedExistingSection] = useState('');
   const [editingField, setEditingField] = useState<string | null>(null);
   const [editingValue, setEditingValue] = useState('');
+  const [showQuickLinkForm, setShowQuickLinkForm] = useState(false);
+  const [newQuickLinkGroup, setNewQuickLinkGroup] = useState({
+    title: { en: '', ar: '' },
+    items: [{ title: { en: '', ar: '' }, href: '', style: 'button' as 'button' | 'link' }]
+  });
+  const [showQuickActionForm, setShowQuickActionForm] = useState(false);
+  const [newQuickActionGroup, setNewQuickActionGroup] = useState({
+    title: { en: '', ar: '' },
+    items: [{ title: { en: '', ar: '' }, href: '' }]
+  });
   const [saving, setSaving] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
   const [config, setConfig] = useState<UniversityConfig>({
@@ -93,10 +103,12 @@ function UniversityConfigPage() {
           if (loadedConfig.footer.quickActions?.length) {
             dynamicSections.push({
               id: 'legacy_quick_actions',
-              title: 'Quick Actions',
-              type: 'quickLinks',
+              title: { en: 'Quick Actions', ar: 'روابط سريعة' },
+              type: 'customSection',
               items: loadedConfig.footer.quickActions.map(action => ({
-                title: action.title,
+                title: typeof action.title === 'string' 
+                  ? { en: action.title, ar: action.title }
+                  : action.title,
                 href: action.href
               }))
             });
@@ -1063,31 +1075,201 @@ function UniversityConfigPage() {
                               </div>
                             )
                           )}
-                          <Button
-                            variant='outline'
-                            size='sm'
-                            onClick={() => {
-                              const newLink = { 
-                                title: {
-                                  en: 'New Quick Link',
-                                  ar: 'رابط سريع جديد'
-                                }, 
-                                href: '', 
-                                style: 'button' as const 
-                              };
-                              handleFooterUpdate({
-                                ...config.footer,
-                                quickLinks: [
-                                  ...(config.footer?.quickLinks || []),
-                                  newLink,
-                                ],
-                              });
-                            }}
-                            className='w-full'
-                          >
-                            <Plus className='h-4 w-4 mr-2' />
-                            Add Quick Link
-                          </Button>
+                          
+                          {/* Add Quick Link Form - Inline */}
+                          {showQuickLinkForm ? (
+                            <div className="border border-blue-300 rounded-lg p-4 bg-blue-50 space-y-4">
+                              <div className="flex justify-between items-center">
+                                <h4 className="text-sm font-medium text-blue-900">Add New Quick Link Group</h4>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => {
+                                    setShowQuickLinkForm(false);
+                                    setNewQuickLinkGroup({
+                                      title: { en: '', ar: '' },
+                                      items: [{ title: { en: '', ar: '' }, href: '', style: 'button' as 'button' | 'link' }]
+                                    });
+                                  }}
+                                  className="text-gray-500 hover:text-gray-700"
+                                >
+                                  ×
+                                </Button>
+                              </div>
+                              
+                              {/* Group Title */}
+
+                              {/* Items */}
+                              <div className="space-y-3">
+                                <Label className="text-xs text-gray-600">Links in this Group</Label>
+                                {newQuickLinkGroup.items.map((item, itemIndex) => (
+                                  <div key={itemIndex} className="border border-gray-200 rounded-md p-3 bg-white space-y-2">
+                                    <div className="flex justify-between items-center">
+                                      <Label className="text-xs text-gray-500">Link #{itemIndex + 1}</Label>
+                                      {newQuickLinkGroup.items.length > 1 && (
+                                        <Button
+                                          variant="ghost"
+                                          size="sm"
+                                          onClick={() => {
+                                            setNewQuickLinkGroup(prev => ({
+                                              ...prev,
+                                              items: prev.items.filter((_, index) => index !== itemIndex)
+                                            }));
+                                          }}
+                                          className="text-red-500 hover:text-red-700 h-6 w-6 p-0"
+                                        >
+                                          ×
+                                        </Button>
+                                      )}
+                                    </div>
+                                    
+                                    {/* Link Title */}
+                                    <div className="grid grid-cols-2 gap-2">
+                                      <Input
+                                        value={item.title.en}
+                                        onChange={(e) => {
+                                          setNewQuickLinkGroup(prev => ({
+                                            ...prev,
+                                            items: prev.items.map((itm, idx) => 
+                                              idx === itemIndex 
+                                                ? { ...itm, title: { ...itm.title, en: e.target.value } }
+                                                : itm
+                                            )
+                                          }));
+                                        }}
+                                        placeholder="Link Title (English)"
+                                        className="text-sm"
+                                      />
+                                      <Input
+                                        value={item.title.ar}
+                                        onChange={(e) => {
+                                          setNewQuickLinkGroup(prev => ({
+                                            ...prev,
+                                            items: prev.items.map((itm, idx) => 
+                                              idx === itemIndex 
+                                                ? { ...itm, title: { ...itm.title, ar: e.target.value } }
+                                                : itm
+                                            )
+                                          }));
+                                        }}
+                                        placeholder="Link Title (Arabic)"
+                                        className="text-sm"
+                                      />
+                                    </div>
+                                    
+                                    {/* URL and Style */}
+                                    <div className="flex gap-2">
+                                      <Input
+                                        value={item.href}
+                                        onChange={(e) => {
+                                          setNewQuickLinkGroup(prev => ({
+                                            ...prev,
+                                            items: prev.items.map((itm, idx) => 
+                                              idx === itemIndex 
+                                                ? { ...itm, href: e.target.value }
+                                                : itm
+                                            )
+                                          }));
+                                        }}
+                                        placeholder="Link URL"
+                                        className="flex-1 text-sm"
+                                      />
+                                      <select
+                                        value={item.style}
+                                        onChange={(e) => {
+                                          setNewQuickLinkGroup(prev => ({
+                                            ...prev,
+                                            items: prev.items.map((itm, idx) => 
+                                              idx === itemIndex 
+                                                ? { ...itm, style: e.target.value as 'button' | 'link' }
+                                                : itm
+                                            )
+                                          }));
+                                        }}
+                                        className="px-2 py-1 border border-gray-300 rounded text-sm"
+                                        aria-label="Link Style"
+                                      >
+                                        <option value="button">Button</option>
+                                        <option value="link">Link</option>
+                                      </select>
+                                    </div>
+                                  </div>
+                                ))}
+                                
+                                {/* Add New Item Button */}
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    setNewQuickLinkGroup(prev => ({
+                                      ...prev,
+                                      items: [...prev.items, { title: { en: '', ar: '' }, href: '', style: 'button' as 'button' | 'link' }]
+                                    }));
+                                  }}
+                                  className="w-full border-dashed"
+                                >
+                                  <Plus className="h-3 w-3 mr-1" />
+                                  Add Another Link
+                                </Button>
+                              </div>
+                              
+                              {/* Action Buttons */}
+                              <div className="flex gap-2 pt-2">
+                                <Button
+                                  size="sm"
+                                  onClick={() => {
+                                    // Add all items as separate quick links
+                                    const newLinks = newQuickLinkGroup.items.filter(item => 
+                                      item.title.en.trim() || item.title.ar.trim()
+                                    );
+                                    
+                                    if (newLinks.length > 0) {
+                                      handleFooterUpdate({
+                                        ...config.footer,
+                                        quickLinks: [
+                                          ...(config.footer?.quickLinks || []),
+                                          ...newLinks,
+                                        ],
+                                      });
+                                      setShowQuickLinkForm(false);
+                                      setNewQuickLinkGroup({
+                                        title: { en: '', ar: '' },
+                                        items: [{ title: { en: '', ar: '' }, href: '', style: 'button' as 'button' | 'link' }]
+                                      });
+                                    }
+                                  }}
+                                  disabled={!newQuickLinkGroup.items.some(item => item.title.en.trim() || item.title.ar.trim())}
+                                  className="flex-1"
+                                >
+                                  Add Links
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    setShowQuickLinkForm(false);
+                                    setNewQuickLinkGroup({
+                                      title: { en: '', ar: '' },
+                                      items: [{ title: { en: '', ar: '' }, href: '', style: 'button' as 'button' | 'link' }]
+                                    });
+                                  }}
+                                  className="flex-1"
+                                >
+                                  Cancel
+                                </Button>
+                              </div>
+                            </div>
+                          ) : (
+                            <Button
+                              variant='outline'
+                              size='sm'
+                              onClick={() => setShowQuickLinkForm(true)}
+                              className='w-full'
+                            >
+                              <Plus className='h-4 w-4 mr-2' />
+                              Add Quick Link
+                            </Button>
+                          )}
                         </div>
                       </div>
 
@@ -1186,35 +1368,186 @@ function UniversityConfigPage() {
                                   }}
                                   className='text-red-500'
                                 >
-                                  Remove Action
+                                  ×
                                 </Button>
                               </div>
                             )
                           )}
-                          <Button
-                            variant='outline'
-                            size='sm'
-                            onClick={() => {
-                              const newAction = { 
-                                title: {
-                                  en: 'New Quick Action',
-                                  ar: 'إجراء سريع جديد'
-                                }, 
-                                href: '' 
-                              };
-                              handleFooterUpdate({
-                                ...config.footer,
-                                quickActions: [
-                                  ...(config.footer?.quickActions || []),
-                                  newAction,
-                                ],
-                              });
-                            }}
-                            className='w-full'
-                          >
-                            <Plus className='h-4 w-4 mr-2' />
-                            Add Quick Action
-                          </Button>
+                          
+                          {/* Add Quick Action Form - Inline */}
+                          {showQuickActionForm ? (
+                            <div className="border border-blue-300 rounded-lg p-4 bg-blue-50 space-y-4">
+                              <div className="flex justify-between items-center">
+                                <h4 className="text-sm font-medium text-blue-900">Add New Quick Action Group</h4>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => {
+                                    setShowQuickActionForm(false);
+                                    setNewQuickActionGroup({
+                                      title: { en: '', ar: '' },
+                                      items: [{ title: { en: '', ar: '' }, href: '' }]
+                                    });
+                                  }}
+                                  className="text-gray-500 hover:text-gray-700"
+                                >
+                                  ×
+                                </Button>
+                              </div>
+
+                              {/* Items */}
+                              <div className="space-y-3">
+                                <Label className="text-xs text-gray-600">Actions in this Group</Label>
+                                {newQuickActionGroup.items.map((item, itemIndex) => (
+                                  <div key={itemIndex} className="border border-gray-200 rounded-md p-3 bg-white space-y-2">
+                                    <div className="flex justify-between items-center">
+                                      <Label className="text-xs text-gray-500">Action #{itemIndex + 1}</Label>
+                                      {newQuickActionGroup.items.length > 1 && (
+                                        <Button
+                                          variant="ghost"
+                                          size="sm"
+                                          onClick={() => {
+                                            setNewQuickActionGroup(prev => ({
+                                              ...prev,
+                                              items: prev.items.filter((_, index) => index !== itemIndex)
+                                            }));
+                                          }}
+                                          className="text-red-500 hover:text-red-700 h-6 w-6 p-0"
+                                        >
+                                          ×
+                                        </Button>
+                                      )}
+                                    </div>
+                                    
+                                    {/* Action Title */}
+                                    <div className="grid grid-cols-2 gap-2">
+                                      <Input
+                                        value={item.title.en}
+                                        onChange={(e) => {
+                                          setNewQuickActionGroup(prev => ({
+                                            ...prev,
+                                            items: prev.items.map((itm, idx) => 
+                                              idx === itemIndex 
+                                                ? { ...itm, title: { ...itm.title, en: e.target.value } }
+                                                : itm
+                                            )
+                                          }));
+                                        }}
+                                        placeholder="Action Title (English)"
+                                        className="text-sm"
+                                      />
+                                      <Input
+                                        value={item.title.ar}
+                                        onChange={(e) => {
+                                          setNewQuickActionGroup(prev => ({
+                                            ...prev,
+                                            items: prev.items.map((itm, idx) => 
+                                              idx === itemIndex 
+                                                ? { ...itm, title: { ...itm.title, ar: e.target.value } }
+                                                : itm
+                                            )
+                                          }));
+                                        }}
+                                        placeholder="Action Title (Arabic)"
+                                        className="text-sm"
+                                      />
+                                    </div>
+                                    
+                                    {/* URL */}
+                                    <div>
+                                      <Input
+                                        value={item.href}
+                                        onChange={(e) => {
+                                          setNewQuickActionGroup(prev => ({
+                                            ...prev,
+                                            items: prev.items.map((itm, idx) => 
+                                              idx === itemIndex 
+                                                ? { ...itm, href: e.target.value }
+                                                : itm
+                                            )
+                                          }));
+                                        }}
+                                        placeholder="Action URL"
+                                        className="text-sm"
+                                      />
+                                    </div>
+                                  </div>
+                                ))}
+                                
+                                {/* Add New Item Button */}
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    setNewQuickActionGroup(prev => ({
+                                      ...prev,
+                                      items: [...prev.items, { title: { en: '', ar: '' }, href: '' }]
+                                    }));
+                                  }}
+                                  className="w-full border-dashed"
+                                >
+                                  <Plus className="h-3 w-3 mr-1" />
+                                  Add Another Action
+                                </Button>
+                              </div>
+                              
+                              {/* Action Buttons */}
+                              <div className="flex gap-2 pt-2">
+                                <Button
+                                  size="sm"
+                                  onClick={() => {
+                                    // Add all items as separate quick actions
+                                    const newActions = newQuickActionGroup.items.filter(item => 
+                                      item.title.en.trim() || item.title.ar.trim()
+                                    );
+                                    
+                                    if (newActions.length > 0) {
+                                      handleFooterUpdate({
+                                        ...config.footer,
+                                        quickActions: [
+                                          ...(config.footer?.quickActions || []),
+                                          ...newActions,
+                                        ],
+                                      });
+                                      setShowQuickActionForm(false);
+                                      setNewQuickActionGroup({
+                                        title: { en: '', ar: '' },
+                                        items: [{ title: { en: '', ar: '' }, href: '' }]
+                                      });
+                                    }
+                                  }}
+                                  disabled={!newQuickActionGroup.items.some(item => item.title.en.trim() || item.title.ar.trim())}
+                                  className="flex-1"
+                                >
+                                  Add Actions
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    setShowQuickActionForm(false);
+                                    setNewQuickActionGroup({
+                                      title: { en: '', ar: '' },
+                                      items: [{ title: { en: '', ar: '' }, href: '' }]
+                                    });
+                                  }}
+                                  className="flex-1"
+                                >
+                                  Cancel
+                                </Button>
+                              </div>
+                            </div>
+                          ) : (
+                            <Button
+                              variant='outline'
+                              size='sm'
+                              onClick={() => setShowQuickActionForm(true)}
+                              className='w-full'
+                            >
+                              <Plus className='h-4 w-4 mr-2' />
+                              Add Quick Action
+                            </Button>
+                          )}
                         </div>
                       </div>
 
@@ -1386,7 +1719,7 @@ function UniversityConfigPage() {
                             </div>
                           ))}
                           
-                          <div className='grid grid-cols-2 gap-2'>
+                          <div className=''>
                             <Button
                               variant='outline'
                               size='sm'
@@ -1395,15 +1728,6 @@ function UniversityConfigPage() {
                             >
                               <Plus className='h-4 w-4 mr-2' />
                               Add Custom Section
-                            </Button>
-                            <Button
-                              variant='outline'
-                              size='sm'
-                              onClick={() => addDynamicSection('quickLinks')}
-                              className='w-full'
-                            >
-                              <Plus className='h-4 w-4 mr-2' />
-                              Add Quick Links
                             </Button>
                           </div>
                         </div>

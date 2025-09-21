@@ -147,48 +147,5 @@ export function OurMissionSection({ sectionId }: OurMissionSectionProps) {
         )}
       </div>
     </section>
-
-    // <>
-    //   <section className='relative w-full min-h-screen flex justify-center items-center'>
-    //     <div className='relative flex justify-center items-center'>
-    //       <motion.div
-    //         className='w-[500px] h-[500px] p-8 rounded-xl bg-gradient-to-r from-[#063574] to-[#03507a] shadow-xl absolute -left-16 top-50 z-10 font-sans flex flex-col justify-center items-center text-center'
-    //         initial={{ opacity: 0, x: -50 }}
-    //         whileInView={{ opacity: 1, x: 0 }}
-    //         transition={{ duration: 0.6 }}
-    //         viewport={{ once: true }}
-    //       >
-    //         <h2 className='text-3xl font-extrabold text-white tracking-wide mb-6'>
-    //           {OurMissionData.title[locale as 'en' | 'ar']}
-    //         </h2>
-    //         <p className='text-lg mb-6 text-white/90 leading-relaxed'>
-    //           {OurMissionData.description[locale as 'en' | 'ar']}
-    //         </p>
-    //         <Link
-    //           href='#'
-    //           className='inline-block bg-gradient-to-r from-[#077599] to-[#01778f] text-white font-semibold px-10 py-4 rounded-lg shadow-md hover:scale-105 hover:brightness-110 transition-transform duration-300'
-    //         >
-    //           {OurMissionData.buttonText[locale as 'en' | 'ar']}
-    //         </Link>
-    //       </motion.div>
-
-    //       <motion.div
-    //         className='w-[500px] h-[500px] rounded-xl overflow-hidden shadow-xl relative z-0 ml-70 mb-70'
-    //         initial={{ opacity: 0, x: 50 }}
-    //         whileInView={{ opacity: 1, x: 0 }}
-    //         transition={{ duration: 0.6 }}
-    //         viewport={{ once: true }}
-    //       >
-    //         <Image
-    //           src={OurMissionData.imageUrl}
-    //           alt='Our Mission'
-    //           width={500}
-    //           height={500}
-    //           className='w-full h-full object-cover rounded-xl'
-    //         />
-    //       </motion.div>
-    //     </div>
-    //   </section>
-    // </>
   );
 }
