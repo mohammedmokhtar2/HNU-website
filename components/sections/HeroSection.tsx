@@ -12,7 +12,13 @@ interface HeroSectionProps {
 export function HeroSection({ section, locale }: HeroSectionProps) {
   // Cast content to HeroContent type for type safety
   const content = section.content as HeroContent;
-  const [mediaType, setMediaType] = useState<'video' | 'image'>('video');
+
+  // Determine initial media type based on availability
+  const hasVideo = !!content.videoUrl;
+  const hasImage = !!content.imageUrl;
+  const initialMediaType = hasVideo ? 'video' : hasImage ? 'image' : 'video';
+
+  const [mediaType, setMediaType] = useState<'video' | 'image'>(initialMediaType);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -52,8 +58,8 @@ export function HeroSection({ section, locale }: HeroSectionProps) {
     }, 300);
   };
 
-  const canSwitchToVideo = heroData.videoUrl && heroData.imageUrl;
-  const canSwitchToImage = heroData.videoUrl && heroData.imageUrl;
+  const canSwitchToVideo = hasVideo && hasImage;
+  const canSwitchToImage = hasVideo && hasImage;
   const heroT = useTranslations('hero');
 
   return (
@@ -63,7 +69,7 @@ export function HeroSection({ section, locale }: HeroSectionProps) {
     >
       {/* Background Video/Image */}
       <div className='absolute inset-0 w-full h-full'>
-        {heroData.videoUrl && mediaType === 'video' && (
+        {hasVideo && mediaType === 'video' && (
           <video
             ref={videoRef}
             src={heroData.videoUrl}
@@ -71,19 +77,17 @@ export function HeroSection({ section, locale }: HeroSectionProps) {
             loop
             muted={true}
             disablePictureInPicture
-            className={`w-full h-full object-cover transition-all duration-500 ${
-              isTransitioning ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
-            }`}
+            className={`w-full h-full object-cover transition-all duration-500 ${isTransitioning ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
+              }`}
           />
         )}
-        {heroData.imageUrl && mediaType === 'image' && (
+        {hasImage && mediaType === 'image' && (
           <Image
             src={heroData.imageUrl}
             alt='Hero background'
             fill
-            className={`object-cover transition-all duration-500 ${
-              isTransitioning ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
-            }`}
+            className={`object-cover transition-all duration-500 ${isTransitioning ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
+              }`}
             priority
           />
         )}
@@ -96,9 +100,8 @@ export function HeroSection({ section, locale }: HeroSectionProps) {
           <button
             onClick={() => switchMediaType('video')}
             disabled={isTransitioning}
-            className={`relative p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 group ${
-              mediaType === 'video' ? 'bg-white/40 ring-2 ring-white/50' : ''
-            } ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
+            className={`relative p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 group ${mediaType === 'video' ? 'bg-white/40 ring-2 ring-white/50' : ''
+              } ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
             aria-label='Switch to video'
           >
             <svg
@@ -118,9 +121,8 @@ export function HeroSection({ section, locale }: HeroSectionProps) {
           <button
             onClick={() => switchMediaType('image')}
             disabled={isTransitioning}
-            className={`relative p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 group ${
-              mediaType === 'image' ? 'bg-white/40 ring-2 ring-white/50' : ''
-            } ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
+            className={`relative p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 group ${mediaType === 'image' ? 'bg-white/40 ring-2 ring-white/50' : ''
+              } ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
             aria-label='Switch to image'
           >
             <svg

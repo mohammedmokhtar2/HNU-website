@@ -87,5 +87,6 @@ export interface CollegeConfig {
     twitter?: string;
     instagram?: string;
     linkedin?: string;
+    tiktok?: string;
   };
 }
