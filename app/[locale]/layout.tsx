@@ -41,7 +41,7 @@ export default async function LocaleLayout({
     >
       <body suppressHydrationWarning>
         <NextIntlClientProvider locale={locale}>
-          <Providers universityId='cmfonhbko0000ubn0td5daho8'>
+          <Providers universityId='cmfswgpf10000ubcgetg8o4fy'>
             <Header3 {...headerData} />
             <main className='bg-white'>
               <DecorativeWrapper>{children}</DecorativeWrapper>

@@ -41,8 +41,8 @@ export default function ChatWidget() {
   // Tooltip messages
   const tooltips = [
     {
-      ar: 'مرحباً! أنا زقزوقي، مساعدك الذكي. اسألني عن الكليات والبرامج!',
-      en: 'Hi! I am Zaqzouqi, your smart assistant. Ask me about colleges and programs!',
+      ar: 'مرحباً! أنا مساعدك الشخصي. اسألني عن الكليات والبرامج!',
+      en: 'Hi! I am your personal assistant. Ask me about colleges and programs!',
     },
     {
       ar: 'يمكنني مساعدتك في معلومات القبول والتسجيل في الجامعة',

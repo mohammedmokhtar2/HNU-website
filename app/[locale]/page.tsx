@@ -47,11 +47,11 @@ const LazyCollegeSection = React.lazy(() =>
   }))
 );
 
-const LazyFactsAndNumber = React.lazy(() =>
-  import('@/components/home/FcatsAndNumber').then(module => ({
-    default: module.default,
-  }))
-);
+// const LazyFactsAndNumber = React.lazy(() =>
+//   import('@/components/home/FcatsAndNumber').then(module => ({
+//     default: module.default,
+//   }))
+// );
 
 const LazyTopNews = React.lazy(() =>
   import('@/components/home/TopNews').then(module => ({
@@ -86,9 +86,9 @@ const StaticContent = React.memo(
           <LazyOurMissionSection />
         </Suspense> */}
 
-        <Suspense fallback={<PageSkeleton />}>
+        {/* <Suspense fallback={<PageSkeleton />}>
           <LazyFactsAndNumber {...FactsAndNumbers} local={locale} />
-        </Suspense>
+        </Suspense> */}
         <Suspense fallback={<PageSkeleton />}>
           <LazyTopNews {...topNewsData} local={locale} />
         </Suspense>
