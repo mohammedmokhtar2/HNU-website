@@ -82,10 +82,10 @@ export function OurMissionSection({ sectionId }: OurMissionSectionProps) {
           className={`${
             isMobile
               ? 'w-full h-[400px] relative'
-              : `w-[700px] h-[500px] rounded-xl overflow-hidden shadow-xl relative z-0 ${locale === 'ar' ? 'mr-90' : 'ml-90'}`
+              : `w-[1000px] h-[500px] rounded-xl overflow-hidden shadow-xl relative z-0 ${locale === 'ar' ? 'mr-90' : 'ml-90'}`
           }`}
           initial={{ opacity: 0, x: 50 }}
-          whileInView={{ opacity: 1, x: 0 }}
+          whileInView={{ opacity: 1, x: isMobile ? 0 : (locale === 'ar' ? -200 : 200) }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
@@ -120,10 +120,11 @@ export function OurMissionSection({ sectionId }: OurMissionSectionProps) {
         {/* كارد النص على الديسكتوب */}
         {!isMobile && (
           <motion.div
-            className={`w-[600px] h-[350px] p-6 bg-gradient-to-r from-[#063574] to-[#035683] rounded-xl shadow-lg flex flex-col justify-center ${
+          // bg with low opacity
+            className={`w-[600px] h-[350px] p-6 bg-gradient-to-r from-[#162e51] to-[#1954a6]/60 rounded-xl shadow-lg flex flex-col justify-center  ${
               locale === 'ar'
                 ? 'text-right rtl right-10 mr-10'
-                : 'text-left left-10 ml-20'
+                : 'text-left left-5 ml-20'
             } z-10 absolute top-1/2 transform -translate-y-1/2`}
             initial={{ opacity: 0, x: locale === 'ar' ? 50 : -50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -138,7 +139,7 @@ export function OurMissionSection({ sectionId }: OurMissionSectionProps) {
             </p>
             <Link
               href='#'
-              className='bg-gradient-to-r from-[#077599] to-[#01778f] text-white font-semibold px-6 py-2 rounded shadow-md hover:scale-105 transition-transform duration-300'
+              className='bg-gradient-to-r from-[#074199] to-[#396ca7] w-50 text-white font-semibold px-6 py-2 rounded shadow-md hover:scale-105 transition-transform duration-300'
             >
               {OurMissionData.buttonText[locale as 'en' | 'ar']}
             </Link>

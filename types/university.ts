@@ -30,6 +30,40 @@ export interface UniversityConfig {
       }[];
     }[];
   };
+  // Enhanced footer configuration with dynamic sections
+  footer?: {
+    quickLinks: {
+      title: {
+        en: string;
+        ar: string;
+      };
+      href: string;
+      style?: 'button' | 'link'; // Optional styling type for quick links
+    }[];
+    dynamicSections: {
+      id: string;
+      title: {
+        en: string;
+        ar: string;
+      };
+      type: 'customSection' | 'quickLinks';
+      items: {
+        title: {
+          en: string;
+          ar: string;
+        };
+        href?: string;
+      }[];
+    }[];
+    // Legacy support - will be moved to dynamicSections
+    quickActions?: {
+      title: {
+        en: string;
+        ar: string;
+      } | string; // Support both old and new format
+      href: string;
+    }[];
+  };
 }
 
 // University creation input type

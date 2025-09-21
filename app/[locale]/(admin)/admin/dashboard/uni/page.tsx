@@ -48,6 +48,9 @@ function UniversityConfigPage() {
   const [university, setUniversity] = useState<University | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeConfig, setActiveConfig] = useState('basic');
+  const [showSectionSelector, setShowSectionSelector] = useState(false);
+  const [selectedSectionType, setSelectedSectionType] = useState<'existing' | 'new'>('new');
+  const [selectedExistingSection, setSelectedExistingSection] = useState('');
   const [editingField, setEditingField] = useState<string | null>(null);
   const [editingValue, setEditingValue] = useState('');
   const [saving, setSaving] = useState(false);
@@ -57,6 +60,10 @@ function UniversityConfigPage() {
     socialMedia: {},
     menuBuilder: {
       menuItems: [],
+    },
+    footer: {
+      quickLinks: [],
+      dynamicSections: [],
     },
   });
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -76,11 +83,33 @@ function UniversityConfigPage() {
         setUniversity(uni);
         if (uni.config) {
           const loadedConfig = uni.config as UniversityConfig;
-          setConfig({
+          
+        // Migrate old footer structure to new dynamic sections
+        const baseDynamicSections = loadedConfig.footer?.dynamicSections || [];
+        const dynamicSections = [...baseDynamicSections];
+        
+        // If old structure exists, migrate it
+        if (loadedConfig.footer?.quickActions?.length) {
+          if (loadedConfig.footer.quickActions?.length) {
+            dynamicSections.push({
+              id: 'legacy_quick_actions',
+              title: 'Quick Actions',
+              type: 'quickLinks',
+              items: loadedConfig.footer.quickActions.map(action => ({
+                title: action.title,
+                href: action.href
+              }))
+            });
+          }
+        }          setConfig({
             logo: loadedConfig.logo || '',
             socialMedia: loadedConfig.socialMedia || {},
             menuBuilder: loadedConfig.menuBuilder || {
               menuItems: [],
+            },
+            footer: {
+              quickLinks: loadedConfig.footer?.quickLinks || [],
+              dynamicSections: dynamicSections,
             },
           });
         }
@@ -174,6 +203,10 @@ function UniversityConfigPage() {
         menuBuilder: loadedConfig.menuBuilder || {
           menuItems: [],
         },
+        footer: loadedConfig.footer || {
+          quickLinks: [],
+          dynamicSections: [],
+        },
       });
       setHasUnsavedChanges(false);
     }
@@ -204,6 +237,184 @@ function UniversityConfigPage() {
       },
     };
     updateConfig(newConfig);
+  };
+
+  const handleFooterUpdate = (footerConfig: any) => {
+    const newConfig = {
+      ...config,
+      footer: footerConfig,
+    };
+    updateConfig(newConfig);
+  };
+
+  const addDynamicSection = (type: 'customSection' | 'quickLinks') => {
+    if (type === 'customSection') {
+      setShowSectionSelector(true);
+      return;
+    }
+    
+    // Create quick links section directly
+    const newSection = {
+      id: `section_${Date.now()}`,
+      title: {
+        en: 'Quick Links Section',
+        ar: 'قسم الروابط السريعة'
+      },
+      type: 'quickLinks' as const,
+      items: []
+    };
+
+    const currentFooter = config.footer || { quickLinks: [], dynamicSections: [] };
+    const newFooter = {
+      ...currentFooter,
+      dynamicSections: [...(currentFooter.dynamicSections || []), newSection]
+    };
+
+    handleFooterUpdate(newFooter);
+  };
+
+  const handleSectionSelection = () => {
+    if (selectedSectionType === 'new') {
+      // Create new custom section
+      const newSection = {
+        id: `section_${Date.now()}`,
+        title: {
+          en: 'New Custom Section',
+          ar: 'قسم مخصص جديد'
+        },
+        type: 'customSection' as const, // Default to customSection
+        items: []
+      };
+
+      const currentFooter = config.footer || { quickLinks: [], dynamicSections: [] };
+      const newFooter = {
+        ...currentFooter,
+        dynamicSections: [...(currentFooter.dynamicSections || []), newSection]
+      };
+
+      handleFooterUpdate(newFooter);
+    } else if (selectedExistingSection) {
+      // Duplicate existing section
+      const existingSection = config.footer?.dynamicSections?.find(s => s.id === selectedExistingSection);
+      if (existingSection) {
+        const duplicatedSection = {
+          ...existingSection,
+          id: `section_${Date.now()}`,
+          title: typeof existingSection.title === 'object' 
+            ? {
+                en: `${existingSection.title.en || ''} (Copy)`,
+                ar: `${existingSection.title.ar || ''} (نسخة)`
+              }
+            : `${existingSection.title} (Copy)`
+        };
+
+        const currentFooter = config.footer || { quickLinks: [], dynamicSections: [] };
+        const newFooter = {
+          ...currentFooter,
+          dynamicSections: [...(currentFooter.dynamicSections || []), duplicatedSection]
+        };
+
+        handleFooterUpdate(newFooter);
+      }
+    }
+
+    // Reset modal state
+    setShowSectionSelector(false);
+    setSelectedSectionType('new');
+    setSelectedExistingSection('');
+  };
+
+  const updateDynamicSection = (sectionId: string, updatedSection: any) => {
+    const currentFooter = config.footer || { quickLinks: [], dynamicSections: [] };
+    
+    // Check if the user selected to copy from an existing section
+    if (updatedSection.type && updatedSection.type.startsWith('copy:')) {
+      const sourceId = updatedSection.type.replace('copy:', '');
+      const sourceSection = currentFooter.dynamicSections?.find(s => s.id === sourceId);
+      
+      if (sourceSection) {
+        // Copy items from source section
+        updatedSection = {
+          ...updatedSection,
+          type: sourceSection.type, // Keep the original type
+          items: [...sourceSection.items] // Deep copy the items
+        };
+      }
+    }
+
+    const newFooter = {
+      ...currentFooter,
+      dynamicSections: (currentFooter.dynamicSections || []).map(section =>
+        section.id === sectionId ? updatedSection : section
+      )
+    };
+
+    handleFooterUpdate(newFooter);
+  };
+
+  const deleteDynamicSection = (sectionId: string) => {
+    const currentFooter = config.footer || { quickLinks: [], dynamicSections: [] };
+    const newFooter = {
+      ...currentFooter,
+      dynamicSections: (currentFooter.dynamicSections || []).filter(section => section.id !== sectionId)
+    };
+
+    handleFooterUpdate(newFooter);
+  };
+
+  const addItemToSection = (sectionId: string, type: 'customSection' | 'quickLinks') => {
+    const newItem = { 
+      title: {
+        en: 'New Item',
+        ar: 'عنصر جديد'
+      }, 
+      href: '#' 
+    };
+
+    const currentFooter = config.footer || { quickLinks: [], dynamicSections: [] };
+    const newFooter = {
+      ...currentFooter,
+      dynamicSections: (currentFooter.dynamicSections || []).map(section =>
+        section.id === sectionId 
+          ? { ...section, items: [...section.items, newItem] }
+          : section
+      )
+    };
+
+    handleFooterUpdate(newFooter);
+  };
+
+  const updateSectionItem = (sectionId: string, itemIndex: number, updatedItem: any) => {
+    const currentFooter = config.footer || { quickLinks: [], dynamicSections: [] };
+    const newFooter = {
+      ...currentFooter,
+      dynamicSections: (currentFooter.dynamicSections || []).map(section =>
+        section.id === sectionId 
+          ? { 
+              ...section, 
+              items: section.items.map((item, index) => 
+                index === itemIndex ? updatedItem : item
+              ) 
+            }
+          : section
+      )
+    };
+
+    handleFooterUpdate(newFooter);
+  };
+
+  const deleteSectionItem = (sectionId: string, itemIndex: number) => {
+    const currentFooter = config.footer || { quickLinks: [], dynamicSections: [] };
+    const newFooter = {
+      ...currentFooter,
+      dynamicSections: (currentFooter.dynamicSections || []).map(section =>
+        section.id === sectionId 
+          ? { ...section, items: section.items.filter((_, index) => index !== itemIndex) }
+          : section
+      )
+    };
+
+    handleFooterUpdate(newFooter);
   };
 
   const handleSectionsChange = useCallback((sections: any[]) => {
@@ -246,6 +457,14 @@ function UniversityConfigPage() {
       description: 'Social media links and integration',
       icon: Share2,
       isActive: activeConfig === 'social',
+    },
+    // add footer configuration tab
+    {
+      id: 'footer',
+      title: 'Footer Configuration',
+      description: 'Manage footer links and content',
+      icon: Palette,
+      isActive: activeConfig === 'footer',
     },
   ];
 
@@ -303,6 +522,7 @@ function UniversityConfigPage() {
                   className='text-2xl font-bold text-gray-900 bg-transparent border-none outline-none'
                   autoFocus
                   disabled={saving}
+                  aria-label='Edit university name'
                 />
               ) : (
                 <span className={saving ? 'opacity-50' : ''}>
@@ -333,6 +553,7 @@ function UniversityConfigPage() {
                   className='bg-transparent border-none outline-none text-sm'
                   autoFocus
                   disabled={saving}
+                  aria-label='Edit university slug'
                 />
               ) : (
                 <span className={saving ? 'opacity-50' : ''}>
@@ -388,7 +609,7 @@ function UniversityConfigPage() {
           className='w-full'
         >
           {/* Tab Navigation */}
-          <TabsList className='grid w-full grid-cols-8 mb-6'>
+          <TabsList className='grid w-full grid-cols-6 mb-6'>
             {configItems.map(item => {
               const Icon = item.icon;
               return (
@@ -717,6 +938,479 @@ function UniversityConfigPage() {
                     </div>
                   </TabsContent>
 
+                  <TabsContent value='footer' className='mt-0'>
+                    <div className='space-y-6'>
+                      {/* Quick Links Section */}
+                      <div>
+                        <Label className='text-sm font-medium text-gray-700'>
+                          Quick Links
+                        </Label>
+                        <div className='mt-2 space-y-2'>
+                          {(config.footer?.quickLinks || []).map(
+                            (link, index) => (
+                              <div key={index} className='border rounded-lg p-3 space-y-2'>
+                                <div className='space-y-2'>
+                                  <Label className='text-xs text-gray-500'>Link Title</Label>
+                                  <div className='grid grid-cols-2 gap-2'>
+                                    <div>
+                                      <Label className='text-xs text-gray-400'>English</Label>
+                                      <Input
+                                        value={typeof link.title === 'object' ? link.title.en || '' : link.title || ''}
+                                        onChange={e => {
+                                          const updatedLinks = [
+                                            ...(config.footer?.quickLinks || []),
+                                          ];
+                                          updatedLinks[index] = {
+                                            ...updatedLinks[index],
+                                            title: {
+                                              en: e.target.value,
+                                              ar: typeof link.title === 'object' ? link.title.ar || '' : ''
+                                            },
+                                          };
+                                          handleFooterUpdate({
+                                            ...config.footer,
+                                            quickLinks: updatedLinks,
+                                          });
+                                        }}
+                                        placeholder='Title (English)'
+                                      />
+                                    </div>
+                                    <div>
+                                      <Label className='text-xs text-gray-400'>Arabic</Label>
+                                      <Input
+                                        value={typeof link.title === 'object' ? link.title.ar || '' : ''}
+                                        onChange={e => {
+                                          const updatedLinks = [
+                                            ...(config.footer?.quickLinks || []),
+                                          ];
+                                          updatedLinks[index] = {
+                                            ...updatedLinks[index],
+                                            title: {
+                                              en: typeof link.title === 'object' ? link.title.en || '' : link.title || '',
+                                              ar: e.target.value
+                                            },
+                                          };
+                                          handleFooterUpdate({
+                                            ...config.footer,
+                                            quickLinks: updatedLinks,
+                                          });
+                                        }}
+                                        placeholder='Title (Arabic)'
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                                <div>
+                                  <Label className='text-xs text-gray-500'>URL</Label>
+                                  <div className='flex gap-2'>
+                                    <Input
+                                      value={link.href}
+                                      onChange={e => {
+                                        const updatedLinks = [
+                                          ...(config.footer?.quickLinks || []),
+                                        ];
+                                        updatedLinks[index] = {
+                                          ...updatedLinks[index],
+                                          href: e.target.value,
+                                        };
+                                        handleFooterUpdate({
+                                          ...config.footer,
+                                          quickLinks: updatedLinks,
+                                        });
+                                      }}
+                                      placeholder='Link URL'
+                                      className='flex-1'
+                                    />
+                                <select
+                                  value={link.style || 'button'}
+                                  onChange={e => {
+                                    const updatedLinks = [
+                                      ...(config.footer?.quickLinks || []),
+                                    ];
+                                    updatedLinks[index] = {
+                                      ...updatedLinks[index],
+                                      style: e.target.value as 'button' | 'link',
+                                    };
+                                    handleFooterUpdate({
+                                      ...config.footer,
+                                      quickLinks: updatedLinks,
+                                    });
+                                  }}
+                                  className='px-2 py-1 border border-gray-300 rounded text-sm'
+                                  aria-label='Link Style'
+                                >
+                                  <option value='button'>Button</option>
+                                  <option value='link'>Link</option>
+                                </select>
+                                <Button
+                                  variant='ghost'
+                                  size='sm'
+                                  onClick={() => {
+                                    const updatedLinks = (
+                                      config.footer?.quickLinks || []
+                                    ).filter((_, i) => i !== index);
+                                    handleFooterUpdate({
+                                      ...config.footer,
+                                      quickLinks: updatedLinks,
+                                    });
+                                  }}
+                                  className='text-red-500'
+                                >
+                                  ×
+                                </Button>
+                              </div>
+                            </div>
+                              </div>
+                            )
+                          )}
+                          <Button
+                            variant='outline'
+                            size='sm'
+                            onClick={() => {
+                              const newLink = { 
+                                title: {
+                                  en: 'New Quick Link',
+                                  ar: 'رابط سريع جديد'
+                                }, 
+                                href: '', 
+                                style: 'button' as const 
+                              };
+                              handleFooterUpdate({
+                                ...config.footer,
+                                quickLinks: [
+                                  ...(config.footer?.quickLinks || []),
+                                  newLink,
+                                ],
+                              });
+                            }}
+                            className='w-full'
+                          >
+                            <Plus className='h-4 w-4 mr-2' />
+                            Add Quick Link
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Quick Actions Section */}
+                      <div>
+                        <Label className='text-sm font-medium text-gray-700'>
+                          Quick Actions
+                        </Label>
+                        <div className='mt-2 space-y-2'>
+                          {(config.footer?.quickActions || []).map(
+                            (action, index) => (
+                              <div key={index} className='border rounded-lg p-3 space-y-2'>
+                                <div className='space-y-2'>
+                                  <Label className='text-xs text-gray-500'>Action Title</Label>
+                                  <div className='grid grid-cols-2 gap-2'>
+                                    <div>
+                                      <Label className='text-xs text-gray-400'>English</Label>
+                                      <Input
+                                        value={typeof action.title === 'object' ? action.title.en || '' : action.title || ''}
+                                        onChange={e => {
+                                          const updatedActions = [
+                                            ...(config.footer?.quickActions || []),
+                                          ];
+                                          updatedActions[index] = {
+                                            ...updatedActions[index],
+                                            title: {
+                                              en: e.target.value,
+                                              ar: typeof action.title === 'object' ? action.title.ar || '' : ''
+                                            },
+                                          };
+                                          handleFooterUpdate({
+                                            ...config.footer,
+                                            quickActions: updatedActions,
+                                          });
+                                        }}
+                                        placeholder='Title (English)'
+                                      />
+                                    </div>
+                                    <div>
+                                      <Label className='text-xs text-gray-400'>Arabic</Label>
+                                      <Input
+                                        value={typeof action.title === 'object' ? action.title.ar || '' : ''}
+                                        onChange={e => {
+                                          const updatedActions = [
+                                            ...(config.footer?.quickActions || []),
+                                          ];
+                                          updatedActions[index] = {
+                                            ...updatedActions[index],
+                                            title: {
+                                              en: typeof action.title === 'object' ? action.title.en || '' : action.title || '',
+                                              ar: e.target.value
+                                            },
+                                          };
+                                          handleFooterUpdate({
+                                            ...config.footer,
+                                            quickActions: updatedActions,
+                                          });
+                                        }}
+                                        placeholder='Title (Arabic)'
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                                <div>
+                                  <Label className='text-xs text-gray-500'>URL</Label>
+                                  <Input
+                                    value={action.href}
+                                    onChange={e => {
+                                      const updatedActions = [
+                                        ...(config.footer?.quickActions || []),
+                                      ];
+                                      updatedActions[index] = {
+                                        ...updatedActions[index],
+                                        href: e.target.value,
+                                      };
+                                      handleFooterUpdate({
+                                        ...config.footer,
+                                        quickActions: updatedActions,
+                                      });
+                                    }}
+                                    placeholder='Action URL'
+                                    className='flex-1'
+                                  />
+                                </div>
+                                <Button
+                                  variant='ghost'
+                                  size='sm'
+                                  onClick={() => {
+                                    const updatedActions = (
+                                      config.footer?.quickActions || []
+                                    ).filter((_, i) => i !== index);
+                                    handleFooterUpdate({
+                                      ...config.footer,
+                                      quickActions: updatedActions,
+                                    });
+                                  }}
+                                  className='text-red-500'
+                                >
+                                  Remove Action
+                                </Button>
+                              </div>
+                            )
+                          )}
+                          <Button
+                            variant='outline'
+                            size='sm'
+                            onClick={() => {
+                              const newAction = { 
+                                title: {
+                                  en: 'New Quick Action',
+                                  ar: 'إجراء سريع جديد'
+                                }, 
+                                href: '' 
+                              };
+                              handleFooterUpdate({
+                                ...config.footer,
+                                quickActions: [
+                                  ...(config.footer?.quickActions || []),
+                                  newAction,
+                                ],
+                              });
+                            }}
+                            className='w-full'
+                          >
+                            <Plus className='h-4 w-4 mr-2' />
+                            Add Quick Action
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Dynamic Sections */}
+                      <div>
+                        <Label className='text-sm font-medium text-gray-700'>
+                          Dynamic Footer Sections
+                        </Label>
+                        <div className='mt-2 space-y-4'>
+                          {(config.footer?.dynamicSections || []).map((section, sectionIndex) => (
+                            <div key={section.id || sectionIndex} className='border rounded-lg p-4 space-y-3'>
+                              <div className='flex justify-between items-center'>
+                                <div className='space-y-2 flex-1'>
+                                  <Label className='text-sm font-medium text-gray-700'>Section Title</Label>
+                                  <div className='grid grid-cols-2 gap-2'>
+                                    <div>
+                                      <Label className='text-xs text-gray-500'>English</Label>
+                                      <Input
+                                        value={typeof section.title === 'object' ? section.title.en || '' : section.title || ''}
+                                        onChange={e => {
+                                          const updatedSection = { 
+                                            ...section, 
+                                            title: {
+                                              en: e.target.value,
+                                              ar: typeof section.title === 'object' ? section.title.ar || '' : ''
+                                            }
+                                          };
+                                          updateDynamicSection(section.id, updatedSection);
+                                        }}
+                                        placeholder='Section Title (English)'
+                                      />
+                                    </div>
+                                    <div>
+                                      <Label className='text-xs text-gray-500'>Arabic</Label>
+                                      <Input
+                                        value={typeof section.title === 'object' ? section.title.ar || '' : ''}
+                                        onChange={e => {
+                                          const updatedSection = { 
+                                            ...section, 
+                                            title: {
+                                              en: typeof section.title === 'object' ? section.title.en || '' : section.title || '',
+                                              ar: e.target.value
+                                            }
+                                          };
+                                          updateDynamicSection(section.id, updatedSection);
+                                        }}
+                                        placeholder='Section Title (Arabic)'
+                                      />
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <Label className='text-xs text-gray-500'>Section Type</Label>
+                                    <select
+                                      value={section.type}
+                                      onChange={e => {
+                                        const updatedSection = { 
+                                          ...section, 
+                                          type: e.target.value as 'customSection' | 'quickLinks'
+                                        };
+                                        updateDynamicSection(section.id, updatedSection);
+                                      }}
+                                      aria-label='Section Type'
+                                      className='w-full px-3 py-2 border border-gray-300 rounded-md text-sm'
+                                    >
+                                      <option value='customSection'>Custom Section</option>
+                                      <option value='quickLinks'>Quick Links Style</option>
+                                      {/* Existing sections as templates */}
+                                      <optgroup label="Copy from existing sections">
+                                        {(config.footer?.dynamicSections || [])
+                                          .filter(existingSection => existingSection.id !== section.id)
+                                          .map(existingSection => (
+                                            <option 
+                                              key={`copy-${existingSection.id}`} 
+                                              value={`copy:${existingSection.id}`}
+                                            >
+                                              Copy from: {typeof existingSection.title === 'object' ? existingSection.title.en || existingSection.title.ar : existingSection.title}
+                                            </option>
+                                          ))
+                                        }
+                                      </optgroup>
+                                    </select>
+                                  </div>
+                                </div>
+                                <Button
+                                  variant='ghost'
+                                  size='sm'
+                                  onClick={() => deleteDynamicSection(section.id)}
+                                  className='text-red-500 ml-2'
+                                >
+                                  ×
+                                </Button>
+                              </div>
+
+                              {/* Section Items */}
+                              <div className='space-y-2'>
+                                {section.items.map((item, itemIndex) => (
+                                  <div key={itemIndex} className='border-l-2 border-gray-200 pl-3 space-y-2'>
+                                    <div className='space-y-2'>
+                                      <Label className='text-xs text-gray-500'>Item Title</Label>
+                                      <div className='grid grid-cols-2 gap-2'>
+                                        <div>
+                                          <Label className='text-xs text-gray-400'>English</Label>
+                                          <Input
+                                            value={typeof item.title === 'object' ? item.title.en || '' : item.title || ''}
+                                            onChange={e => {
+                                              const updatedItem = { 
+                                                ...item, 
+                                                title: {
+                                                  en: e.target.value,
+                                                  ar: typeof item.title === 'object' ? item.title.ar || '' : ''
+                                                }
+                                              };
+                                              updateSectionItem(section.id, itemIndex, updatedItem);
+                                            }}
+                                            placeholder='Title (English)'
+                                          />
+                                        </div>
+                                        <div>
+                                          <Label className='text-xs text-gray-400'>Arabic</Label>
+                                          <Input
+                                            value={typeof item.title === 'object' ? item.title.ar || '' : ''}
+                                            onChange={e => {
+                                              const updatedItem = { 
+                                                ...item, 
+                                                title: {
+                                                  en: typeof item.title === 'object' ? item.title.en || '' : item.title || '',
+                                                  ar: e.target.value
+                                                }
+                                              };
+                                              updateSectionItem(section.id, itemIndex, updatedItem);
+                                            }}
+                                            placeholder='Title (Arabic)'
+                                          />
+                                        </div>
+                                      </div>
+                                      <div>
+                                        <Label className='text-xs text-gray-500'>URL</Label>
+                                        <Input
+                                          value={item.href || ''}
+                                          onChange={e => {
+                                            const updatedItem = { ...item, href: e.target.value };
+                                            updateSectionItem(section.id, itemIndex, updatedItem);
+                                          }}
+                                          placeholder='URL'
+                                        />
+                                      </div>
+                                    </div>
+                                    <Button
+                                      variant='ghost'
+                                      size='sm'
+                                      onClick={() => deleteSectionItem(section.id, itemIndex)}
+                                      className='text-red-500 text-xs'
+                                    >
+                                      Remove Item
+                                    </Button>
+                                  </div>
+                                ))}
+                                
+                                <Button
+                                  variant='outline'
+                                  size='sm'
+                                  onClick={() => addItemToSection(section.id, section.type)}
+                                  className='w-full'
+                                >
+                                  <Plus className='h-4 w-4 mr-2' />
+                                  Add Item to {typeof section.title === 'object' ? section.title.en || section.title.ar : section.title}
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                          
+                          <div className='grid grid-cols-2 gap-2'>
+                            <Button
+                              variant='outline'
+                              size='sm'
+                              onClick={() => addDynamicSection('customSection')}
+                              className='w-full'
+                            >
+                              <Plus className='h-4 w-4 mr-2' />
+                              Add Custom Section
+                            </Button>
+                            <Button
+                              variant='outline'
+                              size='sm'
+                              onClick={() => addDynamicSection('quickLinks')}
+                              className='w-full'
+                            >
+                              <Plus className='h-4 w-4 mr-2' />
+                              Add Quick Links
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+
                   <TabsContent value='layout' className='mt-0'>
                     <div className='text-center py-8'>
                       <Layout
@@ -783,6 +1477,14 @@ function UniversityConfigPage() {
                         <Share2 className='h-4 w-4 mr-2' />
                         Manage Social Media
                       </Button>
+                      <Button
+                        variant='outline'
+                        className='justify-start'
+                        onClick={() => setActiveConfig('footer')}
+                      >
+                        <Palette className='h-4 w-4 mr-2' />
+                        Manage Footer
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
@@ -837,6 +1539,88 @@ function UniversityConfigPage() {
         onSelect={handleLogoSelect}
         currentValue={config.logo}
       />
+
+      {/* Section Selector Modal */}
+      {showSectionSelector && (
+        <div className="fixed inset-0 bg-transparent flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4 shadow-2xl border-2 border-gray-200">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Add Custom Section</h3>
+            
+            <div className="space-y-4">
+              {/* Section Type Selection */}
+              <div>
+                <Label className="text-sm font-medium text-gray-700">Section Type</Label>
+                <div className="mt-2 space-y-2">
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="sectionType"
+                      value="new"
+                      checked={selectedSectionType === 'new'}
+                      onChange={(e) => setSelectedSectionType(e.target.value as 'new' | 'existing')}
+                      className="mr-2"
+                      aria-label="Create new section"
+                    />
+                    Create New Section
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="sectionType"
+                      value="existing"
+                      checked={selectedSectionType === 'existing'}
+                      onChange={(e) => setSelectedSectionType(e.target.value as 'new' | 'existing')}
+                      className="mr-2"
+                      aria-label="Copy existing section"
+                    />
+                    Copy Existing Section
+                  </label>
+                </div>
+              </div>
+
+              {/* Existing Section Selection */}
+              {selectedSectionType === 'existing' && (
+                <div>
+                  <Label className="text-sm font-medium text-gray-700">Select Section to Copy</Label>
+                  <select
+                    value={selectedExistingSection}
+                    onChange={(e) => setSelectedExistingSection(e.target.value)}
+                    className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md"
+                    aria-label="Select section to copy"
+                  >
+                    <option value="">Select a section...</option>
+                    {(config.footer?.dynamicSections || []).map((section) => (
+                      <option key={section.id} value={section.id}>
+                        {typeof section.title === 'object' ? section.title.en || section.title.ar : section.title} ({section.type})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex justify-end space-x-3 mt-6">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowSectionSelector(false);
+                  setSelectedSectionType('new');
+                  setSelectedExistingSection('');
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSectionSelection}
+                disabled={selectedSectionType === 'existing' && !selectedExistingSection}
+              >
+                Add Section
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

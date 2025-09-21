@@ -29,9 +29,9 @@ const LazyOurMissionSection = React.lazy(() =>
   }))
 );
 
-const LazyFactsAndNumber = React.lazy(() =>
-  import('../home/FcatsAndNumber').then(module => ({ default: module.default }))
-);
+// const LazyFactsAndNumber = React.lazy(() =>
+//   import('../home/FcatsAndNumber').then(module => ({ default: module.default }))
+// );
 
 const LazyTopNews = React.lazy(() =>
   import('../home/TopNews').then(module => ({ default: module.default }))
@@ -93,9 +93,9 @@ export function DynamicHomePage({ universityId }: DynamicHomePageProps) {
     () => (
       <>
         <div className='relative py-20 overflow-hidden'>
-          <Suspense fallback={<SectionSkeleton />}>
+          {/* <Suspense fallback={<SectionSkeleton />}>
             <LazyFactsAndNumber {...FactsAndNumbers} local={locale} />
-          </Suspense>
+          </Suspense> */}
           <Suspense fallback={<SectionSkeleton />}>
             <LazyTopNews {...topNewsData} local={locale} />
           </Suspense>
