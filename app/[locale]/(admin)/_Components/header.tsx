@@ -31,7 +31,7 @@ import { cn } from '@/lib/utils';
 import { useUser } from '@/contexts/userContext';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { SignOutButton } from '@clerk/nextjs';
+import { SignOutButton } from '@/components/auth/SignOutButton';
 
 interface HeaderProps {
   notifications?: {
@@ -348,15 +348,7 @@ export function Header({
               </DropdownMenuPortal>
             </DropdownMenuSub>
             <DropdownMenuSeparator className='bg-gray-700' />
-            <SignOutButton redirectUrl='/'>
-              <Button
-                variant='ghost'
-                className='text-red-400 hover:text-red-300 hover:bg-gray-800'
-              >
-                <LogOut className='mr-2 h-4 w-4' />
-                <span>Log out</span>
-              </Button>
-            </SignOutButton>
+            <SignOutButton />
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

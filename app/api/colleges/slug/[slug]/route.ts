@@ -22,6 +22,7 @@ export const GET = withAuditLog(
             },
           },
           statistics: true,
+          programs: true,
           University: true,
         },
       });

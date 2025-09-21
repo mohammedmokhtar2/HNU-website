@@ -39,6 +39,7 @@ export async function GET(request: NextRequest) {
       include: {
         sections: true,
         statistics: true,
+        programs: true,
         University: true,
         User: true, // Include users assigned to this college
       },

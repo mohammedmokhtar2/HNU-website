@@ -1,0 +1,387 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from '@/components/ui/form';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { X, Plus, Trash2 } from 'lucide-react';
+import { ProgramWithRelations } from '@/types/program';
+import { useCollege } from '@/contexts/CollegeContext';
+import { ProgramService } from '@/services/program.service';
+import { useToast } from '@/hooks/use-toast';
+
+const programSchema = z.object({
+    name: z.object({
+        en: z.string().min(1, 'English name is required'),
+        ar: z.string().min(1, 'Arabic name is required'),
+    }),
+    description: z.object({
+        en: z.string().optional(),
+        ar: z.string().optional(),
+    }).optional(),
+    collageId: z.string().min(1, 'College is required'),
+    config: z.object({
+        degree: z.string().optional(),
+        duration: z.string().optional(),
+        credits: z.number().optional(),
+        links: z.array(z.object({
+            title: z.string(),
+            href: z.string().url(),
+        })).optional(),
+    }).optional(),
+});
+
+type ProgramFormData = z.infer<typeof programSchema>;
+
+interface ProgramCreateEditModalProps {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    onSaved: () => void;
+    program: ProgramWithRelations | null;
+}
+
+export function ProgramCreateEditModal({
+    open,
+    onOpenChange,
+    onSaved,
+    program,
+}: ProgramCreateEditModalProps) {
+    const { colleges } = useCollege();
+    const { toast } = useToast();
+    const [loading, setLoading] = useState(false);
+    const [links, setLinks] = useState<{ title: string; href: string }[]>([]);
+
+    const form = useForm<ProgramFormData>({
+        resolver: zodResolver(programSchema),
+        defaultValues: {
+            name: { en: '', ar: '' },
+            description: { en: '', ar: '' },
+            collageId: '',
+            config: {
+                degree: '',
+                duration: '',
+                credits: undefined,
+                links: [],
+            },
+        },
+    });
+
+    const isEdit = !!program;
+
+    useEffect(() => {
+        if (program) {
+            form.reset({
+                name: program.name || { en: '', ar: '' },
+                description: program.description || { en: '', ar: '' },
+                collageId: program.collageId || '',
+                config: {
+                    degree: program.config?.degree || '',
+                    duration: program.config?.duration || '',
+                    credits: program.config?.credits || undefined,
+                    links: program.config?.links || [],
+                },
+            });
+            setLinks(program.config?.links || []);
+        } else {
+            form.reset({
+                name: { en: '', ar: '' },
+                description: { en: '', ar: '' },
+                collageId: '',
+                config: {
+                    degree: '',
+                    duration: '',
+                    credits: undefined,
+                    links: [],
+                },
+            });
+            setLinks([]);
+        }
+    }, [program, form]);
+
+    const addLink = () => {
+        setLinks([...links, { title: '', href: '' }]);
+    };
+
+    const removeLink = (index: number) => {
+        setLinks(links.filter((_, i) => i !== index));
+    };
+
+    const updateLink = (index: number, field: 'title' | 'href', value: string) => {
+        const newLinks = [...links];
+        newLinks[index] = { ...newLinks[index], [field]: value };
+        setLinks(newLinks);
+    };
+
+    const onSubmit = async (data: ProgramFormData) => {
+        try {
+            setLoading(true);
+
+            const programData = {
+                ...data,
+                config: {
+                    ...data.config,
+                    links: links.filter(link => link.title && link.href),
+                },
+            };
+
+            if (isEdit) {
+                await ProgramService.updateProgram(program!.id, programData);
+                toast({
+                    title: 'Success',
+                    description: 'Program updated successfully',
+                });
+            } else {
+                await ProgramService.createProgram(programData);
+                toast({
+                    title: 'Success',
+                    description: 'Program created successfully',
+                });
+            }
+
+            onSaved();
+        } catch (error) {
+            toast({
+                title: 'Error',
+                description: error instanceof Error ? error.message : 'Something went wrong',
+                variant: 'destructive',
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                    <DialogTitle>
+                        {isEdit ? 'Edit Program' : 'Create New Program'}
+                    </DialogTitle>
+                </DialogHeader>
+
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                        {/* Program Names */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="name.en"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Program Name (English) *</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Enter program name in English" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="name.ar"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Program Name (Arabic) *</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="أدخل اسم البرنامج بالعربية" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        {/* Program Descriptions */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="description.en"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Description (English)</FormLabel>
+                                        <FormControl>
+                                            <Textarea
+                                                placeholder="Enter program description in English"
+                                                rows={3}
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="description.ar"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Description (Arabic)</FormLabel>
+                                        <FormControl>
+                                            <Textarea
+                                                placeholder="أدخل وصف البرنامج بالعربية"
+                                                rows={3}
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        {/* College Selection */}
+                        <FormField
+                            control={form.control}
+                            name="collageId"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>College *</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a college" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {colleges.map((college) => (
+                                                <SelectItem key={college.id} value={college.id}>
+                                                    {college.name?.en || college.name?.ar || college.slug}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        {/* Program Configuration */}
+                        <div className="space-y-4">
+                            <h3 className="text-lg font-medium">Program Configuration</h3>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name="config.degree"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Degree</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="e.g., Bachelor of Science" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="config.duration"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Duration</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="e.g., 4 years" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="config.credits"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Credits</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="number"
+                                                    placeholder="e.g., 120"
+                                                    {...field}
+                                                    onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
+                            {/* Links */}
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <FormLabel>Links</FormLabel>
+                                    <Button type="button" variant="outline" size="sm" onClick={addLink}>
+                                        <Plus className="h-4 w-4 mr-2" />
+                                        Add Link
+                                    </Button>
+                                </div>
+                                {links.map((link, index) => (
+                                    <div key={index} className="flex gap-2">
+                                        <Input
+                                            placeholder="Link title"
+                                            value={link.title}
+                                            onChange={(e) => updateLink(index, 'title', e.target.value)}
+                                        />
+                                        <Input
+                                            placeholder="https://example.com"
+                                            value={link.href}
+                                            onChange={(e) => updateLink(index, 'href', e.target.value)}
+                                        />
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => removeLink(index)}
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <DialogFooter>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => onOpenChange(false)}
+                                disabled={loading}
+                            >
+                                Cancel
+                            </Button>
+                            <Button type="submit" disabled={loading}>
+                                {loading ? 'Saving...' : isEdit ? 'Update Program' : 'Create Program'}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </Form>
+            </DialogContent>
+        </Dialog>
+    );
+}

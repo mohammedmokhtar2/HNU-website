@@ -5,28 +5,28 @@ export const useAuthStatus = () => {
   const { isSignedIn, isLoaded: clerkLoaded } = useAuth();
   const { user, loading: userLoading } = useUser();
 
-  // function isCollageCreator(slug: string) {
-  //   if (user?.role === "SUPERADMIN" || user?.role === "OWNER")
-  //     return true;
-  //   if (
-  //     user?.collegesCreated?.some(
-  //       (collage) => collage.slug.toLowerCase() === slug.toLowerCase()
-  //     )
-  //   )
-  //     return true;
-  //   return false;
-  // }
+  function isCollageCreator(slug: string) {
+    if (user?.role === "SUPERADMIN" || user?.role === "OWNER")
+      return true;
+    if (
+      user?.collegesCreated?.some(
+        (collage) => collage.slug.toLowerCase() === slug.toLowerCase()
+      )
+    )
+      return true;
+    return false;
+  }
   // if the user is a member of this collage so the collage will the ther userId in tue users and the user will have the collageId in the CollageId
-  // function isMemberOfCollage(collageId: string) {
-  //   if (user?.collegeId === collageId) return true;
-  //   return false;
-  // }
+  function isMemberOfCollage(collageId: string) {
+    if (user?.collegeId === collageId) return true;
+    return false;
+  }
 
-  // function canViewCollage(collageId: string, slug: string) {
-  //   if (user?.role === "SUPERADMIN" || user?.role === "OWNER") return true;
-  //   if (isMemberOfCollage(collageId) || isCollageCreator(slug)) return true;
-  //   return false;
-  // }
+  function canViewCollage(collageId: string, slug: string) {
+    if (user?.role === "SUPERADMIN" || user?.role === "OWNER") return true;
+    if (isMemberOfCollage(collageId) || isCollageCreator(slug)) return true;
+    return false;
+  }
 
   return {
     // Authentication status
@@ -44,9 +44,9 @@ export const useAuthStatus = () => {
     isOwner: user?.role === 'OWNER',
 
     // Include the function itself, not its execution
-    // isCollageCreator,
-    // isMemberOfCollage,
-    // canViewCollage,
+    isCollageCreator,
+    isMemberOfCollage,
+    canViewCollage,
     // Additional checks
   };
 };

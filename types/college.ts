@@ -4,7 +4,8 @@ import { Section } from './section';
 import { Statistic } from './statistic';
 import { University } from './university';
 import { User } from './user';
-// User, Section, Statistic, and University types will be imported when needed
+import { Program } from './program';
+// User, Section, Statistic, University, and Program types will be imported when needed
 
 // Base College interface
 export interface College {
@@ -22,6 +23,7 @@ export interface College {
   User?: User[]; // Will be properly typed when imported
   sections?: Section[]; // Will be properly typed when imported
   statistics?: Statistic[]; // Will be properly typed when imported
+  programs?: Program[]; // Will be properly typed when imported
   createdBy?: User; // Will be properly typed when imported
   createdById?: string;
   universityId?: string;
@@ -72,6 +74,7 @@ export interface CollegeWithRelationsResponse extends CollegeResponse {
   User?: User[]; // Will be properly typed when imported
   sections?: Section[]; // Will be properly typed when imported
   statistics?: Statistic[]; // Will be properly typed when imported
+  programs?: Program[]; // Will be properly typed when imported
   createdBy?: User; // Will be properly typed when imported
   University?: University; // Will be properly typed when imported
   Page?: Page[]; // Will be properly typed when imported

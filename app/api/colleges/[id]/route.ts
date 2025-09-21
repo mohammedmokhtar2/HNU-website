@@ -21,6 +21,7 @@ export async function GET(req: Request, { params }: Params) {
           },
         },
         statistics: true,
+        programs: true,
         University: true,
       },
     });

@@ -12,6 +12,7 @@ export * from './permission';
 export * from './page';
 export * from './file';
 export * from './blog';
+export * from './program';
 
 // Re-export commonly used types for convenience
 export type {
@@ -87,3 +88,14 @@ export type {
   PaginatedBlogResponse,
   BlogStats,
 } from './blog';
+
+export type {
+  Program,
+  CreateProgramInput,
+  UpdateProgramInput,
+  ProgramResponse,
+  ProgramWithRelationsResponse,
+  ProgramQueryParams,
+  PaginatedProgramResponse,
+  ProgramStats,
+} from './program';
