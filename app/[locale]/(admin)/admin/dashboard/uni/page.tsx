@@ -334,9 +334,9 @@ function UniversityConfigPage() {
           title:
             typeof existingSection.title === 'object'
               ? {
-                en: `${existingSection.title.en || ''} (Copy)`,
-                ar: `${existingSection.title.ar || ''} (نسخة)`,
-              }
+                  en: `${existingSection.title.en || ''} (Copy)`,
+                  ar: `${existingSection.title.ar || ''} (نسخة)`,
+                }
               : `${existingSection.title} (Copy)`,
         };
 
@@ -452,11 +452,11 @@ function UniversityConfigPage() {
       dynamicSections: (currentFooter.dynamicSections || []).map(section =>
         section.id === sectionId
           ? {
-            ...section,
-            items: section.items.map((item, index) =>
-              index === itemIndex ? updatedItem : item
-            ),
-          }
+              ...section,
+              items: section.items.map((item, index) =>
+                index === itemIndex ? updatedItem : item
+              ),
+            }
           : section
       ),
     };
@@ -474,9 +474,9 @@ function UniversityConfigPage() {
       dynamicSections: (currentFooter.dynamicSections || []).map(section =>
         section.id === sectionId
           ? {
-            ...section,
-            items: section.items.filter((_, index) => index !== itemIndex),
-          }
+              ...section,
+              items: section.items.filter((_, index) => index !== itemIndex),
+            }
           : section
       ),
     };
@@ -592,7 +592,9 @@ function UniversityConfigPage() {
                     />
                   ) : (
                     <span className={saving ? 'opacity-50' : ''}>
-                      {locale === 'ar' ? university?.name.ar : university?.name.en}
+                      {locale === 'ar'
+                        ? university?.name.ar
+                        : university?.name.en}
                     </span>
                   )}
                 </h1>
@@ -852,7 +854,9 @@ function UniversityConfigPage() {
                       />
                     ) : (
                       <div className='text-center py-8'>
-                        <div className='text-gray-400'>No university data available</div>
+                        <div className='text-gray-400'>
+                          No university data available
+                        </div>
                       </div>
                     )}
                   </TabsContent>
@@ -890,11 +894,13 @@ function UniversityConfigPage() {
                             title: item.title || '',
                             href: item.href || '',
                             submenu:
-                              item.submenu?.map((sub: any, subIndex: number) => ({
-                                id: sub.id || `sub-${index}-${subIndex}`,
-                                title: sub.title || '',
-                                href: sub.href || '',
-                              })) || [],
+                              item.submenu?.map(
+                                (sub: any, subIndex: number) => ({
+                                  id: sub.id || `sub-${index}-${subIndex}`,
+                                  title: sub.title || '',
+                                  href: sub.href || '',
+                                })
+                              ) || [],
                           })
                         )}
                         onChange={handleMenuUpdate}
@@ -981,7 +987,10 @@ function UniversityConfigPage() {
                             <Input
                               value={config.socialMedia?.tiktok || ''}
                               onChange={e =>
-                                handleSocialMediaUpdate('tiktok', e.target.value)
+                                handleSocialMediaUpdate(
+                                  'tiktok',
+                                  e.target.value
+                                )
                               }
                               placeholder='https://tiktok.com/@yourpage'
                               className='mt-1 bg-gray-800 text-white border-gray-600'
@@ -1081,7 +1090,10 @@ function UniversityConfigPage() {
                             <div className='h-4 w-24 bg-gray-700 rounded animate-pulse mb-4'></div>
                             <div className='space-y-3'>
                               {[...Array(2)].map((_, i) => (
-                                <div key={i} className='h-20 w-full bg-gray-700 rounded animate-pulse'></div>
+                                <div
+                                  key={i}
+                                  className='h-20 w-full bg-gray-700 rounded animate-pulse'
+                                ></div>
                               ))}
                             </div>
                           </div>
@@ -1089,7 +1101,10 @@ function UniversityConfigPage() {
                             <div className='h-4 w-32 bg-gray-700 rounded animate-pulse mb-4'></div>
                             <div className='space-y-3'>
                               {[...Array(3)].map((_, i) => (
-                                <div key={i} className='h-16 w-full bg-gray-700 rounded animate-pulse'></div>
+                                <div
+                                  key={i}
+                                  className='h-16 w-full bg-gray-700 rounded animate-pulse'
+                                ></div>
                               ))}
                             </div>
                           </div>
@@ -1133,7 +1148,8 @@ function UniversityConfigPage() {
                                                 title: {
                                                   en: e.target.value,
                                                   ar:
-                                                    typeof link.title === 'object'
+                                                    typeof link.title ===
+                                                    'object'
                                                       ? link.title.ar || ''
                                                       : '',
                                                 },
@@ -1165,7 +1181,8 @@ function UniversityConfigPage() {
                                                 ...updatedLinks[index],
                                                 title: {
                                                   en:
-                                                    typeof link.title === 'object'
+                                                    typeof link.title ===
+                                                    'object'
                                                       ? link.title.en || ''
                                                       : link.title || '',
                                                   ar: e.target.value,
@@ -1190,7 +1207,8 @@ function UniversityConfigPage() {
                                           value={link.href}
                                           onChange={e => {
                                             const updatedLinks = [
-                                              ...(config.footer?.quickLinks || []),
+                                              ...(config.footer?.quickLinks ||
+                                                []),
                                             ];
                                             updatedLinks[index] = {
                                               ...updatedLinks[index],
@@ -1208,7 +1226,8 @@ function UniversityConfigPage() {
                                           value={link.style || 'button'}
                                           onChange={e => {
                                             const updatedLinks = [
-                                              ...(config.footer?.quickLinks || []),
+                                              ...(config.footer?.quickLinks ||
+                                                []),
                                             ];
                                             updatedLinks[index] = {
                                               ...updatedLinks[index],
@@ -1267,7 +1286,9 @@ function UniversityConfigPage() {
                                             {
                                               title: { en: '', ar: '' },
                                               href: '',
-                                              style: 'button' as 'button' | 'link',
+                                              style: 'button' as
+                                                | 'button'
+                                                | 'link',
                                             },
                                           ],
                                         });
@@ -1295,18 +1316,21 @@ function UniversityConfigPage() {
                                             <Label className='text-xs text-gray-300'>
                                               Link #{itemIndex + 1}
                                             </Label>
-                                            {newQuickLinkGroup.items.length > 1 && (
+                                            {newQuickLinkGroup.items.length >
+                                              1 && (
                                               <Button
                                                 variant='ghost'
                                                 size='sm'
                                                 onClick={() => {
-                                                  setNewQuickLinkGroup(prev => ({
-                                                    ...prev,
-                                                    items: prev.items.filter(
-                                                      (_, index) =>
-                                                        index !== itemIndex
-                                                    ),
-                                                  }));
+                                                  setNewQuickLinkGroup(
+                                                    prev => ({
+                                                      ...prev,
+                                                      items: prev.items.filter(
+                                                        (_, index) =>
+                                                          index !== itemIndex
+                                                      ),
+                                                    })
+                                                  );
                                                 }}
                                                 className='text-red-500 hover:text-red-700 h-6 w-6 p-0'
                                               >
@@ -1326,12 +1350,13 @@ function UniversityConfigPage() {
                                                     (itm, idx) =>
                                                       idx === itemIndex
                                                         ? {
-                                                          ...itm,
-                                                          title: {
-                                                            ...itm.title,
-                                                            en: e.target.value,
-                                                          },
-                                                        }
+                                                            ...itm,
+                                                            title: {
+                                                              ...itm.title,
+                                                              en: e.target
+                                                                .value,
+                                                            },
+                                                          }
                                                         : itm
                                                   ),
                                                 }));
@@ -1348,12 +1373,13 @@ function UniversityConfigPage() {
                                                     (itm, idx) =>
                                                       idx === itemIndex
                                                         ? {
-                                                          ...itm,
-                                                          title: {
-                                                            ...itm.title,
-                                                            ar: e.target.value,
-                                                          },
-                                                        }
+                                                            ...itm,
+                                                            title: {
+                                                              ...itm.title,
+                                                              ar: e.target
+                                                                .value,
+                                                            },
+                                                          }
                                                         : itm
                                                   ),
                                                 }));
@@ -1374,9 +1400,10 @@ function UniversityConfigPage() {
                                                     (itm, idx) =>
                                                       idx === itemIndex
                                                         ? {
-                                                          ...itm,
-                                                          href: e.target.value,
-                                                        }
+                                                            ...itm,
+                                                            href: e.target
+                                                              .value,
+                                                          }
                                                         : itm
                                                   ),
                                                 }));
@@ -1393,12 +1420,12 @@ function UniversityConfigPage() {
                                                     (itm, idx) =>
                                                       idx === itemIndex
                                                         ? {
-                                                          ...itm,
-                                                          style: e.target
-                                                            .value as
-                                                            | 'button'
-                                                            | 'link',
-                                                        }
+                                                            ...itm,
+                                                            style: e.target
+                                                              .value as
+                                                              | 'button'
+                                                              | 'link',
+                                                          }
                                                         : itm
                                                   ),
                                                 }));
@@ -1406,7 +1433,9 @@ function UniversityConfigPage() {
                                               className='px-2 py-1 border border-gray-600 rounded text-sm bg-gray-700 text-white'
                                               aria-label='Link Style'
                                             >
-                                              <option value='button'>Button</option>
+                                              <option value='button'>
+                                                Button
+                                              </option>
                                               <option value='link'>Link</option>
                                             </select>
                                           </div>
@@ -1426,7 +1455,9 @@ function UniversityConfigPage() {
                                             {
                                               title: { en: '', ar: '' },
                                               href: '',
-                                              style: 'button' as 'button' | 'link',
+                                              style: 'button' as
+                                                | 'button'
+                                                | 'link',
                                             },
                                           ],
                                         }));
@@ -1455,7 +1486,8 @@ function UniversityConfigPage() {
                                           handleFooterUpdate({
                                             ...config.footer,
                                             quickLinks: [
-                                              ...(config.footer?.quickLinks || []),
+                                              ...(config.footer?.quickLinks ||
+                                                []),
                                               ...newLinks,
                                             ],
                                           });
@@ -1496,7 +1528,9 @@ function UniversityConfigPage() {
                                             {
                                               title: { en: '', ar: '' },
                                               href: '',
-                                              style: 'button' as 'button' | 'link',
+                                              style: 'button' as
+                                                | 'button'
+                                                | 'link',
                                             },
                                           ],
                                         });
@@ -1550,15 +1584,16 @@ function UniversityConfigPage() {
                                             }
                                             onChange={e => {
                                               const updatedActions = [
-                                                ...(config.footer?.quickActions ||
-                                                  []),
+                                                ...(config.footer
+                                                  ?.quickActions || []),
                                               ];
                                               updatedActions[index] = {
                                                 ...updatedActions[index],
                                                 title: {
                                                   en: e.target.value,
                                                   ar:
-                                                    typeof action.title === 'object'
+                                                    typeof action.title ===
+                                                    'object'
                                                       ? action.title.ar || ''
                                                       : '',
                                                 },
@@ -1583,14 +1618,15 @@ function UniversityConfigPage() {
                                             }
                                             onChange={e => {
                                               const updatedActions = [
-                                                ...(config.footer?.quickActions ||
-                                                  []),
+                                                ...(config.footer
+                                                  ?.quickActions || []),
                                               ];
                                               updatedActions[index] = {
                                                 ...updatedActions[index],
                                                 title: {
                                                   en:
-                                                    typeof action.title === 'object'
+                                                    typeof action.title ===
+                                                    'object'
                                                       ? action.title.en || ''
                                                       : action.title || '',
                                                   ar: e.target.value,
@@ -1614,7 +1650,8 @@ function UniversityConfigPage() {
                                         value={action.href}
                                         onChange={e => {
                                           const updatedActions = [
-                                            ...(config.footer?.quickActions || []),
+                                            ...(config.footer?.quickActions ||
+                                              []),
                                           ];
                                           updatedActions[index] = {
                                             ...updatedActions[index],
@@ -1664,7 +1701,10 @@ function UniversityConfigPage() {
                                         setNewQuickActionGroup({
                                           title: { en: '', ar: '' },
                                           items: [
-                                            { title: { en: '', ar: '' }, href: '' },
+                                            {
+                                              title: { en: '', ar: '' },
+                                              href: '',
+                                            },
                                           ],
                                         });
                                       }}
@@ -1691,23 +1731,25 @@ function UniversityConfigPage() {
                                             </Label>
                                             {newQuickActionGroup.items.length >
                                               1 && (
-                                                <Button
-                                                  variant='ghost'
-                                                  size='sm'
-                                                  onClick={() => {
-                                                    setNewQuickActionGroup(prev => ({
+                                              <Button
+                                                variant='ghost'
+                                                size='sm'
+                                                onClick={() => {
+                                                  setNewQuickActionGroup(
+                                                    prev => ({
                                                       ...prev,
                                                       items: prev.items.filter(
                                                         (_, index) =>
                                                           index !== itemIndex
                                                       ),
-                                                    }));
-                                                  }}
-                                                  className='text-red-500 hover:text-red-700 h-6 w-6 p-0'
-                                                >
-                                                  ×
-                                                </Button>
-                                              )}
+                                                    })
+                                                  );
+                                                }}
+                                                className='text-red-500 hover:text-red-700 h-6 w-6 p-0'
+                                              >
+                                                ×
+                                              </Button>
+                                            )}
                                           </div>
 
                                           {/* Action Title */}
@@ -1715,21 +1757,24 @@ function UniversityConfigPage() {
                                             <Input
                                               value={item.title.en}
                                               onChange={e => {
-                                                setNewQuickActionGroup(prev => ({
-                                                  ...prev,
-                                                  items: prev.items.map(
-                                                    (itm, idx) =>
-                                                      idx === itemIndex
-                                                        ? {
-                                                          ...itm,
-                                                          title: {
-                                                            ...itm.title,
-                                                            en: e.target.value,
-                                                          },
-                                                        }
-                                                        : itm
-                                                  ),
-                                                }));
+                                                setNewQuickActionGroup(
+                                                  prev => ({
+                                                    ...prev,
+                                                    items: prev.items.map(
+                                                      (itm, idx) =>
+                                                        idx === itemIndex
+                                                          ? {
+                                                              ...itm,
+                                                              title: {
+                                                                ...itm.title,
+                                                                en: e.target
+                                                                  .value,
+                                                              },
+                                                            }
+                                                          : itm
+                                                    ),
+                                                  })
+                                                );
                                               }}
                                               placeholder='Action Title (English)'
                                               className='text-sm'
@@ -1737,21 +1782,24 @@ function UniversityConfigPage() {
                                             <Input
                                               value={item.title.ar}
                                               onChange={e => {
-                                                setNewQuickActionGroup(prev => ({
-                                                  ...prev,
-                                                  items: prev.items.map(
-                                                    (itm, idx) =>
-                                                      idx === itemIndex
-                                                        ? {
-                                                          ...itm,
-                                                          title: {
-                                                            ...itm.title,
-                                                            ar: e.target.value,
-                                                          },
-                                                        }
-                                                        : itm
-                                                  ),
-                                                }));
+                                                setNewQuickActionGroup(
+                                                  prev => ({
+                                                    ...prev,
+                                                    items: prev.items.map(
+                                                      (itm, idx) =>
+                                                        idx === itemIndex
+                                                          ? {
+                                                              ...itm,
+                                                              title: {
+                                                                ...itm.title,
+                                                                ar: e.target
+                                                                  .value,
+                                                              },
+                                                            }
+                                                          : itm
+                                                    ),
+                                                  })
+                                                );
                                               }}
                                               placeholder='Action Title (Arabic)'
                                               className='text-sm'
@@ -1763,18 +1811,21 @@ function UniversityConfigPage() {
                                             <Input
                                               value={item.href}
                                               onChange={e => {
-                                                setNewQuickActionGroup(prev => ({
-                                                  ...prev,
-                                                  items: prev.items.map(
-                                                    (itm, idx) =>
-                                                      idx === itemIndex
-                                                        ? {
-                                                          ...itm,
-                                                          href: e.target.value,
-                                                        }
-                                                        : itm
-                                                  ),
-                                                }));
+                                                setNewQuickActionGroup(
+                                                  prev => ({
+                                                    ...prev,
+                                                    items: prev.items.map(
+                                                      (itm, idx) =>
+                                                        idx === itemIndex
+                                                          ? {
+                                                              ...itm,
+                                                              href: e.target
+                                                                .value,
+                                                            }
+                                                          : itm
+                                                    ),
+                                                  })
+                                                );
                                               }}
                                               placeholder='Action URL'
                                               className='text-sm'
@@ -1793,7 +1844,10 @@ function UniversityConfigPage() {
                                           ...prev,
                                           items: [
                                             ...prev.items,
-                                            { title: { en: '', ar: '' }, href: '' },
+                                            {
+                                              title: { en: '', ar: '' },
+                                              href: '',
+                                            },
                                           ],
                                         }));
                                       }}
@@ -1857,7 +1911,10 @@ function UniversityConfigPage() {
                                         setNewQuickActionGroup({
                                           title: { en: '', ar: '' },
                                           items: [
-                                            { title: { en: '', ar: '' }, href: '' },
+                                            {
+                                              title: { en: '', ar: '' },
+                                              href: '',
+                                            },
                                           ],
                                         });
                                       }}
@@ -1905,7 +1962,8 @@ function UniversityConfigPage() {
                                             </Label>
                                             <Input
                                               value={
-                                                typeof section.title === 'object'
+                                                typeof section.title ===
+                                                'object'
                                                   ? section.title.en || ''
                                                   : section.title || ''
                                               }
@@ -1916,7 +1974,7 @@ function UniversityConfigPage() {
                                                     en: e.target.value,
                                                     ar:
                                                       typeof section.title ===
-                                                        'object'
+                                                      'object'
                                                         ? section.title.ar || ''
                                                         : '',
                                                   },
@@ -1935,7 +1993,8 @@ function UniversityConfigPage() {
                                             </Label>
                                             <Input
                                               value={
-                                                typeof section.title === 'object'
+                                                typeof section.title ===
+                                                'object'
                                                   ? section.title.ar || ''
                                                   : ''
                                               }
@@ -1945,7 +2004,7 @@ function UniversityConfigPage() {
                                                   title: {
                                                     en:
                                                       typeof section.title ===
-                                                        'object'
+                                                      'object'
                                                         ? section.title.en || ''
                                                         : section.title || '',
                                                     ar: e.target.value,
@@ -1990,7 +2049,8 @@ function UniversityConfigPage() {
                                             {/* Existing sections as templates */}
                                             <optgroup label='Copy from existing sections'>
                                               {(
-                                                config.footer?.dynamicSections || []
+                                                config.footer
+                                                  ?.dynamicSections || []
                                               )
                                                 .filter(
                                                   existingSection =>
@@ -2004,9 +2064,10 @@ function UniversityConfigPage() {
                                                   >
                                                     Copy from:{' '}
                                                     {typeof existingSection.title ===
-                                                      'object'
-                                                      ? existingSection.title.en ||
-                                                      existingSection.title.ar
+                                                    'object'
+                                                      ? existingSection.title
+                                                          .en ||
+                                                        existingSection.title.ar
                                                       : existingSection.title}
                                                   </option>
                                                 ))}
@@ -2044,7 +2105,8 @@ function UniversityConfigPage() {
                                                 </Label>
                                                 <Input
                                                   value={
-                                                    typeof item.title === 'object'
+                                                    typeof item.title ===
+                                                    'object'
                                                       ? item.title.en || ''
                                                       : item.title || ''
                                                   }
@@ -2055,8 +2117,9 @@ function UniversityConfigPage() {
                                                         en: e.target.value,
                                                         ar:
                                                           typeof item.title ===
-                                                            'object'
-                                                            ? item.title.ar || ''
+                                                          'object'
+                                                            ? item.title.ar ||
+                                                              ''
                                                             : '',
                                                       },
                                                     };
@@ -2075,7 +2138,8 @@ function UniversityConfigPage() {
                                                 </Label>
                                                 <Input
                                                   value={
-                                                    typeof item.title === 'object'
+                                                    typeof item.title ===
+                                                    'object'
                                                       ? item.title.ar || ''
                                                       : ''
                                                   }
@@ -2085,8 +2149,9 @@ function UniversityConfigPage() {
                                                       title: {
                                                         en:
                                                           typeof item.title ===
-                                                            'object'
-                                                            ? item.title.en || ''
+                                                          'object'
+                                                            ? item.title.en ||
+                                                              ''
                                                             : item.title || '',
                                                         ar: e.target.value,
                                                       },
@@ -2142,7 +2207,10 @@ function UniversityConfigPage() {
                                         variant='outline'
                                         size='sm'
                                         onClick={() =>
-                                          addItemToSection(section.id, section.type)
+                                          addItemToSection(
+                                            section.id,
+                                            section.type
+                                          )
                                         }
                                         className='w-full bg-gray-800 text-white border-gray-600'
                                       >
@@ -2161,7 +2229,9 @@ function UniversityConfigPage() {
                                 <Button
                                   variant='outline'
                                   size='sm'
-                                  onClick={() => addDynamicSection('customSection')}
+                                  onClick={() =>
+                                    addDynamicSection('customSection')
+                                  }
                                   className='w-full bg-gray-800 text-white border-gray-600'
                                 >
                                   <Plus className='h-4 w-4 mr-2' />
@@ -2293,7 +2363,11 @@ function UniversityConfigPage() {
                           Created
                         </Label>
                         <div className='p-2 bg-gray-700 rounded text-sm text-white'>
-                          {university?.createdAt ? new Date(university.createdAt).toLocaleDateString() : 'N/A'}
+                          {university?.createdAt
+                            ? new Date(
+                                university.createdAt
+                              ).toLocaleDateString()
+                            : 'N/A'}
                         </div>
                       </div>
                       <div>
@@ -2301,7 +2375,11 @@ function UniversityConfigPage() {
                           Last Updated
                         </Label>
                         <div className='p-2 bg-gray-700 rounded text-sm text-white'>
-                          {university?.updatedAt ? new Date(university.updatedAt).toLocaleDateString() : 'N/A'}
+                          {university?.updatedAt
+                            ? new Date(
+                                university.updatedAt
+                              ).toLocaleDateString()
+                            : 'N/A'}
                         </div>
                       </div>
                     </div>

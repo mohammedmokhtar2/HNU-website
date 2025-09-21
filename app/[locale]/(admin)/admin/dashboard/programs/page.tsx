@@ -6,13 +6,13 @@ import { ProgramProvider } from '@/contexts/ProgramContext';
 import { CollegeProvider } from '@/contexts/CollegeContext';
 
 const ProgramsPage = () => {
-    return (
-        <CollegeProvider>
-            <ProgramProvider>
-                <ProgramManagementPage />
-            </ProgramProvider>
-        </CollegeProvider>
-    );
+  return (
+    <CollegeProvider>
+      <ProgramProvider>
+        <ProgramManagementPage />
+      </ProgramProvider>
+    </CollegeProvider>
+  );
 };
 
 export default ProgramsPage;

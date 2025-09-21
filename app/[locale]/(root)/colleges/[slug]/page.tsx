@@ -46,9 +46,7 @@ function CollagePage() {
       } catch (error) {
         console.error('Error loading college:', error);
         setError(
-          error instanceof Error
-            ? error.message
-            : 'Failed to load college data'
+          error instanceof Error ? error.message : 'Failed to load college data'
         );
       } finally {
         setLoading(false);

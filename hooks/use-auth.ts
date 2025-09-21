@@ -6,11 +6,10 @@ export const useAuthStatus = () => {
   const { user, loading: userLoading } = useUser();
 
   function isCollageCreator(slug: string) {
-    if (user?.role === "SUPERADMIN" || user?.role === "OWNER")
-      return true;
+    if (user?.role === 'SUPERADMIN' || user?.role === 'OWNER') return true;
     if (
       user?.collegesCreated?.some(
-        (collage) => collage.slug.toLowerCase() === slug.toLowerCase()
+        collage => collage.slug.toLowerCase() === slug.toLowerCase()
       )
     )
       return true;
@@ -23,7 +22,7 @@ export const useAuthStatus = () => {
   }
 
   function canViewCollage(collageId: string, slug: string) {
-    if (user?.role === "SUPERADMIN" || user?.role === "OWNER") return true;
+    if (user?.role === 'SUPERADMIN' || user?.role === 'OWNER') return true;
     if (isMemberOfCollage(collageId) || isCollageCreator(slug)) return true;
     return false;
   }

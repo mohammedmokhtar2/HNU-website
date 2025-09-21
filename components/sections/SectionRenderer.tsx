@@ -40,6 +40,12 @@ const LazyBlogSection = React.lazy(() =>
   }))
 );
 
+const LazyProgramsSection = React.lazy(() =>
+  import('./ProgramsSectionWrapper').then(module => ({
+    default: module.ProgramsSectionWrapper,
+  }))
+);
+
 export const SectionRenderer = React.memo(
   ({ section, locale }: SectionRendererProps) => {
     const renderSection = useMemo(() => {
@@ -50,6 +56,13 @@ export const SectionRenderer = React.memo(
           return <LazyAboutSection sectionId={section.id} />;
         case SectionType.COLLEGES_SECTION:
           return <LazyCollegeSection sectionId={section.id} />;
+        case SectionType.PROGRAMS_SECTION:
+          return (
+            <LazyProgramsSection
+              sectionId={section.id}
+              collageId={section.collageId}
+            />
+          );
         case SectionType.OUR_MISSION:
           return <LazyOurMissionSection sectionId={section.id} />;
         case SectionType.BLOGS:

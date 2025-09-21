@@ -88,6 +88,21 @@ export interface CollegesContent {
   };
 }
 
+export interface ProgramsContent {
+  title: BaseContent;
+  description: BaseContent;
+  maxItems?: number;
+}
+
+export interface ProgramsSectionContent {
+  title: BaseContent;
+  subtitle: BaseContent;
+  description: BaseContent;
+  buttonText: BaseContent;
+  collageId?: string; // Specific college ID for filtering programs
+  maxItems?: number;
+}
+
 export interface CustomContent {
   [key: string]: any; // Flexible content for custom sections
 }
@@ -102,6 +117,7 @@ export type SectionContent =
   | { type: SectionType.NUMBERS; content: NumbersContent }
   | { type: SectionType.STUDENT_UNION; content: StudentUnionContent }
   | { type: SectionType.COLLEGES_SECTION; content: CollegeSectionContent }
+  | { type: SectionType.PROGRAMS_SECTION; content: ProgramsSectionContent }
   | { type: SectionType.EGYPT_STUDENT_GROUP; content: EgyptStudentGroupContent }
   | { type: SectionType.PRESIDENT; content: CustomContent }
   | { type: SectionType.BLOGS; content: BlogsContent }
@@ -214,6 +230,18 @@ export function isEgyptStudentGroupContent(
   );
 }
 
+export function isProgramsSectionContent(
+  content: any
+): content is ProgramsSectionContent {
+  return (
+    content &&
+    typeof content.title === 'object' &&
+    typeof content.subtitle === 'object' &&
+    typeof content.description === 'object' &&
+    typeof content.buttonText === 'object'
+  );
+}
+
 // Helper function to get the correct content type based on section type
 export function getContentForSectionType(type: SectionType): any {
   switch (type) {
@@ -268,6 +296,20 @@ export function getContentForSectionType(type: SectionType): any {
         showUniversityBlogs: true,
         showCollegeBlogs: true,
       } as BlogsContent;
+    case SectionType.PROGRAMS_SECTION:
+      return {
+        title: { ar: 'البرامج الأكاديمية', en: 'Academic Programs' },
+        subtitle: {
+          ar: 'اكتشف برامجنا المتنوعة',
+          en: 'Discover Our Diverse Programs',
+        },
+        description: {
+          ar: 'نقدم مجموعة واسعة من البرامج الأكاديمية المصممة لتلبية احتياجات سوق العمل',
+          en: 'We offer a wide range of academic programs designed to meet the needs of the job market',
+        },
+        buttonText: { ar: 'عرض جميع البرامج', en: 'View All Programs' },
+        maxItems: 6,
+      } as ProgramsSectionContent;
     case SectionType.HEADER:
     case SectionType.CUSTOM:
       return {} as CustomContent;

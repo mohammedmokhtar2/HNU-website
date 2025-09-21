@@ -1,4 +1,4 @@
-export { ProgramManagementPage } from './ProgramManagementPage';
+export { ProgramManagementPage } from './ProgramManagementPage.tsx';
 export { ProgramGridView } from './ProgramGridView';
 export { ProgramTable } from './ProgramTable';
 export { ProgramStats } from './ProgramStats';

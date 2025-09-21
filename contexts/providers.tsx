@@ -6,14 +6,20 @@ import { ReactNode, useState } from 'react';
 import { UserProvider } from './userContext';
 import { UniversityProvider } from './UniversityContext';
 import { CollegeProvider } from './CollegeContext';
+import { SectionProvider } from './SectionContext';
 import { ClerkProviderWrapper } from '@/components/providers/ClerkProvider';
 
 interface ProvidersProps {
   children: ReactNode;
   universityId?: string;
+  collegeId?: string;
 }
 
-export function Providers({ children, universityId }: ProvidersProps) {
+export function Providers({
+  children,
+  universityId,
+  collegeId,
+}: ProvidersProps) {
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -41,7 +47,12 @@ export function Providers({ children, universityId }: ProvidersProps) {
         >
           <UniversityProvider universityId={universityId}>
             <CollegeProvider>
-              <UserProvider>{children}</UserProvider>
+              <SectionProvider
+                universityId={universityId}
+                collegeId={collegeId}
+              >
+                <UserProvider>{children}</UserProvider>
+              </SectionProvider>
             </CollegeProvider>
           </UniversityProvider>
         </NextThemeProvider>

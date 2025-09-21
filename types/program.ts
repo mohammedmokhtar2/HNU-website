@@ -4,6 +4,9 @@ export interface ProgramConfig {
   duration?: string;
   credits?: number;
   degree?: string;
+  images?: string[];
+  videos?: string[];
+  pdfs?: string[]; // for the لوايح بتاعت كل قسم
   links?: {
     title: string;
     href: string;

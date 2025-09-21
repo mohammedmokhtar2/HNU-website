@@ -1,17 +1,174 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
-// prisma/schema.prisma
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  entity    String
+  entityId  String?
+  metadata  Json?
+  userId    String?
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id              String       @id @default(cuid())
+  clerkId         String?      @unique
+  name            String?
+  email           String       @unique
+  role            UserType     @default(GUEST)
+  image           String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  collegeId       String?
+  auditLogs       AuditLog[]
+  permissions     Permission[]
+  createdBlogs    Blogs[]
+  collegesCreated College[]    @relation("CollegeCreatedBy")
+  College         College?     @relation(fields: [collegeId], references: [id])
+
+  @@map("users")
+}
+
+model University {
+  id        String    @id @default(cuid())
+  name      Json
+  slug      String    @unique
+  config    Json?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  pages     Page[]
+  sections  Section[]
+  Blogs     Blogs[]
+  colleges  College[]
+
+  @@map("universities")
+}
+
+model College {
+  id              String      @id @default(cuid())
+  slug            String      @unique
+  name            Json
+  description     Json?
+  config          Json?
+  type            CollegeType
+  fees            Json?
+  studentsCount   Int?
+  programsCount   Int?
+  facultyCount    Int?
+  establishedYear Int?
+  createdById     String?
+  universityId    String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  Page            Page[]
+  sections        Section[]
+  statistics      Statistic[]
+  Blogs           Blogs[]
+  createdBy       User?       @relation("CollegeCreatedBy", fields: [createdById], references: [id])
+  University      University? @relation(fields: [universityId], references: [id], onDelete: Cascade)
+  programs        Program[]
+  User            User[]
+
+  @@map("colleges")
+}
+
+model Program {
+  id          String   @id @default(cuid())
+  name        Json
+  description Json?
+  config      Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  collageId   String?
+  collage     College? @relation(fields: [collageId], references: [id], onDelete: Cascade)
+
+  @@map("programs")
+}
+
+model Section {
+  id           String      @id @default(cuid())
+  type         SectionType
+  title        Json?
+  content      Json?
+  mediaUrl     Json?
+  order        Int
+  universityId String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  collageId    String?
+  collage      College?    @relation(fields: [collageId], references: [id], onDelete: Cascade)
+  University   University? @relation(fields: [universityId], references: [id], onDelete: Cascade)
+}
+
+model Statistic {
+  id        String   @id @default(cuid())
+  label     Json
+  collageId String?
+  collage   College? @relation(fields: [collageId], references: [id], onDelete: Cascade)
+}
+
+model Permission {
+  id          String   @id @default(cuid())
+  userId      String
+  action      Action
+  resource    String
+  title       String
+  description String?
+  isActive    Boolean  @default(true)
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model Page {
+  id           String      @id @default(cuid())
+  type         PageType
+  title        Json
+  content      Json
+  config       Json?
+  isActive     Boolean     @default(true)
+  slug         String      @unique
+  universityId String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  collageId    String?
+  collage      College?    @relation(fields: [collageId], references: [id], onDelete: Cascade)
+  University   University? @relation(fields: [universityId], references: [id], onDelete: Cascade)
+}
+
+model Blogs {
+  id           String      @id @default(cuid())
+  title        Json
+  content      Json
+  image        String[]
+  tags         String[]
+  isFeatured   Boolean     @default(false)
+  isPublished  Boolean     @default(true)
+  slug         String      @unique
+  publishedAt  DateTime?
+  scheduledAt  DateTime?
+  order        Int         @default(0)
+  universityId String?
+  createdById  String?
+  collageId    String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  isEvent      Boolean     @default(false)
+  eventConfig  Json?
+  collage      College?    @relation(fields: [collageId], references: [id], onDelete: Cascade)
+  createdBy    User?       @relation(fields: [createdById], references: [id])
+  University   University? @relation(fields: [universityId], references: [id], onDelete: Cascade)
+
+  @@map("blogs")
 }
 
 enum UserType {
@@ -37,10 +194,12 @@ enum SectionType {
   NUMBERS
   STUDENT_UNION
   COLLEGES_SECTION
+  PROGRAMS_SECTION
   EGYPT_STUDENT_GROUP
   PRESIDENT
   BLOGS
   CUSTOM
+  PROGRAMS
 }
 
 enum PageType {
@@ -53,206 +212,9 @@ enum PageType {
   CUSTOM
 }
 
-model AuditLog {
-  id        String   @id @default(cuid())
-  action    String // e.g., "CREATE_COLLEGE", "DELETE_USER"
-  entity    String // e.g., "College", "User", "FormSection"
-  entityId  String? // optional reference to the entity’s ID
-  metadata  Json? // any extra data you want to store (e.g., fields changed)
-  user      User?    @relation(fields: [userId], references: [id])
-  userId    String?
-  createdAt DateTime @default(now())
-}
-
-// MODELS
-model User {
-  id          String       @id @default(cuid())
-  clerkId     String?      @unique
-  name        String?
-  email       String       @unique
-  role        UserType     @default(GUEST)
-  image       String?
-  auditLogs   AuditLog[]
-  permissions Permission[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-
-  College College? @relation(fields: [collegeId], references: [id])
-
-  collegeId String?
-
-  collegesCreated College[] @relation("CollegeCreatedBy")
-  createdBlogs    Blogs[]
-
-  @@map("users")
-}
-
-model University {
-  id       String    @id @default(cuid())
-  name     Json
-  slug     String    @unique
-  sections Section[]
-  colleges College[]
-  pages    Page[]
-
-  config Json? // for the logo and social media links
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Blogs     Blogs[]
-
-  @@map("universities")
-}
-
-model College {
-  id          String      @id @default(cuid())
-  slug        String      @unique
-  name        Json
-  description Json?
-  config      Json? // for the logo and social media links
-  type        CollegeType
-  fees        Json? // University fees in different languages {"en": "EGP 80,000/yr", "ar": "٨٠٠٠٠ جنيه/سنة"}
-
-  // College Statistics
-  studentsCount   Int? // Number of students enrolled
-  programsCount   Int? // Number of academic programs
-  facultyCount    Int? // Number of faculty members
-  establishedYear Int? // Year the college was established
-
-  User       User[]
-  sections   Section[]
-  statistics Statistic[]
-  programs   Program[]
-
-  createdBy   User?   @relation("CollegeCreatedBy", fields: [createdById], references: [id])
-  createdById String?
-
-  universityId String?
-  University   University? @relation(fields: [universityId], references: [id] , onDelete: Cascade)
-
-  Page Page[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Blogs     Blogs[]
-
-  @@map("colleges")
-}
-
-model Program {
-  id          String @id @default(cuid())
-  name        Json
-  description Json?
-  config      Json?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  collageId String?
-  collage   College? @relation(fields: [collageId], references: [id] , onDelete: Cascade)
-
-  @@map("programs")
-}
-
-model Section {
-  id   String      @id @default(cuid())
-  type SectionType
-
-  title    Json?
-  content  Json? // flexible content (paragraphs, numbers, etc.)
-  mediaUrl Json? // صورة أو فيديو
-
-  order Int // ترتيب القسم في الصفحة
-
-  collageId String? // لو section خاص بكلية
-  collage   College? @relation(fields: [collageId], references: [id] , onDelete: Cascade)
-
-  University   University? @relation(fields: [universityId], references: [id] , onDelete: Cascade)
-  universityId String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Statistic {
-  id        String   @id @default(cuid())
-  label     Json // { ar: "عدد الطلاب", en: "Students Numbers" }
-  collageId String?
-  collage   College? @relation(fields: [collageId], references: [id] , onDelete: Cascade)
-}
-
-model Permission {
-  id          String   @id @default(cuid())
-  userId      String
-  action      Action // e.g. VIEW, EDIT, DELETE
-  resource    String // e.g. "SECTION", "COLLAGE"
-  title       String
-  description String?
-  isActive    Boolean  @default(true)
-  metadata    Json?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id])
-}
-
-model Page {
-  id           String      @id @default(cuid())
-  type         PageType
-  title        Json
-  content      Json
-  config       Json?
-  isActive     Boolean     @default(true)
-  slug         String      @unique
-  collageId    String?
-  collage      College?    @relation(fields: [collageId], references: [id] , onDelete: Cascade)
-  universityId String?
-  University   University? @relation(fields: [universityId], references: [id] , onDelete: Cascade)
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-}
-
 enum Action {
   VIEW
   EDIT
   DELETE
   CREATE
-}
-
-model Blogs {
-  id      String   @id @default(cuid())
-  title   Json
-  content Json
-  image   String[]
-  tags    String[]
-
-  // Status and visibility
-  isFeatured  Boolean @default(false)
-  isPublished Boolean @default(true) // eg published or draft
-
-  // SEO and navigation
-  slug String @unique
-
-  // Publishing
-  publishedAt DateTime? // When it was published
-  scheduledAt DateTime? // For scheduled posts
-
-  // Content organization
-  order Int @default(0) // For ordering featured content
-
-  // Relationships
-  universityId String?
-  University   University? @relation(fields: [universityId], references: [id] , onDelete: Cascade)
-
-  createdBy   User?   @relation(fields: [createdById], references: [id])
-  createdById String?
-
-  collageId String?
-  collage   College? @relation(fields: [collageId], references: [id] , onDelete: Cascade)
-
-  // Timestamps
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("blogs")
 }

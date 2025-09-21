@@ -1,16 +1,23 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { withAuditLog } from '@/lib/middleware/withAuditLog';
 
-interface Params {
-  params: Promise<{
+interface RouteParams {
+  params: {
     id: string;
-  }>;
+  };
 }
 
-export async function GET(req: Request, { params }: Params) {
+export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
-    const { id } = await params;
+    const { id } = params;
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Section ID is required' },
+        { status: 400 }
+      );
+    }
 
     const section = await db.section.findUnique({
       where: { id },
@@ -34,13 +41,21 @@ export async function GET(req: Request, { params }: Params) {
   }
 }
 
-export const PATCH = withAuditLog(
-  async (req: Request, { params }: Params) => {
+export const PUT = withAuditLog(
+  async (request: NextRequest, { params }: RouteParams) => {
     try {
-      const { id } = await params;
-      const body = await req.json();
+      const { id } = params;
+      const body = await request.json();
       const { type, content, order, collageId, universityId } = body;
 
+      if (!id) {
+        return NextResponse.json(
+          { error: 'Section ID is required' },
+          { status: 400 }
+        );
+      }
+
+      // Check if section exists
       const existingSection = await db.section.findUnique({
         where: { id },
       });
@@ -52,14 +67,26 @@ export const PATCH = withAuditLog(
         );
       }
 
+      // Validate that section belongs to either university or college
+      if (universityId && collageId) {
+        return NextResponse.json(
+          { error: 'Section cannot belong to both university and college' },
+          { status: 400 }
+        );
+      }
+
       const section = await db.section.update({
         where: { id },
         data: {
-          type: type !== undefined ? type : undefined,
-          content: content !== undefined ? content : undefined,
-          order: order !== undefined ? order : undefined,
-          collageId: collageId !== undefined ? collageId : undefined,
-          universityId: universityId !== undefined ? universityId : undefined,
+          ...(type && { type }),
+          ...(content && { content }),
+          ...(order !== undefined && { order }),
+          ...(collageId !== undefined && { collageId }),
+          ...(universityId !== undefined && { universityId }),
+        },
+        include: {
+          collage: true,
+          University: true,
         },
       });
 
@@ -74,24 +101,26 @@ export const PATCH = withAuditLog(
   },
   {
     action: 'UPDATE_SECTION',
-    extract: req => {
-      // Extract the id from the URL
-      const url = new URL(req.url);
-      const pathParts = url.pathname.split('/');
-      const id = pathParts[pathParts.length - 1];
-
+    extract: (request: NextRequest, { params }: RouteParams) => {
       return {
         entity: 'Section',
-        entityId: id,
+        entityId: params.id,
       };
     },
   }
 );
 
 export const DELETE = withAuditLog(
-  async (req: Request, { params }: Params) => {
+  async (request: NextRequest, { params }: RouteParams) => {
     try {
-      const { id } = await params;
+      const { id } = params;
+
+      if (!id) {
+        return NextResponse.json(
+          { error: 'Section ID is required' },
+          { status: 400 }
+        );
+      }
 
       // Check if section exists
       const existingSection = await db.section.findUnique({
@@ -105,7 +134,6 @@ export const DELETE = withAuditLog(
         );
       }
 
-      // Delete the section
       await db.section.delete({
         where: { id },
       });
@@ -121,15 +149,10 @@ export const DELETE = withAuditLog(
   },
   {
     action: 'DELETE_SECTION',
-    extract: req => {
-      // Extract the id from the URL
-      const url = new URL(req.url);
-      const pathParts = url.pathname.split('/');
-      const id = pathParts[pathParts.length - 1];
-
+    extract: (request: NextRequest, { params }: RouteParams) => {
       return {
         entity: 'Section',
-        entityId: id,
+        entityId: params.id,
       };
     },
   }
