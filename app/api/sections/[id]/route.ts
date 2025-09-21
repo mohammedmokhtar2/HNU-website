@@ -3,14 +3,14 @@ import { db } from '@/lib/db';
 import { withAuditLog } from '@/lib/middleware/withAuditLog';
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     if (!id) {
       return NextResponse.json(
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 export const PUT = withAuditLog(
   async (request: NextRequest, { params }: RouteParams) => {
     try {
-      const { id } = params;
+      const { id } = await params;
       const body = await request.json();
       const { type, content, order, collageId, universityId } = body;
 
@@ -101,10 +101,9 @@ export const PUT = withAuditLog(
   },
   {
     action: 'UPDATE_SECTION',
-    extract: (request: NextRequest, { params }: RouteParams) => {
+    extract: async (request: NextRequest, { params }: RouteParams) => {
       return {
         entity: 'Section',
-        entityId: params.id,
       };
     },
   }
@@ -113,7 +112,7 @@ export const PUT = withAuditLog(
 export const DELETE = withAuditLog(
   async (request: NextRequest, { params }: RouteParams) => {
     try {
-      const { id } = params;
+      const { id } = await params;
 
       if (!id) {
         return NextResponse.json(
@@ -149,10 +148,9 @@ export const DELETE = withAuditLog(
   },
   {
     action: 'DELETE_SECTION',
-    extract: (request: NextRequest, { params }: RouteParams) => {
+    extract: async (request: NextRequest, { params }: RouteParams) => {
       return {
         entity: 'Section',
-        entityId: params.id,
       };
     },
   }

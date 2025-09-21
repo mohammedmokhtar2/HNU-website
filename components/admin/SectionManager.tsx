@@ -43,6 +43,7 @@ import {
   isNumbersContent,
   isStudentUnionContent,
   isEgyptStudentGroupContent,
+  isProgramsSectionContent,
 } from '@/types/section';
 import { SectionType } from '@/types/enums';
 import {
@@ -109,6 +110,7 @@ const sectionTypeIcons = {
   [SectionType.PRESIDENT]: Crown,
   [SectionType.BLOGS]: FileText,
   [SectionType.CUSTOM]: FileText,
+  [SectionType.PROGRAMS_SECTION]: Building2,
 };
 
 const sectionTypeLabels = {
@@ -124,6 +126,7 @@ const sectionTypeLabels = {
   [SectionType.PRESIDENT]: 'President',
   [SectionType.BLOGS]: 'Blogs',
   [SectionType.CUSTOM]: 'Custom',
+  [SectionType.PROGRAMS_SECTION]: 'Programs Section',
 };
 
 // Sortable Section Item Component
@@ -150,7 +153,8 @@ function SortableSectionItem({
     transition,
   };
 
-  const Icon = sectionTypeIcons[section.type] || FileText;
+  const Icon =
+    sectionTypeIcons[section.type as keyof typeof sectionTypeIcons] || FileText;
 
   const getContentPreview = (content: any, type: SectionType) => {
     switch (type) {
@@ -215,6 +219,11 @@ function SortableSectionItem({
           return content.title?.en || content.title?.ar || 'Student Section';
         }
         break;
+      case SectionType.PROGRAMS_SECTION:
+        if (isProgramsSectionContent(content)) {
+          return `${content.title?.en || content.title?.ar || 'Programs'}: ${content.subtitle?.en || content.subtitle?.ar || 'Our Programs'}: ${content.description?.en || content.description?.ar || ''}: ${content.buttonText?.en || content.buttonText?.ar || 'View all Programs'}`;
+        }
+        break;
       case SectionType.PRESIDENT:
         return 'President Section';
       default:
@@ -251,7 +260,11 @@ function SortableSectionItem({
                   {getContentPreview(section.content, section.type)}
                 </h3>
                 <Badge variant='outline' className='text-xs'>
-                  {sectionTypeLabels[section.type]}
+                  {
+                    sectionTypeLabels[
+                      section.type as keyof typeof sectionTypeLabels
+                    ]
+                  }
                 </Badge>
                 <Badge variant='secondary' className='text-xs'>
                   Order: {section.order}
