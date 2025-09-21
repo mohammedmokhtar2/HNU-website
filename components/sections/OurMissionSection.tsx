@@ -85,7 +85,10 @@ export function OurMissionSection({ sectionId }: OurMissionSectionProps) {
               : `w-[1000px] h-[500px] rounded-xl overflow-hidden shadow-xl relative z-0 ${locale === 'ar' ? 'mr-90' : 'ml-90'}`
           }`}
           initial={{ opacity: 0, x: 50 }}
-          whileInView={{ opacity: 1, x: isMobile ? 0 : (locale === 'ar' ? -200 : 200) }}
+          whileInView={{
+            opacity: 1,
+            x: isMobile ? 0 : locale === 'ar' ? -200 : 200,
+          }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
@@ -120,7 +123,7 @@ export function OurMissionSection({ sectionId }: OurMissionSectionProps) {
         {/* كارد النص على الديسكتوب */}
         {!isMobile && (
           <motion.div
-          // bg with low opacity
+            // bg with low opacity
             className={`w-[600px] h-[350px] p-6 bg-gradient-to-r from-[#162e51] to-[#1954a6]/60 rounded-xl shadow-lg flex flex-col justify-center  ${
               locale === 'ar'
                 ? 'text-right rtl right-10 mr-10'

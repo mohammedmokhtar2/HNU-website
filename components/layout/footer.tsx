@@ -16,7 +16,7 @@ function Footer({ local }: FooterProps) {
   const pathname = usePathname();
   const { university } = useUniversity();
   const locale = useLocale();
-  
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -29,11 +29,11 @@ function Footer({ local }: FooterProps) {
   };
 
   const config = university?.config;
-  
+
   // Get dynamic sections with fallback to legacy structure
   const quickLinksData = config?.footer?.quickLinks || [];
   const quickActionsData = config?.footer?.quickActions || [];
-  
+
   // Merge legacy data with dynamic sections
   const dynamicSections = config?.footer?.dynamicSections || [];
   const allDynamicSections = [...dynamicSections];
@@ -46,8 +46,8 @@ function Footer({ local }: FooterProps) {
       type: 'quickActions' as const,
       items: quickActionsData.map(action => ({
         title: action.title,
-        href: action.href
-      }))
+        href: action.href,
+      })),
     });
   }
 
@@ -61,40 +61,40 @@ function Footer({ local }: FooterProps) {
       {/* Main Footer Content */}
       <div className='py-8 bg-gray-900'>
         <div className='px-2 sm:px-4 lg:px-6 max-w-full mx-auto w-full'>
-          
           {/* Top Section - Quick Links */}
           {quickLinksData.length > 0 && (
             <div className='mb-8 pb-6 border-b border-gray-800 w-full'>
               <div className='grid grid-cols-1 lg:grid-cols-5 gap-8 w-full'>
                 {/* Quick Links Title */}
                 <div className='lg:col-span-1'>
-<h3
-  className={`
+                  <h3
+                    className={`
     text-2xl sm:text-3xl lg:text-4xl font-bold text-white mt-4 
     text-center lg:text-left
     ${locale === 'ar' ? 'lg:text-right' : 'lg:text-left'}
   `}
->
-  {footerT('Quick_Links')}
-</h3>
+                  >
+                    {footerT('Quick_Links')}
+                  </h3>
                 </div>
-                
+
                 {/* Quick Links Items - Takes 4/5 of the width */}
                 <div className='lg:col-span-4 w-full'>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 w-full">
+                  <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 w-full'>
                     {quickLinksData.map((item, index) => {
-                      const content = typeof item.title === 'object' 
-                        ? item.title[local as 'en' | 'ar'] || item.title.en 
-                        : item.title;
+                      const content =
+                        typeof item.title === 'object'
+                          ? item.title[local as 'en' | 'ar'] || item.title.en
+                          : item.title;
                       const isButton = item.style === 'button' || !item.style; // Default to button
-                      
-                      if (item.href && !item.href.startsWith("#")) {
+
+                      if (item.href && !item.href.startsWith('#')) {
                         return (
                           <Link
                             key={index}
                             href={item.href}
                             className={
-                              isButton 
+                              isButton
                                 ? 'block bg-white text-gray-800 hover:bg-gray-100 hover:text-blue-600 py-3 px-4 text-sm font-medium transition-all duration-300 rounded-full text-center border-2 border-white hover:border-blue-400 w-39'
                                 : 'block text-gray-300 hover:text-purple-400 transition-all duration-300 text-center text-base font-medium py-2 px-3 hover:underline'
                             }
@@ -107,9 +107,11 @@ function Footer({ local }: FooterProps) {
                       return (
                         <button
                           key={index}
-                          onClick={() => scrollToSection(item.href?.replace("#", "") || "")}
+                          onClick={() =>
+                            scrollToSection(item.href?.replace('#', '') || '')
+                          }
                           className={
-                            isButton 
+                            isButton
                               ? 'block bg-white text-gray-800 hover:bg-gray-100 hover:text-blue-600 py-3 px-4 text-sm font-medium transition-all duration-300 rounded-full text-center w-full border-2 border-white hover:border-blue-400'
                               : 'block text-gray-300 hover:text-purple-400 transition-all duration-300 text-center text-base font-medium py-2 px-3 hover:underline'
                           }
@@ -130,33 +132,41 @@ function Footer({ local }: FooterProps) {
               <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 w-full px-2'>
                 {allDynamicSections.map((section, sectionIndex) => (
                   <div key={section.id || sectionIndex} className='w-full'>
-                    <h3 className={`font-bold text-white mb-3 ${section.type === 'quickActions' ? 'text-xl' : 'text-lg'}`}>
-                      {typeof section.title === 'object' 
-                        ? section.title[local as 'en' | 'ar'] || section.title.en 
+                    <h3
+                      className={`font-bold text-white mb-3 ${section.type === 'quickActions' ? 'text-xl' : 'text-lg'}`}
+                    >
+                      {typeof section.title === 'object'
+                        ? section.title[local as 'en' | 'ar'] ||
+                          section.title.en
                         : section.title}
                     </h3>
-                    
+
                     <div className='space-y-2'>
                       {section.items.map((item, itemIndex) => {
-                        const itemTitle = typeof item.title === 'object' 
-                          ? item.title[local as 'en' | 'ar'] || item.title.en 
-                          : item.title;
-                        
+                        const itemTitle =
+                          typeof item.title === 'object'
+                            ? item.title[local as 'en' | 'ar'] || item.title.en
+                            : item.title;
+
                         // Quick Actions style - simple text links, no borders or backgrounds
                         if (section.type === 'quickActions') {
                           if ('href' in item && item.href) {
-                            if (item.href.startsWith("#")) {
+                            if (item.href.startsWith('#')) {
                               return (
                                 <button
                                   key={itemIndex}
-                                  onClick={() => scrollToSection(item.href?.replace("#", "") || "")}
+                                  onClick={() =>
+                                    scrollToSection(
+                                      item.href?.replace('#', '') || ''
+                                    )
+                                  }
                                   className='block w-full text-gray-300 hover:text-blue-400 py-2 text-sm transition-all duration-300 text-left'
                                 >
                                   {itemTitle}
                                 </button>
                               );
                             }
-                            
+
                             return (
                               <Link
                                 key={itemIndex}
@@ -167,9 +177,12 @@ function Footer({ local }: FooterProps) {
                               </Link>
                             );
                           }
-                          
+
                           return (
-                            <div key={itemIndex} className='block w-full text-gray-500 py-2 text-sm text-left'>
+                            <div
+                              key={itemIndex}
+                              className='block w-full text-gray-500 py-2 text-sm text-left'
+                            >
                               {itemTitle}
                             </div>
                           );
@@ -178,18 +191,22 @@ function Footer({ local }: FooterProps) {
                         // Quick Links style - similar to the top quick links
                         if (section.type === 'quickLinks') {
                           if ('href' in item && item.href) {
-                            if (item.href.startsWith("#")) {
+                            if (item.href.startsWith('#')) {
                               return (
                                 <button
                                   key={itemIndex}
-                                  onClick={() => scrollToSection(item.href?.replace("#", "") || "")}
+                                  onClick={() =>
+                                    scrollToSection(
+                                      item.href?.replace('#', '') || ''
+                                    )
+                                  }
                                   className='block bg-white text-gray-800 hover:bg-gray-100 hover:text-blue-600 py-2 px-3 text-sm font-medium transition-all duration-300 rounded-full text-center w-full border-2 border-white hover:border-blue-400 mb-2'
                                 >
                                   {itemTitle}
                                 </button>
                               );
                             }
-                            
+
                             return (
                               <Link
                                 key={itemIndex}
@@ -200,9 +217,12 @@ function Footer({ local }: FooterProps) {
                               </Link>
                             );
                           }
-                          
+
                           return (
-                            <div key={itemIndex} className='block bg-gray-700 text-gray-300 py-2 px-3 text-sm font-medium rounded-full text-center w-full mb-2'>
+                            <div
+                              key={itemIndex}
+                              className='block bg-gray-700 text-gray-300 py-2 px-3 text-sm font-medium rounded-full text-center w-full mb-2'
+                            >
                               {itemTitle}
                             </div>
                           );
@@ -218,7 +238,10 @@ function Footer({ local }: FooterProps) {
                             {itemTitle}
                           </Link>
                         ) : (
-                          <div key={itemIndex} className='block text-gray-400 text-left text-base font-medium'>
+                          <div
+                            key={itemIndex}
+                            className='block text-gray-400 text-left text-base font-medium'
+                          >
                             {itemTitle}
                           </div>
                         );
