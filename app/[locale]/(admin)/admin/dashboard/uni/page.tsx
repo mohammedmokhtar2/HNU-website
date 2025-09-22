@@ -709,9 +709,9 @@ function UniversityConfigPage() {
           </TabsList>
 
           {/* Tab Content */}
-          <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+          <div className='grid grid-cols-1 lg:grid-cols-5 gap-6'>
             {/* Configuration Content */}
-            <div className='space-y-6'>
+            <div className='space-y-6 col-span-4'>
               <Card
                 className={cn(
                   'bg-gray-800 border-gray-700 transition-all duration-200',
@@ -2264,7 +2264,7 @@ function UniversityConfigPage() {
             </div>
 
             {/* Management Section */}
-            <div className='space-y-6'>
+            <div className='space-y-6 col-span-1'>
               {/* Quick Actions */}
               <Card className='bg-gray-800 border-gray-700'>
                 <CardHeader>

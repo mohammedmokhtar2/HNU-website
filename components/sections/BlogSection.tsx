@@ -409,14 +409,14 @@ export const BlogSection = ({
 
   const sectionTitle = content?.title
     ? content.title[locale as keyof typeof content.title] ||
-      content.title.en ||
-      'Latest Blogs'
+    content.title.en ||
+    'Latest Blogs'
     : 'Latest Blogs';
 
   const sectionDescription = content?.description
     ? content.description[locale as keyof typeof content.description] ||
-      content.description.en ||
-      'Stay updated with our latest news, insights, and announcements'
+    content.description.en ||
+    'Stay updated with our latest news, insights, and announcements'
     : 'Stay updated with our latest news, insights, and announcements';
 
   if (loading) {
@@ -458,18 +458,8 @@ export const BlogSection = ({
   }
 
   if (blogs.length === 0) {
-    return (
-      <div className='py-16'>
-        <div className='container mx-auto px-4'>
-          <div className='text-center'>
-            <h2 className='text-2xl font-bold mb-4'>{sectionTitle}</h2>
-            <p className='text-muted-foreground'>
-              No blogs available at this time.
-            </p>
-          </div>
-        </div>
-      </div>
-    );
+    console.log('no blogs found');
+    return null
   }
 
   return (
