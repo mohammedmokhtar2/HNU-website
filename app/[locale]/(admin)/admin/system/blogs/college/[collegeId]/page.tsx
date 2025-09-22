@@ -6,6 +6,7 @@ import { BlogProvider } from '@/contexts/BlogContext';
 import { UniversityProvider } from '@/contexts/UniversityContext';
 import { CollegeProvider } from '@/contexts/CollegeContext';
 import { UserProvider } from '@/contexts/userContext';
+import { EventConfigProvider } from '@/contexts/EventConfigContext';
 import { QueryClientProviderWrapper } from '@/contexts/QueryClientProvider';
 import { BlogManagementPage } from '@/components/admin/blog/BlogManagementPage';
 
@@ -18,9 +19,11 @@ export default function AdminCollegeBlogsPage() {
       <UserProvider>
         <UniversityProvider>
           <CollegeProvider collegeId={collegeId}>
-            <BlogProvider initialParams={{ collageId: collegeId }}>
-              <BlogManagementPage collegeId={collegeId} />
-            </BlogProvider>
+            <EventConfigProvider>
+              <BlogProvider initialParams={{ collageId: collegeId }}>
+                <BlogManagementPage collegeId={collegeId} />
+              </BlogProvider>
+            </EventConfigProvider>
           </CollegeProvider>
         </UniversityProvider>
       </UserProvider>

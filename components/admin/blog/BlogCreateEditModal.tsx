@@ -44,6 +44,8 @@ import {
 import { ImageSelectorModal } from '@/components/ui/image-selector-modal';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
+import { EventConfigForm } from './EventConfigForm';
+import { EventConfig, EventType, EventStatus } from '@/types/event';
 
 interface BlogCreateEditModalProps {
   isOpen: boolean;
@@ -91,6 +93,8 @@ export function BlogCreateEditModal({
     order: 0,
     universityId: universityId || '',
     collageId: collegeId || '',
+    isEvent: false,
+    eventConfig: null as EventConfig | null,
   });
 
   const isEditing = !!blog;
@@ -100,6 +104,7 @@ export function BlogCreateEditModal({
     if (isEditing && blog) {
       const title = typeof blog.title === 'object' ? blog.title : {};
       const content = typeof blog.content === 'object' ? blog.content : {};
+      const eventConfig = blog.eventConfig as EventConfig | null;
 
       setFormData({
         titleEn: (title as any).en || '',
@@ -121,6 +126,8 @@ export function BlogCreateEditModal({
         order: blog.order,
         universityId: blog.universityId || universityId || 'none',
         collageId: blog.collageId || collegeId || 'none',
+        isEvent: blog.isEvent || false,
+        eventConfig: eventConfig,
       });
     } else if (!isEditing) {
       setFormData({
@@ -139,6 +146,8 @@ export function BlogCreateEditModal({
         order: 0,
         universityId: universityId || 'none',
         collageId: collegeId || 'none',
+        isEvent: false,
+        eventConfig: null,
       });
     }
   }, [isEditing, blog, universityId, collegeId]);
@@ -236,6 +245,8 @@ export function BlogCreateEditModal({
             ? formData.collageId
             : null,
         createdById: user?.id,
+        isEvent: formData.isEvent,
+        eventConfig: formData.eventConfig,
       };
 
       if (isEditing && blog) {
@@ -278,10 +289,11 @@ export function BlogCreateEditModal({
 
           <form onSubmit={handleSubmit} className='space-y-6'>
             <Tabs defaultValue='content' className='w-full'>
-              <TabsList className='grid w-full grid-cols-4'>
+              <TabsList className='grid w-full grid-cols-5'>
                 <TabsTrigger value='content'>Content</TabsTrigger>
                 <TabsTrigger value='media'>Media</TabsTrigger>
                 <TabsTrigger value='settings'>Settings</TabsTrigger>
+                <TabsTrigger value='event'>Event</TabsTrigger>
                 <TabsTrigger value='publish'>Publish</TabsTrigger>
               </TabsList>
 
@@ -534,6 +546,49 @@ export function BlogCreateEditModal({
                       }))
                     }
                   />
+                </div>
+              </TabsContent>
+
+              {/* Event Tab */}
+              <TabsContent value='event' className='space-y-4'>
+                <div className='space-y-4'>
+                  <div className='flex items-center justify-between rounded-lg border p-4'>
+                    <div className='space-y-0.5'>
+                      <Label className='text-base flex items-center gap-2'>
+                        <Calendar className='h-4 w-4' />
+                        This is an Event
+                      </Label>
+                      <div className='text-sm text-muted-foreground'>
+                        Enable event configuration for this blog
+                      </div>
+                    </div>
+                    <Switch
+                      checked={formData.isEvent}
+                      onCheckedChange={checked =>
+                        setFormData(prev => ({
+                          ...prev,
+                          isEvent: checked,
+                          eventConfig: checked ? {
+                            eventDate: null,
+                            eventEndDate: null,
+                            location: null,
+                            eventType: EventType.OTHER,
+                            status: EventStatus.DRAFT,
+                            metadata: {}
+                          } : null
+                        }))
+                      }
+                    />
+                  </div>
+
+                  {formData.isEvent && (
+                    <EventConfigForm
+                      eventConfig={formData.eventConfig}
+                      onChange={(eventConfig) =>
+                        setFormData(prev => ({ ...prev, eventConfig }))
+                      }
+                    />
+                  )}
                 </div>
               </TabsContent>
 

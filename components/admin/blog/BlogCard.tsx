@@ -23,10 +23,14 @@ import {
   User,
   Building,
   GripVertical,
+  Clock,
+  MapPin,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import { getMultilingualText } from '@/utils/multilingual';
+import { useEventDisplay } from '@/contexts/EventConfigContext';
+import { EventStatus, EventType } from '@/types/event';
 
 interface BlogCardProps {
   blog: BlogWithRelations;
@@ -47,6 +51,7 @@ export function BlogCard({
   isDragging = false,
   dragHandleProps,
 }: BlogCardProps) {
+  const { formatEventDate, getEventStatusColor, getEventTypeDisplay } = useEventDisplay();
   const getBlogTitle = (blog: BlogWithRelations): string => {
     if (typeof blog.title === 'object' && blog.title !== null) {
       return (blog.title as any).en || (blog.title as any).ar || 'Untitled';
@@ -93,21 +98,31 @@ export function BlogCard({
 
   const associatedEntity = getAssociatedEntity(blog);
   const blogImage = getBlogImage(blog);
+  const isEvent = blog.isEvent && blog.eventConfig;
 
   return (
     <Card
-      className={`group hover:shadow-lg transition-all duration-300 ${
-        isDragging ? 'opacity-50 scale-95' : ''
-      } ${blog.isFeatured ? 'ring-2 ring-yellow-400 bg-yellow-50/50' : ''} ${
-        !blog.isPublished ? 'bg-gray-50/50 border-gray-200' : ''
-      }`}
+      className={`group hover:shadow-lg transition-all duration-300 ${isDragging ? 'opacity-50 scale-95' : ''
+        } ${blog.isFeatured ? 'ring-2 ring-yellow-400 bg-yellow-50/50' : ''} ${!blog.isPublished ? 'bg-gray-50/50 border-gray-200' : ''
+        } ${isEvent
+          ? 'border-blue-200 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 dark:border-blue-800 dark:from-blue-950/20 dark:to-indigo-950/20'
+          : ''
+        }`}
     >
       <CardHeader className='pb-3'>
         <div className='flex items-start justify-between'>
           <div className='flex-1 min-w-0'>
-            <CardTitle className='text-lg line-clamp-2 group-hover:text-primary transition-colors'>
-              {getBlogTitle(blog)}
-            </CardTitle>
+            <div className='flex items-center gap-2 mb-1'>
+              <CardTitle className='text-lg line-clamp-2 group-hover:text-primary transition-colors'>
+                {getBlogTitle(blog)}
+              </CardTitle>
+              {isEvent && (
+                <Badge variant='outline' className='text-xs bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700 flex-shrink-0'>
+                  <Calendar className='h-3 w-3 mr-1' />
+                  Event
+                </Badge>
+              )}
+            </div>
             {associatedEntity && (
               <div className='flex items-center gap-1 mt-1 text-sm text-muted-foreground'>
                 <Building className='h-3 w-3' />
@@ -164,6 +179,51 @@ export function BlogCard({
                   +{blog.tags.length - 3} more
                 </Badge>
               )}
+            </div>
+          )}
+
+          {/* Event Information */}
+          {isEvent && (
+            <div className='p-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-lg border border-blue-200 dark:border-blue-800 shadow-sm'>
+              <div className='flex items-center gap-2 mb-2'>
+                <div className='p-1 bg-blue-100 dark:bg-blue-900 rounded-full'>
+                  <Calendar className='h-3 w-3 text-blue-600 dark:text-blue-400' />
+                </div>
+                <span className='text-sm font-semibold text-blue-900 dark:text-blue-100'>
+                  Event Details
+                </span>
+                <Badge
+                  variant='outline'
+                  className={`text-xs font-medium ${getEventStatusColor(blog.eventConfig?.status || EventStatus.DRAFT)}`}
+                >
+                  {blog.eventConfig?.status ?
+                    blog.eventConfig.status.charAt(0).toUpperCase() + blog.eventConfig.status.slice(1) :
+                    'Draft'
+                  }
+                </Badge>
+              </div>
+              <div className='space-y-2 text-sm'>
+                {blog.eventConfig?.eventDate && (
+                  <div className='flex items-center gap-2 text-blue-800 dark:text-blue-200'>
+                    <Clock className='h-4 w-4 text-blue-600 dark:text-blue-400' />
+                    <span className='font-medium'>Date:</span>
+                    <span className='truncate'>{formatEventDate(blog.eventConfig.eventDate)}</span>
+                  </div>
+                )}
+                {blog.eventConfig?.location && (
+                  <div className='flex items-center gap-2 text-blue-800 dark:text-blue-200'>
+                    <MapPin className='h-4 w-4 text-blue-600 dark:text-blue-400' />
+                    <span className='font-medium'>Location:</span>
+                    <span className='truncate'>{blog.eventConfig.location}</span>
+                  </div>
+                )}
+                <div className='flex items-center gap-2 text-blue-800 dark:text-blue-200'>
+                  <span className='font-medium'>Type:</span>
+                  <Badge variant='secondary' className='text-xs'>
+                    {getEventTypeDisplay(blog.eventConfig?.eventType || EventType.OTHER)}
+                  </Badge>
+                </div>
+              </div>
             </div>
           )}
 

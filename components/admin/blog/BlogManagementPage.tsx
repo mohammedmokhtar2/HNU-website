@@ -33,6 +33,7 @@ import {
   Grid3X3,
   List,
   GripVertical,
+  Calendar,
 } from 'lucide-react';
 import { BlogWithRelations } from '@/types/blog';
 
@@ -332,6 +333,14 @@ export function BlogManagementPage({
               <Button variant='outline' size='sm' onClick={getFeaturedBlogs}>
                 <Star className='h-4 w-4 mr-1' />
                 Featured
+              </Button>
+              <Button
+                variant={queryParams.isEvent ? 'default' : 'outline'}
+                size='sm'
+                onClick={() => setQueryParams({ isEvent: !queryParams.isEvent })}
+              >
+                <Calendar className='h-4 w-4 mr-1' />
+                Events
               </Button>
             </div>
           </div>

@@ -40,6 +40,12 @@ import { useBlogMutations, useCurrentBlog } from '@/contexts/BlogContext';
 import { useUser } from '@/contexts/userContext';
 import { useUniversity } from '@/contexts/UniversityContext';
 import { useCollege } from '@/contexts/CollegeContext';
+import { EventConfigForm } from '@/components/admin/blog/EventConfigForm';
+import { EventConfig, EventType, EventStatus } from '@/types/event';
+import { UserProvider } from '@/contexts/userContext';
+import { UniversityProvider } from '@/contexts/UniversityContext';
+import { CollegeProvider } from '@/contexts/CollegeContext';
+import { EventConfigProvider } from '@/contexts/EventConfigContext';
 // import { ImageSelectorModal } from '@/components/file-manager/ImageSelectorModal';
 import { QueryClientProviderWrapper } from '@/contexts/QueryClientProvider';
 import Image from 'next/image';
@@ -66,6 +72,8 @@ interface FormData {
   order: number;
   universityId: string;
   collageId: string;
+  isEvent: boolean;
+  eventConfig: EventConfig | null;
 }
 
 function EditBlogPage() {
@@ -94,6 +102,8 @@ function EditBlogPage() {
     order: 0,
     universityId: 'none',
     collageId: 'none',
+    isEvent: false,
+    eventConfig: null,
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -116,6 +126,7 @@ function EditBlogPage() {
             const title = typeof blog.title === 'object' ? blog.title : {};
             const content =
               typeof blog.content === 'object' ? blog.content : {};
+            const eventConfig = blog.eventConfig as EventConfig | null;
 
             setFormData({
               titleEn: (title as any).en || '',
@@ -137,6 +148,8 @@ function EditBlogPage() {
               order: blog.order,
               universityId: blog.universityId || 'none',
               collageId: blog.collageId || 'none',
+              isEvent: blog.isEvent || false,
+              eventConfig: eventConfig,
             });
 
             // Set selected university and college if they exist
@@ -270,6 +283,8 @@ function EditBlogPage() {
             ? formData.collageId
             : null,
         createdById: user?.id,
+        isEvent: formData.isEvent,
+        eventConfig: formData.eventConfig,
       };
 
       await updateBlog(currentBlog.id, blogData as any);
@@ -759,6 +774,53 @@ function EditBlogPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Event Configuration Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className='flex items-center gap-2'>
+              <Calendar className='h-5 w-5' />
+              Event Configuration
+            </CardTitle>
+          </CardHeader>
+          <CardContent className='space-y-6'>
+            <div className='flex items-center justify-between'>
+              <div className='space-y-0.5'>
+                <Label htmlFor='isEvent'>This is an Event</Label>
+                <p className='text-sm text-muted-foreground'>
+                  Enable event configuration for this blog
+                </p>
+              </div>
+              <Switch
+                id='isEvent'
+                checked={formData.isEvent}
+                onCheckedChange={checked =>
+                  setFormData(prev => ({
+                    ...prev,
+                    isEvent: checked,
+                    eventConfig: checked ? (formData.eventConfig || {
+                      eventDate: null,
+                      eventEndDate: null,
+                      location: null,
+                      eventType: EventType.OTHER,
+                      status: EventStatus.DRAFT,
+                      metadata: {}
+                    }) : null
+                  }))
+                }
+              />
+            </div>
+
+            {formData.isEvent && (
+              <EventConfigForm
+                eventConfig={formData.eventConfig}
+                onChange={(eventConfig) =>
+                  setFormData(prev => ({ ...prev, eventConfig }))
+                }
+              />
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       <div className='flex justify-end gap-4'>
@@ -779,7 +841,15 @@ function EditBlogPage() {
 export default function EditBlogPageWithProviders() {
   return (
     <QueryClientProviderWrapper>
-      <EditBlogPage />
+      <UserProvider>
+        <UniversityProvider>
+          <CollegeProvider>
+            <EventConfigProvider>
+              <EditBlogPage />
+            </EventConfigProvider>
+          </CollegeProvider>
+        </UniversityProvider>
+      </UserProvider>
     </QueryClientProviderWrapper>
   );
 }

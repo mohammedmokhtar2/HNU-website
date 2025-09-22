@@ -1,4 +1,5 @@
 import { User, University, College } from '@prisma/client';
+import { EventConfig } from './event';
 
 // Base Blog type from Prisma
 export interface Blog {
@@ -18,6 +19,8 @@ export interface Blog {
   collageId: string | null;
   createdAt: Date;
   updatedAt: Date;
+  isEvent: boolean;
+  eventConfig: EventConfig | null;
 }
 
 // Blog with relations
@@ -42,6 +45,8 @@ export interface CreateBlogInput {
   universityId?: string | null;
   createdById?: string | null;
   collageId?: string | null;
+  isEvent?: boolean;
+  eventConfig?: EventConfig | null;
 }
 
 // Input types for updating blogs
@@ -59,12 +64,14 @@ export interface UpdateBlogInput {
   universityId?: string | null;
   createdById?: string | null;
   collageId?: string | null;
+  isEvent?: boolean;
+  eventConfig?: EventConfig | null;
 }
 
 // Response types
-export interface BlogResponse extends Blog {}
+export type BlogResponse = Blog;
 
-export interface BlogWithRelationsResponse extends BlogWithRelations {}
+export type BlogWithRelationsResponse = BlogWithRelations;
 
 // Query parameters for filtering blogs
 export interface BlogQueryParams {
@@ -72,6 +79,7 @@ export interface BlogQueryParams {
   limit?: number;
   isPublished?: boolean;
   isFeatured?: boolean;
+  isEvent?: boolean;
   universityId?: string;
   collageId?: string;
   createdById?: string;
@@ -100,6 +108,7 @@ export interface BlogStats {
   published: number;
   draft: number;
   featured: number;
+  events: number;
   byUniversity: Array<{
     universityId: string;
     universityName: string;
@@ -112,6 +121,10 @@ export interface BlogStats {
   }>;
   byTags: Array<{
     tag: string;
+    count: number;
+  }>;
+  byEventType: Array<{
+    eventType: string;
     count: number;
   }>;
 }

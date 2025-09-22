@@ -178,6 +178,10 @@ export async function POST(request: NextRequest) {
         universityId: body.universityId,
         createdById: body.createdById,
         collageId: body.collageId,
+        isEvent: body.isEvent || false,
+        eventConfig: body.eventConfig
+          ? JSON.parse(JSON.stringify(body.eventConfig))
+          : null,
       },
     });
 

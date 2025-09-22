@@ -30,7 +30,12 @@ import {
   Calendar,
   User,
   Building,
+  MapPin,
+  Clock,
 } from 'lucide-react';
+import { EventConfigDisplay } from './EventConfigForm';
+import { useEventDisplay } from '@/contexts/EventConfigContext';
+import { EventStatus, EventType } from '@/types/event';
 import { format } from 'date-fns';
 import Image from 'next/image';
 
@@ -59,6 +64,7 @@ export function BlogTable({
   collegeId,
   availableColleges,
 }: BlogTableProps) {
+  const { formatEventDate, getEventStatusColor, getEventTypeDisplay } = useEventDisplay();
   if (loading) {
     return (
       <Card>
@@ -138,11 +144,15 @@ export function BlogTable({
           {blogs.map(blog => {
             const associatedEntity = getAssociatedEntity(blog);
             const blogImage = getBlogImage(blog);
+            const isEvent = blog.isEvent && blog.eventConfig;
 
             return (
               <div
                 key={blog.id}
-                className='border rounded-lg p-4 hover:bg-muted/50 transition-colors'
+                className={`border rounded-lg p-4 hover:bg-muted/50 transition-colors ${isEvent
+                  ? 'border-blue-200 bg-blue-50/30 dark:border-blue-800 dark:bg-blue-950/20'
+                  : 'border-border'
+                  }`}
               >
                 <div className='flex items-start gap-4'>
                   {/* Blog Image */}
@@ -167,9 +177,17 @@ export function BlogTable({
                   <div className='flex-1 min-w-0'>
                     <div className='flex items-start justify-between'>
                       <div className='flex-1 min-w-0'>
-                        <h3 className='font-semibold text-lg truncate'>
-                          {getBlogTitle(blog)}
-                        </h3>
+                        <div className='flex items-center gap-2 mb-1'>
+                          <h3 className='font-semibold text-lg truncate'>
+                            {getBlogTitle(blog)}
+                          </h3>
+                          {isEvent && (
+                            <Badge variant='outline' className='text-xs bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700'>
+                              <Calendar className='h-3 w-3 mr-1' />
+                              Event
+                            </Badge>
+                          )}
+                        </div>
                         <p className='text-sm text-muted-foreground mt-1 line-clamp-2'>
                           {getBlogExcerpt(blog)}
                         </p>
@@ -188,6 +206,58 @@ export function BlogTable({
                             </div>
                           )}
                         </div>
+
+                        {/* Event Information */}
+                        {isEvent && (
+                          <div className='mt-3 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-lg border border-blue-200 dark:border-blue-800 shadow-sm'>
+                            <div className='flex items-center gap-2 mb-2'>
+                              <div className='p-1 bg-blue-100 dark:bg-blue-900 rounded-full'>
+                                <Calendar className='h-3 w-3 text-blue-600 dark:text-blue-400' />
+                              </div>
+                              <span className='text-sm font-semibold text-blue-900 dark:text-blue-100'>
+                                Event Details
+                              </span>
+                              <Badge
+                                variant='outline'
+                                className={`text-xs font-medium ${getEventStatusColor(blog.eventConfig?.status || EventStatus.DRAFT)}`}
+                              >
+                                {blog.eventConfig?.status ?
+                                  blog.eventConfig.status.charAt(0).toUpperCase() + blog.eventConfig.status.slice(1) :
+                                  'Draft'
+                                }
+                              </Badge>
+                            </div>
+                            <div className='grid grid-cols-1 md:grid-cols-2 gap-2 text-sm'>
+                              {blog.eventConfig?.eventDate && (
+                                <div className='flex items-center gap-2 text-blue-800 dark:text-blue-200'>
+                                  <Clock className='h-4 w-4 text-blue-600 dark:text-blue-400' />
+                                  <span className='font-medium'>Date:</span>
+                                  <span>{formatEventDate(blog.eventConfig.eventDate)}</span>
+                                </div>
+                              )}
+                              {blog.eventConfig?.location && (
+                                <div className='flex items-center gap-2 text-blue-800 dark:text-blue-200'>
+                                  <MapPin className='h-4 w-4 text-blue-600 dark:text-blue-400' />
+                                  <span className='font-medium'>Location:</span>
+                                  <span className='truncate'>{blog.eventConfig.location}</span>
+                                </div>
+                              )}
+                              <div className='flex items-center gap-2 text-blue-800 dark:text-blue-200'>
+                                <span className='font-medium'>Type:</span>
+                                <Badge variant='secondary' className='text-xs'>
+                                  {getEventTypeDisplay(blog.eventConfig?.eventType || EventType.OTHER)}
+                                </Badge>
+                              </div>
+                              {blog.eventConfig?.eventEndDate && (
+                                <div className='flex items-center gap-2 text-blue-800 dark:text-blue-200'>
+                                  <Clock className='h-4 w-4 text-blue-600 dark:text-blue-400' />
+                                  <span className='font-medium'>Ends:</span>
+                                  <span>{formatEventDate(blog.eventConfig.eventEndDate)}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
 
                         {/* Tags */}
                         {blog.tags && blog.tags.length > 0 && (

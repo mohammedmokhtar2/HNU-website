@@ -39,6 +39,12 @@ import { useBlogMutations } from '@/contexts/BlogContext';
 import { useUser } from '@/contexts/userContext';
 import { useUniversity } from '@/contexts/UniversityContext';
 import { useCollege } from '@/contexts/CollegeContext';
+import { EventConfigForm } from '@/components/admin/blog/EventConfigForm';
+import { EventConfig, EventType, EventStatus } from '@/types/event';
+import { UserProvider } from '@/contexts/userContext';
+import { UniversityProvider } from '@/contexts/UniversityContext';
+import { CollegeProvider } from '@/contexts/CollegeContext';
+import { EventConfigProvider } from '@/contexts/EventConfigContext';
 // import { ImageSelectorModal } from '@/components/file-manager/ImageSelectorModal';
 import { QueryClientProviderWrapper } from '@/contexts/QueryClientProvider';
 import Image from 'next/image';
@@ -65,6 +71,8 @@ interface FormData {
   order: number;
   universityId: string;
   collageId: string;
+  isEvent: boolean;
+  eventConfig: EventConfig | null;
 }
 
 function CreateBlogPage() {
@@ -92,6 +100,8 @@ function CreateBlogPage() {
     order: 0,
     universityId: 'none',
     collageId: 'none',
+    isEvent: false,
+    eventConfig: null,
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -211,6 +221,8 @@ function CreateBlogPage() {
             ? formData.collageId
             : null,
         createdById: user?.id,
+        isEvent: formData.isEvent,
+        eventConfig: formData.eventConfig,
       };
 
       await createBlog(blogData);
@@ -218,7 +230,7 @@ function CreateBlogPage() {
         title: 'Success',
         description: 'Blog created successfully',
       });
-      router.push('/admin/blogs');
+      router.push('/admin/system/blogs');
     } catch (error) {
       console.error('Error creating blog:', error);
       toast({
@@ -679,6 +691,53 @@ function CreateBlogPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Event Configuration Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className='flex items-center gap-2'>
+              <Calendar className='h-5 w-5' />
+              Event Configuration
+            </CardTitle>
+          </CardHeader>
+          <CardContent className='space-y-6'>
+            <div className='flex items-center justify-between'>
+              <div className='space-y-0.5'>
+                <Label htmlFor='isEvent'>This is an Event</Label>
+                <p className='text-sm text-muted-foreground'>
+                  Enable event configuration for this blog
+                </p>
+              </div>
+              <Switch
+                id='isEvent'
+                checked={formData.isEvent}
+                onCheckedChange={checked =>
+                  setFormData(prev => ({
+                    ...prev,
+                    isEvent: checked,
+                    eventConfig: checked ? {
+                      eventDate: null,
+                      eventEndDate: null,
+                      location: null,
+                      eventType: EventType.OTHER,
+                      status: EventStatus.DRAFT,
+                      metadata: {}
+                    } : null
+                  }))
+                }
+              />
+            </div>
+
+            {formData.isEvent && (
+              <EventConfigForm
+                eventConfig={formData.eventConfig}
+                onChange={(eventConfig) =>
+                  setFormData(prev => ({ ...prev, eventConfig }))
+                }
+              />
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       <div className='flex justify-end gap-4'>
@@ -699,7 +758,15 @@ function CreateBlogPage() {
 export default function CreateBlogPageWithProviders() {
   return (
     <QueryClientProviderWrapper>
-      <CreateBlogPage />
+      <UserProvider>
+        <UniversityProvider>
+          <CollegeProvider>
+            <EventConfigProvider>
+              <CreateBlogPage />
+            </EventConfigProvider>
+          </CollegeProvider>
+        </UniversityProvider>
+      </UserProvider>
     </QueryClientProviderWrapper>
   );
 }

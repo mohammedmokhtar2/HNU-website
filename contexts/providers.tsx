@@ -7,6 +7,7 @@ import { UserProvider } from './userContext';
 import { UniversityProvider } from './UniversityContext';
 import { CollegeProvider } from './CollegeContext';
 import { SectionProvider } from './SectionContext';
+import { EventConfigProvider } from './EventConfigContext';
 import { ClerkProviderWrapper } from '@/components/providers/ClerkProvider';
 
 interface ProvidersProps {
@@ -51,7 +52,9 @@ export function Providers({
                 universityId={universityId}
                 collegeId={collegeId}
               >
-                <UserProvider>{children}</UserProvider>
+                <EventConfigProvider>
+                  <UserProvider>{children}</UserProvider>
+                </EventConfigProvider>
               </SectionProvider>
             </CollegeProvider>
           </UniversityProvider>
