@@ -228,6 +228,38 @@ const BlogCard = ({
                       </div>
                     )}
 
+                    {/* Event Information */}
+                    {blog.isEvent && blog.eventConfig && (
+                      <div className='bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg border border-purple-200 dark:border-purple-800'>
+                        <div className='flex items-center gap-2 mb-2'>
+                          <Calendar className='h-4 w-4 text-purple-600' />
+                          <span className='font-semibold text-purple-800 dark:text-purple-200'>Event Details</span>
+                        </div>
+                        <div className='space-y-1 text-sm'>
+                          {blog.eventConfig.eventType && (
+                            <div className='flex items-center gap-2'>
+                              <span className='text-purple-600 dark:text-purple-400'>Type:</span>
+                              <span className='capitalize'>{blog.eventConfig.eventType}</span>
+                            </div>
+                          )}
+                          {blog.eventConfig.location && (
+                            <div className='flex items-center gap-2'>
+                              <span className='text-purple-600 dark:text-purple-400'>Location:</span>
+                              <span>{blog.eventConfig.location}</span>
+                            </div>
+                          )}
+                          {blog.eventConfig.status && (
+                            <div className='flex items-center gap-2'>
+                              <span className='text-purple-600 dark:text-purple-400'>Status:</span>
+                              <Badge variant='outline' className='text-xs capitalize'>
+                                {blog.eventConfig.status}
+                              </Badge>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Meta Information */}
                     <div className='flex items-center gap-4 text-xs text-muted-foreground'>
                       <div className='flex items-center gap-1'>
@@ -291,6 +323,15 @@ const BlogCard = ({
 
           {/* Status Badges */}
           <div className='absolute top-2 right-2 flex flex-col gap-1'>
+            {blog.isEvent && (
+              <Badge
+                variant='default'
+                className='text-xs bg-purple-500 hover:bg-purple-600 px-2 py-1'
+              >
+                <Calendar className='h-3 w-3 mr-1' />
+                Event
+              </Badge>
+            )}
             {blog.isFeatured && (
               <Badge
                 variant='default'
@@ -369,7 +410,7 @@ export const BlogSection = ({
         setError(null);
 
         const maxItems = content?.maxItems || 6;
-        let url = `/api/blogs?limit=${maxItems}`;
+        let url = `/api/blogs?limit=${maxItems}&isPublished=true`;
 
         if (content?.showFeaturedOnly) {
           url += '&isFeatured=true';
@@ -406,6 +447,8 @@ export const BlogSection = ({
   const handleViewAll = () => {
     router.push('/blogs');
   };
+
+  console.log("blogs in blog section", blogs);
 
   const sectionTitle = content?.title
     ? content.title[locale as keyof typeof content.title] ||

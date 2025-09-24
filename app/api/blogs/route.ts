@@ -30,6 +30,12 @@ export async function GET(request: NextRequest) {
       orderBy: (searchParams.get('orderBy') as any) || 'createdAt',
       orderDirection:
         (searchParams.get('orderDirection') as 'asc' | 'desc') || 'desc',
+      isEvent:
+        searchParams.get('isEvent') === 'true'
+          ? true
+          : searchParams.get('isEvent') === 'false'
+            ? false
+            : undefined,
     };
 
     // Build where clause
@@ -53,6 +59,10 @@ export async function GET(request: NextRequest) {
 
     if (params.createdById) {
       where.createdById = params.createdById;
+    }
+
+    if (params.isEvent !== undefined) {
+      where.isEvent = params.isEvent;
     }
 
     if (params.tags && params.tags.length > 0) {

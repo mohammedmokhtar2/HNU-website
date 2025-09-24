@@ -66,7 +66,18 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     // Update the blog
     const updatedBlog = await db.blogs.update({
       where: { id },
-      data: body,
+      data: {
+        ...body,
+        universityId:
+          body.universityId === null ? undefined : body.universityId,
+        collageId: body.collageId === null ? undefined : body.collageId,
+        publishedAt: body.publishedAt === null ? undefined : body.publishedAt,
+        scheduledAt: body.scheduledAt === null ? undefined : body.scheduledAt,
+        eventConfig:
+          body.eventConfig === null
+            ? undefined
+            : JSON.parse(JSON.stringify(body.eventConfig)),
+      },
     });
 
     return NextResponse.json(updatedBlog);

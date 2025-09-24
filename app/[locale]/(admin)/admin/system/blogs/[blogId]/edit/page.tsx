@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -86,6 +86,11 @@ function EditBlogPage() {
   const { colleges } = useCollege();
   const { currentBlog, getBlogById } = useCurrentBlog();
 
+  // Parse blogId from params
+  const blogId = useMemo(() => {
+    return typeof params.blogId === 'string' ? params.blogId : '';
+  }, [params.blogId]);
+
   const [formData, setFormData] = useState<FormData>({
     titleEn: '',
     titleAr: '',
@@ -119,66 +124,69 @@ function EditBlogPage() {
   // Fetch blog data when component mounts
   useEffect(() => {
     const fetchBlog = async () => {
-      if (params.blogId) {
-        try {
-          const blog = await getBlogById(params.blogId as string);
-          if (blog) {
-            const title = typeof blog.title === 'object' ? blog.title : {};
-            const content =
-              typeof blog.content === 'object' ? blog.content : {};
-            const eventConfig = blog.eventConfig as EventConfig | null;
+      if (!blogId) return;
 
-            setFormData({
-              titleEn: (title as any).en || '',
-              titleAr: (title as any).ar || '',
-              contentEn: (content as any).en || '',
-              contentAr: (content as any).ar || '',
-              slug: blog.slug,
-              images: blog.image || [],
-              tags: blog.tags || [],
-              newTag: '',
-              isPublished: blog.isPublished,
-              isFeatured: blog.isFeatured,
-              publishedAt: blog.publishedAt
-                ? new Date(blog.publishedAt).toISOString().slice(0, 16)
-                : '',
-              scheduledAt: blog.scheduledAt
-                ? new Date(blog.scheduledAt).toISOString().slice(0, 16)
-                : '',
-              order: blog.order,
-              universityId: blog.universityId || 'none',
-              collageId: blog.collageId || 'none',
-              isEvent: blog.isEvent || false,
-              eventConfig: eventConfig,
-            });
+      try {
+        const blog = await getBlogById(blogId);
+        if (blog) {
+          const title = typeof blog.title === 'object' ? blog.title : {};
+          const content = typeof blog.content === 'object' ? blog.content : {};
+          const eventConfig = blog.eventConfig as EventConfig | null;
 
-            // Set selected university and college if they exist
-            if (blog.universityId) {
-              const university = universities.find(
-                u => u.id === blog.universityId
-              );
-              if (university) setSelectedUniversity(university);
-            }
-            if (blog.collageId) {
-              const college = colleges.find(c => c.id === blog.collageId);
-              if (college) setSelectedCollege(college);
+          setFormData({
+            titleEn: (title as any).en || '',
+            titleAr: (title as any).ar || '',
+            contentEn: (content as any).en || '',
+            contentAr: (content as any).ar || '',
+            slug: blog.slug,
+            images: blog.image || [],
+            tags: blog.tags || [],
+            newTag: '',
+            isPublished: blog.isPublished,
+            isFeatured: blog.isFeatured,
+            publishedAt: blog.publishedAt
+              ? new Date(blog.publishedAt).toISOString().slice(0, 16)
+              : '',
+            scheduledAt: blog.scheduledAt
+              ? new Date(blog.scheduledAt).toISOString().slice(0, 16)
+              : '',
+            order: blog.order,
+            universityId: blog.universityId || 'none',
+            collageId: blog.collageId || 'none',
+            isEvent: blog.isEvent || false,
+            eventConfig: eventConfig,
+          });
+
+          // Set selected university and college if they exist
+          if (blog.universityId) {
+            const university = universities.find(u => u.id === blog.universityId);
+            if (university) {
+              setSelectedUniversity(university);
+              setShowUniversities(true); // Show university selection UI
             }
           }
-        } catch (error) {
-          console.error('Error fetching blog:', error);
-          toast({
-            title: 'Error',
-            description: 'Failed to load blog data',
-            variant: 'destructive',
-          });
+          if (blog.collageId) {
+            const college = colleges.find(c => c.id === blog.collageId);
+            if (college) {
+              setSelectedCollege(college);
+              setShowColleges(true); // Show college selection UI
+            }
+          }
         }
+      } catch (error) {
+        console.error('Error fetching blog:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to load blog data',
+          variant: 'destructive',
+        });
       }
     };
 
     fetchBlog();
-  }, [params.blogId, getBlogById, universities, colleges, toast]);
+  }, [blogId, getBlogById, universities, colleges, toast]);
 
-  const handleAddTag = () => {
+  const handleAddTag = useCallback(() => {
     if (
       formData.newTag.trim() &&
       !formData.tags.includes(formData.newTag.trim())
@@ -189,39 +197,43 @@ function EditBlogPage() {
         newTag: '',
       }));
     }
-  };
+  }, [formData.newTag, formData.tags]);
 
-  const handleRemoveTag = (tagToRemove: string) => {
+  const handleRemoveTag = useCallback((tagToRemove: string) => {
     setFormData(prev => ({
       ...prev,
       tags: prev.tags.filter(tag => tag !== tagToRemove),
     }));
-  };
+  }, []);
 
-  const handleRemoveImage = (imageUrl: string) => {
+  const handleRemoveImage = useCallback((imageUrl: string) => {
     setFormData(prev => ({
       ...prev,
       images: prev.images.filter(img => img !== imageUrl),
     }));
-  };
+  }, []);
 
-  const handleUniversitySelect = (university: University) => {
+  const handleUniversitySelect = useCallback((university: University) => {
     setSelectedUniversity(university);
     setFormData(prev => ({
       ...prev,
       universityId: university.id,
     }));
-  };
+    // Ensure university selection UI is shown
+    setShowUniversities(true);
+  }, []);
 
-  const handleCollegeSelect = (college: College) => {
+  const handleCollegeSelect = useCallback((college: College) => {
     setSelectedCollege(college);
     setFormData(prev => ({
       ...prev,
       collageId: college.id,
     }));
-  };
+    // Ensure college selection UI is shown
+    setShowColleges(true);
+  }, []);
 
-  const handleImageSelect = (file: CloudinaryFile) => {
+  const handleImageSelect = useCallback((file: CloudinaryFile) => {
     setFormData(prev => ({
       ...prev,
       images: [...prev.images, file.secure_url],
@@ -230,9 +242,52 @@ function EditBlogPage() {
       title: 'Success',
       description: 'Image added successfully',
     });
-  };
+  }, [toast]);
 
-  const handleSubmit = async () => {
+  // Memoized input handlers
+  const handleInputChange = useCallback((field: keyof FormData) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setFormData(prev => ({
+        ...prev,
+        [field]: e.target.value,
+      }));
+    }, []);
+
+  const handleSwitchChange = useCallback((field: keyof FormData) =>
+    (checked: boolean) => {
+      setFormData(prev => ({
+        ...prev,
+        [field]: checked,
+      }));
+    }, []);
+
+  const handleNumberChange = useCallback((field: keyof FormData) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData(prev => ({
+        ...prev,
+        [field]: parseInt(e.target.value) || 0,
+      }));
+    }, []);
+
+  const handleEventToggle = useCallback((checked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      isEvent: checked,
+      eventConfig: checked ? (prev.eventConfig || {
+        eventDate: null,
+        eventEndDate: null,
+        location: null,
+        eventType: EventType.OTHER,
+        status: EventStatus.DRAFT,
+        metadata: {}
+      }) : null
+    }));
+  }, []);
+
+  const handleEventConfigChange = useCallback((eventConfig: EventConfig | null) =>
+    setFormData(prev => ({ ...prev, eventConfig })), []);
+
+  const handleSubmit = useCallback(async () => {
     if (!formData.titleEn.trim() || !formData.contentEn.trim()) {
       toast({
         title: 'Error',
@@ -242,14 +297,21 @@ function EditBlogPage() {
       return;
     }
 
-    if (!currentBlog) {
+    if (!blogId) {
       toast({
         title: 'Error',
-        description: 'Blog not found',
+        description: 'Blog ID not found',
         variant: 'destructive',
       });
       return;
     }
+
+    // Ensure form data is synchronized with selected items
+    const finalFormData = {
+      ...formData,
+      universityId: selectedUniversity?.id || formData.universityId,
+      collageId: selectedCollege?.id || formData.collageId,
+    };
 
     setIsSubmitting(true);
     try {
@@ -275,24 +337,38 @@ function EditBlogPage() {
           : null,
         order: formData.order,
         universityId:
-          formData.universityId && formData.universityId !== 'none'
-            ? formData.universityId
+          finalFormData.universityId && finalFormData.universityId !== 'none'
+            ? finalFormData.universityId
             : null,
         collageId:
-          formData.collageId && formData.collageId !== 'none'
-            ? formData.collageId
+          finalFormData.collageId && finalFormData.collageId !== 'none'
+            ? finalFormData.collageId
             : null,
         createdById: user?.id,
         isEvent: formData.isEvent,
         eventConfig: formData.eventConfig,
       };
 
-      await updateBlog(currentBlog.id, blogData as any);
+      console.log('Updating blog with data:', {
+        blogId,
+        universityId: blogData.universityId,
+        collageId: blogData.collageId,
+        finalFormData: {
+          universityId: finalFormData.universityId,
+          collageId: finalFormData.collageId,
+        },
+        selectedUniversity: selectedUniversity?.id,
+        selectedCollege: selectedCollege?.id,
+        showUniversities,
+        showColleges,
+      });
+
+      await updateBlog(blogId, blogData as any);
       toast({
         title: 'Success',
         description: 'Blog updated successfully',
       });
-      router.push('/admin/blogs');
+      router.push('/admin/system/blogs');
     } catch (error) {
       console.error('Error updating blog:', error);
       toast({
@@ -304,20 +380,14 @@ function EditBlogPage() {
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [formData, blogId, user?.id, updateBlog, toast, router, selectedUniversity?.id, selectedCollege?.id, showUniversities, showColleges]);
 
-  if (!currentBlog) {
-    return (
-      <div className='container mx-auto py-6'>
-        <div className='flex items-center justify-center h-64'>
-          <Loader2 className='h-8 w-8 animate-spin' />
-        </div>
-      </div>
-    );
-  }
+  // Memoize loading states
+  const isLoading = useMemo(() => {
+    return !currentBlog || (!formData.titleEn && !formData.titleAr);
+  }, [currentBlog, formData.titleEn, formData.titleAr]);
 
-  // Show loading state while fetching blog data
-  if (!formData.titleEn && !formData.titleAr) {
+  if (isLoading) {
     return (
       <div className='container mx-auto py-6'>
         <div className='flex items-center justify-center h-64'>
@@ -351,12 +421,7 @@ function EditBlogPage() {
                   <Input
                     id='titleEn'
                     value={formData.titleEn}
-                    onChange={e =>
-                      setFormData(prev => ({
-                        ...prev,
-                        titleEn: e.target.value,
-                      }))
-                    }
+                    onChange={handleInputChange('titleEn')}
                     placeholder='Enter blog title in English'
                   />
                 </div>
@@ -365,12 +430,7 @@ function EditBlogPage() {
                   <Textarea
                     id='contentEn'
                     value={formData.contentEn}
-                    onChange={e =>
-                      setFormData(prev => ({
-                        ...prev,
-                        contentEn: e.target.value,
-                      }))
-                    }
+                    onChange={handleInputChange('contentEn')}
                     placeholder='Enter blog content in English'
                     rows={10}
                   />
@@ -382,12 +442,7 @@ function EditBlogPage() {
                   <Input
                     id='titleAr'
                     value={formData.titleAr}
-                    onChange={e =>
-                      setFormData(prev => ({
-                        ...prev,
-                        titleAr: e.target.value,
-                      }))
-                    }
+                    onChange={handleInputChange('titleAr')}
                     placeholder='Enter blog title in Arabic'
                     dir='rtl'
                   />
@@ -397,12 +452,7 @@ function EditBlogPage() {
                   <Textarea
                     id='contentAr'
                     value={formData.contentAr}
-                    onChange={e =>
-                      setFormData(prev => ({
-                        ...prev,
-                        contentAr: e.target.value,
-                      }))
-                    }
+                    onChange={handleInputChange('contentAr')}
                     placeholder='Enter blog content in Arabic'
                     rows={10}
                     dir='rtl'
@@ -491,9 +541,7 @@ function EditBlogPage() {
               <Input
                 id='slug'
                 value={formData.slug}
-                onChange={e =>
-                  setFormData(prev => ({ ...prev, slug: e.target.value }))
-                }
+                onChange={handleInputChange('slug')}
                 placeholder='blog-slug'
               />
             </div>
@@ -512,6 +560,12 @@ function EditBlogPage() {
                         setFormData(prev => ({
                           ...prev,
                           universityId: 'none',
+                        }));
+                      } else if (selectedUniversity) {
+                        // If checking and we have a selected university, ensure it's in form data
+                        setFormData(prev => ({
+                          ...prev,
+                          universityId: selectedUniversity.id,
                         }));
                       }
                     }}
@@ -532,6 +586,12 @@ function EditBlogPage() {
                       if (!checked) {
                         setSelectedCollege(null);
                         setFormData(prev => ({ ...prev, collageId: 'none' }));
+                      } else if (selectedCollege) {
+                        // If checking and we have a selected college, ensure it's in form data
+                        setFormData(prev => ({
+                          ...prev,
+                          collageId: selectedCollege.id,
+                        }));
                       }
                     }}
                   />
@@ -647,9 +707,7 @@ function EditBlogPage() {
                   <Input
                     placeholder='Add a tag'
                     value={formData.newTag}
-                    onChange={e =>
-                      setFormData(prev => ({ ...prev, newTag: e.target.value }))
-                    }
+                    onChange={handleInputChange('newTag')}
                     onKeyPress={e => {
                       if (e.key === 'Enter') {
                         e.preventDefault();
@@ -693,12 +751,7 @@ function EditBlogPage() {
                 id='order'
                 type='number'
                 value={formData.order}
-                onChange={e =>
-                  setFormData(prev => ({
-                    ...prev,
-                    order: parseInt(e.target.value) || 0,
-                  }))
-                }
+                onChange={handleNumberChange('order')}
               />
             </div>
           </CardContent>
@@ -720,9 +773,7 @@ function EditBlogPage() {
               <Switch
                 id='isPublished'
                 checked={formData.isPublished}
-                onCheckedChange={checked =>
-                  setFormData(prev => ({ ...prev, isPublished: checked }))
-                }
+                onCheckedChange={handleSwitchChange('isPublished')}
               />
             </div>
 
@@ -736,9 +787,7 @@ function EditBlogPage() {
               <Switch
                 id='isFeatured'
                 checked={formData.isFeatured}
-                onCheckedChange={checked =>
-                  setFormData(prev => ({ ...prev, isFeatured: checked }))
-                }
+                onCheckedChange={handleSwitchChange('isFeatured')}
               />
             </div>
 
@@ -749,12 +798,7 @@ function EditBlogPage() {
                   id='publishedAt'
                   type='datetime-local'
                   value={formData.publishedAt}
-                  onChange={e =>
-                    setFormData(prev => ({
-                      ...prev,
-                      publishedAt: e.target.value,
-                    }))
-                  }
+                  onChange={handleInputChange('publishedAt')}
                 />
               </div>
               <div>
@@ -763,12 +807,7 @@ function EditBlogPage() {
                   id='scheduledAt'
                   type='datetime-local'
                   value={formData.scheduledAt}
-                  onChange={e =>
-                    setFormData(prev => ({
-                      ...prev,
-                      scheduledAt: e.target.value,
-                    }))
-                  }
+                  onChange={handleInputChange('scheduledAt')}
                 />
               </div>
             </div>
@@ -794,29 +833,14 @@ function EditBlogPage() {
               <Switch
                 id='isEvent'
                 checked={formData.isEvent}
-                onCheckedChange={checked =>
-                  setFormData(prev => ({
-                    ...prev,
-                    isEvent: checked,
-                    eventConfig: checked ? (formData.eventConfig || {
-                      eventDate: null,
-                      eventEndDate: null,
-                      location: null,
-                      eventType: EventType.OTHER,
-                      status: EventStatus.DRAFT,
-                      metadata: {}
-                    }) : null
-                  }))
-                }
+                onCheckedChange={handleEventToggle}
               />
             </div>
 
             {formData.isEvent && (
               <EventConfigForm
                 eventConfig={formData.eventConfig}
-                onChange={(eventConfig) =>
-                  setFormData(prev => ({ ...prev, eventConfig }))
-                }
+                onChange={handleEventConfigChange}
               />
             )}
           </CardContent>

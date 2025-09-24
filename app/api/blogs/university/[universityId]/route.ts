@@ -33,6 +33,12 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const tags =
       searchParams.get('tags')?.split(',').filter(Boolean) || undefined;
     const search = searchParams.get('search') || undefined;
+    const isEvent =
+      searchParams.get('isEvent') === 'true'
+        ? true
+        : searchParams.get('isEvent') === 'false'
+          ? false
+          : undefined;
 
     // Build where clause
     const where: any = {
@@ -45,6 +51,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     if (isFeatured !== undefined) {
       where.isFeatured = isFeatured;
+    }
+
+    if (isEvent !== undefined) {
+      where.isEvent = isEvent;
     }
 
     if (tags && tags.length > 0) {
