@@ -32,11 +32,9 @@
     "discover_all_programs": "اكتشف جميع البرامج",
     "learn_more": "المزيد"
   },
-
   "programs": {
     "learn_more": "المزيد"
   },
-
   "expand": {
     "About-this": " عن هذا",
     "Featured": "مميز",
@@ -57,6 +55,8 @@
     "Request_Information": "طلب معلومات",
     "university_name": "جامعة حلوان الاهلية",
     "rights_reserved": "جميع الحقوق محفوظة.",
-    "date": "٢٠٢٥"
+    "date": "٢٠٢٥",
+    "Total_Visitors": "إجمالي الزوار",
+    "Unique_Visitors": "زوار فريدون"
   }
 }

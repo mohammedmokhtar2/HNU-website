@@ -46,7 +46,6 @@
     "join-now": "Join Now",
     "learn-more": "Learn More"
   },
-
   "footer": {
     "Our_Location": "Our Location",
     "Quick_Links": "Quick Links",
@@ -56,6 +55,8 @@
     "Request_Information": "Request Information",
     "university_name": "HELWAN NATIONAL UNIVERSITY",
     "rights_reserved": "All rights reserved.",
-    "date": "2025"
+    "date": "2025",
+    "Total_Visitors": "Total Visitors",
+    "Unique_Visitors": "Unique Visitors"
   }
 }

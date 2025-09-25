@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useUniversity } from '@/contexts/UniversityContext';
 import { footerData } from '@/data';
 import { useLocale } from 'next-intl';
+import VisitorCountDisplay from '@/components/VisitorCountDisplay';
 
 export interface FooterProps {
   local: string;
@@ -137,7 +138,7 @@ function Footer({ local }: FooterProps) {
                     >
                       {typeof section.title === 'object'
                         ? section.title[local as 'en' | 'ar'] ||
-                          section.title.en
+                        section.title.en
                         : section.title}
                     </h3>
 
@@ -278,6 +279,11 @@ function Footer({ local }: FooterProps) {
                 ? footerData.contact.address.ar
                 : footerData.contact.address.en}
             </p>
+
+            {/* Visitor Counter */}
+            <div className='max-w-sm mx-auto mb-8'>
+              <VisitorCountDisplay />
+            </div>
           </div>
         </div>
       </div>
