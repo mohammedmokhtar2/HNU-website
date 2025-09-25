@@ -64,7 +64,8 @@ export function BlogTable({
   collegeId,
   availableColleges,
 }: BlogTableProps) {
-  const { formatEventDate, getEventStatusColor, getEventTypeDisplay } = useEventDisplay();
+  const { formatEventDate, getEventStatusColor, getEventTypeDisplay } =
+    useEventDisplay();
   if (loading) {
     return (
       <Card>
@@ -149,10 +150,11 @@ export function BlogTable({
             return (
               <div
                 key={blog.id}
-                className={`border rounded-lg p-4 hover:bg-muted/50 transition-colors ${isEvent
-                  ? 'border-blue-200 bg-blue-50/30 dark:border-blue-800 dark:bg-blue-950/20'
-                  : 'border-border'
-                  }`}
+                className={`border rounded-lg p-4 hover:bg-muted/50 transition-colors ${
+                  isEvent
+                    ? 'border-blue-200 bg-blue-50/30 dark:border-blue-800 dark:bg-blue-950/20'
+                    : 'border-border'
+                }`}
               >
                 <div className='flex items-start gap-4'>
                   {/* Blog Image */}
@@ -182,7 +184,10 @@ export function BlogTable({
                             {getBlogTitle(blog)}
                           </h3>
                           {isEvent && (
-                            <Badge variant='outline' className='text-xs bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700'>
+                            <Badge
+                              variant='outline'
+                              className='text-xs bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700'
+                            >
                               <Calendar className='h-3 w-3 mr-1' />
                               Event
                             </Badge>
@@ -221,10 +226,12 @@ export function BlogTable({
                                 variant='outline'
                                 className={`text-xs font-medium ${getEventStatusColor(blog.eventConfig?.status || EventStatus.DRAFT)}`}
                               >
-                                {blog.eventConfig?.status ?
-                                  blog.eventConfig.status.charAt(0).toUpperCase() + blog.eventConfig.status.slice(1) :
-                                  'Draft'
-                                }
+                                {blog.eventConfig?.status
+                                  ? blog.eventConfig.status
+                                      .charAt(0)
+                                      .toUpperCase() +
+                                    blog.eventConfig.status.slice(1)
+                                  : 'Draft'}
                               </Badge>
                             </div>
                             <div className='grid grid-cols-1 md:grid-cols-2 gap-2 text-sm'>
@@ -232,27 +239,40 @@ export function BlogTable({
                                 <div className='flex items-center gap-2 text-blue-800 dark:text-blue-200'>
                                   <Clock className='h-4 w-4 text-blue-600 dark:text-blue-400' />
                                   <span className='font-medium'>Date:</span>
-                                  <span>{formatEventDate(blog.eventConfig.eventDate)}</span>
+                                  <span>
+                                    {formatEventDate(
+                                      blog.eventConfig.eventDate
+                                    )}
+                                  </span>
                                 </div>
                               )}
                               {blog.eventConfig?.location && (
                                 <div className='flex items-center gap-2 text-blue-800 dark:text-blue-200'>
                                   <MapPin className='h-4 w-4 text-blue-600 dark:text-blue-400' />
                                   <span className='font-medium'>Location:</span>
-                                  <span className='truncate'>{blog.eventConfig.location}</span>
+                                  <span className='truncate'>
+                                    {blog.eventConfig.location}
+                                  </span>
                                 </div>
                               )}
                               <div className='flex items-center gap-2 text-blue-800 dark:text-blue-200'>
                                 <span className='font-medium'>Type:</span>
                                 <Badge variant='secondary' className='text-xs'>
-                                  {getEventTypeDisplay(blog.eventConfig?.eventType || EventType.OTHER)}
+                                  {getEventTypeDisplay(
+                                    blog.eventConfig?.eventType ||
+                                      EventType.OTHER
+                                  )}
                                 </Badge>
                               </div>
                               {blog.eventConfig?.eventEndDate && (
                                 <div className='flex items-center gap-2 text-blue-800 dark:text-blue-200'>
                                   <Clock className='h-4 w-4 text-blue-600 dark:text-blue-400' />
                                   <span className='font-medium'>Ends:</span>
-                                  <span>{formatEventDate(blog.eventConfig.eventEndDate)}</span>
+                                  <span>
+                                    {formatEventDate(
+                                      blog.eventConfig.eventEndDate
+                                    )}
+                                  </span>
                                 </div>
                               )}
                             </div>

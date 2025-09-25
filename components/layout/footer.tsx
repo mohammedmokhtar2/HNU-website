@@ -138,7 +138,7 @@ function Footer({ local }: FooterProps) {
                     >
                       {typeof section.title === 'object'
                         ? section.title[local as 'en' | 'ar'] ||
-                        section.title.en
+                          section.title.en
                         : section.title}
                     </h3>
 

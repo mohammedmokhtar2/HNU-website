@@ -159,7 +159,9 @@ function EditBlogPage() {
 
           // Set selected university and college if they exist
           if (blog.universityId) {
-            const university = universities.find(u => u.id === blog.universityId);
+            const university = universities.find(
+              u => u.id === blog.universityId
+            );
             if (university) {
               setSelectedUniversity(university);
               setShowUniversities(true); // Show university selection UI
@@ -233,59 +235,74 @@ function EditBlogPage() {
     setShowColleges(true);
   }, []);
 
-  const handleImageSelect = useCallback((file: CloudinaryFile) => {
-    setFormData(prev => ({
-      ...prev,
-      images: [...prev.images, file.secure_url],
-    }));
-    toast({
-      title: 'Success',
-      description: 'Image added successfully',
-    });
-  }, [toast]);
-
-  // Memoized input handlers
-  const handleInputChange = useCallback((field: keyof FormData) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleImageSelect = useCallback(
+    (file: CloudinaryFile) => {
       setFormData(prev => ({
         ...prev,
-        [field]: e.target.value,
+        images: [...prev.images, file.secure_url],
       }));
-    }, []);
+      toast({
+        title: 'Success',
+        description: 'Image added successfully',
+      });
+    },
+    [toast]
+  );
 
-  const handleSwitchChange = useCallback((field: keyof FormData) =>
-    (checked: boolean) => {
+  // Memoized input handlers
+  const handleInputChange = useCallback(
+    (field: keyof FormData) =>
+      (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setFormData(prev => ({
+          ...prev,
+          [field]: e.target.value,
+        }));
+      },
+    []
+  );
+
+  const handleSwitchChange = useCallback(
+    (field: keyof FormData) => (checked: boolean) => {
       setFormData(prev => ({
         ...prev,
         [field]: checked,
       }));
-    }, []);
+    },
+    []
+  );
 
-  const handleNumberChange = useCallback((field: keyof FormData) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNumberChange = useCallback(
+    (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
       setFormData(prev => ({
         ...prev,
         [field]: parseInt(e.target.value) || 0,
       }));
-    }, []);
+    },
+    []
+  );
 
   const handleEventToggle = useCallback((checked: boolean) => {
     setFormData(prev => ({
       ...prev,
       isEvent: checked,
-      eventConfig: checked ? (prev.eventConfig || {
-        eventDate: null,
-        eventEndDate: null,
-        location: null,
-        eventType: EventType.OTHER,
-        status: EventStatus.DRAFT,
-        metadata: {}
-      }) : null
+      eventConfig: checked
+        ? prev.eventConfig || {
+            eventDate: null,
+            eventEndDate: null,
+            location: null,
+            eventType: EventType.OTHER,
+            status: EventStatus.DRAFT,
+            metadata: {},
+          }
+        : null,
     }));
   }, []);
 
-  const handleEventConfigChange = useCallback((eventConfig: EventConfig | null) =>
-    setFormData(prev => ({ ...prev, eventConfig })), []);
+  const handleEventConfigChange = useCallback(
+    (eventConfig: EventConfig | null) =>
+      setFormData(prev => ({ ...prev, eventConfig })),
+    []
+  );
 
   const handleSubmit = useCallback(async () => {
     if (!formData.titleEn.trim() || !formData.contentEn.trim()) {
@@ -380,7 +397,18 @@ function EditBlogPage() {
     } finally {
       setIsSubmitting(false);
     }
-  }, [formData, blogId, user?.id, updateBlog, toast, router, selectedUniversity?.id, selectedCollege?.id, showUniversities, showColleges]);
+  }, [
+    formData,
+    blogId,
+    user?.id,
+    updateBlog,
+    toast,
+    router,
+    selectedUniversity?.id,
+    selectedCollege?.id,
+    showUniversities,
+    showColleges,
+  ]);
 
   // Memoize loading states
   const isLoading = useMemo(() => {

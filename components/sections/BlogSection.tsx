@@ -233,25 +233,38 @@ const BlogCard = ({
                       <div className='bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg border border-purple-200 dark:border-purple-800'>
                         <div className='flex items-center gap-2 mb-2'>
                           <Calendar className='h-4 w-4 text-purple-600' />
-                          <span className='font-semibold text-purple-800 dark:text-purple-200'>Event Details</span>
+                          <span className='font-semibold text-purple-800 dark:text-purple-200'>
+                            Event Details
+                          </span>
                         </div>
                         <div className='space-y-1 text-sm'>
                           {blog.eventConfig.eventType && (
                             <div className='flex items-center gap-2'>
-                              <span className='text-purple-600 dark:text-purple-400'>Type:</span>
-                              <span className='capitalize'>{blog.eventConfig.eventType}</span>
+                              <span className='text-purple-600 dark:text-purple-400'>
+                                Type:
+                              </span>
+                              <span className='capitalize'>
+                                {blog.eventConfig.eventType}
+                              </span>
                             </div>
                           )}
                           {blog.eventConfig.location && (
                             <div className='flex items-center gap-2'>
-                              <span className='text-purple-600 dark:text-purple-400'>Location:</span>
+                              <span className='text-purple-600 dark:text-purple-400'>
+                                Location:
+                              </span>
                               <span>{blog.eventConfig.location}</span>
                             </div>
                           )}
                           {blog.eventConfig.status && (
                             <div className='flex items-center gap-2'>
-                              <span className='text-purple-600 dark:text-purple-400'>Status:</span>
-                              <Badge variant='outline' className='text-xs capitalize'>
+                              <span className='text-purple-600 dark:text-purple-400'>
+                                Status:
+                              </span>
+                              <Badge
+                                variant='outline'
+                                className='text-xs capitalize'
+                              >
                                 {blog.eventConfig.status}
                               </Badge>
                             </div>
@@ -448,18 +461,18 @@ export const BlogSection = ({
     router.push('/blogs');
   };
 
-  console.log("blogs in blog section", blogs);
+  console.log('blogs in blog section', blogs);
 
   const sectionTitle = content?.title
     ? content.title[locale as keyof typeof content.title] ||
-    content.title.en ||
-    'Latest Blogs'
+      content.title.en ||
+      'Latest Blogs'
     : 'Latest Blogs';
 
   const sectionDescription = content?.description
     ? content.description[locale as keyof typeof content.description] ||
-    content.description.en ||
-    'Stay updated with our latest news, insights, and announcements'
+      content.description.en ||
+      'Stay updated with our latest news, insights, and announcements'
     : 'Stay updated with our latest news, insights, and announcements';
 
   if (loading) {
@@ -502,7 +515,7 @@ export const BlogSection = ({
 
   if (blogs.length === 0) {
     console.log('no blogs found');
-    return null
+    return null;
   }
 
   return (

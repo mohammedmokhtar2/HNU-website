@@ -9,5 +9,5 @@ export interface Config {
 }
 
 export interface globalConfig {
-  visitors: number;
+  counter: number;
 }

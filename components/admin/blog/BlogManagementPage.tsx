@@ -337,7 +337,9 @@ export function BlogManagementPage({
               <Button
                 variant={queryParams.isEvent ? 'default' : 'outline'}
                 size='sm'
-                onClick={() => setQueryParams({ isEvent: !queryParams.isEvent })}
+                onClick={() =>
+                  setQueryParams({ isEvent: !queryParams.isEvent })
+                }
               >
                 <Calendar className='h-4 w-4 mr-1' />
                 Events

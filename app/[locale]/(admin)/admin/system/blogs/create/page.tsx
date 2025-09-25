@@ -715,14 +715,16 @@ function CreateBlogPage() {
                   setFormData(prev => ({
                     ...prev,
                     isEvent: checked,
-                    eventConfig: checked ? {
-                      eventDate: null,
-                      eventEndDate: null,
-                      location: null,
-                      eventType: EventType.OTHER,
-                      status: EventStatus.DRAFT,
-                      metadata: {}
-                    } : null
+                    eventConfig: checked
+                      ? {
+                          eventDate: null,
+                          eventEndDate: null,
+                          location: null,
+                          eventType: EventType.OTHER,
+                          status: EventStatus.DRAFT,
+                          metadata: {},
+                        }
+                      : null,
                   }))
                 }
               />
@@ -731,7 +733,7 @@ function CreateBlogPage() {
             {formData.isEvent && (
               <EventConfigForm
                 eventConfig={formData.eventConfig}
-                onChange={(eventConfig) =>
+                onChange={eventConfig =>
                   setFormData(prev => ({ ...prev, eventConfig }))
                 }
               />

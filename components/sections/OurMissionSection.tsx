@@ -72,16 +72,18 @@ export function OurMissionSection({ sectionId }: OurMissionSectionProps) {
   return (
     <section className='relative w-full flex justify-center items-center px-4 md:px-8 py-8'>
       <div
-        className={`relative max-w-[1400px] w-full flex ${isMobile
-          ? 'flex-col items-center gap-0'
-          : 'flex-row justify-center items-center gap-8'
-          }`}
+        className={`relative max-w-[1400px] w-full flex ${
+          isMobile
+            ? 'flex-col items-center gap-0'
+            : 'flex-row justify-center items-center gap-8'
+        }`}
       >
         <motion.div
-          className={`${isMobile
-            ? 'w-full h-[400px] relative'
-            : `w-[1000px] h-[500px] rounded-xl overflow-hidden shadow-xl relative z-0 ${locale === 'ar' ? 'mr-90' : 'ml-90'}`
-            }`}
+          className={`${
+            isMobile
+              ? 'w-full h-[400px] relative'
+              : `w-[1000px] h-[500px] rounded-xl overflow-hidden shadow-xl relative z-0 ${locale === 'ar' ? 'mr-90' : 'ml-90'}`
+          }`}
           initial={{ opacity: 0, x: 50 }}
           whileInView={{
             opacity: 1,
@@ -95,8 +97,9 @@ export function OurMissionSection({ sectionId }: OurMissionSectionProps) {
             alt='Our Mission'
             width={700}
             height={500}
-            className={`w-full h-full object-cover rounded-xl ${isMobile ? 'filter blur-[2px]' : ''
-              }`}
+            className={`w-full h-full object-cover rounded-xl ${
+              isMobile ? 'filter blur-[2px]' : ''
+            }`}
           />
 
           {isMobile && (
@@ -121,10 +124,9 @@ export function OurMissionSection({ sectionId }: OurMissionSectionProps) {
         {!isMobile && (
           <motion.div
             // bg with low opacity
-            className={`w-[700px] h-[350px] p-6 bg-gradient-to-r from-[#162e51] to-[#1954a6]/60 rounded-xl shadow-lg flex flex-col justify-center  ${locale === 'ar'
-              ? 'text-right rtl right-10'
-              : 'text-left left-5'
-              } z-10 absolute top-1/2 transform -translate-y-1/2`}
+            className={`w-[700px] h-[350px] p-6 bg-gradient-to-r from-[#162e51] to-[#1954a6]/60 rounded-xl shadow-lg flex flex-col justify-center  ${
+              locale === 'ar' ? 'text-right rtl right-10' : 'text-left left-5'
+            } z-10 absolute top-1/2 transform -translate-y-1/2`}
             initial={{ opacity: 0, x: locale === 'ar' ? 50 : -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}

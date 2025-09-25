@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        counter: config.config.globalConfig?.counter || 0,
+        counter: (config.config as any)?.globalConfig?.counter || 0,
       });
     }
 

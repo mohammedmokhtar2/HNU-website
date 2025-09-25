@@ -51,7 +51,8 @@ export function BlogCard({
   isDragging = false,
   dragHandleProps,
 }: BlogCardProps) {
-  const { formatEventDate, getEventStatusColor, getEventTypeDisplay } = useEventDisplay();
+  const { formatEventDate, getEventStatusColor, getEventTypeDisplay } =
+    useEventDisplay();
   const getBlogTitle = (blog: BlogWithRelations): string => {
     if (typeof blog.title === 'object' && blog.title !== null) {
       return (blog.title as any).en || (blog.title as any).ar || 'Untitled';
@@ -102,12 +103,15 @@ export function BlogCard({
 
   return (
     <Card
-      className={`group hover:shadow-lg transition-all duration-300 ${isDragging ? 'opacity-50 scale-95' : ''
-        } ${blog.isFeatured ? 'ring-2 ring-yellow-400 bg-yellow-50/50' : ''} ${!blog.isPublished ? 'bg-gray-50/50 border-gray-200' : ''
-        } ${isEvent
+      className={`group hover:shadow-lg transition-all duration-300 ${
+        isDragging ? 'opacity-50 scale-95' : ''
+      } ${blog.isFeatured ? 'ring-2 ring-yellow-400 bg-yellow-50/50' : ''} ${
+        !blog.isPublished ? 'bg-gray-50/50 border-gray-200' : ''
+      } ${
+        isEvent
           ? 'border-blue-200 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 dark:border-blue-800 dark:from-blue-950/20 dark:to-indigo-950/20'
           : ''
-        }`}
+      }`}
     >
       <CardHeader className='pb-3'>
         <div className='flex items-start justify-between'>
@@ -117,7 +121,10 @@ export function BlogCard({
                 {getBlogTitle(blog)}
               </CardTitle>
               {isEvent && (
-                <Badge variant='outline' className='text-xs bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700 flex-shrink-0'>
+                <Badge
+                  variant='outline'
+                  className='text-xs bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700 flex-shrink-0'
+                >
                   <Calendar className='h-3 w-3 mr-1' />
                   Event
                 </Badge>
@@ -196,10 +203,10 @@ export function BlogCard({
                   variant='outline'
                   className={`text-xs font-medium ${getEventStatusColor(blog.eventConfig?.status || EventStatus.DRAFT)}`}
                 >
-                  {blog.eventConfig?.status ?
-                    blog.eventConfig.status.charAt(0).toUpperCase() + blog.eventConfig.status.slice(1) :
-                    'Draft'
-                  }
+                  {blog.eventConfig?.status
+                    ? blog.eventConfig.status.charAt(0).toUpperCase() +
+                      blog.eventConfig.status.slice(1)
+                    : 'Draft'}
                 </Badge>
               </div>
               <div className='space-y-2 text-sm'>
@@ -207,20 +214,26 @@ export function BlogCard({
                   <div className='flex items-center gap-2 text-blue-800 dark:text-blue-200'>
                     <Clock className='h-4 w-4 text-blue-600 dark:text-blue-400' />
                     <span className='font-medium'>Date:</span>
-                    <span className='truncate'>{formatEventDate(blog.eventConfig.eventDate)}</span>
+                    <span className='truncate'>
+                      {formatEventDate(blog.eventConfig.eventDate)}
+                    </span>
                   </div>
                 )}
                 {blog.eventConfig?.location && (
                   <div className='flex items-center gap-2 text-blue-800 dark:text-blue-200'>
                     <MapPin className='h-4 w-4 text-blue-600 dark:text-blue-400' />
                     <span className='font-medium'>Location:</span>
-                    <span className='truncate'>{blog.eventConfig.location}</span>
+                    <span className='truncate'>
+                      {blog.eventConfig.location}
+                    </span>
                   </div>
                 )}
                 <div className='flex items-center gap-2 text-blue-800 dark:text-blue-200'>
                   <span className='font-medium'>Type:</span>
                   <Badge variant='secondary' className='text-xs'>
-                    {getEventTypeDisplay(blog.eventConfig?.eventType || EventType.OTHER)}
+                    {getEventTypeDisplay(
+                      blog.eventConfig?.eventType || EventType.OTHER
+                    )}
                   </Badge>
                 </div>
               </div>
