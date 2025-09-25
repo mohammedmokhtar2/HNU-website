@@ -47,7 +47,11 @@ export default function VisitorCountDisplay() {
             returningVisitors: globalConfig.returningVisitors || 0,
             lastVisit: globalConfig.lastVisit || new Date().toISOString(),
             dailyStats: globalConfig.dailyStats || {},
-            deviceStats: globalConfig.deviceStats || { desktop: 0, mobile: 0, tablet: 0 },
+            deviceStats: globalConfig.deviceStats || {
+              desktop: 0,
+              mobile: 0,
+              tablet: 0,
+            },
             countryStats: globalConfig.countryStats || {},
           };
 
@@ -86,7 +90,9 @@ export default function VisitorCountDisplay() {
 
   const today = new Date().toISOString().split('T')[0];
   const todayStats = stats.dailyStats?.[today];
-  const topCountry = stats.countryStats ? Object.entries(stats.countryStats).sort(([, a], [, b]) => b - a)[0] : null;
+  const topCountry = stats.countryStats
+    ? Object.entries(stats.countryStats).sort(([, a], [, b]) => b - a)[0]
+    : null;
 
   return (
     <div className='space-y-3'>
@@ -132,7 +138,9 @@ export default function VisitorCountDisplay() {
       {topCountry && (
         <div className='bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg p-3 text-center shadow-lg'>
           <div className='text-white'>
-            <div className='text-xs font-medium mb-1 opacity-90'>Top Country</div>
+            <div className='text-xs font-medium mb-1 opacity-90'>
+              Top Country
+            </div>
             <div className='text-sm font-bold'>{topCountry[0]}</div>
             <div className='text-xs opacity-75'>{topCountry[1]} visitors</div>
           </div>

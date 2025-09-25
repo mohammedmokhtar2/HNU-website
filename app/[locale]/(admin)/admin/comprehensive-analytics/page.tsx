@@ -626,6 +626,97 @@ const ComprehensiveAnalyticsPage = () => {
         </Button>
       </div>
 
+      {/* Data Summary */}
+      <Card>
+        <CardHeader>
+          <CardTitle className='flex items-center gap-2'>
+            <Activity className='h-5 w-5' />
+            Data Summary
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-4 text-sm'>
+            <div className='space-y-2'>
+              <div className='font-medium text-muted-foreground'>
+                Data Coverage
+              </div>
+              <div className='space-y-1'>
+                <div className='flex justify-between'>
+                  <span>Daily Records:</span>
+                  <Badge variant='outline'>
+                    {Object.keys(stats.dailyStats || {}).length} days
+                  </Badge>
+                </div>
+                <div className='flex justify-between'>
+                  <span>Monthly Records:</span>
+                  <Badge variant='outline'>
+                    {Object.keys(stats.monthlyStats || {}).length} months
+                  </Badge>
+                </div>
+                <div className='flex justify-between'>
+                  <span>Hourly Data Points:</span>
+                  <Badge variant='outline'>
+                    {Object.keys(stats.hourlyStats || {}).length} hours
+                  </Badge>
+                </div>
+              </div>
+            </div>
+            <div className='space-y-2'>
+              <div className='font-medium text-muted-foreground'>
+                Device & Browser Data
+              </div>
+              <div className='space-y-1'>
+                <div className='flex justify-between'>
+                  <span>Device Types:</span>
+                  <Badge variant='outline'>
+                    {
+                      Object.values(stats.deviceStats || {}).filter(v => v > 0)
+                        .length
+                    }{' '}
+                    types
+                  </Badge>
+                </div>
+                <div className='flex justify-between'>
+                  <span>Browser Types:</span>
+                  <Badge variant='outline'>
+                    {Object.keys(stats.browserStats || {}).length} browsers
+                  </Badge>
+                </div>
+                <div className='flex justify-between'>
+                  <span>Countries:</span>
+                  <Badge variant='outline'>
+                    {Object.keys(stats.countryStats || {}).length} countries
+                  </Badge>
+                </div>
+              </div>
+            </div>
+            <div className='space-y-2'>
+              <div className='font-medium text-muted-foreground'>
+                Data Freshness
+              </div>
+              <div className='space-y-1'>
+                <div className='flex justify-between'>
+                  <span>Last Updated:</span>
+                  <Badge variant='outline'>
+                    {new Date(
+                      stats.lastVisit || new Date()
+                    ).toLocaleDateString()}
+                  </Badge>
+                </div>
+                <div className='flex justify-between'>
+                  <span>Data Range:</span>
+                  <Badge variant='outline'>
+                    {Object.keys(stats.dailyStats || {}).length > 0
+                      ? `${Object.keys(stats.dailyStats).sort()[0]} to ${Object.keys(stats.dailyStats).sort().pop()}`
+                      : 'No data'}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Overview Cards */}
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
         <Card>
@@ -959,34 +1050,34 @@ const ComprehensiveAnalyticsPage = () => {
         </div>
 
         {/* Browser Share (Polar Area) */}
-        {/* <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <Chrome className="h-5 w-5" />
-                            Browser Share Distribution
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div style={{ height: '300px' }}>
-                            <PolarArea
-                                data={chartData.browserPolarData}
-                                options={{
-                                    responsive: true,
-                                    maintainAspectRatio: false,
-                                    plugins: {
-                                        legend: { position: 'bottom' },
-                                        datalabels: {
-                                            display: true,
-                                            formatter: (value: number) => {
-                                                return `${value.toLocaleString()}`;
-                                            },
-                                        },
-                                    },
-                                }}
-                            />
-                        </div>
-                    </CardContent>
-                </Card> */}
+        <Card>
+          <CardHeader>
+            <CardTitle className='flex items-center gap-2'>
+              <Chrome className='h-5 w-5' />
+              Browser Share Distribution
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div style={{ height: '300px' }}>
+              <PolarArea
+                data={chartData.browserPolarData}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: { position: 'bottom' },
+                    datalabels: {
+                      display: true,
+                      formatter: (value: number) => {
+                        return `${value.toLocaleString()}`;
+                      },
+                    },
+                  },
+                }}
+              />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Visitor Types */}
@@ -1164,97 +1255,6 @@ const ComprehensiveAnalyticsPage = () => {
             </CardContent>
           </Card>
         </div>
-        {/* Data Summary */}
-        <Card>
-          <CardHeader>
-            <CardTitle className='flex items-center gap-2'>
-              <Activity className='h-5 w-5' />
-              Data Summary
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className='grid grid-cols-1 md:grid-cols-3 gap-4 text-sm'>
-              <div className='space-y-2'>
-                <div className='font-medium text-muted-foreground'>
-                  Data Coverage
-                </div>
-                <div className='space-y-1'>
-                  <div className='flex justify-between'>
-                    <span>Daily Records:</span>
-                    <Badge variant='outline'>
-                      {Object.keys(stats.dailyStats || {}).length} days
-                    </Badge>
-                  </div>
-                  <div className='flex justify-between'>
-                    <span>Monthly Records:</span>
-                    <Badge variant='outline'>
-                      {Object.keys(stats.monthlyStats || {}).length} months
-                    </Badge>
-                  </div>
-                  <div className='flex justify-between'>
-                    <span>Hourly Data Points:</span>
-                    <Badge variant='outline'>
-                      {Object.keys(stats.hourlyStats || {}).length} hours
-                    </Badge>
-                  </div>
-                </div>
-              </div>
-              <div className='space-y-2'>
-                <div className='font-medium text-muted-foreground'>
-                  Device & Browser Data
-                </div>
-                <div className='space-y-1'>
-                  <div className='flex justify-between'>
-                    <span>Device Types:</span>
-                    <Badge variant='outline'>
-                      {
-                        Object.values(stats.deviceStats || {}).filter(
-                          v => v > 0
-                        ).length
-                      }{' '}
-                      types
-                    </Badge>
-                  </div>
-                  <div className='flex justify-between'>
-                    <span>Browser Types:</span>
-                    <Badge variant='outline'>
-                      {Object.keys(stats.browserStats || {}).length} browsers
-                    </Badge>
-                  </div>
-                  <div className='flex justify-between'>
-                    <span>Countries:</span>
-                    <Badge variant='outline'>
-                      {Object.keys(stats.countryStats || {}).length} countries
-                    </Badge>
-                  </div>
-                </div>
-              </div>
-              <div className='space-y-2'>
-                <div className='font-medium text-muted-foreground'>
-                  Data Freshness
-                </div>
-                <div className='space-y-1'>
-                  <div className='flex justify-between'>
-                    <span>Last Updated:</span>
-                    <Badge variant='outline'>
-                      {new Date(
-                        stats.lastVisit || new Date()
-                      ).toLocaleDateString()}
-                    </Badge>
-                  </div>
-                  <div className='flex justify-between'>
-                    <span>Data Range:</span>
-                    <Badge variant='outline'>
-                      {Object.keys(stats.dailyStats || {}).length > 0
-                        ? `${Object.keys(stats.dailyStats).sort()[0]} to ${Object.keys(stats.dailyStats).sort().pop()}`
-                        : 'No data'}
-                    </Badge>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
