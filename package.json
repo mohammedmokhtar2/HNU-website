@@ -16,6 +16,8 @@
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
     "db:seed": "tsx prisma/seed.ts",
+    "analytics:dummy": "node scripts/populate-dummy-analytics.js",
+    "analytics:reset": "node scripts/reset-analytics.js",
     "postinstall": "prisma generate"
   },
   "dependencies": {
@@ -49,6 +51,7 @@
     "@tanstack/react-query": "^5.85.5",
     "@tanstack/react-query-devtools": "^5.87.3",
     "axios": "^1.11.0",
+    "chart.js": "^4.5.0",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.7.0",
     "clsx": "^2.1.1",
@@ -63,6 +66,7 @@
     "package.json": "^2.0.1",
     "prisma": "^6.15.0",
     "react": "19.1.0",
+    "react-chartjs-2": "^5.3.0",
     "react-dom": "19.1.0",
     "react-fast-marquee": "^1.6.5",
     "react-hook-form": "^7.62.0",

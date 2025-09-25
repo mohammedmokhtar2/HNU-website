@@ -1,12 +1,15 @@
 'use client';
 
 import { useEffect } from 'react';
-import { handleVisitorCount } from '@/utils/visitorCounter';
+import { trackVisitor, trackPageView } from '@/utils/visitorAnalytics';
 
 export default function VisitorCounter() {
   useEffect(() => {
-    // Handle visitor count when component mounts
-    handleVisitorCount();
+    // Track visitor when component mounts
+    trackVisitor();
+
+    // Track page view for existing sessions
+    trackPageView();
   }, []);
 
   // This component doesn't render anything visible
