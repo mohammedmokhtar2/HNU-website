@@ -12,6 +12,7 @@ import {
   Settings,
   FileText,
   User,
+  Mail,
 } from 'lucide-react';
 import { NavSection } from '../types/navigation';
 
@@ -100,6 +101,14 @@ export const navigationSections: NavSection[] = [
         icon: Book,
         description: 'Manage blogs',
         roles: ['OWNER'],
+      },
+      {
+        title: 'Messages',
+        href: '/admin/system/messages',
+        icon: Mail,
+        description: 'Manage messages and notifications',
+        roles: ['OWNER', 'SUPERADMIN', 'ADMIN'],
+        dynamicBadge: true,
       },
       {
         title: 'Audit Logs',

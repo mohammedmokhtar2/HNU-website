@@ -13,6 +13,7 @@ export {
   useBlogMutations,
   useBlogFilters,
 } from './BlogContext';
+export { MessageProvider, useMessage } from './MessageContext';
 
 // Export axios instance
 export { api } from '../lib/axios';

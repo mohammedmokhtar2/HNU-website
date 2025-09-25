@@ -32,6 +32,7 @@ import { useUser } from '@/contexts/userContext';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { SignOutButton } from '@/components/auth/SignOutButton';
+import { MessageNotifications } from '@/components/admin/MessageNotifications';
 
 interface HeaderProps {
   notifications?: {
@@ -188,7 +189,10 @@ export function Header({
           <span className='sr-only'>Help</span>
         </Button>
 
-        {/* Notifications */}
+        {/* Message Notifications */}
+        <MessageNotifications />
+
+        {/* System Notifications */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -212,7 +216,7 @@ export function Header({
             className='w-80 sm:w-96 bg-gray-900 border-gray-700'
           >
             <DropdownMenuLabel className='flex justify-between items-center text-white'>
-              <span>Notifications</span>
+              <span>System Notifications</span>
               {unreadNotifications > 0 && (
                 <Button
                   variant='link'
@@ -254,7 +258,7 @@ export function Header({
                 ))
               ) : (
                 <div className='p-4 text-center text-sm text-gray-400'>
-                  No notifications
+                  No system notifications
                 </div>
               )}
             </div>

@@ -180,6 +180,15 @@ model config {
   @@map("configs")
 }
 
+model messages {
+  id            String   @id @default(cuid())
+  messageConfig Json?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("messages")
+}
+
 enum UserType {
   ADMIN
   SUPERADMIN

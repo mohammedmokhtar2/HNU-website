@@ -13,6 +13,7 @@ export * from './page';
 export * from './file';
 export * from './blog';
 export * from './program';
+export * from './message';
 
 // Re-export commonly used types for convenience
 export type {
@@ -99,3 +100,17 @@ export type {
   PaginatedProgramResponse,
   ProgramStats,
 } from './program';
+
+export type {
+  Message,
+  MessageConfig,
+  CreateMessageInput,
+  UpdateMessageInput,
+  MessageQueryParams,
+  MessageResponse,
+  MessageWithRelationsResponse,
+  PaginatedMessageResponse,
+  MessageStats,
+  UnreadMessagesCount,
+  MessageServiceResponse,
+} from './message';
