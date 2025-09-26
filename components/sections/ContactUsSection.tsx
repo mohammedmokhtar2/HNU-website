@@ -25,8 +25,6 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { io, Socket } from 'socket.io-client';
-import { getSocketConfig } from '@/lib/socket-config';
 
 interface ContactUsSectionProps {
   sectionId: string;
@@ -49,7 +47,6 @@ export function ContactUsSection({
     'idle' | 'success' | 'error'
   >('idle');
   const [errorMessage, setErrorMessage] = useState('');
-  const [socket, setSocket] = useState<Socket | null>(null);
   const [rateLimitInfo, setRateLimitInfo] = useState<{
     remaining: number;
     resetTime: number | null;
@@ -58,38 +55,6 @@ export function ContactUsSection({
   const getLocalizedText = (text: { ar: string; en: string }) => {
     return locale === 'ar' ? text.ar : text.en;
   };
-
-  // Initialize socket connection
-  useEffect(() => {
-    const config = getSocketConfig();
-    const socketInstance = io(config.url, {
-      path: config.path,
-      transports: config.transports,
-      autoConnect: config.autoConnect,
-    });
-
-    socketInstance.on('connect', () => {
-      console.log('Connected to socket server');
-    });
-
-    socketInstance.on('disconnect', () => {
-      console.log('Disconnected from socket server');
-    });
-
-    socketInstance.on('connect_error', error => {
-      console.error('Socket connection error:', error);
-    });
-
-    socketInstance.on('error', error => {
-      console.error('Socket error:', error);
-    });
-
-    setSocket(socketInstance);
-
-    return () => {
-      socketInstance.disconnect();
-    };
-  }, []);
 
   // Handle rate limit information
   const handleRateLimitError = (error: any) => {

@@ -41,8 +41,7 @@ The system implements a complete contact form workflow that allows:
 3. Creates `MessageConfig` object with email details
 4. Calls `MessageService.createMessage()` to submit to API
 5. API creates message record in database
-6. Socket event emitted for real-time admin notification
-7. Success/error feedback shown to user
+6. Success/error feedback shown to user
 
 **Key Features**:
 - Rate limiting (5 submissions per 15 minutes per IP)
@@ -57,16 +56,13 @@ The system implements a complete contact form workflow that allows:
 
 **Process**:
 1. Admin views messages list with filtering and search
-2. Real-time updates via socket connection
-3. Message statistics dashboard
-4. Bulk operations (mark as read, delete, etc.)
+2. Message statistics dashboard
+3. Bulk operations (mark as read, delete, etc.)
 5. Individual message actions (send, retry, schedule)
 
 **Key Features**:
-- Real-time message notifications
 - Advanced filtering (status, type, priority, date range)
 - Pagination and search
-- Socket connection status indicator
 - Auto-refresh every 30 seconds
 
 ### 3. Message Viewing and Replying
@@ -173,17 +169,14 @@ interface MessageConfig {
 
 ## Real-time Features
 
-### Socket Events
-
-- `new-message` - New message received
-- `new-contact-message` - New contact form submission
-- `message-replied` - Admin replied to message
+### Auto-refresh
+- Messages list refreshes every 30 seconds
+- Statistics update automatically
 
 ### Live Updates
 
 - Message count updates
 - New message notifications
-- Connection status indicator
 - Auto-refresh functionality
 
 ## Error Handling
@@ -199,7 +192,6 @@ interface MessageConfig {
 
 - Message loading failures
 - Reply sending failures
-- Socket connection issues
 - Permission errors
 
 ### Email Delivery Errors
@@ -245,10 +237,6 @@ NODEMAILER_PORT=587
 NODEMAILER_USER="your-email@gmail.com"
 NODEMAILER_PASS="your-app-password"
 NODEMAILER_FROM_EMAIL="noreply@hnu.edu"
-
-# Socket
-SOCKET_PORT=3001
-SOCKET_CORS_ORIGIN="http://localhost:3000"
 ```
 
 ### Rate Limiting Configuration
@@ -285,15 +273,13 @@ node test-contact-reply-flow.js
 ### Production Setup
 
 1. Configure SMTP server (Gmail, SendGrid, etc.)
-2. Set up proper CORS for socket connections
-3. Configure rate limiting appropriately
-4. Set up monitoring and logging
+2. Configure rate limiting appropriately
+3. Set up monitoring and logging
 5. Configure backup and recovery
 
 ### Performance Optimization
 
 - Database indexing on message queries
-- Socket connection pooling
 - Email template caching
 - CDN for static assets
 
@@ -302,7 +288,6 @@ node test-contact-reply-flow.js
 - Message delivery rates
 - Error rates and types
 - Response times
-- Socket connection health
 - Email bounce rates
 
 ## Troubleshooting
@@ -314,10 +299,9 @@ node test-contact-reply-flow.js
    - Verify email credentials
    - Check firewall settings
 
-2. **Socket connection issues**
-   - Verify CORS configuration
-   - Check port availability
-   - Monitor connection limits
+2. **Rate limiting issues**
+   - Adjust rate limit settings
+   - Check IP blocking
 
 3. **Rate limiting too strict**
    - Adjust rate limit configuration
@@ -326,7 +310,6 @@ node test-contact-reply-flow.js
 
 4. **Message not appearing**
    - Check database connection
-   - Verify socket events
    - Check admin permissions
 
 ### Debug Mode

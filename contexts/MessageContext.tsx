@@ -11,7 +11,6 @@ import React, {
 } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { MessageService } from '@/services/message.service';
-import { useSocket } from '@/hooks/use-socket';
 import {
   Message,
   CreateMessageInput,
@@ -39,11 +38,6 @@ interface MessageContextType {
 
   // Error states
   error: string | null;
-
-  // Socket states
-  isSocketConnected: boolean;
-  newMessageNotification: any;
-  newContactMessageNotification: any;
 
   // Query parameters
   queryParams: MessageQueryParams;
@@ -111,7 +105,6 @@ export function MessageProvider({
   initialParams = {},
 }: MessageProviderProps) {
   const queryClient = useQueryClient();
-  const { isConnected, newMessage, newContactMessage } = useSocket();
 
   // State
   const [currentMessage, setCurrentMessage] = useState<Message | null>(null);
@@ -128,25 +121,6 @@ export function MessageProvider({
   const setQueryParams = useCallback((params: Partial<MessageQueryParams>) => {
     setQueryParamsState(prev => ({ ...prev, ...params }));
   }, []);
-
-  // Handle socket events
-  useEffect(() => {
-    if (newMessage) {
-      // Invalidate and refetch messages when a new message arrives
-      queryClient.invalidateQueries({ queryKey: [MESSAGES_QUERY_KEY] });
-      queryClient.invalidateQueries({ queryKey: [MESSAGE_STATS_QUERY_KEY] });
-      queryClient.invalidateQueries({ queryKey: [UNREAD_COUNT_QUERY_KEY] });
-    }
-  }, [newMessage, queryClient]);
-
-  useEffect(() => {
-    if (newContactMessage) {
-      // Invalidate and refetch messages when a new contact message arrives
-      queryClient.invalidateQueries({ queryKey: [MESSAGES_QUERY_KEY] });
-      queryClient.invalidateQueries({ queryKey: [MESSAGE_STATS_QUERY_KEY] });
-      queryClient.invalidateQueries({ queryKey: [UNREAD_COUNT_QUERY_KEY] });
-    }
-  }, [newContactMessage, queryClient]);
 
   // Main messages query
   const {
@@ -583,11 +557,6 @@ export function MessageProvider({
       // Error states
       error,
 
-      // Socket states
-      isSocketConnected: isConnected,
-      newMessageNotification: newMessage,
-      newContactMessageNotification: newContactMessage,
-
       // Query parameters
       queryParams,
       setQueryParams,
@@ -632,9 +601,6 @@ export function MessageProvider({
       loadingUnreadCount,
       isInitialLoad,
       error,
-      isConnected,
-      newMessage,
-      newContactMessage,
       queryParams,
       setQueryParams,
       refetch,

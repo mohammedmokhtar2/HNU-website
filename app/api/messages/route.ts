@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { contactFormRateLimiter } from '@/lib/rate-limit';
-import { getSocketIO } from '@/lib/socket';
 import {
   CreateMessageInputSchema,
   MessageQueryParamsSchema,
@@ -210,35 +209,6 @@ export async function POST(req: NextRequest) {
         messageConfig: messageConfig as any,
       },
     });
-
-    // Emit socket event for real-time updates
-    try {
-      const io = getSocketIO();
-      if (io) {
-        // Emit to admin room for real-time updates
-        io.to('admin').emit('new-message', {
-          id: message.id,
-          messageConfig: message.messageConfig,
-          createdAt: message.createdAt,
-          updatedAt: message.updatedAt,
-        });
-
-        // Also emit contact form specific event if it's from contact form
-        if (messageConfig.metadata?.source === 'contact_form') {
-          io.to('admin').emit('new-contact-message', {
-            id: message.id,
-            name: messageConfig.metadata?.name || 'Unknown',
-            email: messageConfig.from,
-            subject: messageConfig.subject,
-            message: messageConfig.body,
-            createdAt: message.createdAt,
-          });
-        }
-      }
-    } catch (socketError) {
-      console.error('Socket emission error:', socketError);
-      // Don't fail the request if socket emission fails
-    }
 
     return NextResponse.json({
       success: true,

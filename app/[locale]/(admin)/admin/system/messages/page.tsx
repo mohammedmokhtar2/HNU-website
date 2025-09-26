@@ -14,18 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { NotificationContainer } from '@/components/admin/MessageNotification';
 import { MessageViewModal } from '@/components/admin/MessageViewModal';
 import { EmailConfigSection } from '@/components/admin/EmailConfigSection';
-import { useMessageNotifications } from '@/hooks/use-message-notifications';
 import {
   Mail,
   Send,
@@ -34,8 +24,6 @@ import {
   XCircle,
   AlertCircle,
   Search,
-  Filter,
-  Plus,
   RefreshCw,
   Eye,
   Trash2,
@@ -74,9 +62,6 @@ function MessagesContent() {
     filterByType,
     filterByPriority,
   } = useMessage();
-
-  // Use the new notification system
-  const { isConnected } = useMessageNotifications();
 
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -222,25 +207,6 @@ function MessagesContent() {
               Messages
             </h1>
             <p className='text-gray-600'>Manage and monitor all messages</p>
-          </div>
-          <div className='flex items-center space-x-2'>
-            {isConnected ? (
-              <Badge
-                variant='outline'
-                className='text-green-600 border-green-200 bg-green-50'
-              >
-                <Wifi className='w-3 h-3 mr-1' />
-                Live
-              </Badge>
-            ) : (
-              <Badge
-                variant='outline'
-                className='text-red-600 border-red-200 bg-red-50'
-              >
-                <WifiOff className='w-3 h-3 mr-1' />
-                Offline
-              </Badge>
-            )}
           </div>
         </div>
         <div className='flex gap-2'>

@@ -19,17 +19,13 @@ SMTP_PASS=your-app-password
 SMTP_SECURE=false
 ```
 
-### Socket.IO Configuration (Required for Real-time Updates)
+### Site Configuration
 ```env
-# Base URL for Socket.IO connections (use base URL without locale prefix)
-NEXT_PUBLIC_SOCKET_URL=http://localhost:3000
-# For production: NEXT_PUBLIC_SOCKET_URL=https://yourdomain.com
-
 # Site URL for CORS configuration (base URL)
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 # For production: NEXT_PUBLIC_SITE_URL=https://yourdomain.com
 
-# API URL (used as fallback for Socket.IO)
+# API URL
 NEXT_PUBLIC_API_URL=http://localhost:3000
 # For production: NEXT_PUBLIC_API_URL=https://yourdomain.com
 ```
@@ -100,11 +96,11 @@ After setting up the environment variables, you can test the configuration:
    - Try submitting multiple contact forms quickly
    - You should see rate limit warnings after 5 submissions
 
-5. **Test Socket.IO connection**:
+5. **Test message processing**:
    ```bash
-   npm run test:socket
+   npm run cron:messages
    ```
-   This will test the Socket.IO connection and send a test message.
+   This will process any scheduled messages.
 
 ## Features Enabled
 
@@ -113,7 +109,6 @@ With these environment variables configured, you get:
 - ✅ **Real-time message notifications** in admin panel
 - ✅ **Rate limiting** to prevent spam (5 submissions per 15 minutes)
 - ✅ **Email notifications** to admin when contact forms are submitted
-- ✅ **Socket.IO connection** for live updates
 - ✅ **Cron job processing** for scheduled messages
 
 ## Security Notes
