@@ -17,7 +17,7 @@ export const getSocketConfig = () => {
   const baseUrl =
     process.env.NEXT_PUBLIC_SITE_URL ||
     process.env.NEXT_PUBLIC_API_URL ||
-    (isDevelopment ? 'http://localhost:3001' : 'https://yourdomain.com');
+    (isDevelopment ? 'http://localhost:3001' : 'https://hnu-seven.vercel.app');
 
   return {
     url: baseUrl,
@@ -32,7 +32,7 @@ export const getCorsOrigins = () => {
   const baseUrl =
     process.env.NEXT_PUBLIC_SITE_URL ||
     process.env.NEXT_PUBLIC_API_URL ||
-    (isDevelopment ? 'http://localhost:3001' : 'https://yourdomain.com');
+    (isDevelopment ? 'http://localhost:3001' : 'https://hnu-seven.vercel.app');
 
   if (isDevelopment) {
     return [
@@ -69,6 +69,6 @@ export const getApiUrl = () => {
   return (
     process.env.NEXT_PUBLIC_API_URL ||
     process.env.NEXT_PUBLIC_SITE_URL ||
-    (isDevelopment ? 'http://localhost:3000' : 'https://yourdomain.com')
+    (isDevelopment ? 'http://localhost:3000' : 'https://hnu-seven.vercel.app')
   );
 };
