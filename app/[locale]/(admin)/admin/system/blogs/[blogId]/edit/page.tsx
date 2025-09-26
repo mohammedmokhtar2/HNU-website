@@ -88,8 +88,8 @@ function EditBlogPage() {
 
   // Parse blogId from params
   const blogId = useMemo(() => {
-    return typeof params.blogId === 'string' ? params.blogId : '';
-  }, [params.blogId]);
+    return params && typeof params.blogId === 'string' ? params.blogId : '';
+  }, [params?.blogId]);
 
   const [formData, setFormData] = useState<FormData>({
     titleEn: '',

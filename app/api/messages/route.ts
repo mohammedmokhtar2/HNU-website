@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { contactFormRateLimiter } from '@/lib/rate-limit';
+import { getSocketIO } from '@/lib/socket';
 import {
   CreateMessageInputSchema,
   MessageQueryParamsSchema,
@@ -155,8 +157,37 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
+    // Rate limiting check
+    const clientIP =
+      req.headers.get('x-forwarded-for') ||
+      req.headers.get('x-real-ip') ||
+      req.headers.get('cf-connecting-ip') ||
+      'unknown';
+    const rateLimitResult = contactFormRateLimiter.isAllowed(clientIP);
+
+    if (!rateLimitResult.allowed) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Too many contact form submissions. Please try again later.',
+          retryAfter: rateLimitResult.retryAfter,
+        },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': rateLimitResult.retryAfter?.toString() || '900',
+            'X-RateLimit-Limit': '5',
+            'X-RateLimit-Remaining': '0',
+            'X-RateLimit-Reset': new Date(
+              Date.now() + (rateLimitResult.retryAfter || 900) * 1000
+            ).toISOString(),
+          },
+        }
+      );
+    }
+
     const body = await req.json();
 
     // Validate input
@@ -179,6 +210,35 @@ export async function POST(req: Request) {
         messageConfig: messageConfig as any,
       },
     });
+
+    // Emit socket event for real-time updates
+    try {
+      const io = getSocketIO();
+      if (io) {
+        // Emit to admin room for real-time updates
+        io.to('admin').emit('new-message', {
+          id: message.id,
+          messageConfig: message.messageConfig,
+          createdAt: message.createdAt,
+          updatedAt: message.updatedAt,
+        });
+
+        // Also emit contact form specific event if it's from contact form
+        if (messageConfig.metadata?.source === 'contact_form') {
+          io.to('admin').emit('new-contact-message', {
+            id: message.id,
+            name: messageConfig.metadata?.name || 'Unknown',
+            email: messageConfig.from,
+            subject: messageConfig.subject,
+            message: messageConfig.body,
+            createdAt: message.createdAt,
+          });
+        }
+      }
+    } catch (socketError) {
+      console.error('Socket emission error:', socketError);
+      // Don't fail the request if socket emission fails
+    }
 
     return NextResponse.json({
       success: true,

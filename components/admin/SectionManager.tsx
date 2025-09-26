@@ -36,6 +36,7 @@ import {
   NumbersContent,
   StudentUnionContent,
   EgyptStudentGroupContent,
+  ContactUsContent,
   getContentForSectionType,
   isHeroContent,
   isAboutContent,
@@ -44,6 +45,7 @@ import {
   isStudentUnionContent,
   isEgyptStudentGroupContent,
   isProgramsSectionContent,
+  isContactUsContent,
 } from '@/types/section';
 import { SectionType } from '@/types/enums';
 import {
@@ -68,6 +70,7 @@ import {
   Link,
   Hash,
   List,
+  Mail,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
@@ -111,6 +114,7 @@ const sectionTypeIcons = {
   [SectionType.BLOGS]: FileText,
   [SectionType.CUSTOM]: FileText,
   [SectionType.PROGRAMS_SECTION]: Building2,
+  [SectionType.CONTACT_US]: Mail,
 };
 
 const sectionTypeLabels = {
@@ -127,6 +131,7 @@ const sectionTypeLabels = {
   [SectionType.BLOGS]: 'Blogs',
   [SectionType.CUSTOM]: 'Custom',
   [SectionType.PROGRAMS_SECTION]: 'Programs Section',
+  [SectionType.CONTACT_US]: 'Contact Us',
 };
 
 // Sortable Section Item Component
@@ -208,6 +213,15 @@ function SortableSectionItem({
           typeof content.description === 'object'
         ) {
           return `${content.title?.en || content.title?.ar || 'Blogs'}: ${content.description?.en || content.description?.ar || 'Latest blog posts'}`;
+        }
+        break;
+      case SectionType.CONTACT_US:
+        if (
+          content &&
+          typeof content.title === 'object' &&
+          typeof content.subtitle === 'object'
+        ) {
+          return `${content.title?.en || content.title?.ar || 'Contact Us'}: ${content.subtitle?.en || content.subtitle?.ar || 'Get in touch with us'}`;
         }
         break;
       case SectionType.STUDENT_UNION:
@@ -1660,6 +1674,327 @@ function SectionForm({
                 </label>
               </div>
             </div>
+          </div>
+        );
+
+      case SectionType.CONTACT_US:
+        return (
+          <div className='space-y-4'>
+            <div>
+              <Label>Title (English)</Label>
+              <Input
+                value={content.title?.en || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      title: { ...content.title, en: e.target.value },
+                    },
+                  })
+                }
+                placeholder='Enter English title'
+              />
+            </div>
+            <div>
+              <Label>Title (Arabic)</Label>
+              <Input
+                value={content.title?.ar || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      title: { ...content.title, ar: e.target.value },
+                    },
+                  })
+                }
+                placeholder='Enter Arabic title'
+              />
+            </div>
+            <div>
+              <Label>Subtitle (English)</Label>
+              <Input
+                value={content.subtitle?.en || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      subtitle: { ...content.subtitle, en: e.target.value },
+                    },
+                  })
+                }
+                placeholder='Enter English subtitle'
+              />
+            </div>
+            <div>
+              <Label>Subtitle (Arabic)</Label>
+              <Input
+                value={content.subtitle?.ar || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      subtitle: { ...content.subtitle, ar: e.target.value },
+                    },
+                  })
+                }
+                placeholder='Enter Arabic subtitle'
+              />
+            </div>
+            <div>
+              <Label>Description (English)</Label>
+              <Textarea
+                value={content.description?.en || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      description: {
+                        ...content.description,
+                        en: e.target.value,
+                      },
+                    },
+                  })
+                }
+                placeholder='Enter English description'
+                rows={3}
+              />
+            </div>
+            <div>
+              <Label>Description (Arabic)</Label>
+              <Textarea
+                value={content.description?.ar || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      description: {
+                        ...content.description,
+                        ar: e.target.value,
+                      },
+                    },
+                  })
+                }
+                placeholder='Enter Arabic description'
+                rows={3}
+              />
+            </div>
+            <div>
+              <Label>Form Title (English)</Label>
+              <Input
+                value={content.formTitle?.en || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      formTitle: { ...content.formTitle, en: e.target.value },
+                    },
+                  })
+                }
+                placeholder='Enter English form title'
+              />
+            </div>
+            <div>
+              <Label>Form Title (Arabic)</Label>
+              <Input
+                value={content.formTitle?.ar || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      formTitle: { ...content.formTitle, ar: e.target.value },
+                    },
+                  })
+                }
+                placeholder='Enter Arabic form title'
+              />
+            </div>
+            <div>
+              <Label>Admin Email</Label>
+              <Input
+                type='email'
+                value={content.adminEmail || ''}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    content: {
+                      ...content,
+                      adminEmail: e.target.value,
+                    },
+                  })
+                }
+                placeholder='admin@university.edu'
+              />
+            </div>
+            <div className='space-y-2'>
+              <Label>Contact Information</Label>
+              <div className='space-y-2'>
+                <label className='flex items-center gap-2'>
+                  <input
+                    type='checkbox'
+                    checked={content.showContactInfo || false}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          showContactInfo: e.target.checked,
+                        },
+                      })
+                    }
+                  />
+                  <span className='text-sm'>Show contact information</span>
+                </label>
+              </div>
+            </div>
+            {content.showContactInfo && (
+              <div className='space-y-4 border-t pt-4'>
+                <h4 className='font-medium'>Contact Information</h4>
+                <div>
+                  <Label>Phone (English)</Label>
+                  <Input
+                    value={content.contactInfo?.phone?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          contactInfo: {
+                            ...content.contactInfo,
+                            phone: {
+                              ...content.contactInfo?.phone,
+                              en: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Enter English phone'
+                  />
+                </div>
+                <div>
+                  <Label>Phone (Arabic)</Label>
+                  <Input
+                    value={content.contactInfo?.phone?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          contactInfo: {
+                            ...content.contactInfo,
+                            phone: {
+                              ...content.contactInfo?.phone,
+                              ar: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Enter Arabic phone'
+                  />
+                </div>
+                <div>
+                  <Label>Address (English)</Label>
+                  <Textarea
+                    value={content.contactInfo?.address?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          contactInfo: {
+                            ...content.contactInfo,
+                            address: {
+                              ...content.contactInfo?.address,
+                              en: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Enter English address'
+                    rows={2}
+                  />
+                </div>
+                <div>
+                  <Label>Address (Arabic)</Label>
+                  <Textarea
+                    value={content.contactInfo?.address?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          contactInfo: {
+                            ...content.contactInfo,
+                            address: {
+                              ...content.contactInfo?.address,
+                              ar: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Enter Arabic address'
+                    rows={2}
+                  />
+                </div>
+                <div>
+                  <Label>Contact Email (English)</Label>
+                  <Input
+                    type='email'
+                    value={content.contactInfo?.email?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          contactInfo: {
+                            ...content.contactInfo,
+                            email: {
+                              ...content.contactInfo?.email,
+                              en: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Enter English contact email'
+                  />
+                </div>
+                <div>
+                  <Label>Contact Email (Arabic)</Label>
+                  <Input
+                    type='email'
+                    value={content.contactInfo?.email?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          contactInfo: {
+                            ...content.contactInfo,
+                            email: {
+                              ...content.contactInfo?.email,
+                              ar: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Enter Arabic contact email'
+                  />
+                </div>
+              </div>
+            )}
           </div>
         );
 

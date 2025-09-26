@@ -15,7 +15,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { CollegeService, ProgramService } from '@/services';
+import { CollegeService } from '@/services/collage.service';
+import { ProgramService } from '@/services/program.service';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { useLocale } from 'next-intl';

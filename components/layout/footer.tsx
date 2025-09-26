@@ -53,7 +53,7 @@ function Footer({ local }: FooterProps) {
   }
 
   // if the routes starts with /admin, then show the admin header
-  if (pathname.includes('/admin')) {
+  if (pathname?.includes('/admin')) {
     return null;
   }
 

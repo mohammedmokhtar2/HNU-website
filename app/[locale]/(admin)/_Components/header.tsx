@@ -60,7 +60,8 @@ export function Header({
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const unreadNotifications = notifications.filter(n => !n.read).length;
-  const { locale } = useParams();
+  const params = useParams();
+  const locale = params?.locale as string;
 
   useEffect(() => {
     setMounted(true);

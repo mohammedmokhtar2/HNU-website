@@ -46,6 +46,12 @@ const LazyProgramsSection = React.lazy(() =>
   }))
 );
 
+const LazyContactUsSection = React.lazy(() =>
+  import('./ContactUsSection').then(module => ({
+    default: module.ContactUsSection,
+  }))
+);
+
 export const SectionRenderer = React.memo(
   ({ section, locale }: SectionRendererProps) => {
     const renderSection = useMemo(() => {
@@ -72,6 +78,13 @@ export const SectionRenderer = React.memo(
               universityId={section.universityId}
               collegeId={section.collageId}
               locale={locale}
+              content={section.content as any}
+            />
+          );
+        case SectionType.CONTACT_US:
+          return (
+            <LazyContactUsSection
+              sectionId={section.id}
               content={section.content as any}
             />
           );

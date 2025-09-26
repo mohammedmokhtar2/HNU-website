@@ -9,4 +9,4 @@ export * from './file.service';
 export * from './blog.service';
 export * from './program.service';
 export * from './message.service';
-export * from './nodemailer.service';
+// Note: nodemailer.service is not exported to prevent client-side bundling

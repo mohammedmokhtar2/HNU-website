@@ -19,10 +19,31 @@ SMTP_PASS=your-app-password
 SMTP_SECURE=false
 ```
 
+### Socket.IO Configuration (Required for Real-time Updates)
+```env
+# Base URL for Socket.IO connections (use base URL without locale prefix)
+NEXT_PUBLIC_SOCKET_URL=http://localhost:3000
+# For production: NEXT_PUBLIC_SOCKET_URL=https://yourdomain.com
+
+# Site URL for CORS configuration (base URL)
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+# For production: NEXT_PUBLIC_SITE_URL=https://yourdomain.com
+
+# API URL (used as fallback for Socket.IO)
+NEXT_PUBLIC_API_URL=http://localhost:3000
+# For production: NEXT_PUBLIC_API_URL=https://yourdomain.com
+```
+
+**Important**: All three URLs should use the same base URL without locale prefixes (`/en`, `/ar`). The system will automatically handle locale-specific routes.
+
 ### Optional Configuration
 ```env
 # Cron Job Security (Optional - for production)
 CRON_SECRET=your-secret-key-for-cron-authentication
+
+# API URL
+NEXT_PUBLIC_API_URL=http://localhost:3000
+# For production: NEXT_PUBLIC_API_URL=https://yourdomain.com
 ```
 
 ## SMTP Provider Examples
@@ -61,7 +82,7 @@ SMTP_SECURE=false  # true for port 465, false for port 587
 
 ## Testing Your Configuration
 
-After setting up the environment variables, you can test the email configuration:
+After setting up the environment variables, you can test the configuration:
 
 1. **Start your development server**:
    ```bash
@@ -70,10 +91,30 @@ After setting up the environment variables, you can test the email configuration
 
 2. **Test the SMTP connection** by creating a test message in the admin panel at `/admin/system/messages`
 
-3. **Check the cron job status**:
+3. **Test real-time updates**:
+   - Open the admin panel in one browser tab
+   - Submit a contact form in another tab
+   - Watch for real-time notifications in the admin panel
+
+4. **Test rate limiting**:
+   - Try submitting multiple contact forms quickly
+   - You should see rate limit warnings after 5 submissions
+
+5. **Test Socket.IO connection**:
    ```bash
-   npm run cron:messages:status
+   npm run test:socket
    ```
+   This will test the Socket.IO connection and send a test message.
+
+## Features Enabled
+
+With these environment variables configured, you get:
+
+- ✅ **Real-time message notifications** in admin panel
+- ✅ **Rate limiting** to prevent spam (5 submissions per 15 minutes)
+- ✅ **Email notifications** to admin when contact forms are submitted
+- ✅ **Socket.IO connection** for live updates
+- ✅ **Cron job processing** for scheduled messages
 
 ## Security Notes
 

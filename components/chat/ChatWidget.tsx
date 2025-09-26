@@ -218,7 +218,7 @@ export default function ChatWidget() {
     }
   }, [isOpen, startTooltipCycle, stopTooltipCycle]);
 
-  if (pathname.includes('/admin')) {
+  if (pathname?.includes('/admin')) {
     return null;
   }
 

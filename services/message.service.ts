@@ -277,4 +277,48 @@ export class MessageService {
       };
     }
   }
+
+  // Send reply to contact form message
+  static async sendReply(
+    messageId: string,
+    replyData: {
+      subject: string;
+      body: string;
+      htmlBody?: string;
+    }
+  ): Promise<MessageServiceResponse<Message>> {
+    try {
+      const response = await axios.post('/api/messages/reply', {
+        messageId,
+        ...replyData,
+      });
+
+      return {
+        success: true,
+        data: response.data.data.replyMessageId,
+        message: 'Reply sent successfully',
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.error ||
+          error.message ||
+          'Failed to send reply',
+      };
+    }
+  }
+
+  // Get reply history for a message
+  static async getReplyHistory(messageId: string): Promise<Message[]> {
+    try {
+      const response = await axios.get(
+        `/api/messages/reply?messageId=${messageId}`
+      );
+      return response.data.data;
+    } catch (error) {
+      console.error('Error fetching reply history:', error);
+      return [];
+    }
+  }
 }

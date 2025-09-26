@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "node server.js",
     "build": "npm run build:clean && npm run format && npm run db:generate && npm run build:next",
     "build:clean": "rimraf .next && rimraf node_modules/.prisma",
     "build:next": "next build --turbopack",
@@ -20,6 +20,9 @@
     "analytics:reset": "node scripts/reset-analytics.js",
     "cron:messages": "node scripts/message-cron.js",
     "cron:messages:status": "node scripts/message-cron.js status",
+    "test:socket": "node test-socket.js",
+    "test:realtime": "node test-realtime-flow.js",
+    "test:complete": "node test-complete-flow.js",
     "postinstall": "prisma generate"
   },
   "dependencies": {
@@ -61,6 +64,7 @@
     "cloudinary": "^2.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "express-rate-limit": "^8.1.0",
     "framer-motion": "^12.23.16",
     "lucide-react": "^0.542.0",
     "motion": "^12.23.16",
@@ -78,6 +82,8 @@
     "react-fast-marquee": "^1.6.5",
     "react-hook-form": "^7.62.0",
     "react-icons": "^5.5.0",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "sonner": "^2.0.7",
     "svix": "^1.76.1",
     "tailwind-merge": "^3.3.1",

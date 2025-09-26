@@ -196,7 +196,7 @@ export function SidebarContent({
                                 'flex items-center justify-center rounded-lg p-2 text-sm transition-all hover:bg-gray-900/50 text-gray-300 hover:text-white',
                                 isActive && 'bg-gray-900/50 text-white',
                                 isDisabled &&
-                                'cursor-not-allowed opacity-50 hover:bg-transparent'
+                                  'cursor-not-allowed opacity-50 hover:bg-transparent'
                               )}
                             >
                               <Icon className='h-4 w-4 flex-shrink-0' />
@@ -233,7 +233,7 @@ export function SidebarContent({
                                   'flex-1 flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all hover:bg-gray-900/50 text-gray-300 hover:text-white',
                                   isActive && 'bg-gray-900/50 text-white',
                                   isDisabled &&
-                                  'cursor-not-allowed opacity-50 hover:bg-transparent'
+                                    'cursor-not-allowed opacity-50 hover:bg-transparent'
                                 )}
                               >
                                 <Icon className='h-4 w-4 flex-shrink-0' />
@@ -294,7 +294,7 @@ export function SidebarContent({
                                       className={cn(
                                         'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all hover:bg-gray-900/50 text-gray-300 hover:text-white ml-6',
                                         isSubActive &&
-                                        'bg-gray-900/50 text-white'
+                                          'bg-gray-900/50 text-white'
                                       )}
                                     >
                                       {subItem.logoUrl ? (
@@ -333,7 +333,7 @@ export function SidebarContent({
                           'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all hover:bg-gray-900/50 text-gray-300 hover:text-white',
                           isActive && 'bg-gray-900/50 text-white',
                           isDisabled &&
-                          'cursor-not-allowed opacity-50 hover:bg-transparent'
+                            'cursor-not-allowed opacity-50 hover:bg-transparent'
                         )}
                       >
                         <Icon className='h-4 w-4 flex-shrink-0' />

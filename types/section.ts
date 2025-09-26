@@ -103,6 +103,27 @@ export interface ProgramsSectionContent {
   maxItems?: number;
 }
 
+export interface ContactUsContent {
+  title: BaseContent;
+  subtitle: BaseContent;
+  description: BaseContent;
+  formTitle: BaseContent;
+  nameLabel: BaseContent;
+  emailLabel: BaseContent;
+  subjectLabel: BaseContent;
+  messageLabel: BaseContent;
+  submitButtonText: BaseContent;
+  successMessage: BaseContent;
+  errorMessage: BaseContent;
+  adminEmail: string; // Admin email to receive messages
+  showContactInfo?: boolean;
+  contactInfo?: {
+    phone?: BaseContent;
+    address?: BaseContent;
+    email?: BaseContent;
+  };
+}
+
 export interface CustomContent {
   [key: string]: any; // Flexible content for custom sections
 }
@@ -121,6 +142,7 @@ export type SectionContent =
   | { type: SectionType.EGYPT_STUDENT_GROUP; content: EgyptStudentGroupContent }
   | { type: SectionType.PRESIDENT; content: CustomContent }
   | { type: SectionType.BLOGS; content: BlogsContent }
+  | { type: SectionType.CONTACT_US; content: ContactUsContent }
   | { type: SectionType.CUSTOM; content: CustomContent };
 
 export interface Section {
@@ -242,6 +264,17 @@ export function isProgramsSectionContent(
   );
 }
 
+export function isContactUsContent(content: any): content is ContactUsContent {
+  return (
+    content &&
+    typeof content.title === 'object' &&
+    typeof content.subtitle === 'object' &&
+    typeof content.description === 'object' &&
+    typeof content.formTitle === 'object' &&
+    typeof content.adminEmail === 'string'
+  );
+}
+
 // Helper function to get the correct content type based on section type
 export function getContentForSectionType(type: SectionType): any {
   switch (type) {
@@ -310,6 +343,42 @@ export function getContentForSectionType(type: SectionType): any {
         buttonText: { ar: 'عرض جميع البرامج', en: 'View All Programs' },
         maxItems: 6,
       } as ProgramsSectionContent;
+    case SectionType.CONTACT_US:
+      return {
+        title: { ar: 'تواصل معنا', en: 'Contact Us' },
+        subtitle: {
+          ar: 'نحن هنا لمساعدتك',
+          en: 'We are here to help you',
+        },
+        description: {
+          ar: 'هل لديك سؤال أو تحتاج إلى مساعدة؟ لا تتردد في التواصل معنا',
+          en: 'Do you have a question or need help? Feel free to contact us',
+        },
+        formTitle: { ar: 'أرسل لنا رسالة', en: 'Send us a message' },
+        nameLabel: { ar: 'الاسم', en: 'Name' },
+        emailLabel: { ar: 'البريد الإلكتروني', en: 'Email' },
+        subjectLabel: { ar: 'الموضوع', en: 'Subject' },
+        messageLabel: { ar: 'الرسالة', en: 'Message' },
+        submitButtonText: { ar: 'إرسال الرسالة', en: 'Send Message' },
+        successMessage: {
+          ar: 'تم إرسال رسالتك بنجاح. سنتواصل معك قريباً',
+          en: 'Your message has been sent successfully. We will contact you soon',
+        },
+        errorMessage: {
+          ar: 'حدث خطأ في إرسال الرسالة. يرجى المحاولة مرة أخرى',
+          en: 'An error occurred while sending the message. Please try again',
+        },
+        adminEmail: 'admin@university.edu',
+        showContactInfo: true,
+        contactInfo: {
+          phone: { ar: '+1234567890', en: '+1234567890' },
+          address: {
+            ar: 'عنوان الجامعة، المدينة، الدولة',
+            en: 'University Address, City, Country',
+          },
+          email: { ar: 'info@university.edu', en: 'info@university.edu' },
+        },
+      } as ContactUsContent;
     case SectionType.HEADER:
     case SectionType.CUSTOM:
       return {} as CustomContent;

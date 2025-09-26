@@ -3,6 +3,7 @@ import type React from 'react';
 import { MessageProvider, Providers } from '@/contexts';
 import { AdminAuthGuard } from './_Components/AdminAuthGuard';
 import { AdminLayout } from './_Components/admin-layout';
+import { Toaster } from '@/components/ui/sonner';
 
 interface AdminLayoutWrapperProps {
   children: React.ReactNode;
@@ -24,6 +25,12 @@ export default function AdminLayoutWrapper({
                 </div>
               </div>
             </AdminLayout>
+            <Toaster
+              position='top-right'
+              expand={true}
+              richColors={true}
+              closeButton={true}
+            />
           </MessageProvider>
         </AdminAuthGuard>
       </Providers>

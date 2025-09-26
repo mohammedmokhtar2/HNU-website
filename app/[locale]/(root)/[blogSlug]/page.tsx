@@ -30,7 +30,7 @@ export default function BlogDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const blogSlug = params.blogSlug as string;
+  const blogSlug = params?.blogSlug as string;
 
   useEffect(() => {
     const fetchBlog = async () => {

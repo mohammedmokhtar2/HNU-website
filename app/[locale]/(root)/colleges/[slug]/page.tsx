@@ -3,7 +3,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useParams } from 'next/navigation';
 import { useLocale } from 'next-intl';
-import { CollegeService } from '@/services';
+import { CollegeService } from '@/services/collage.service';
 import { DynamicCollegePage } from '@/components/sections/DynamicCollegePage';
 import { CollegeProvider } from '@/contexts/CollegeContext';
 import { PageSkeleton } from '@/components/ui/skeleton';
@@ -21,7 +21,7 @@ import { Button } from '@/components/ui/button';
 function CollagePage() {
   const params = useParams();
   const locale = useLocale();
-  const slug = params.slug as string;
+  const slug = params?.slug as string;
 
   const [collegeId, setCollegeId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);

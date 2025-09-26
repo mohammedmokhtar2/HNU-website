@@ -12,7 +12,7 @@ import { BlogManagementPage } from '@/components/admin/blog/BlogManagementPage';
 
 export default function AdminUniversityBlogsPage() {
   const params = useParams();
-  const universityId = params.universityId as string;
+  const universityId = params?.universityId as string;
 
   return (
     <QueryClientProviderWrapper>

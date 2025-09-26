@@ -42,11 +42,10 @@ export const navigationSections: NavSection[] = [
       },
       {
         title: 'Analytics',
-        href: '/admin/analytics',
+        href: '/admin/dashboard',
         icon: BarChart3,
         description: 'University statistics and insights',
         roles: ['OWNER', 'SUPERADMIN', 'ADMIN'],
-        badge: 'Soon',
       },
     ],
   },
