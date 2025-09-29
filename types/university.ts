@@ -22,11 +22,17 @@ export interface UniversityConfig {
   };
   menuBuilder?: {
     menuItems: {
-      title: string;
+      id?: string;
+      title: Record<string, any>;
       href: string;
+      linkType?: 'page' | 'external';
+      pageId?: string;
       submenu?: {
-        title: string;
+        id?: string;
+        title: Record<string, any>;
         href: string;
+        linkType?: 'page' | 'external';
+        pageId?: string;
       }[];
     }[];
   };

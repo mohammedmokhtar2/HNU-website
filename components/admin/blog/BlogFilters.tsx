@@ -88,7 +88,7 @@ export function BlogFilters({
   };
 
   const handleUniversityFilter = (univId: string) => {
-    if (univId) {
+    if (univId && univId !== 'all') {
       getBlogsByUniversity(univId);
     } else {
       setQueryParams({ universityId: undefined, page: 1 });
@@ -96,7 +96,7 @@ export function BlogFilters({
   };
 
   const handleCollegeFilter = (collId: string) => {
-    if (collId) {
+    if (collId && collId !== 'all') {
       getBlogsByCollege(collId);
     } else {
       setQueryParams({ collageId: undefined, page: 1 });
@@ -240,14 +240,14 @@ export function BlogFilters({
             <div>
               <Label>University</Label>
               <Select
-                value={queryParams.universityId || ''}
+                value={queryParams.universityId || 'all'}
                 onValueChange={handleUniversityFilter}
               >
                 <SelectTrigger className='mt-1'>
                   <SelectValue placeholder='All universities' />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value=''>All Universities</SelectItem>
+                  <SelectItem value='all'>All Universities</SelectItem>
                   {/* Add university options here */}
                 </SelectContent>
               </Select>
@@ -256,14 +256,14 @@ export function BlogFilters({
             <div>
               <Label>College</Label>
               <Select
-                value={queryParams.collageId || ''}
+                value={queryParams.collageId || 'all'}
                 onValueChange={handleCollegeFilter}
               >
                 <SelectTrigger className='mt-1'>
                   <SelectValue placeholder='All colleges' />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value=''>All Colleges</SelectItem>
+                  <SelectItem value='all'>All Colleges</SelectItem>
                   {availableColleges.map(college => (
                     <SelectItem key={college.id} value={college.id}>
                       {college.name}

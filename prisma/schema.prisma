@@ -107,6 +107,33 @@ model Section {
   collage      College?    @relation(fields: [collageId], references: [id], onDelete: Cascade)
   University   University? @relation(fields: [universityId], references: [id], onDelete: Cascade)
 }
+model Page {
+  id           String        @id @default(cuid())
+  title        Json
+  slug         String        @unique
+  config       Json?
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  universityId String?
+  collageId    String?
+  sections     PageSection[]
+  collage      College?      @relation(fields: [collageId], references: [id], onDelete: Cascade)
+  University   University?   @relation(fields: [universityId], references: [id], onDelete: Cascade)
+}
+
+model PageSection {
+  id           String      @id @default(cuid())
+  type         PageSectionType
+  title        Json?
+  content      Json?
+  mediaUrl     Json?
+  order        Int
+  pageId       String
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  page         Page        @relation(fields: [pageId], references: [id], onDelete: Cascade)
+}
 
 model Statistic {
   id        String   @id @default(cuid())
@@ -129,21 +156,6 @@ model Permission {
   user        User     @relation(fields: [userId], references: [id])
 }
 
-model Page {
-  id           String      @id @default(cuid())
-  type         PageType
-  title        Json
-  content      Json
-  config       Json?
-  isActive     Boolean     @default(true)
-  slug         String      @unique
-  universityId String?
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  collageId    String?
-  collage      College?    @relation(fields: [collageId], references: [id], onDelete: Cascade)
-  University   University? @relation(fields: [universityId], references: [id], onDelete: Cascade)
-}
 
 model Blogs {
   id           String      @id @default(cuid())
@@ -221,13 +233,18 @@ enum SectionType {
   CONTACT_US
 }
 
-enum PageType {
-  ABOUT
+enum PageSectionType {
+  HERO1
+  HERO2
+  ABOUT1
+  ABOUT2
   CONTACT
   BLOGS
+  PRESIDENT
   STUDENT_ACTIVITIES
   STUDENT_UNIONS
-  FOR_EGUPT_GROUP
+  FOR_EGYPT_GROUP
+  OUR_HISTORY
   CUSTOM
 }
 

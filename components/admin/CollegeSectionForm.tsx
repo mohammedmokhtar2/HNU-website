@@ -1101,7 +1101,7 @@ export function CollegeSectionForm({
                 <SelectContent>
                   <SelectItem value='all'>All Programs (No Filter)</SelectItem>
                   {collegesLoading ? (
-                    <SelectItem value='' disabled>
+                    <SelectItem value='loading' disabled>
                       Loading colleges...
                     </SelectItem>
                   ) : (

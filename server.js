@@ -35,30 +35,32 @@ app.prepare().then(() => {
   console.log('🔌 Initializing Socket.IO...');
   const isDevelopment = process.env.NODE_ENV !== 'production';
 
-  const corsOrigins = isDevelopment ? [
-    'http://localhost:3000',
-    'http://localhost:3000/en',
-    'http://localhost:3000/ar',
-    'http://localhost:3000/en/admin',
-    'http://localhost:3000/ar/admin',
-    'http://localhost:3000/en/admin/system/messages',
-    'http://localhost:3000/ar/admin/system/messages',
-    'http://localhost:3001',
-    'http://localhost:3001/en',
-    'http://localhost:3001/ar',
-    'http://localhost:3001/en/admin',
-    'http://localhost:3001/ar/admin',
-    'http://localhost:3001/en/admin/system/messages',
-    'http://localhost:3001/ar/admin/system/messages',
-  ] : [
-    'https://hnu-seven.vercel.app',
-    'https://hnu-seven.vercel.app/en',
-    'https://hnu-seven.vercel.app/ar',
-    'https://hnu-seven.vercel.app/en/admin',
-    'https://hnu-seven.vercel.app/ar/admin',
-    'https://hnu-seven.vercel.app/en/admin/system/messages',
-    'https://hnu-seven.vercel.app/ar/admin/system/messages',
-  ];
+  const corsOrigins = isDevelopment
+    ? [
+        'http://localhost:3000',
+        'http://localhost:3000/en',
+        'http://localhost:3000/ar',
+        'http://localhost:3000/en/admin',
+        'http://localhost:3000/ar/admin',
+        'http://localhost:3000/en/admin/system/messages',
+        'http://localhost:3000/ar/admin/system/messages',
+        'http://localhost:3001',
+        'http://localhost:3001/en',
+        'http://localhost:3001/ar',
+        'http://localhost:3001/en/admin',
+        'http://localhost:3001/ar/admin',
+        'http://localhost:3001/en/admin/system/messages',
+        'http://localhost:3001/ar/admin/system/messages',
+      ]
+    : [
+        'https://hnu-seven.vercel.app',
+        'https://hnu-seven.vercel.app/en',
+        'https://hnu-seven.vercel.app/ar',
+        'https://hnu-seven.vercel.app/en/admin',
+        'https://hnu-seven.vercel.app/ar/admin',
+        'https://hnu-seven.vercel.app/en/admin/system/messages',
+        'https://hnu-seven.vercel.app/ar/admin/system/messages',
+      ];
 
   const io = new Server(server, {
     path: '/api/socketio',

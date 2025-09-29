@@ -256,29 +256,28 @@ function Footer({ local }: FooterProps) {
 
           {/* Bottom Section - Map & Facts */}
           <div className='text-center w-full'>
-            <h3 className='text-xl font-bold text-white mb-6'>
-              {footerT('Our_Location')}
-            </h3>
-
-            {/* Map */}
-            <div className='w-full max-w-6xl mx-auto h-96 rounded-lg overflow-hidden mb-6'>
-              <iframe
-                src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4649.09110483954!2d31.3170068!3d29.870366200000003!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x145837d9f857b2f3%3A0xe714664b99bc108e!2sHelwan%20National%20University!5e1!3m2!1sen!2seg!4v1756554256943!5m2!1sen!2seg'
-                width='100%'
-                height='100%'
-                allowFullScreen
-                referrerPolicy='no-referrer-when-downgrade'
-                title='Helwan National University Campus Location'
-                className='w-full h-full'
-              />
-            </div>
-
-            {/* Address */}
-            <p className='text-gray-400 text-base mb-8 px-4'>
-              {local === 'ar'
-                ? footerData.contact.address.ar
-                : footerData.contact.address.en}
-            </p>
+            {/* Map section */}
+            {!pathname?.includes('/our-history') && (
+              <>
+                <h3 className='text-xl font-bold text-white mb-6'>
+                  {footerT('Our_Location')}
+                </h3>
+                <div className='w-full text-center'>
+                  <iframe
+                    src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4649.09110483954!2d31.3170068!3d29.870366200000003!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x145837d9f857b2f3%3A0xe714664b99bc108e!2sHelwan%20National%20University!5e1!3m2!1sen!2seg!4v1756554256943!5m2!1sen!2seg'
+                    className='w-full h-[500px] border-0'
+                    allowFullScreen
+                    title='Map'
+                  />
+                </div>
+                {/* Address */}
+                <p className='text-gray-400 text-base mb-8 px-4'>
+                  {local === 'ar'
+                    ? footerData.contact.address.ar
+                    : footerData.contact.address.en}
+                </p>
+              </>
+            )}
 
             {/* Visitor Counter */}
             <div className='max-w-sm mx-auto mb-8'>

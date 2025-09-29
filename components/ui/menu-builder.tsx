@@ -1,10 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Plus,
   Minus,
@@ -13,32 +20,82 @@ import {
   ChevronDown,
   ChevronRight,
   Check,
+  FileText,
+  ExternalLink,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { PageService } from '@/services/pageService';
+import { Page } from '@/types/page';
+
+interface BaseContent {
+  ar: string;
+  en: string;
+}
 
 interface MenuItem {
   id: string;
-  title: string;
+  title: BaseContent;
   href: string;
+  linkType?: 'page' | 'external'; // Add linkType to distinguish between page links and external links
+  pageId?: string; // Add pageId to store the selected page ID
   submenu?: MenuItem[];
 }
 
 interface MenuBuilderProps {
   value: MenuItem[];
   onChange: (menuItems: MenuItem[]) => void;
+  universityId?: string; // Add universityId for fetching pages
 }
 
-export function MenuBuilder({ value, onChange }: MenuBuilderProps) {
+export function MenuBuilder({
+  value,
+  onChange,
+  universityId,
+}: MenuBuilderProps) {
   const [editingItem, setEditingItem] = useState<string | null>(null);
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+  const [availablePages, setAvailablePages] = useState<Page[]>([]);
+  const [loadingPages, setLoadingPages] = useState(false);
 
   const generateId = () => Math.random().toString(36).substr(2, 9);
+
+  // Fetch available pages when component mounts or universityId changes
+  useEffect(() => {
+    const fetchPages = async () => {
+      if (!universityId) return;
+
+      setLoadingPages(true);
+      try {
+        const response = await PageService.getPagesByUniversity(universityId);
+        setAvailablePages(response || []);
+      } catch (error) {
+        console.error('Error fetching pages:', error);
+        setAvailablePages([]);
+      } finally {
+        setLoadingPages(false);
+      }
+    };
+
+    fetchPages();
+  }, [universityId]);
+
+  const getPageTitle = (title: any) => {
+    if (typeof title === 'object' && title !== null) {
+      return title.en || title.ar || 'Untitled Page';
+    }
+    return title || 'Untitled Page';
+  };
+
+  const getMenuTitle = (title: BaseContent, locale: 'ar' | 'en' = 'en') => {
+    return title[locale] || title.en || title.ar || 'Untitled';
+  };
 
   const addMenuItem = (parentId?: string) => {
     const newItem: MenuItem = {
       id: generateId(),
-      title: 'New Menu Item',
+      title: { ar: 'عنصر قائمة جديد', en: 'New Menu Item' },
       href: '#',
+      linkType: 'external',
       submenu: [],
     };
 
@@ -72,13 +129,14 @@ export function MenuBuilder({ value, onChange }: MenuBuilderProps) {
 
   const deleteMenuItem = (id: string) => {
     const deleteItem = (items: MenuItem[]): MenuItem[] => {
-      return items.filter(item => {
-        if (item.id === id) return false;
-        if (item.submenu) {
-          return { ...item, submenu: deleteItem(item.submenu) };
-        }
-        return true;
-      });
+      return items
+        .filter(item => item.id !== id)
+        .map(item => {
+          if (item.submenu) {
+            return { ...item, submenu: deleteItem(item.submenu) };
+          }
+          return item;
+        });
     };
     onChange(deleteItem(value));
   };
@@ -103,7 +161,7 @@ export function MenuBuilder({ value, onChange }: MenuBuilderProps) {
         <div
           className={cn(
             'flex items-center gap-2 p-3',
-            level > 0 && 'ml-4 bg-gray-50'
+            level > 0 && 'ml-4 bg-transparent'
           )}
         >
           {hasSubmenu && (
@@ -124,32 +182,184 @@ export function MenuBuilder({ value, onChange }: MenuBuilderProps) {
           {!hasSubmenu && <div className='w-6' />}
 
           {isEditing ? (
-            <div className='flex-1 flex gap-2'>
-              <Input
-                value={item.title}
-                onChange={e =>
-                  updateMenuItem(item.id, { title: e.target.value })
-                }
-                className='flex-1'
-                placeholder='Menu title'
-              />
-              <Input
-                value={item.href}
-                onChange={e =>
-                  updateMenuItem(item.id, { href: e.target.value })
-                }
-                className='flex-1'
-                placeholder='URL'
-              />
-              <Button size='sm' onClick={() => setEditingItem(null)}>
-                <Check className='h-4 w-4' />
-              </Button>
+            <div className='flex-1 space-y-3'>
+              <div className='grid grid-cols-2 gap-2'>
+                <div>
+                  <Label className='text-xs text-gray-600'>
+                    Menu Title (English)
+                  </Label>
+                  <Input
+                    value={item.title.en}
+                    onChange={e =>
+                      updateMenuItem(item.id, {
+                        title: { ...item.title, en: e.target.value },
+                      })
+                    }
+                    className='mt-1'
+                    placeholder='English title'
+                  />
+                </div>
+                <div>
+                  <Label className='text-xs text-gray-600'>
+                    Menu Title (Arabic)
+                  </Label>
+                  <Input
+                    value={item.title.ar}
+                    onChange={e =>
+                      updateMenuItem(item.id, {
+                        title: { ...item.title, ar: e.target.value },
+                      })
+                    }
+                    className='mt-1'
+                    placeholder='العنوان بالعربية'
+                    dir='rtl'
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label className='text-xs text-gray-600 flex items-center gap-1'>
+                  Link Type
+                  <div className='flex gap-1'>
+                    <button
+                      type='button'
+                      onClick={() =>
+                        updateMenuItem(item.id, { linkType: 'page' })
+                      }
+                      className={cn(
+                        'px-2 py-1 text-xs rounded',
+                        item.linkType === 'page'
+                          ? 'bg-blue-500 text-white'
+                          : 'bg-gray-200'
+                      )}
+                    >
+                      <FileText className='h-3 w-3 inline mr-1' />
+                      Page
+                    </button>
+                    <button
+                      type='button'
+                      onClick={() =>
+                        updateMenuItem(item.id, { linkType: 'external' })
+                      }
+                      className={cn(
+                        'px-2 py-1 text-xs rounded',
+                        item.linkType === 'external'
+                          ? 'bg-blue-500 text-white'
+                          : 'bg-gray-200'
+                      )}
+                    >
+                      <ExternalLink className='h-3 w-3 inline mr-1' />
+                      External
+                    </button>
+                  </div>
+                </Label>
+              </div>
+
+              {item.linkType === 'page' ? (
+                <div>
+                  <Label className='text-xs text-gray-600'>Select Page</Label>
+                  <Select
+                    value={item.pageId || ''}
+                    onValueChange={pageId => {
+                      const selectedPage = availablePages.find(
+                        p => p.id === pageId
+                      );
+                      if (selectedPage) {
+                        updateMenuItem(item.id, {
+                          pageId: pageId,
+                          href: `/pages/${selectedPage.slug}`,
+                        });
+                      }
+                    }}
+                  >
+                    <SelectTrigger className='mt-1'>
+                      <SelectValue
+                        placeholder={
+                          loadingPages ? 'Loading pages...' : 'Select a page'
+                        }
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availablePages.map(page => (
+                        <SelectItem key={page.id} value={page.id}>
+                          <div className='flex items-center gap-2'>
+                            <FileText className='h-4 w-4' />
+                            <span>{getPageTitle(page.title)}</span>
+                            <span className='text-xs text-gray-500'>
+                              ({page.slug})
+                            </span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                      {availablePages.length === 0 && !loadingPages && (
+                        <SelectItem value='' disabled>
+                          No pages available
+                        </SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+              ) : (
+                <div>
+                  <Label className='text-xs text-gray-600'>External URL</Label>
+                  <Input
+                    value={item.href}
+                    onChange={e =>
+                      updateMenuItem(item.id, { href: e.target.value })
+                    }
+                    className='mt-1'
+                    placeholder='https://example.com'
+                  />
+                </div>
+              )}
+
+              <div className='flex gap-2'>
+                <Button size='sm' onClick={() => setEditingItem(null)}>
+                  <Check className='h-4 w-4 mr-1' />
+                  Save
+                </Button>
+                <Button
+                  size='sm'
+                  variant='outline'
+                  onClick={() => setEditingItem(null)}
+                >
+                  Cancel
+                </Button>
+              </div>
             </div>
           ) : (
             <>
               <div className='flex-1'>
-                <div className='font-medium'>{item.title}</div>
+                <div className='flex items-center gap-2'>
+                  <div className='flex flex-col'>
+                    <span className='font-medium'>
+                      {getMenuTitle(item.title, 'en')}
+                    </span>
+                    <span className='text-sm text-gray-600' dir='rtl'>
+                      {getMenuTitle(item.title, 'ar')}
+                    </span>
+                  </div>
+                  {item.linkType === 'page' && (
+                    <span className='inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800'>
+                      <FileText className='h-3 w-3 mr-1' />
+                      Page
+                    </span>
+                  )}
+                  {item.linkType === 'external' && (
+                    <span className='inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-800'>
+                      <ExternalLink className='h-3 w-3 mr-1' />
+                      External
+                    </span>
+                  )}
+                </div>
                 <div className='text-sm text-gray-500'>{item.href}</div>
+                {item.linkType === 'page' && item.pageId && (
+                  <div className='text-xs text-blue-600'>
+                    Page:{' '}
+                    {availablePages.find(p => p.id === item.pageId)?.slug ||
+                      'Unknown page'}
+                  </div>
+                )}
               </div>
               <div className='flex gap-1'>
                 <Button

@@ -31,15 +31,18 @@ export enum SectionType {
   CUSTOM = 'CUSTOM',
 }
 
-export enum PageType {
-  HOME = 'HOME',
-  ABOUT = 'ABOUT',
+export enum PageSectionType {
+  HERO1 = 'HERO1',
+  HERO2 = 'HERO2',
+  ABOUT1 = 'ABOUT1',
+  ABOUT2 = 'ABOUT2',
   CONTACT = 'CONTACT',
-  PRIVACY = 'PRIVACY',
-  TERMS = 'TERMS',
   BLOGS = 'BLOGS',
+  PRESIDENT = 'PRESIDENT',
   STUDENT_ACTIVITIES = 'STUDENT_ACTIVITIES',
   STUDENT_UNIONS = 'STUDENT_UNIONS',
+  FOR_EGYPT_GROUP = 'FOR_EGYPT_GROUP',
+  OUR_HISTORY = 'OUR_HISTORY',
   CUSTOM = 'CUSTOM',
 }
 

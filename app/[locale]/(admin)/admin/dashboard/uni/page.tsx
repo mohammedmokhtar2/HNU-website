@@ -12,6 +12,7 @@ import { University, UniversityConfig } from '@/types/university';
 import { ImageSelectorModal } from '@/components/ui/image-selector-modal';
 import { MenuBuilder } from '@/components/ui/menu-builder';
 import { SectionManager } from '@/components/admin/SectionManager';
+import { PageManager } from '@/components/admin/PageManager';
 import {
   Building2,
   Settings,
@@ -862,22 +863,26 @@ function UniversityConfigPage() {
                   </TabsContent>
 
                   <TabsContent value='pages' className='mt-0'>
-                    <div className='space-y-6'>
-                      <div className='text-center py-8'>
-                        <FolderOpen className='h-12 w-12 text-gray-400 mx-auto mb-4' />
-                        <div className='text-gray-300 mb-4'>
-                          Pages management will be available here
-                        </div>
-                        <p className='text-sm text-gray-400 mb-6'>
-                          Manage university pages like About, Contact, Programs,
-                          etc.
-                        </p>
-                        <Button className='bg-blue-600 hover:bg-blue-700'>
-                          <Plus className='h-4 w-4 mr-2' />
-                          Coming Soon
-                        </Button>
+                    {universityLoading ? (
+                      <div className='space-y-4'>
+                        <div className='h-8 w-48 bg-gray-700 rounded animate-pulse'></div>
+                        <div className='h-32 w-full bg-gray-700 rounded animate-pulse'></div>
                       </div>
-                    </div>
+                    ) : university ? (
+                      <PageManager
+                        universityId={university.id}
+                        onPagesChange={pages => {
+                          // Handle pages change if needed
+                          console.log('Pages updated:', pages);
+                        }}
+                      />
+                    ) : (
+                      <div className='text-center py-8'>
+                        <div className='text-gray-400'>
+                          No university data available
+                        </div>
+                      </div>
+                    )}
                   </TabsContent>
 
                   <TabsContent value='menu' className='mt-0'>
@@ -888,17 +893,22 @@ function UniversityConfigPage() {
                       </div>
                     ) : (
                       <MenuBuilder
+                        universityId={university?.id}
                         value={(config.menuBuilder?.menuItems || []).map(
                           (item: any, index: number) => ({
                             id: item.id || `item-${index}`,
                             title: item.title || '',
                             href: item.href || '',
+                            linkType: item.linkType || 'external',
+                            pageId: item.pageId || undefined,
                             submenu:
                               item.submenu?.map(
                                 (sub: any, subIndex: number) => ({
                                   id: sub.id || `sub-${index}-${subIndex}`,
                                   title: sub.title || '',
                                   href: sub.href || '',
+                                  linkType: sub.linkType || 'external',
+                                  pageId: sub.pageId || undefined,
                                 })
                               ) || [],
                           })
