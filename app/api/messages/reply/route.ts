@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { NodeMailerService } from '@/services/nodemailer.service';
 import { EmailTemplateService } from '@/lib/email-templates';
-import { getSocketIO } from '@/lib/socket';
 import { z } from 'zod';
 
 // Validation schema for reply request
@@ -179,23 +178,6 @@ export async function POST(request: NextRequest) {
           },
         },
       });
-
-      // Emit socket event for real-time updates
-      try {
-        const io = getSocketIO();
-        if (io) {
-          io.to('admin').emit('message-replied', {
-            originalMessageId: messageId,
-            replyMessageId: replyMessage.id,
-            originalFrom: originalFrom,
-            replySubject: subject,
-            timestamp: new Date().toISOString(),
-          });
-        }
-      } catch (socketError) {
-        console.error('Socket emission error:', socketError);
-        // Don't fail the request if socket emission fails
-      }
 
       return NextResponse.json({
         success: true,
