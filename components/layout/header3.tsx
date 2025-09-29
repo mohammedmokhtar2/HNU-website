@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useLocale } from 'next-intl';
 import { Link, usePathname } from '@/i18n/navigation';
 import { ChevronDown, MenuIcon } from 'lucide-react';
+import { useUniversity } from '@/contexts/UniversityContext';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 
@@ -21,6 +22,8 @@ export interface Language {
 export interface NavigationItem {
   label: Label;
   href: string;
+  linkType?: 'page' | 'external';
+  pageId?: string;
   submenu?: NavigationItem[];
 }
 
@@ -33,12 +36,55 @@ export interface HeaderData {
 function Header3({ navigationItems = [] }: HeaderData) {
   const locale = useLocale();
   const pathname = usePathname();
+  const { university } = useUniversity();
   const [isScrolled, setIsScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [openSubmenus, setOpenSubmenus] = useState<Set<string>>(new Set());
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
+
+  // menuBuilder?: {
+  //   menuItems: {
+  //     title: string;
+  //     href: string;
+  //     submenu?: {
+  //       title: string;
+  //       href: string;
+  //     }[];
+  //   }[];
+  // };
+
+  const config = university?.config;
+
+  const menuBuilder = config?.menuBuilder;
+
+  if (menuBuilder && menuBuilder.menuItems) {
+    navigationItems = menuBuilder.menuItems.map(item => ({
+      label: {
+        en: typeof item.title === 'object' ? item.title.en : item.title,
+        ar: typeof item.title === 'object' ? item.title.ar : item.title,
+      },
+      href: item.href,
+      linkType: item.linkType || 'external',
+      pageId: item.pageId,
+      submenu: item.submenu?.map(subitem => ({
+        label: {
+          en:
+            typeof subitem.title === 'object'
+              ? subitem.title.en
+              : subitem.title,
+          ar:
+            typeof subitem.title === 'object'
+              ? subitem.title.ar
+              : subitem.title,
+        },
+        href: subitem.href,
+        linkType: subitem.linkType || 'external',
+        pageId: subitem.pageId,
+      })),
+    }));
+  }
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
