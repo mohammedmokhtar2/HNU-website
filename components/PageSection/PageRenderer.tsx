@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useLocale } from 'next-intl';
 import { useUniversity } from '@/contexts/UniversityContext';
 import { PageService } from '@/services/pageService';
@@ -17,6 +17,7 @@ import { HeroTwoSection } from './sections/aboutUsPage/HeroTwoSection';
 import { AboutTwoSection } from './sections/aboutUsPage/AboutTwoSection';
 import { OurHistorySection } from './sections/ourHistoryPage/ourHistoryPage';
 import { PresidentSection } from './sections/presidentPage/aboutPresident';
+import { PresidentMessageSection } from './sections/presidentMessage/PresidentMessage';
 
 interface PageRendererProps {
   pageSlug: string;
@@ -43,6 +44,8 @@ export function PageRenderer({ pageSlug }: PageRendererProps) {
     loading: true,
     error: null,
   });
+
+  const aboutOneRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchPageData = async () => {
@@ -189,13 +192,25 @@ export function PageRenderer({ pageSlug }: PageRendererProps) {
 
     switch (section.type) {
       case PageSectionType.HERO1:
-        return <HeroOneSection key={section.id} {...sectionProps} />;
+        return (
+          <HeroOneSection
+            key={section.id}
+            {...sectionProps}
+            scrollTarget={aboutOneRef}
+          />
+        );
 
       case PageSectionType.HERO2:
         return <HeroTwoSection key={section.id} {...sectionProps} />;
 
       case PageSectionType.ABOUT1:
-        return <AboutOneSection key={section.id} {...sectionProps} />;
+        return (
+          <AboutOneSection
+            key={section.id}
+            {...sectionProps}
+            ref={aboutOneRef}
+          />
+        );
 
       case PageSectionType.ABOUT2:
         return <AboutTwoSection key={section.id} {...sectionProps} />;
@@ -205,6 +220,9 @@ export function PageRenderer({ pageSlug }: PageRendererProps) {
 
       case PageSectionType.PRESIDENT:
         return <PresidentSection key={section.id} {...sectionProps} />;
+
+      case PageSectionType.PRESIDENT_MESSAGE:
+        return <PresidentMessageSection key={section.id} {...sectionProps} />;
 
       case PageSectionType.CONTACT:
         // return <ContactSection {...sectionProps} />;
@@ -227,7 +245,6 @@ export function PageRenderer({ pageSlug }: PageRendererProps) {
             <p>Section ID: {section.id}</p>
           </div>
         );
-
 
       case PageSectionType.STUDENT_ACTIVITIES:
         // return <StudentActivitiesSection {...sectionProps} />;

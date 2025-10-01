@@ -92,6 +92,7 @@ const pageSectionTypeIcons = {
   [PageSectionType.PRESIDENT]: Crown,
   [PageSectionType.STUDENT_ACTIVITIES]: Users,
   [PageSectionType.STUDENT_UNIONS]: Users,
+  [PageSectionType.PRESIDENT_MESSAGE]: Crown,
   [PageSectionType.FOR_EGYPT_GROUP]: Users,
   [PageSectionType.OUR_HISTORY]: Menu,
   [PageSectionType.CUSTOM]: FileText,
@@ -105,6 +106,7 @@ const pageSectionTypeLabels = {
   [PageSectionType.CONTACT]: 'Contact',
   [PageSectionType.BLOGS]: 'Blogs',
   [PageSectionType.PRESIDENT]: 'President',
+  [PageSectionType.PRESIDENT_MESSAGE]: 'President Message',
   [PageSectionType.STUDENT_ACTIVITIES]: 'Student Activities',
   [PageSectionType.STUDENT_UNIONS]: 'Student Unions',
   [PageSectionType.FOR_EGYPT_GROUP]: 'For Egypt Group',
@@ -162,6 +164,10 @@ function SortablePageSectionItem({
         return 'Student Activities Section';
       case PageSectionType.STUDENT_UNIONS:
         return 'Student Unions Section';
+      case PageSectionType.PRESIDENT_MESSAGE:
+        return (
+          content?.name?.en || content?.name?.ar || 'President Message Section'
+        );
       case PageSectionType.FOR_EGYPT_GROUP:
         return 'For Egypt Group Section';
       case PageSectionType.OUR_HISTORY:
@@ -2172,6 +2178,238 @@ function PageSectionForm({
             </div>
 
             <div>
+              <Label>President Paragraphs</Label>
+              <div className='space-y-3 mt-2'>
+                {(content.PresidentParagraphs || []).map(
+                  (para: { en: string; ar: string }, index: number) => (
+                    <div
+                      key={index}
+                      className='grid grid-cols-2 gap-4 items-start'
+                    >
+                      {/* English Paragraph */}
+                      <div>
+                        <Label className='text-xs text-gray-500'>English</Label>
+                        <textarea
+                          value={para.en}
+                          onChange={e => {
+                            const newParagraphs = [
+                              ...(content.PresidentParagraphs || []),
+                            ];
+                            newParagraphs[index] = {
+                              ...newParagraphs[index],
+                              en: e.target.value,
+                            };
+                            setFormData({
+                              ...formData,
+                              content: {
+                                ...content,
+                                PresidentParagraphs: newParagraphs,
+                              },
+                            });
+                          }}
+                          placeholder='Enter president paragraph in English'
+                          className='w-full border rounded p-2'
+                        />
+                      </div>
+
+                      {/* Arabic Paragraph */}
+                      <div>
+                        <Label className='text-xs text-gray-500'>Arabic</Label>
+                        <textarea
+                          value={para.ar}
+                          onChange={e => {
+                            const newParagraphs = [
+                              ...(content.PresidentParagraphs || []),
+                            ];
+                            newParagraphs[index] = {
+                              ...newParagraphs[index],
+                              ar: e.target.value,
+                            };
+                            setFormData({
+                              ...formData,
+                              content: {
+                                ...content,
+                                PresidentParagraphs: newParagraphs,
+                              },
+                            });
+                          }}
+                          placeholder='أدخل فقرة الرئيس بالعربية'
+                          className='w-full border rounded p-2'
+                        />
+                      </div>
+
+                      {/* Remove Button */}
+                      <div className='col-span-2'>
+                        <Button
+                          type='button'
+                          variant='outline'
+                          size='sm'
+                          onClick={() => {
+                            const newParagraphs = (
+                              content.PresidentParagraphs || []
+                            ).filter(
+                              (_: { en: string; ar: string }, i: number) =>
+                                i !== index
+                            );
+                            setFormData({
+                              ...formData,
+                              content: {
+                                ...content,
+                                PresidentParagraphs: newParagraphs,
+                              },
+                            });
+                          }}
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                    </div>
+                  )
+                )}
+
+                {/* Add New Paragraph */}
+                <Button
+                  type='button'
+                  variant='outline'
+                  onClick={() => {
+                    const newParagraphs = [
+                      ...(content.PresidentParagraphs || []),
+                      { en: '', ar: '' },
+                    ];
+                    setFormData({
+                      ...formData,
+                      content: {
+                        ...content,
+                        PresidentParagraphs: newParagraphs,
+                      },
+                    });
+                  }}
+                >
+                  Add Paragraph
+                </Button>
+              </div>
+            </div>
+          </div>
+        );
+
+      case PageSectionType.PRESIDENT_MESSAGE:
+        return (
+          <div className='space-y-4'>
+            <div>
+              <Label>Name</Label>
+              <div className='grid grid-cols-2 gap-4 mt-2'>
+                <div>
+                  <Label className='text-xs text-gray-500'>English</Label>
+                  <Input
+                    value={content.Name?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          Name: { ...content.Name, en: e.target.value },
+                        },
+                      })
+                    }
+                    placeholder='President Name'
+                  />
+                </div>
+                <div>
+                  <Label className='text-xs text-gray-500'>Arabic</Label>
+                  <Input
+                    value={content.Name?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          Name: { ...content.Name, ar: e.target.value },
+                        },
+                      })
+                    }
+                    placeholder='اسم الرئيس'
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <Label>Role</Label>
+              <div className='grid grid-cols-2 gap-4 mt-2'>
+                <div>
+                  <Label className='text-xs text-gray-500'>English</Label>
+                  <Input
+                    value={content.Role?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          Role: { ...content.Role, en: e.target.value },
+                        },
+                      })
+                    }
+                    placeholder='President Role'
+                  />
+                </div>
+                <div>
+                  <Label className='text-xs text-gray-500'>Arabic</Label>
+                  <Input
+                    value={content.Role?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          Role: { ...content.Role, ar: e.target.value },
+                        },
+                      })
+                    }
+                    placeholder='دور الرئيس'
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <Label>Title</Label>
+              <div className='grid grid-cols-2 gap-4 mt-2'>
+                <div>
+                  <Label className='text-xs text-gray-500'>English</Label>
+                  <Input
+                    value={content.Title?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          Title: { ...content.Title, en: e.target.value },
+                        },
+                      })
+                    }
+                    placeholder='President Title'
+                  />
+                </div>
+                <div>
+                  <Label className='text-xs text-gray-500'>Arabic</Label>
+                  <Input
+                    value={content.Title?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          Title: { ...content.Title, ar: e.target.value },
+                        },
+                      })
+                    }
+                    placeholder='عنوان الرئيس'
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div>
               <Label>Images</Label>
               <div className='space-y-3 mt-2'>
                 {(content.ImagesUrl || []).map(
@@ -2354,119 +2592,6 @@ function PageSectionForm({
                 </Button>
               </div>
             </div>
-
-            <div>
-              <Label>President Paragraphs</Label>
-              <div className='space-y-3 mt-2'>
-                {(content.PresidentParagraphs || []).map(
-                  (para: { en: string; ar: string }, index: number) => (
-                    <div
-                      key={index}
-                      className='grid grid-cols-2 gap-4 items-start'
-                    >
-                      {/* English Paragraph */}
-                      <div>
-                        <Label className='text-xs text-gray-500'>English</Label>
-                        <textarea
-                          value={para.en}
-                          onChange={e => {
-                            const newParagraphs = [
-                              ...(content.PresidentParagraphs || []),
-                            ];
-                            newParagraphs[index] = {
-                              ...newParagraphs[index],
-                              en: e.target.value,
-                            };
-                            setFormData({
-                              ...formData,
-                              content: {
-                                ...content,
-                                PresidentParagraphs: newParagraphs,
-                              },
-                            });
-                          }}
-                          placeholder='Enter president paragraph in English'
-                          className='w-full border rounded p-2'
-                        />
-                      </div>
-
-                      {/* Arabic Paragraph */}
-                      <div>
-                        <Label className='text-xs text-gray-500'>Arabic</Label>
-                        <textarea
-                          value={para.ar}
-                          onChange={e => {
-                            const newParagraphs = [
-                              ...(content.PresidentParagraphs || []),
-                            ];
-                            newParagraphs[index] = {
-                              ...newParagraphs[index],
-                              ar: e.target.value,
-                            };
-                            setFormData({
-                              ...formData,
-                              content: {
-                                ...content,
-                                PresidentParagraphs: newParagraphs,
-                              },
-                            });
-                          }}
-                          placeholder='أدخل فقرة الرئيس بالعربية'
-                          className='w-full border rounded p-2'
-                        />
-                      </div>
-
-                      {/* Remove Button */}
-                      <div className='col-span-2'>
-                        <Button
-                          type='button'
-                          variant='outline'
-                          size='sm'
-                          onClick={() => {
-                            const newParagraphs = (
-                              content.PresidentParagraphs || []
-                            ).filter(
-                              (_: { en: string; ar: string }, i: number) =>
-                                i !== index
-                            );
-                            setFormData({
-                              ...formData,
-                              content: {
-                                ...content,
-                                PresidentParagraphs: newParagraphs,
-                              },
-                            });
-                          }}
-                        >
-                          Remove
-                        </Button>
-                      </div>
-                    </div>
-                  )
-                )}
-
-                {/* Add New Paragraph */}
-                <Button
-                  type='button'
-                  variant='outline'
-                  onClick={() => {
-                    const newParagraphs = [
-                      ...(content.PresidentParagraphs || []),
-                      { en: '', ar: '' },
-                    ];
-                    setFormData({
-                      ...formData,
-                      content: {
-                        ...content,
-                        PresidentParagraphs: newParagraphs,
-                      },
-                    });
-                  }}
-                >
-                  Add Paragraph
-                </Button>
-              </div>
-            </div>
           </div>
         );
 
@@ -2485,31 +2610,1117 @@ function PageSectionForm({
 
       case PageSectionType.STUDENT_UNIONS:
         return (
-          <div className='space-y-4'>
+          <div className='space-y-8'>
+            {/* Hero Section */}
+            <div className='space-y-4'>
+              <Label>Hero Section Title</Label>
+              <div className='grid grid-cols-2 gap-4 mt-2'>
+                <div>
+                  <Label className='text-xs text-gray-500'>English</Label>
+                  <Input
+                    value={content.heroSection?.title?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          heroSection: {
+                            ...content.heroSection,
+                            title: {
+                              ...content.heroSection?.title,
+                              en: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Enter title in English'
+                  />
+                </div>
+                <div>
+                  <Label className='text-xs text-gray-500'>Arabic</Label>
+                  <Input
+                    value={content.heroSection?.title?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          heroSection: {
+                            ...content.heroSection,
+                            title: {
+                              ...content.heroSection?.title,
+                              ar: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='ادخل العنوان باللغة العربية'
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label>Logo URL</Label>
+                <Input
+                  value={content.heroSection?.logo || ''}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      content: {
+                        ...content,
+                        heroSection: {
+                          ...content.heroSection,
+                          logo: e.target.value,
+                        },
+                      },
+                    })
+                  }
+                  placeholder='https://example.com/logo.png'
+                />
+              </div>
+
+              <div>
+                <Label>Background Image URL</Label>
+                <Input
+                  value={content.heroSection?.bgImageUrl || ''}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      content: {
+                        ...content,
+                        heroSection: {
+                          ...content.heroSection,
+                          bgImageUrl: e.target.value,
+                        },
+                      },
+                    })
+                  }
+                  placeholder='https://example.com/background.jpg'
+                />
+              </div>
+            </div>
+
+            {/* About Section */}
+            <div className='space-y-4'>
+              <Label>About Section Title</Label>
+              <div className='grid grid-cols-2 gap-4 mt-2'>
+                <div>
+                  <Label className='text-xs text-gray-500'>English</Label>
+                  <Input
+                    value={content.aboutSection?.title?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          aboutSection: {
+                            ...content.aboutSection,
+                            title: {
+                              ...content.aboutSection?.title,
+                              en: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Enter title in English'
+                  />
+                </div>
+                <div>
+                  <Label className='text-xs text-gray-500'>Arabic</Label>
+                  <Input
+                    value={content.aboutSection?.title?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          aboutSection: {
+                            ...content.aboutSection,
+                            title: {
+                              ...content.aboutSection?.title,
+                              ar: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='ادخل العنوان باللغة العربية'
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label>About Section Image URL</Label>
+                <Input
+                  value={content.aboutSection?.imageUrl || ''}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      content: {
+                        ...content,
+                        aboutSection: {
+                          ...content.aboutSection,
+                          imageUrl: e.target.value,
+                        },
+                      },
+                    })
+                  }
+                  placeholder='https://example.com/about.jpg'
+                />
+              </div>
+
+              <Label>About Section Description</Label>
+              <div className='grid grid-cols-2 gap-4 mt-2'>
+                <div>
+                  <Label className='text-xs text-gray-500'>English</Label>
+                  <Textarea
+                    value={content.aboutSection?.description?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          aboutSection: {
+                            ...content.aboutSection,
+                            description: {
+                              ...content.aboutSection?.description,
+                              en: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Enter description in English'
+                  />
+                </div>
+                <div>
+                  <Label className='text-xs text-gray-500'>Arabic</Label>
+                  <Textarea
+                    value={content.aboutSection?.description?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          aboutSection: {
+                            ...content.aboutSection,
+                            description: {
+                              ...content.aboutSection?.description,
+                              ar: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='ادخل الوصف باللغة العربية'
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Our Mission Section */}
+            <div className='space-y-4'>
+              <Label>Our Mission Section Title</Label>
+              <div className='grid grid-cols-2 gap-4 mt-2'>
+                <div>
+                  <Label className='text-xs text-gray-500'>English</Label>
+                  <Input
+                    value={content.ourMissionSection?.title?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          ourMissionSection: {
+                            ...content.ourMissionSection,
+                            title: {
+                              ...content.ourMissionSection?.title,
+                              en: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Enter title in English'
+                  />
+                </div>
+                <div>
+                  <Label className='text-xs text-gray-500'>Arabic</Label>
+                  <Input
+                    value={content.ourMissionSection?.title?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          ourMissionSection: {
+                            ...content.ourMissionSection,
+                            title: {
+                              ...content.ourMissionSection?.title,
+                              ar: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='ادخل العنوان باللغة العربية'
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label>Our Mission Section Image URL</Label>
+                <Input
+                  value={content.ourMissionSection?.imageUrl || ''}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      content: {
+                        ...content,
+                        ourMissionSection: {
+                          ...content.ourMissionSection,
+                          imageUrl: e.target.value,
+                        },
+                      },
+                    })
+                  }
+                  placeholder='https://example.com/mission.jpg'
+                />
+              </div>
+
+              <Label>Our Mission Section Description</Label>
+              <div className='grid grid-cols-2 gap-4 mt-2'>
+                <div>
+                  <Label className='text-xs text-gray-500'>English</Label>
+                  <Textarea
+                    value={content.ourMissionSection?.description?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          ourMissionSection: {
+                            ...content.ourMissionSection,
+                            description: {
+                              ...content.ourMissionSection?.description,
+                              en: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Enter description in English'
+                  />
+                </div>
+                <div>
+                  <Label className='text-xs text-gray-500'>Arabic</Label>
+                  <Textarea
+                    value={content.ourMissionSection?.description?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          ourMissionSection: {
+                            ...content.ourMissionSection,
+                            description: {
+                              ...content.ourMissionSection?.description,
+                              ar: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='ادخل الوصف باللغة العربية'
+                  />
+                </div>
+              </div>
+            </div>
+            {/* Contact Us Section */}
+            <div className='space-y-4'>
+              <Label>Contact Us Section Title</Label>
+              <div className='grid grid-cols-2 gap-4 mt-2'>
+                <div>
+                  <Label className='text-xs text-gray-500'>English</Label>
+                  <Input
+                    value={content.contactUsSection?.title?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          contactUsSection: {
+                            ...content.contactUsSection,
+                            title: {
+                              ...content.contactUsSection?.title,
+                              en: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Enter title in English'
+                  />
+                </div>
+
+                <div>
+                  <Label className='text-xs text-gray-500'>Arabic</Label>
+                  <Input
+                    value={content.contactUsSection?.title?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          contactUsSection: {
+                            ...content.contactUsSection,
+                            title: {
+                              ...content.contactUsSection?.title,
+                              ar: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='ادخل العنوان باللغة العربية'
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label>Contact Us Button URL</Label>
+                <Input
+                  value={content.contactUsSection?.buttonUrl || ''}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      content: {
+                        ...content,
+                        contactUsSection: {
+                          ...content.contactUsSection,
+                          buttonUrl: e.target.value,
+                        },
+                      },
+                    })
+                  }
+                  placeholder='https://example.com/contact'
+                />
+              </div>
+            </div>
+
+            {/* Social Media Buttons */}
             <div>
-              <Label>Student Unions</Label>
-              <p className='text-sm text-gray-500'>
-                This section will display student unions. Unions management
-                requires additional implementation.
-              </p>
+              <Label>Social Media Buttons</Label>
+              <div className='space-y-3 mt-2'>
+                {(content.contactUsSection?.socialMediaButtons || []).map(
+                  (
+                    btn: { text: { en: string; ar: string }; url: string },
+                    index: number
+                  ) => (
+                    <div
+                      key={index}
+                      className='grid grid-cols-4 gap-4 items-center'
+                    >
+                      {/* English Text */}
+                      <Input
+                        value={btn.text?.en || ''}
+                        onChange={e => {
+                          const newButtons = [
+                            ...(content.contactUsSection?.socialMediaButtons ||
+                              []),
+                          ];
+                          newButtons[index] = {
+                            ...newButtons[index],
+                            text: {
+                              ...newButtons[index].text,
+                              en: e.target.value,
+                            },
+                          };
+                          setFormData({
+                            ...formData,
+                            content: {
+                              ...content,
+                              contactUsSection: {
+                                ...content.contactUsSection,
+                                socialMediaButtons: newButtons,
+                              },
+                            },
+                          });
+                        }}
+                        placeholder='Button Text (English)'
+                      />
+
+                      {/* Arabic Text */}
+                      <Input
+                        value={btn.text?.ar || ''}
+                        onChange={e => {
+                          const newButtons = [
+                            ...(content.contactUsSection?.socialMediaButtons ||
+                              []),
+                          ];
+                          newButtons[index] = {
+                            ...newButtons[index],
+                            text: {
+                              ...newButtons[index].text,
+                              ar: e.target.value,
+                            },
+                          };
+                          setFormData({
+                            ...formData,
+                            content: {
+                              ...content,
+                              contactUsSection: {
+                                ...content.contactUsSection,
+                                socialMediaButtons: newButtons,
+                              },
+                            },
+                          });
+                        }}
+                        placeholder='نص الزر (عربي)'
+                      />
+
+                      {/* URL */}
+                      <Input
+                        value={btn.url}
+                        onChange={e => {
+                          const newButtons = [
+                            ...(content.contactUsSection?.socialMediaButtons ||
+                              []),
+                          ];
+                          newButtons[index] = {
+                            ...newButtons[index],
+                            url: e.target.value,
+                          };
+                          setFormData({
+                            ...formData,
+                            content: {
+                              ...content,
+                              contactUsSection: {
+                                ...content.contactUsSection,
+                                socialMediaButtons: newButtons,
+                              },
+                            },
+                          });
+                        }}
+                        placeholder='https://example.com'
+                      />
+
+                      {/* Remove Button */}
+                      <Button
+                        type='button'
+                        variant='outline'
+                        size='sm'
+                        onClick={() => {
+                          const newButtons = (
+                            content.contactUsSection?.socialMediaButtons || []
+                          ).filter((_: any, i: number) => i !== index);
+                          setFormData({
+                            ...formData,
+                            content: {
+                              ...content,
+                              contactUsSection: {
+                                ...content.contactUsSection,
+                                socialMediaButtons: newButtons,
+                              },
+                            },
+                          });
+                        }}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  )
+                )}
+
+                {/* Add New Button */}
+                <Button
+                  type='button'
+                  variant='secondary'
+                  size='sm'
+                  className='mt-2'
+                  onClick={() => {
+                    const newButtons = [
+                      ...(content.contactUsSection?.socialMediaButtons || []),
+                      { text: { en: '', ar: '' }, url: '' },
+                    ];
+                    setFormData({
+                      ...formData,
+                      content: {
+                        ...content,
+                        contactUsSection: {
+                          ...content.contactUsSection,
+                          socialMediaButtons: newButtons,
+                        },
+                      },
+                    });
+                  }}
+                >
+                  + Add Social Media Button
+                </Button>
+              </div>
             </div>
           </div>
         );
-
       case PageSectionType.FOR_EGYPT_GROUP:
         return (
-          <div className='space-y-4'>
+          <div className='space-y-8'>
+            {/* Hero Section */}
+            <div className='space-y-4'>
+              <Label>Hero Section Title</Label>
+              <div className='grid grid-cols-2 gap-4 mt-2'>
+                <div>
+                  <Label className='text-xs text-gray-500'>English</Label>
+                  <Input
+                    value={content.heroSection?.title?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          heroSection: {
+                            ...content.heroSection,
+                            title: {
+                              ...content.heroSection?.title,
+                              en: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Enter title in English'
+                  />
+                </div>
+                <div>
+                  <Label className='text-xs text-gray-500'>Arabic</Label>
+                  <Input
+                    value={content.heroSection?.title?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          heroSection: {
+                            ...content.heroSection,
+                            title: {
+                              ...content.heroSection?.title,
+                              ar: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='ادخل العنوان باللغة العربية'
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label>Logo URL</Label>
+                <Input
+                  value={content.heroSection?.logo || ''}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      content: {
+                        ...content,
+                        heroSection: {
+                          ...content.heroSection,
+                          logo: e.target.value,
+                        },
+                      },
+                    })
+                  }
+                  placeholder='https://example.com/logo.png'
+                />
+              </div>
+
+              <div>
+                <Label>Background Image URL</Label>
+                <Input
+                  value={content.heroSection?.bgImageUrl || ''}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      content: {
+                        ...content,
+                        heroSection: {
+                          ...content.heroSection,
+                          bgImageUrl: e.target.value,
+                        },
+                      },
+                    })
+                  }
+                  placeholder='https://example.com/background.jpg'
+                />
+              </div>
+            </div>
+
+            {/* About Section */}
+            <div className='space-y-4'>
+              <Label>About Section Title</Label>
+              <div className='grid grid-cols-2 gap-4 mt-2'>
+                <div>
+                  <Label className='text-xs text-gray-500'>English</Label>
+                  <Input
+                    value={content.aboutSection?.title?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          aboutSection: {
+                            ...content.aboutSection,
+                            title: {
+                              ...content.aboutSection?.title,
+                              en: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Enter title in English'
+                  />
+                </div>
+                <div>
+                  <Label className='text-xs text-gray-500'>Arabic</Label>
+                  <Input
+                    value={content.aboutSection?.title?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          aboutSection: {
+                            ...content.aboutSection,
+                            title: {
+                              ...content.aboutSection?.title,
+                              ar: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='ادخل العنوان باللغة العربية'
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label>About Section Image URL</Label>
+                <Input
+                  value={content.aboutSection?.imageUrl || ''}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      content: {
+                        ...content,
+                        aboutSection: {
+                          ...content.aboutSection,
+                          imageUrl: e.target.value,
+                        },
+                      },
+                    })
+                  }
+                  placeholder='https://example.com/about.jpg'
+                />
+              </div>
+
+              <Label>About Section Description</Label>
+              <div className='grid grid-cols-2 gap-4 mt-2'>
+                <div>
+                  <Label className='text-xs text-gray-500'>English</Label>
+                  <Textarea
+                    value={content.aboutSection?.description?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          aboutSection: {
+                            ...content.aboutSection,
+                            description: {
+                              ...content.aboutSection?.description,
+                              en: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Enter description in English'
+                  />
+                </div>
+                <div>
+                  <Label className='text-xs text-gray-500'>Arabic</Label>
+                  <Textarea
+                    value={content.aboutSection?.description?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          aboutSection: {
+                            ...content.aboutSection,
+                            description: {
+                              ...content.aboutSection?.description,
+                              ar: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='ادخل الوصف باللغة العربية'
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Our Mission Section */}
+            <div className='space-y-4'>
+              <Label>Our Mission Section Title</Label>
+              <div className='grid grid-cols-2 gap-4 mt-2'>
+                <div>
+                  <Label className='text-xs text-gray-500'>English</Label>
+                  <Input
+                    value={content.ourMissionSection?.title?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          ourMissionSection: {
+                            ...content.ourMissionSection,
+                            title: {
+                              ...content.ourMissionSection?.title,
+                              en: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Enter title in English'
+                  />
+                </div>
+                <div>
+                  <Label className='text-xs text-gray-500'>Arabic</Label>
+                  <Input
+                    value={content.ourMissionSection?.title?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          ourMissionSection: {
+                            ...content.ourMissionSection,
+                            title: {
+                              ...content.ourMissionSection?.title,
+                              ar: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='ادخل العنوان باللغة العربية'
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label>Our Mission Section Image URL</Label>
+                <Input
+                  value={content.ourMissionSection?.imageUrl || ''}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      content: {
+                        ...content,
+                        ourMissionSection: {
+                          ...content.ourMissionSection,
+                          imageUrl: e.target.value,
+                        },
+                      },
+                    })
+                  }
+                  placeholder='https://example.com/mission.jpg'
+                />
+              </div>
+
+              <Label>Our Mission Section Description</Label>
+              <div className='grid grid-cols-2 gap-4 mt-2'>
+                <div>
+                  <Label className='text-xs text-gray-500'>English</Label>
+                  <Textarea
+                    value={content.ourMissionSection?.description?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          ourMissionSection: {
+                            ...content.ourMissionSection,
+                            description: {
+                              ...content.ourMissionSection?.description,
+                              en: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Enter description in English'
+                  />
+                </div>
+                <div>
+                  <Label className='text-xs text-gray-500'>Arabic</Label>
+                  <Textarea
+                    value={content.ourMissionSection?.description?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          ourMissionSection: {
+                            ...content.ourMissionSection,
+                            description: {
+                              ...content.ourMissionSection?.description,
+                              ar: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='ادخل الوصف باللغة العربية'
+                  />
+                </div>
+              </div>
+            </div>
+            {/* Contact Us Section */}
+            <div className='space-y-4'>
+              <Label>Contact Us Section Title</Label>
+              <div className='grid grid-cols-2 gap-4 mt-2'>
+                <div>
+                  <Label className='text-xs text-gray-500'>English</Label>
+                  <Input
+                    value={content.contactUsSection?.title?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          contactUsSection: {
+                            ...content.contactUsSection,
+                            title: {
+                              ...content.contactUsSection?.title,
+                              en: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Enter title in English'
+                  />
+                </div>
+
+                <div>
+                  <Label className='text-xs text-gray-500'>Arabic</Label>
+                  <Input
+                    value={content.contactUsSection?.title?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          contactUsSection: {
+                            ...content.contactUsSection,
+                            title: {
+                              ...content.contactUsSection?.title,
+                              ar: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='ادخل العنوان باللغة العربية'
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label>Contact Us Button URL</Label>
+                <Input
+                  value={content.contactUsSection?.buttonUrl || ''}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      content: {
+                        ...content,
+                        contactUsSection: {
+                          ...content.contactUsSection,
+                          buttonUrl: e.target.value,
+                        },
+                      },
+                    })
+                  }
+                  placeholder='https://example.com/contact'
+                />
+              </div>
+            </div>
+
+            {/* Social Media Buttons */}
             <div>
-              <Label>For Egypt Group</Label>
-              <p className='text-sm text-gray-500'>
-                This section will display For Egypt Group information. Members
-                and activities management requires additional implementation.
-              </p>
+              <Label>Social Media Buttons</Label>
+              <div className='space-y-3 mt-2'>
+                {(content.contactUsSection?.socialMediaButtons || []).map(
+                  (
+                    btn: { text: { en: string; ar: string }; url: string },
+                    index: number
+                  ) => (
+                    <div
+                      key={index}
+                      className='grid grid-cols-4 gap-4 items-center'
+                    >
+                      {/* English Text */}
+                      <Input
+                        value={btn.text?.en || ''}
+                        onChange={e => {
+                          const newButtons = [
+                            ...(content.contactUsSection?.socialMediaButtons ||
+                              []),
+                          ];
+                          newButtons[index] = {
+                            ...newButtons[index],
+                            text: {
+                              ...newButtons[index].text,
+                              en: e.target.value,
+                            },
+                          };
+                          setFormData({
+                            ...formData,
+                            content: {
+                              ...content,
+                              contactUsSection: {
+                                ...content.contactUsSection,
+                                socialMediaButtons: newButtons,
+                              },
+                            },
+                          });
+                        }}
+                        placeholder='Button Text (English)'
+                      />
+
+                      {/* Arabic Text */}
+                      <Input
+                        value={btn.text?.ar || ''}
+                        onChange={e => {
+                          const newButtons = [
+                            ...(content.contactUsSection?.socialMediaButtons ||
+                              []),
+                          ];
+                          newButtons[index] = {
+                            ...newButtons[index],
+                            text: {
+                              ...newButtons[index].text,
+                              ar: e.target.value,
+                            },
+                          };
+                          setFormData({
+                            ...formData,
+                            content: {
+                              ...content,
+                              contactUsSection: {
+                                ...content.contactUsSection,
+                                socialMediaButtons: newButtons,
+                              },
+                            },
+                          });
+                        }}
+                        placeholder='نص الزر (عربي)'
+                      />
+
+                      {/* URL */}
+                      <Input
+                        value={btn.url}
+                        onChange={e => {
+                          const newButtons = [
+                            ...(content.contactUsSection?.socialMediaButtons ||
+                              []),
+                          ];
+                          newButtons[index] = {
+                            ...newButtons[index],
+                            url: e.target.value,
+                          };
+                          setFormData({
+                            ...formData,
+                            content: {
+                              ...content,
+                              contactUsSection: {
+                                ...content.contactUsSection,
+                                socialMediaButtons: newButtons,
+                              },
+                            },
+                          });
+                        }}
+                        placeholder='https://example.com'
+                      />
+
+                      {/* Remove Button */}
+                      <Button
+                        type='button'
+                        variant='outline'
+                        size='sm'
+                        onClick={() => {
+                          const newButtons = (
+                            content.contactUsSection?.socialMediaButtons || []
+                          ).filter((_: any, i: number) => i !== index);
+                          setFormData({
+                            ...formData,
+                            content: {
+                              ...content,
+                              contactUsSection: {
+                                ...content.contactUsSection,
+                                socialMediaButtons: newButtons,
+                              },
+                            },
+                          });
+                        }}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  )
+                )}
+
+                {/* Add New Button */}
+                <Button
+                  type='button'
+                  variant='secondary'
+                  size='sm'
+                  className='mt-2'
+                  onClick={() => {
+                    const newButtons = [
+                      ...(content.contactUsSection?.socialMediaButtons || []),
+                      { text: { en: '', ar: '' }, url: '' },
+                    ];
+                    setFormData({
+                      ...formData,
+                      content: {
+                        ...content,
+                        contactUsSection: {
+                          ...content.contactUsSection,
+                          socialMediaButtons: newButtons,
+                        },
+                      },
+                    });
+                  }}
+                >
+                  + Add Social Media Button
+                </Button>
+              </div>
             </div>
           </div>
         );
-
-      default:
+      case PageSectionType.CUSTOM:
         return (
           <div className='space-y-4'>
             <div>
