@@ -1,5 +1,6 @@
 import { PageRenderer } from '@/components/PageSection/PageRenderer';
 import { notFound } from 'next/navigation';
+import HelwanPlusPage from '../../helwanPlus/page';
 
 interface DynamicPageProps {
   params: {
@@ -8,8 +9,8 @@ interface DynamicPageProps {
   };
 }
 
-export default function DynamicPage({ params }: DynamicPageProps) {
-  const { pageSlug } = params;
+export default async function DynamicPage({ params }: DynamicPageProps) {
+  const { pageSlug } = await params;
 
   // Basic validation for pageSlug
   if (!pageSlug || typeof pageSlug !== 'string') {
@@ -29,6 +30,12 @@ export default function DynamicPage({ params }: DynamicPageProps) {
   if (reservedSlugs.includes(pageSlug)) {
     return notFound();
   }
+
+  if (pageSlug === 'helwan-plus-team') {
+    return <HelwanPlusPage />;
+  }
+
+
 
   return <PageRenderer pageSlug={pageSlug} />;
 }

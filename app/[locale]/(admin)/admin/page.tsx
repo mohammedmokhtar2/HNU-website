@@ -127,10 +127,10 @@ export default function AdminDashboard() {
     <div className='space-y-6'>
       <div className='flex justify-between items-center'>
         <div>
-          <h1 className='text-3xl font-bold text-white dark:text-gray-900'>
+          <h1 className='text-3xl font-bold text-white'>
             Admin Dashboard
           </h1>
-          <p className='text-gray-600 mt-1'>
+          <p className='text-white mt-1'>
             Welcome back, {user.name || 'Admin'}!
           </p>
         </div>
@@ -138,7 +138,7 @@ export default function AdminDashboard() {
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className='flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors'
+            className='flex items-center space-x-2 px-4 py-2 bg-slate-00 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors'
           >
             <RefreshCw
               className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`}
