@@ -50,9 +50,9 @@ export function UniversityProvider({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [selectedUniversityId, setSelectedUniversityId] = useState<string | null>(
-    initialUniversityId || null
-  );
+  const [selectedUniversityId, setSelectedUniversityId] = useState<
+    string | null
+  >(initialUniversityId || null);
 
   const fetchUniversityData = useCallback(
     async (forceRefresh = false) => {
@@ -126,7 +126,11 @@ export function UniversityProvider({
         console.log('✅ Successfully loaded:', {
           university: uniData.name,
           sectionsCount: sectionsData.length,
-          sections: sectionsData.map((s: any) => ({ id: s.id, type: s.type, order: s.order }))
+          sections: sectionsData.map((s: any) => ({
+            id: s.id,
+            type: s.type,
+            order: s.order,
+          })),
         });
 
         // Cache the data
@@ -167,7 +171,16 @@ export function UniversityProvider({
       selectedUniversityId,
       setSelectedUniversityId,
     }),
-    [university, universities, sections, loading, error, refetch, isInitialLoad, selectedUniversityId]
+    [
+      university,
+      universities,
+      sections,
+      loading,
+      error,
+      refetch,
+      isInitialLoad,
+      selectedUniversityId,
+    ]
   );
 
   return (

@@ -15,10 +15,7 @@ interface ProvidersProps {
   collegeId?: string;
 }
 
-export function Providers({
-  children,
-  collegeId,
-}: ProvidersProps) {
+export function Providers({ children, collegeId }: ProvidersProps) {
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -46,9 +43,7 @@ export function Providers({
         >
           <UniversityProvider>
             <CollegeProvider>
-              <SectionProvider
-                collegeId={collegeId}
-              >
+              <SectionProvider collegeId={collegeId}>
                 <EventConfigProvider>
                   <UserProvider>{children}</UserProvider>
                 </EventConfigProvider>

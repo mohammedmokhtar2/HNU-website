@@ -1,5 +1,6 @@
 'use client';
 import { IconArrowNarrowRight } from '@tabler/icons-react';
+import Image from 'next/image';
 import { useState, useRef, useId, useEffect } from 'react';
 
 interface SlideData {
@@ -20,7 +21,7 @@ const Slide = ({ slide, index, current, handleSlideClick }: SlideProps) => {
 
   const xRef = useRef(0);
   const yRef = useRef(0);
-  const frameRef = useRef<number>();
+  const frameRef = useRef<number>(0);
 
   useEffect(() => {
     const animate = () => {
@@ -90,7 +91,7 @@ const Slide = ({ slide, index, current, handleSlideClick }: SlideProps) => {
                 : 'none',
           }}
         >
-          <img
+          <Image
             className='absolute inset-0 w-[120%] h-[120%] object-cover opacity-100 transition-opacity duration-600 ease-in-out'
             style={{
               opacity: current === index ? 1 : 0.5,
@@ -100,6 +101,8 @@ const Slide = ({ slide, index, current, handleSlideClick }: SlideProps) => {
             onLoad={imageLoaded}
             loading='eager'
             decoding='sync'
+            width={100}
+            height={100}
           />
           {current === index && (
             <div className='absolute inset-0 bg-black/30 transition-all duration-1000' />
@@ -151,10 +154,11 @@ const CarouselControl = ({
 
 interface CarouselProps {
   slides: SlideData[];
+  startIndex?: number;
 }
 
-export default function Carousel({ slides }: CarouselProps) {
-  const [current, setCurrent] = useState(0);
+export default function Carousel({ slides, startIndex = 0 }: CarouselProps) {
+  const [current, setCurrent] = useState(startIndex);
 
   const handlePreviousClick = () => {
     const previous = current - 1;
@@ -176,7 +180,7 @@ export default function Carousel({ slides }: CarouselProps) {
 
   return (
     <div
-      className='relative w-[70vmin] h-[70vmin] mx-auto'
+      className='relative w-[80vmin] h-[70vmin] mx-auto'
       aria-labelledby={`carousel-heading-${id}`}
     >
       <ul

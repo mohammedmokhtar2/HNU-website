@@ -8,9 +8,11 @@ import { SparklesCore } from '@/components/ui/sparkles';
 export const Cover = ({
   children,
   className,
+  variant = 'default',
 }: {
   children?: React.ReactNode;
   className?: string;
+  variant?: 'default' | 'helwan' | 'gradient';
 }) => {
   const [hovered, setHovered] = useState(false);
 
@@ -24,21 +26,32 @@ export const Cover = ({
       setContainerWidth(ref.current?.clientWidth ?? 0);
 
       const height = ref.current?.clientHeight ?? 0;
-      const numberOfBeams = Math.floor(height / 10); // Adjust the divisor to control the spacing
+      const numberOfBeams = Math.floor(height / 8); // Reduced spacing for more beams
       const positions = Array.from(
         { length: numberOfBeams },
         (_, i) => (i + 1) * (height / (numberOfBeams + 1))
       );
       setBeamPositions(positions);
     }
-  }, [ref.current]);
+  }, []);
+
+  const getVariantStyles = () => {
+    switch (variant) {
+      case 'helwan':
+        return 'relative hover:bg-[#354eab] group/cover inline-block dark:bg-[#354eab]/20 bg-[#354eab]/10 px-3 py-2 transition-all duration-300 rounded-lg border border-[#354eab]/30 hover:border-[#354eab] hover:shadow-lg hover:shadow-[#354eab]/20';
+      case 'gradient':
+        return 'relative hover:bg-gradient-to-r hover:from-[#354eab] hover:to-[#ffce00] group/cover inline-block bg-gradient-to-r from-[#354eab]/10 to-[#ffce00]/10 px-3 py-2 transition-all duration-300 rounded-lg border border-[#354eab]/20 hover:border-[#ffce00]/50 hover:shadow-lg hover:shadow-[#354eab]/20';
+      default:
+        return 'relative hover:bg-neutral-900 group/cover inline-block dark:bg-neutral-900 bg-neutral-100 px-2 py-2 transition duration-200 rounded-sm';
+    }
+  };
 
   return (
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       ref={ref}
-      className='relative hover:bg-neutral-900  group/cover inline-block dark:bg-neutral-900 bg-neutral-100 px-2 py-2  transition duration-200 rounded-sm'
+      className={getVariantStyles()}
     >
       <AnimatePresence>
         {hovered && (
@@ -70,17 +83,17 @@ export const Cover = ({
                 background='transparent'
                 minSize={0.4}
                 maxSize={1}
-                particleDensity={500}
+                particleDensity={variant === 'helwan' ? 600 : 500}
                 className='w-full h-full'
-                particleColor='#FFFFFF'
+                particleColor={variant === 'helwan' ? '#ffce00' : '#FFFFFF'}
               />
               <SparklesCore
                 background='transparent'
                 minSize={0.4}
                 maxSize={1}
-                particleDensity={500}
+                particleDensity={variant === 'helwan' ? 600 : 500}
                 className='w-full h-full'
-                particleColor='#FFFFFF'
+                particleColor={variant === 'helwan' ? '#354eab' : '#FFFFFF'}
               />
             </motion.div>
           </motion.div>
@@ -93,6 +106,7 @@ export const Cover = ({
           duration={Math.random() * 2 + 1}
           delay={Math.random() * 2 + 1}
           width={containerWidth}
+          variant={variant}
           style={{
             top: `${position}px`,
           }}
@@ -137,10 +151,25 @@ export const Cover = ({
       >
         {children}
       </motion.span>
-      <CircleIcon className='absolute -right-[2px] -top-[2px]' />
-      <CircleIcon className='absolute -bottom-[2px] -right-[2px]' delay={0.4} />
-      <CircleIcon className='absolute -left-[2px] -top-[2px]' delay={0.8} />
-      <CircleIcon className='absolute -bottom-[2px] -left-[2px]' delay={1.6} />
+      <CircleIcon
+        className='absolute -right-[2px] -top-[2px]'
+        variant={variant}
+      />
+      <CircleIcon
+        className='absolute -bottom-[2px] -right-[2px]'
+        delay={0.4}
+        variant={variant}
+      />
+      <CircleIcon
+        className='absolute -left-[2px] -top-[2px]'
+        delay={0.8}
+        variant={variant}
+      />
+      <CircleIcon
+        className='absolute -bottom-[2px] -left-[2px]'
+        delay={1.6}
+        variant={variant}
+      />
     </div>
   );
 };
@@ -151,6 +180,7 @@ export const Beam = ({
   duration,
   hovered,
   width = 600,
+  variant = 'default',
   ...svgProps
 }: {
   className?: string;
@@ -158,8 +188,34 @@ export const Beam = ({
   duration?: number;
   hovered?: boolean;
   width?: number;
+  variant?: 'default' | 'helwan' | 'gradient';
 } & React.ComponentProps<typeof motion.svg>) => {
   const id = useId();
+
+  const getGradientColors = () => {
+    switch (variant) {
+      case 'helwan':
+        return {
+          start: '#ffce00',
+          middle: '#354eab',
+          end: '#ffce00',
+        };
+      case 'gradient':
+        return {
+          start: '#354eab',
+          middle: '#ffce00',
+          end: '#354eab',
+        };
+      default:
+        return {
+          start: '#2EB9DF',
+          middle: '#3b82f6',
+          end: '#3b82f6',
+        };
+    }
+  };
+
+  const colors = getGradientColors();
 
   return (
     <motion.svg
@@ -201,9 +257,9 @@ export const Beam = ({
             repeatDelay: hovered ? Math.random() * (2 - 1) + 1 : (delay ?? 1),
           }}
         >
-          <stop stopColor='#2EB9DF' stopOpacity='0' />
-          <stop stopColor='#3b82f6' />
-          <stop offset='1' stopColor='#3b82f6' stopOpacity='0' />
+          <stop stopColor={colors.start} stopOpacity='0' />
+          <stop stopColor={colors.middle} />
+          <stop offset='1' stopColor={colors.end} stopOpacity='0' />
         </motion.linearGradient>
       </defs>
     </motion.svg>
@@ -213,16 +269,22 @@ export const Beam = ({
 export const CircleIcon = ({
   className,
   delay,
+  variant = 'default',
 }: {
   className?: string;
   delay?: number;
+  variant?: 'default' | 'helwan' | 'gradient';
 }) => {
-  return (
-    <div
-      className={cn(
-        `pointer-events-none animate-pulse group-hover/cover:hidden group-hover/cover:opacity-100 group h-2 w-2 rounded-full bg-neutral-600 dark:bg-white opacity-20 group-hover/cover:bg-white`,
-        className
-      )}
-    ></div>
-  );
+  const getCircleStyles = () => {
+    switch (variant) {
+      case 'helwan':
+        return 'pointer-events-none animate-pulse group-hover/cover:hidden group-hover/cover:opacity-100 group h-2 w-2 rounded-full bg-[#354eab] opacity-30 group-hover/cover:bg-[#ffce00] group-hover/cover:opacity-100';
+      case 'gradient':
+        return 'pointer-events-none animate-pulse group-hover/cover:hidden group-hover/cover:opacity-100 group h-2 w-2 rounded-full bg-[#354eab] opacity-30 group-hover/cover:bg-[#ffce00] group-hover/cover:opacity-100';
+      default:
+        return 'pointer-events-none animate-pulse group-hover/cover:hidden group-hover/cover:opacity-100 group h-2 w-2 rounded-full bg-neutral-600 dark:bg-white opacity-20 group-hover/cover:bg-white';
+    }
+  };
+
+  return <div className={cn(getCircleStyles(), className)}></div>;
 };

@@ -2,35 +2,27 @@ import React from 'react';
 import {
   PlusAbout,
   PlusAchivments,
-  PlusDevHero,
-  PlusDevTeam,
+  PlusDev,
   PlusHero,
   PlusTeam,
 } from './_components';
-import { BackgroundRippleEffect } from '@/components/ui/background-ripple-effect';
+import DecorativeWrapper from '@/components/DecorativeWrapper';
 
 const HelwanPlusPage = () => {
   // we need to use here the BackgroundRippleEffect so the page be more modern and attractive
   return (
     <div className='relative min-h-screen w-full overflow-hidden !bg-white'>
-      <BackgroundRippleEffect
-        rows={6}
-        cols={20}
-        cellSize={60}
-        lightMode={true}
-      />
-      <div className='relative z-10'>
-        <div id='helwan_plus'>
-          <PlusHero />
-          <PlusAbout />
-          <PlusTeam />
+      <DecorativeWrapper>
+        <div className='relative z-10'>
+          <div id='helwan_plus'>
+            <PlusHero />
+            <PlusAbout />
+            <PlusTeam />
+            <PlusDev />
+          </div>
           <PlusAchivments />
         </div>
-        <div id='dev_team'>
-          <PlusDevHero />
-          <PlusDevTeam />
-        </div>
-      </div>
+      </DecorativeWrapper>
     </div>
   );
 };

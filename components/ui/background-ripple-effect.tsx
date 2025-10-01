@@ -7,11 +7,13 @@ export const BackgroundRippleEffect = ({
   cols = 27,
   cellSize = 56,
   lightMode = false,
+  children,
 }: {
   rows?: number;
   cols?: number;
   cellSize?: number;
   lightMode?: boolean;
+  children?: React.ReactNode;
 }) => {
   const [clickedCell, setClickedCell] = useState<{
     row: number;
@@ -26,8 +28,8 @@ export const BackgroundRippleEffect = ({
       className={cn(
         'absolute inset-0 h-full w-full',
         lightMode
-          ? '[--cell-border-color:#e5e7eb] [--cell-fill-color:#f9fafb] [--cell-shadow-color:#d1d5db]'
-          : '[--cell-border-color:var(--color-neutral-300)] [--cell-fill-color:var(--color-neutral-100)] [--cell-shadow-color:var(--color-neutral-500)]'
+          ? '[--cell-border-color:#6b7280] [--cell-fill-color:#374151] [--cell-shadow-color:#1f2937]'
+          : '[--cell-border-color:#4b5563] [--cell-fill-color:#1f2937] [--cell-shadow-color:#111827]'
       )}
     >
       <div className='relative h-auto w-auto overflow-hidden'>
@@ -47,6 +49,7 @@ export const BackgroundRippleEffect = ({
           }}
           interactive
         />
+        {children}
       </div>
     </div>
   );

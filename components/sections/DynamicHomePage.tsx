@@ -87,7 +87,7 @@ export function DynamicHomePage({ universityId }: DynamicHomePageProps) {
     const sorted = [...sections].sort((a, b) => a.order - b.order);
     console.log('📋 DynamicHomePage sections:', {
       total: sections.length,
-      sorted: sorted.map(s => ({ id: s.id, type: s.type, order: s.order }))
+      sorted: sorted.map(s => ({ id: s.id, type: s.type, order: s.order })),
     });
     return sorted;
   }, [sections]);
@@ -160,7 +160,6 @@ export function DynamicHomePage({ universityId }: DynamicHomePageProps) {
             key={section.id}
             section={section}
             locale={locale}
-
           />
         ))}
       </Suspense>

@@ -3,12 +3,13 @@ import React from 'react';
 import { BackgroundLines } from '@/components/ui/background-lines';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import { Spotlight } from '@/components/ui/spotlight';
 
 const plusHeroData = {
   imageUrl: '/home.jpeg',
   title: 'Helwan Plus',
   description:
-    'Helwan Plus is a team of developers who are passionate about building innovative solutions for the Helwan community.',
+    'Helwan Plus is a team of developers who are passionate about building innovative solutions for the Helwan community. ',
   buttons: [
     {
       label: 'About Us',
@@ -33,7 +34,7 @@ const plusHero = () => {
   // we will use the BackgroundLines
   // the text is in the center overlaying the image with the three buttons outline underneeth them
   return (
-    <div className='relative w-full h-[70vh] bg-white! overflow-hidden'>
+    <div className='relative w-full h-[100vh] bg-white! overflow-hidden'>
       {/* Background Image with Overlay */}
       <div className='absolute inset-0'>
         <Image
@@ -44,7 +45,7 @@ const plusHero = () => {
           priority
         />
         {/* Black Overlay */}
-        <div className='absolute inset-0 bg-black/40' />
+        <div className='absolute inset-0 bg-[#1b4b7b]/40' />
       </div>
 
       {/* BackgroundLines Effect */}
@@ -54,15 +55,15 @@ const plusHero = () => {
           <div className='space-y-6'>
             <div className='flex justify-center'>
               <Image
-                src='/helwanBlack.png'
+                src='/helwanWhite.png'
                 alt='Helwan Plus Logo'
-                width={400}
-                height={200}
+                width={800}
+                height={800}
                 className='max-w-full h-auto'
                 priority
               />
             </div>
-            <p className='max-w-2xl mx-auto text-lg md:text-xl text-white relative z-20 drop-shadow-lg'>
+            <p className='max-w-4xl mx-auto text-lg md:text-3xl text-white relative z-20 drop-shadow-lg'>
               {plusHeroData.description}
             </p>
           </div>

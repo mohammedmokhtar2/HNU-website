@@ -16,6 +16,8 @@ export interface ContainerTextFlipProps {
   textClassName?: string;
   /** Duration of the transition animation in milliseconds */
   animationDuration?: number;
+  /** Theme variant for styling */
+  variant?: 'default' | 'helwan' | 'gradient' | 'minimal';
 }
 
 export function ContainerTextFlip({
@@ -24,6 +26,7 @@ export function ContainerTextFlip({
   className,
   textClassName,
   animationDuration = 700,
+  variant = 'default',
 }: ContainerTextFlipProps) {
   const id = useId();
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
@@ -33,9 +36,42 @@ export function ContainerTextFlip({
   const updateWidthForWord = () => {
     if (textRef.current) {
       // Add some padding to the text width (30px on each side)
-      // @ts-ignore
+      // @ts-expect-error - scrollWidth is not in the type definition but exists on DOM elements
       const textWidth = textRef.current.scrollWidth + 30;
       setWidth(textWidth);
+    }
+  };
+
+  const getVariantStyles = () => {
+    switch (variant) {
+      case 'helwan':
+        return [
+          'relative inline-block rounded-xl pt-3 pb-4 text-center text-3xl font-bold text-white md:text-6xl',
+          'bg-gradient-to-br from-[#354eab] via-[#354eab]/90 to-[#354eab]/80',
+          'shadow-[0_8px_32px_rgba(53,78,171,0.3)] border border-[#354eab]/20',
+          'backdrop-blur-sm hover:shadow-[0_12px_40px_rgba(53,78,171,0.4)] transition-all duration-300',
+        ].join(' ');
+      case 'gradient':
+        return [
+          'relative inline-block rounded-xl pt-3 pb-4 text-center text-3xl font-bold text-white md:text-6xl',
+          'bg-gradient-to-br from-[#354eab] via-[#ffce00] to-[#354eab]',
+          'shadow-[0_8px_32px_rgba(53,78,171,0.3)] border border-[#ffce00]/30',
+          'backdrop-blur-sm hover:shadow-[0_12px_40px_rgba(255,206,0,0.4)] transition-all duration-300',
+        ].join(' ');
+      case 'minimal':
+        return [
+          'relative inline-block rounded-lg pt-2 pb-3 text-center text-2xl font-semibold text-[#354eab] md:text-5xl',
+          'bg-transparent border-2 border-[#354eab]/30',
+          'hover:border-[#354eab] hover:bg-[#354eab]/5 transition-all duration-300',
+        ].join(' ');
+      default:
+        return [
+          'relative inline-block rounded-lg pt-2 pb-3 text-center text-4xl font-bold text-black md:text-7xl dark:text-white',
+          '[background:linear-gradient(to_bottom,#f3f4f6,#e5e7eb)]',
+          'shadow-[inset_0_-1px_#d1d5db,inset_0_0_0_1px_#d1d5db,_0_4px_8px_#d1d5db]',
+          'dark:[background:linear-gradient(to_bottom,#374151,#1f2937)]',
+          'dark:shadow-[inset_0_-1px_#10171e,inset_0_0_0_1px_hsla(205,89%,46%,.24),_0_4px_8px_#00000052]',
+        ].join(' ');
     }
   };
 
@@ -59,14 +95,7 @@ export function ContainerTextFlip({
       layoutId={`words-here-${id}`}
       animate={{ width }}
       transition={{ duration: animationDuration / 2000 }}
-      className={cn(
-        'relative inline-block rounded-lg pt-2 pb-3 text-center text-4xl font-bold text-black md:text-7xl dark:text-white',
-        '[background:linear-gradient(to_bottom,#f3f4f6,#e5e7eb)]',
-        'shadow-[inset_0_-1px_#d1d5db,inset_0_0_0_1px_#d1d5db,_0_4px_8px_#d1d5db]',
-        'dark:[background:linear-gradient(to_bottom,#374151,#1f2937)]',
-        'dark:shadow-[inset_0_-1px_#10171e,inset_0_0_0_1px_hsla(205,89%,46%,.24),_0_4px_8px_#00000052]',
-        className
-      )}
+      className={cn(getVariantStyles(), className)}
       key={words[currentWordIndex]}
     >
       <motion.div

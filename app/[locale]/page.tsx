@@ -10,7 +10,7 @@ import HeroSection from '@/components/home/heroSection';
 import AboutSection from '@/components/home/aboutSection';
 import ProgramsSection from '@/components/home/programsSection';
 import { CollageSection } from '@/components/sections/CollagesSection';
-import { } from '@/components/sections/OurMissionSection';
+import {} from '@/components/sections/OurMissionSection';
 import {
   heroSection,
   aboutSection,
@@ -59,40 +59,34 @@ const LazyTopNews = React.lazy(() =>
 );
 
 // Memoized static content component
-const StaticContent = React.memo(
-  ({
-    locale,
-  }: {
-    locale: string;
-  }) => (
-    <>
-      <Suspense fallback={<PageSkeleton />}>
-        <LazyHeroSection {...heroSection} local={locale} />
-      </Suspense>
-      <Suspense fallback={<PageSkeleton />}>
-        <LazyAboutSection {...aboutSection} local={locale} />
-      </Suspense>
-      <div className='relative py-20 overflow-hidden'>
-        {/* <Suspense fallback={<PageSkeleton />}>
+const StaticContent = React.memo(({ locale }: { locale: string }) => (
+  <>
+    <Suspense fallback={<PageSkeleton />}>
+      <LazyHeroSection {...heroSection} local={locale} />
+    </Suspense>
+    <Suspense fallback={<PageSkeleton />}>
+      <LazyAboutSection {...aboutSection} local={locale} />
+    </Suspense>
+    <div className='relative py-20 overflow-hidden'>
+      {/* <Suspense fallback={<PageSkeleton />}>
           <CollegeProvider universityId={universityId || undefined}>
             <LazyCollegeSection universityId={universityId || undefined} />
           </CollegeProvider>
         </Suspense> */}
 
-        {/* <Suspense fallback={<PageSkeleton />}>
+      {/* <Suspense fallback={<PageSkeleton />}>
           <LazyOurMissionSection />
         </Suspense> */}
 
-        {/* <Suspense fallback={<PageSkeleton />}>
+      {/* <Suspense fallback={<PageSkeleton />}>
           <LazyFactsAndNumber {...FactsAndNumbers} local={locale} />
         </Suspense> */}
-        <Suspense fallback={<PageSkeleton />}>
-          <LazyTopNews {...topNewsData} local={locale} />
-        </Suspense>
-      </div>
-    </>
-  )
-);
+      <Suspense fallback={<PageSkeleton />}>
+        <LazyTopNews {...topNewsData} local={locale} />
+      </Suspense>
+    </div>
+  </>
+));
 
 StaticContent.displayName = 'StaticContent';
 
@@ -102,9 +96,7 @@ function Home() {
 
   // Show loading state only on initial load
   if (loading) {
-    return (
-      <AnimatedLoading onComplete={() => { }} duration={4000} />
-    );
+    return <AnimatedLoading onComplete={() => {}} duration={4000} />;
   }
 
   // Show error state with fallback to static content
