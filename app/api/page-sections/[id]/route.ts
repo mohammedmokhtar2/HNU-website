@@ -3,12 +3,13 @@ import { db } from '@/lib/db';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const section = await db.pageSection.findUnique({
       where: {
-        id: params.id,
+        id: id,
       },
       include: {
         page: true,
@@ -34,15 +35,16 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const body = await request.json();
     const { type, title, content, mediaUrl, order, pageId } = body;
 
     const section = await db.pageSection.update({
       where: {
-        id: params.id,
+        id: id,
       },
       data: {
         ...(type && { type }),
@@ -69,12 +71,13 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     await db.pageSection.delete({
       where: {
-        id: params.id,
+        id: id,
       },
     });
 

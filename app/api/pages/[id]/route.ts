@@ -3,12 +3,13 @@ import { db } from '@/lib/db';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const page = await db.page.findUnique({
       where: {
-        id: params.id,
+        id: id,
       },
       include: {
         collage: true,
@@ -36,8 +37,9 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const body = await request.json();
     const { title, slug, config, isActive, collageId, universityId, order } =
@@ -45,7 +47,7 @@ export async function PATCH(
 
     const page = await db.page.update({
       where: {
-        id: params.id,
+        id: id,
       },
       data: {
         ...(title && { title }),
@@ -74,12 +76,13 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     await db.page.delete({
       where: {
-        id: params.id,
+        id: id,
       },
     });
 

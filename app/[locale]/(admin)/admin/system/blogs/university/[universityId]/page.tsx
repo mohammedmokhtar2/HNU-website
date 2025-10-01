@@ -17,7 +17,7 @@ export default function AdminUniversityBlogsPage() {
   return (
     <QueryClientProviderWrapper>
       <UserProvider>
-        <UniversityProvider universityId={universityId}>
+        <UniversityProvider>
           <CollegeProvider universityId={universityId}>
             <EventConfigProvider>
               <BlogProvider initialParams={{ universityId }}>

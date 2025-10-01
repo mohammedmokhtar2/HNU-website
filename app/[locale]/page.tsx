@@ -1,11 +1,10 @@
 'use client';
-import React, { useState, useEffect, useMemo, Suspense } from 'react';
+import React, { Suspense } from 'react';
 import { useLocale } from 'next-intl';
-import { UniversityService } from '@/services/university.service';
 import { DynamicHomePage } from '@/components/sections/DynamicHomePage';
-import { UniversityProvider } from '@/contexts/UniversityContext';
-import { CollegeProvider } from '@/contexts/CollegeContext';
+import { useUniversity } from '@/contexts/UniversityContext';
 import { PageSkeleton } from '@/components/ui/skeleton';
+import { AnimatedLoading } from '@/components/ui/animated-loading';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
 import HeroSection from '@/components/home/heroSection';
 import AboutSection from '@/components/home/aboutSection';
@@ -60,87 +59,44 @@ const LazyTopNews = React.lazy(() =>
 );
 
 // Memoized static content component
-const StaticContent = React.memo(
-  ({
-    locale,
-    universityId,
-  }: {
-    locale: string;
-    universityId?: string | null;
-  }) => (
-    <>
-      <Suspense fallback={<PageSkeleton />}>
-        <LazyHeroSection {...heroSection} local={locale} />
-      </Suspense>
-      <Suspense fallback={<PageSkeleton />}>
-        <LazyAboutSection {...aboutSection} local={locale} />
-      </Suspense>
-      <div className='relative py-20 overflow-hidden'>
-        {/* <Suspense fallback={<PageSkeleton />}>
+const StaticContent = React.memo(({ locale }: { locale: string }) => (
+  <>
+    <Suspense fallback={<PageSkeleton />}>
+      <LazyHeroSection {...heroSection} local={locale} />
+    </Suspense>
+    <Suspense fallback={<PageSkeleton />}>
+      <LazyAboutSection {...aboutSection} local={locale} />
+    </Suspense>
+    <div className='relative py-20 overflow-hidden'>
+      {/* <Suspense fallback={<PageSkeleton />}>
           <CollegeProvider universityId={universityId || undefined}>
             <LazyCollegeSection universityId={universityId || undefined} />
           </CollegeProvider>
         </Suspense> */}
 
-        {/* <Suspense fallback={<PageSkeleton />}>
+      {/* <Suspense fallback={<PageSkeleton />}>
           <LazyOurMissionSection />
         </Suspense> */}
 
-        {/* <Suspense fallback={<PageSkeleton />}>
+      {/* <Suspense fallback={<PageSkeleton />}>
           <LazyFactsAndNumber {...FactsAndNumbers} local={locale} />
         </Suspense> */}
-        <Suspense fallback={<PageSkeleton />}>
-          <LazyTopNews {...topNewsData} local={locale} />
-        </Suspense>
-      </div>
-    </>
-  )
-);
+      <Suspense fallback={<PageSkeleton />}>
+        <LazyTopNews {...topNewsData} local={locale} />
+      </Suspense>
+    </div>
+  </>
+));
 
 StaticContent.displayName = 'StaticContent';
 
 function Home() {
   const locale = useLocale();
-  const [universityId, setUniversityId] = useState<string | null>(null);
-  const [useDynamicSections, setUseDynamicSections] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadUniversity = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const universities = await UniversityService.getUniversities();
-        console.log('Loaded universities:', universities);
-        if (universities && universities.length > 0) {
-          console.log('Setting universityId to:', universities[0].id);
-          setUniversityId(universities[0].id);
-          // Check if university has sections configured
-          setUseDynamicSections(true);
-        } else {
-          console.log('No universities found');
-        }
-      } catch (error) {
-        console.error('Error loading university:', error);
-        setError(
-          error instanceof Error
-            ? error.message
-            : 'Failed to load university data'
-        );
-        setUseDynamicSections(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadUniversity();
-  }, []);
+  const { loading, error, university, selectedUniversityId } = useUniversity();
 
   // Show loading state only on initial load
   if (loading) {
-    return <PageSkeleton />;
+    return <AnimatedLoading onComplete={() => {}} duration={4000} />;
   }
 
   // Show error state with fallback to static content
@@ -148,18 +104,16 @@ function Home() {
     console.warn('Falling back to static content due to error:', error);
     return (
       <ErrorBoundary>
-        <StaticContent locale={locale} universityId={universityId} />
+        <StaticContent locale={locale} />
       </ErrorBoundary>
     );
   }
 
-  // Use dynamic sections if available, otherwise fall back to static content
-  if (useDynamicSections && universityId) {
+  // Use dynamic sections if university is available, otherwise fall back to static content
+  if (university && selectedUniversityId) {
     return (
       <ErrorBoundary>
-        <UniversityProvider universityId={universityId}>
-          <DynamicHomePage universityId={universityId} />
-        </UniversityProvider>
+        <DynamicHomePage universityId={selectedUniversityId} />
       </ErrorBoundary>
     );
   }
@@ -167,7 +121,7 @@ function Home() {
   // Fallback to static content
   return (
     <ErrorBoundary>
-      <StaticContent locale={locale} universityId={universityId} />
+      <StaticContent locale={locale} />
     </ErrorBoundary>
   );
 }

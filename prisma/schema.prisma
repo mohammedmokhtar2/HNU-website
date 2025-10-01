@@ -107,32 +107,33 @@ model Section {
   collage      College?    @relation(fields: [collageId], references: [id], onDelete: Cascade)
   University   University? @relation(fields: [universityId], references: [id], onDelete: Cascade)
 }
+
 model Page {
   id           String        @id @default(cuid())
   title        Json
-  slug         String        @unique
   config       Json?
   isActive     Boolean       @default(true)
+  slug         String        @unique
+  universityId String?
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
-  universityId String?
   collageId    String?
-  sections     PageSection[]
   collage      College?      @relation(fields: [collageId], references: [id], onDelete: Cascade)
   University   University?   @relation(fields: [universityId], references: [id], onDelete: Cascade)
+  sections     PageSection[]
 }
 
 model PageSection {
-  id           String      @id @default(cuid())
-  type         PageSectionType
-  title        Json?
-  content      Json?
-  mediaUrl     Json?
-  order        Int
-  pageId       String
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  page         Page        @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  id        String          @id @default(cuid())
+  type      PageSectionType
+  title     Json?
+  content   Json?
+  mediaUrl  Json?
+  order     Int
+  pageId    String
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  page      Page            @relation(fields: [pageId], references: [id], onDelete: Cascade)
 }
 
 model Statistic {
@@ -155,7 +156,6 @@ model Permission {
   updatedAt   DateTime @updatedAt
   user        User     @relation(fields: [userId], references: [id])
 }
-
 
 model Blogs {
   id           String      @id @default(cuid())
@@ -245,8 +245,9 @@ enum PageSectionType {
   STUDENT_ACTIVITIES
   STUDENT_UNIONS
   FOR_EGYPT_GROUP
-  OUR_HISTORY
   CUSTOM
+  OUR_HISTORY
+  PRESIDENT_MESSAGE
 }
 
 enum Action {

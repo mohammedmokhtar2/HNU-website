@@ -3,12 +3,13 @@ import { db } from '@/lib/db';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { pageId: string } }
+  { params }: { params: Promise<{ pageId: string }> }
 ) {
+  const { pageId } = await params;
   try {
     const sections = await db.pageSection.findMany({
       where: {
-        pageId: params.pageId,
+        pageId: pageId,
       },
       include: {
         page: true,

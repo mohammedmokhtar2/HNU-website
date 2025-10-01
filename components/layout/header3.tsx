@@ -43,6 +43,7 @@ function Header3({ navigationItems = [] }: HeaderData) {
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const isHelwanPlusTeam = pathname.includes('/helwan-plus-team');
 
   // menuBuilder?: {
   //   menuItems: {
@@ -157,6 +158,12 @@ function Header3({ navigationItems = [] }: HeaderData) {
     return null;
   }
 
+  const headerLogo = isHelwanPlusTeam
+    ? '/helwanBlack.png'
+    : isScrolled
+      ? '/logo-hnu-web2.png'
+      : '/logossss.png';
+
   return (
     <>
       {/* Top Navbar */}
@@ -171,7 +178,7 @@ function Header3({ navigationItems = [] }: HeaderData) {
             <div className='flex-shrink-0'>
               <Link href={basePath} className='text-white font-bold text-xl'>
                 <Image
-                  src={isScrolled ? '/logo-hnu-web2.png' : '/logossss.png'}
+                  src={headerLogo}
                   alt='HNU Logo'
                   width={isMobile ? 190 : 220}
                   height={isMobile ? 190 : 220}
@@ -183,10 +190,7 @@ function Header3({ navigationItems = [] }: HeaderData) {
             {/* Right Controls */}
             <div className='flex items-center gap-2 flex-shrink-0 mr-4 sm:mr-8 ml-4 sm:ml-20'>
               {/* Switch Language */}
-              <Link
-                href={pathname}
-                locale={currentLocale === 'en' ? 'ar' : 'en'}
-              >
+              <Link href='/'>
                 <Button
                   variant={isScrolled ? 'default' : 'outline'}
                   size={isMobile ? 'sm' : 'lg'}
@@ -197,7 +201,7 @@ function Header3({ navigationItems = [] }: HeaderData) {
                 >
                   {currentLocale === 'en' ? (
                     <div className='flex items-center justify-center'>
-                      <span className='text-lg'>🇸🇦</span>
+                      <span className='text-lg'></span>
                     </div>
                   ) : (
                     <div className='flex items-center justify-center'>
