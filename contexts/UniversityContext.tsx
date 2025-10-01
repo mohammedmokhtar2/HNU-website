@@ -20,6 +20,8 @@ interface UniversityContextType {
   error: string | null;
   refetch: () => Promise<void>;
   isInitialLoad: boolean;
+  selectedUniversityId: string | null;
+  setSelectedUniversityId: (id: string | null) => void;
 }
 
 const UniversityContext = createContext<UniversityContextType | undefined>(
@@ -28,7 +30,7 @@ const UniversityContext = createContext<UniversityContextType | undefined>(
 
 interface UniversityProviderProps {
   children: ReactNode;
-  universityId?: string;
+  initialUniversityId?: string;
 }
 
 // Cache for storing fetched data
@@ -40,7 +42,7 @@ const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 export function UniversityProvider({
   children,
-  universityId,
+  initialUniversityId,
 }: UniversityProviderProps) {
   const [university, setUniversity] = useState<University | null>(null);
   const [universities, setUniversities] = useState<University[]>([]);
@@ -48,6 +50,9 @@ export function UniversityProvider({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [selectedUniversityId, setSelectedUniversityId] = useState<string | null>(
+    initialUniversityId || null
+  );
 
   const fetchUniversityData = useCallback(
     async (forceRefresh = false) => {
@@ -57,19 +62,30 @@ export function UniversityProvider({
 
         // Always fetch all universities first
         const universitiesResponse = await fetch('/api/university');
-        if (universitiesResponse.ok) {
-          const universitiesData = await universitiesResponse.json();
-          setUniversities(universitiesData);
+        if (!universitiesResponse.ok) {
+          throw new Error('Failed to fetch universities list');
         }
 
-        if (!universityId) {
+        const universitiesData = await universitiesResponse.json();
+        setUniversities(universitiesData);
+
+        // Determine which university to fetch data for
+        let currentUniversityId = selectedUniversityId;
+
+        // If no university is selected, select the first one
+        if (!currentUniversityId && universitiesData.length > 0) {
+          currentUniversityId = universitiesData[0].id;
+          setSelectedUniversityId(currentUniversityId);
+        }
+
+        if (!currentUniversityId) {
           setLoading(false);
           setIsInitialLoad(false);
           return;
         }
 
         // Check cache first
-        const cacheKey = `university-${universityId}`;
+        const cacheKey = `university-${currentUniversityId}`;
         const cachedData = dataCache.get(cacheKey);
         const now = Date.now();
 
@@ -87,8 +103,8 @@ export function UniversityProvider({
 
         // Use Promise.all for parallel requests
         const [uniResponse, sectionsResponse] = await Promise.all([
-          fetch(`/api/university/${universityId}`),
-          fetch(`/api/sections?universityId=${universityId}`),
+          fetch(`/api/university/${currentUniversityId}`),
+          fetch(`/api/sections?universityId=${currentUniversityId}`),
         ]);
 
         if (!uniResponse.ok) {
@@ -107,6 +123,12 @@ export function UniversityProvider({
         setUniversity(uniData);
         setSections(sectionsData);
 
+        console.log('✅ Successfully loaded:', {
+          university: uniData.name,
+          sectionsCount: sectionsData.length,
+          sections: sectionsData.map((s: any) => ({ id: s.id, type: s.type, order: s.order }))
+        });
+
         // Cache the data
         dataCache.set(cacheKey, {
           university: uniData,
@@ -121,9 +143,10 @@ export function UniversityProvider({
         setIsInitialLoad(false);
       }
     },
-    [universityId]
+    [selectedUniversityId]
   );
 
+  // Initial fetch and refetch when selectedUniversityId changes
   useEffect(() => {
     fetchUniversityData();
   }, [fetchUniversityData]);
@@ -141,8 +164,10 @@ export function UniversityProvider({
       error,
       refetch,
       isInitialLoad,
+      selectedUniversityId,
+      setSelectedUniversityId,
     }),
-    [university, universities, sections, loading, error, refetch, isInitialLoad]
+    [university, universities, sections, loading, error, refetch, isInitialLoad, selectedUniversityId]
   );
 
   return (

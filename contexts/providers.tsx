@@ -12,13 +12,11 @@ import { ClerkProviderWrapper } from '@/components/providers/ClerkProvider';
 
 interface ProvidersProps {
   children: ReactNode;
-  universityId?: string;
   collegeId?: string;
 }
 
 export function Providers({
   children,
-  universityId,
   collegeId,
 }: ProvidersProps) {
   const [queryClient] = useState(
@@ -46,10 +44,9 @@ export function Providers({
           enableSystem
           disableTransitionOnChange
         >
-          <UniversityProvider universityId={universityId}>
+          <UniversityProvider>
             <CollegeProvider>
               <SectionProvider
-                universityId={universityId}
                 collegeId={collegeId}
               >
                 <EventConfigProvider>

@@ -228,7 +228,6 @@ export function PageRenderer({ pageSlug }: PageRendererProps) {
           </div>
         );
 
-
       case PageSectionType.STUDENT_ACTIVITIES:
         // return <StudentActivitiesSection {...sectionProps} />;
         return (

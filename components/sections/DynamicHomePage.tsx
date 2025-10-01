@@ -4,7 +4,6 @@ import React, { useMemo, Suspense } from 'react';
 import { SectionRenderer } from './SectionRenderer';
 import { useLocale } from 'next-intl';
 import { useUniversity } from '@/contexts/UniversityContext';
-import { CollegeProvider } from '@/contexts/CollegeContext';
 import { PageSkeleton, SectionSkeleton } from '@/components/ui/skeleton';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
 import { AlertCircle, RefreshCw } from 'lucide-react';
@@ -85,7 +84,12 @@ export function DynamicHomePage({ universityId }: DynamicHomePageProps) {
 
   // Memoize sorted sections to prevent unnecessary re-sorting
   const sortedSections = useMemo(() => {
-    return [...sections].sort((a, b) => a.order - b.order);
+    const sorted = [...sections].sort((a, b) => a.order - b.order);
+    console.log('📋 DynamicHomePage sections:', {
+      total: sections.length,
+      sorted: sorted.map(s => ({ id: s.id, type: s.type, order: s.order }))
+    });
+    return sorted;
   }, [sections]);
 
   // Memoize additional sections to prevent unnecessary re-renders
@@ -156,6 +160,7 @@ export function DynamicHomePage({ universityId }: DynamicHomePageProps) {
             key={section.id}
             section={section}
             locale={locale}
+
           />
         ))}
       </Suspense>

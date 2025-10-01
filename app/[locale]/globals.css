@@ -13,6 +13,7 @@ html {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -165,6 +166,23 @@ html {
   animation: fade-in-up 0.8s ease-out forwards;
 }
 
+/* Animated Loading Component Styles */
+@keyframes fade-in-up-loading {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up-loading {
+  animation: fade-in-up-loading 0.7s ease-out forwards;
+}
+
 .animation-delay-200 {
   animation-delay: 200ms;
 }
@@ -190,16 +208,17 @@ html {
 }
 
 @theme inline {
-  --animate-cell-ripple: cell-ripple var(--duration, 200ms) ease-out none 1
-  var(--delay, 0ms);
+  --animate-cell-ripple: cell-ripple var(--duration, 200ms) ease-out none 1 var(--delay, 0ms);
 
   @keyframes cell-ripple {
     0% {
       opacity: 0.4;
     }
+
     50% {
       opacity: 0.8;
     }
+
     100% {
       opacity: 0.4;
     }

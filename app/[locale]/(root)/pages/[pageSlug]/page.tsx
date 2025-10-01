@@ -35,7 +35,5 @@ export default async function DynamicPage({ params }: DynamicPageProps) {
     return <HelwanPlusPage />;
   }
 
-
-
   return <PageRenderer pageSlug={pageSlug} />;
 }
