@@ -48,14 +48,14 @@ export function StudentUnionsSection({
   const socialButtons = content.contactUsSection.socialMediaButtons || [];
 
   // this is new form line 50 to 58
-  const teamTitle = getLocalizedContent(content.ourTeamSection.title);
-  const teamNames = content.ourTeamSection.name.map(n =>
-    getLocalizedContent(n)
-  );
-  const teamRoles = content.ourTeamSection.role.map(r =>
-    getLocalizedContent(r)
-  );
-  const teamPhotos = content.ourTeamSection.photo;
+  const teamTitle = getLocalizedContent(content.ourTeamSection?.title || '');
+  const teamNames = content.ourTeamSection?.name
+    ? content.ourTeamSection.name.map(n => getLocalizedContent(n))
+    : [];
+  const teamRoles = content.ourTeamSection?.role
+    ? content.ourTeamSection.role.map(r => getLocalizedContent(r))
+    : [];
+  const teamPhotos = content.ourTeamSection?.photo || [];
   // here
 
   // Define the socialIcons array to match the order of socialButtons

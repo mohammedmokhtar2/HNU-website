@@ -19,7 +19,9 @@ const LazyHeroSection = React.lazy(() =>
 );
 
 const LazyAboutSection = React.lazy(() =>
-  import('./uniSections/AboutSection').then(module => ({ default: module.AboutSection }))
+  import('./uniSections/AboutSection').then(module => ({
+    default: module.AboutSection,
+  }))
 );
 
 const LazyCollegeSection = React.lazy(() =>
