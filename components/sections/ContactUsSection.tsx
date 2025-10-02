@@ -25,6 +25,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 interface ContactUsSectionProps {
   sectionId: string;
@@ -165,23 +166,37 @@ This message was sent from the contact form on the website.
   };
 
   return (
-    <section className='py-16 bg-gray-50'>
-      <div className='container mx-auto px-4'>
+    <section className='relative py-16 bg-gray-50'>
+      {/* Background Image */}
+      <div className='absolute inset-0'>
+        <Image
+          src={content.imageUrl}
+          alt={getLocalizedText(content.title)}
+          layout='fill'
+          objectFit='cover'
+          priority
+        />
+      </div>
+
+      {/* Dark Overlay */}
+      <div className='absolute inset-0 bg-black/50' />
+
+      <div className='relative container mx-auto px-4'>
         <div className='text-center mb-12'>
-          <h2 className='text-3xl font-bold text-gray-900 mb-4'>
+          <h2 className='text-3xl font-bold text-white mb-4'>
             {getLocalizedText(content.title)}
           </h2>
-          <p className='text-xl text-gray-600 mb-2'>
+          <p className='text-xl text-gray-200 mb-2'>
             {getLocalizedText(content.subtitle)}
           </p>
-          <p className='text-gray-500 max-w-2xl mx-auto'>
+          <p className='text-gray-300 max-w-2xl mx-auto'>
             {getLocalizedText(content.description)}
           </p>
         </div>
 
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto'>
           {/* Contact Form */}
-          <Card>
+          <Card className='bg-white/40 backdrop-blur-md shadow-lg text-black'>
             <CardHeader>
               <CardTitle className='flex items-center gap-2'>
                 <Mail className='w-5 h-5' />
@@ -191,7 +206,7 @@ This message was sent from the contact form on the website.
             <CardContent>
               <form onSubmit={handleSubmit} className='space-y-4'>
                 <div>
-                  <Label htmlFor='name'>
+                  <Label htmlFor='name' className='text-black'>
                     {getLocalizedText(content.nameLabel)}
                   </Label>
                   <Input
@@ -206,7 +221,7 @@ This message was sent from the contact form on the website.
                 </div>
 
                 <div>
-                  <Label htmlFor='email'>
+                  <Label htmlFor='email' className='text-black'>
                     {getLocalizedText(content.emailLabel)}
                   </Label>
                   <Input
@@ -221,7 +236,7 @@ This message was sent from the contact form on the website.
                 </div>
 
                 <div>
-                  <Label htmlFor='subject'>
+                  <Label htmlFor='subject' className='text-black'>
                     {getLocalizedText(content.subjectLabel)}
                   </Label>
                   <Input
@@ -236,7 +251,7 @@ This message was sent from the contact form on the website.
                 </div>
 
                 <div>
-                  <Label htmlFor='message'>
+                  <Label htmlFor='message' className='text-black'>
                     {getLocalizedText(content.messageLabel)}
                   </Label>
                   <Textarea
@@ -268,17 +283,6 @@ This message was sent from the contact form on the website.
                   </Alert>
                 )}
 
-                {rateLimitInfo && (
-                  <Alert className='border-yellow-200 bg-yellow-50'>
-                    <AlertCircle className='h-4 w-4 text-yellow-600' />
-                    <AlertDescription className='text-yellow-800'>
-                      {rateLimitInfo.remaining === 0
-                        ? `Rate limit exceeded. Please try again ${rateLimitInfo.resetTime ? `in ${Math.ceil((rateLimitInfo.resetTime - Date.now()) / 60000)} minutes` : 'later'}.`
-                        : `${rateLimitInfo.remaining} submissions remaining.`}
-                    </AlertDescription>
-                  </Alert>
-                )}
-
                 <Button
                   type='submit'
                   disabled={isSubmitting || rateLimitInfo?.remaining === 0}
@@ -302,19 +306,21 @@ This message was sent from the contact form on the website.
 
           {/* Contact Information */}
           {content.showContactInfo && content.contactInfo && (
-            <Card>
+            <Card className='bg-white/40 backdrop-blur shadow-lg text-black'>
               <CardHeader>
-                <CardTitle>{getLocalizedText(content.title)}</CardTitle>
+                <CardTitle className='text-black'>
+                  {getLocalizedText(content.title)}
+                </CardTitle>
               </CardHeader>
               <CardContent className='space-y-6'>
                 {content.contactInfo.phone && (
                   <div className='flex items-start gap-3'>
-                    <Phone className='w-5 h-5 text-blue-600 mt-1' />
+                    <Phone className='w-5 h-5 text-black mt-1' />
                     <div>
-                      <h3 className='font-semibold text-gray-900 mb-1'>
+                      <h3 className='font-semibold text-black mb-1'>
                         {locale === 'ar' ? 'الهاتف' : 'Phone'}
                       </h3>
-                      <p className='text-gray-600'>
+                      <p className='text-black'>
                         {getLocalizedText(content.contactInfo.phone)}
                       </p>
                     </div>
@@ -323,12 +329,12 @@ This message was sent from the contact form on the website.
 
                 {content.contactInfo.email && (
                   <div className='flex items-start gap-3'>
-                    <Mail className='w-5 h-5 text-blue-600 mt-1' />
+                    <Mail className='w-5 h-5 text-black mt-1' />
                     <div>
-                      <h3 className='font-semibold text-gray-900 mb-1'>
+                      <h3 className='font-semibold text-black mb-1'>
                         {locale === 'ar' ? 'البريد الإلكتروني' : 'Email'}
                       </h3>
-                      <p className='text-gray-600'>
+                      <p className='text-black'>
                         {getLocalizedText(content.contactInfo.email)}
                       </p>
                     </div>
@@ -337,12 +343,12 @@ This message was sent from the contact form on the website.
 
                 {content.contactInfo.address && (
                   <div className='flex items-start gap-3'>
-                    <MapPin className='w-5 h-5 text-blue-600 mt-1' />
+                    <MapPin className='w-5 h-5 text-black mt-1' />
                     <div>
-                      <h3 className='font-semibold text-gray-900 mb-1'>
+                      <h3 className='font-semibold text-black mb-1'>
                         {locale === 'ar' ? 'العنوان' : 'Address'}
                       </h3>
-                      <p className='text-gray-600'>
+                      <p className='text-black'>
                         {getLocalizedText(content.contactInfo.address)}
                       </p>
                     </div>

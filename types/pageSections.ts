@@ -107,9 +107,11 @@ export interface StudentUnionsContent {
 
   ourTeamSection: {
     title: BaseContent;
-    name: BaseContent[];
-    role: BaseContent[];
-    photo: string[];
+    members: {
+      name: BaseContent;
+      role: BaseContent;
+      photo: string;
+    }[];
   };
 }
 
@@ -143,9 +145,11 @@ export interface ForEgyptGroupContent {
 
   ourTeamSection: {
     title: BaseContent;
-    name: BaseContent[];
-    role: BaseContent[];
-    photo: string[];
+    members: {
+      name: BaseContent;
+      role: BaseContent;
+      photo: string;
+    }[];
   };
 }
 

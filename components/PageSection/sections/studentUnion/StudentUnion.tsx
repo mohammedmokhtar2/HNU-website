@@ -28,35 +28,49 @@ export function StudentUnionsSection({
     );
   }
 
-  const heroTitle = getLocalizedContent(content.heroSection.title);
-  const heroLogo = content.heroSection.logo;
-  const heroBg = content.heroSection.bgImageUrl;
+  // === HERO SECTION ===
+  const heroTitle = getLocalizedContent(content?.heroSection?.title);
+  const heroLogo = content?.heroSection?.logo || '';
+  const heroBg = content?.heroSection?.bgImageUrl || '';
 
-  const aboutTitle = getLocalizedContent(content.aboutSection.title);
-  const aboutImage = content.aboutSection.imageUrl;
+  // === ABOUT SECTION ===
+  const aboutTitle = getLocalizedContent(content?.aboutSection?.title);
+  const aboutImage = content?.aboutSection?.imageUrl || '';
   const aboutDescription = getLocalizedContent(
-    content.aboutSection.description
+    content?.aboutSection?.description
   );
 
-  const missionTitle = getLocalizedContent(content.ourMissionSection.title);
+  // === MISSION SECTION ===
+  const missionTitle = getLocalizedContent(content?.ourMissionSection?.title);
   const missionDescription = getLocalizedContent(
-    content.ourMissionSection.description
+    content?.ourMissionSection?.description
   );
-  const missionImage = content.ourMissionSection.imageUrl;
+  const missionImage = content?.ourMissionSection?.imageUrl || '';
 
-  const contactTitle = getLocalizedContent(content.contactUsSection.title);
-  const socialButtons = content.contactUsSection.socialMediaButtons || [];
+  // === CONTACT SECTION ===
+  const contactTitle = getLocalizedContent(content?.contactUsSection?.title);
+  const socialButtons = content?.contactUsSection?.socialMediaButtons || [];
 
-  // this is new form line 50 to 58
-  const teamTitle = getLocalizedContent(content.ourTeamSection?.title || '');
-  const teamNames = content.ourTeamSection?.name
-    ? content.ourTeamSection.name.map(n => getLocalizedContent(n))
-    : [];
-  const teamRoles = content.ourTeamSection?.role
-    ? content.ourTeamSection.role.map(r => getLocalizedContent(r))
-    : [];
-  const teamPhotos = content.ourTeamSection?.photo || [];
-  // here
+  //  ourTeamSection: {
+  //   title: BaseContent;
+  //   name: BaseContent[];
+  //   role: BaseContent[];
+  //   photo: string[];
+  // };
+
+  // === OURTEAM SECTION ===
+  const teamTitle = getLocalizedContent(content?.ourTeamSection?.title || '');
+  const teamMembers = content?.ourTeamSection?.members || [];
+
+  const teamData = teamMembers.map((member: any) => ({
+    name: getLocalizedContent(member?.name || ''),
+    role: getLocalizedContent(member?.role || ''),
+    photo: member?.photo || '',
+  }));
+
+  console.log('Team Title:', teamTitle);
+  console.log('Team Members:', teamMembers);
+  console.log('Team Data:', teamData);
 
   // Define the socialIcons array to match the order of socialButtons
   const socialIcons = [FaFacebookF, FaInstagram, FaTiktok];
@@ -66,16 +80,18 @@ export function StudentUnionsSection({
 
   return (
     <>
-      {/* === SECTION 1: HERO (Full viewport height) === */}
+      {/* === SECTION 1: HERO === */}
       <section className='relative min-h-screen w-full flex items-center justify-center text-center'>
         <div className='absolute inset-0 overflow-hidden'>
-          <Image
-            src={heroBg}
-            alt='Hero Background'
-            fill
-            className='object-cover'
-            priority
-          />
+          {heroBg && (
+            <Image
+              src={heroBg}
+              alt='Hero Background'
+              fill
+              className='object-cover'
+              priority
+            />
+          )}
           <div className='absolute inset-0 bg-[#02397c] opacity-70'></div>
         </div>
         <div className='relative z-10 space-y-6 text-white max-w-4xl px-6'>
@@ -97,12 +113,12 @@ export function StudentUnionsSection({
         </div>
       </section>
 
-      {/* === SECTION 2: ABOUT (Now full height + centered) === */}
+      {/* === SECTION 2: ABOUT === */}
       <section
-        className='min-h-screen w-full flex flex-col lg:flex-row bg-gradient-to-r from-[#ffffff] to-[#ffffff] text-black  '
+        className='min-h-screen w-full flex flex-col lg:flex-row bg-gradient-to-r from-[#ffffff] to-[#ffffff] text-black'
         dir={locale === 'ar' ? 'rtl' : 'ltr'}
       >
-        {/* Left: Text Content */}
+        {/* Left: Text */}
         <div className='w-full lg:w-1/2 flex flex-col justify-center px-6 lg:px-16 py-12 lg:py-0'>
           <div className='max-w-xl space-y-5'>
             {aboutTitle && (
@@ -117,8 +133,7 @@ export function StudentUnionsSection({
             )}
           </div>
         </div>
-
-        {/* Right: Full-Height Image */}
+        {/* Right: Image */}
         {aboutImage && (
           <div className='w-full lg:w-1/2 relative min-h-[400px] lg:min-h-screen'>
             <Image
@@ -131,7 +146,7 @@ export function StudentUnionsSection({
         )}
       </section>
 
-      {/* === SECTION 3: OUR MISSION (Full height, layout preserved) === */}
+      {/* === SECTION 3: OUR MISSION === */}
       <section className='min-h-screen w-full flex items-center justify-center px-4 md:px-8'>
         <div
           className={`relative max-w-[1400px] w-full ${
@@ -140,49 +155,44 @@ export function StudentUnionsSection({
               : 'flex flex-row justify-center items-center gap-8'
           }`}
         >
-          <motion.div
-            className={`${
-              isMobile
-                ? 'w-full h-[400px] relative'
-                : `w-[1000px] h-[500px] rounded-xl overflow-hidden shadow-xl relative z-0 ${
-                    locale === 'ar' ? 'mr-90' : 'ml-90'
-                  }`
-            }`}
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{
-              opacity: 1,
-              x: isMobile ? 0 : locale === 'ar' ? -200 : 200,
-            }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <Image
-              src={missionImage}
-              alt='Our Mission'
-              width={700}
-              height={500}
-              className={`w-full h-full object-cover rounded-xl ${
-                isMobile ? 'filter blur-[2px]' : ''
+          {missionImage && (
+            <motion.div
+              className={`${
+                isMobile
+                  ? 'w-full h-[400px] relative'
+                  : `w-[1000px] h-[500px] rounded-xl overflow-hidden shadow-xl relative z-0 ${
+                      locale === 'ar' ? 'mr-90' : 'ml-90'
+                    }`
               }`}
-            />
-
-            {isMobile && (
-              <div className='absolute inset-0 bg-gradient-to-r from-[#063574]/80 to-[#035683]/80 flex flex-col justify-center items-center p-6 rounded-xl'>
-                <h3 className='text-3xl font-bold text-white mb-4 text-center'>
-                  {missionTitle}
-                </h3>
-                <p className='text-md text-white/90 mb-6 leading-relaxed text-center'>
-                  {missionDescription}
-                </p>
-                <a
-                  href='#'
-                  className='bg-gradient-to-r from-[#077599] to-[#01778f] text-white font-semibold px-6 py-2 rounded shadow-md hover:scale-105 transition-transform duration-300'
-                >
-                  {locale === 'ar' ? 'المزيد' : 'Learn More'}
-                </a>
-              </div>
-            )}
-          </motion.div>
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{
+                opacity: 1,
+                x: isMobile ? 0 : locale === 'ar' ? -200 : 200,
+              }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <Image
+                src={missionImage}
+                alt='Our Mission'
+                width={700}
+                height={500}
+                className={`w-full h-full object-cover rounded-xl ${
+                  isMobile ? 'filter blur-[2px]' : ''
+                }`}
+              />
+              {isMobile && (
+                <div className='absolute inset-0 bg-gradient-to-r from-[#063574]/80 to-[#035683]/80 flex flex-col justify-center items-center p-6 rounded-xl'>
+                  <h3 className='text-3xl font-bold text-white mb-4 text-center'>
+                    {missionTitle}
+                  </h3>
+                  <p className='text-md text-white/90 mb-6 leading-relaxed text-center'>
+                    {missionDescription}
+                  </p>
+                </div>
+              )}
+            </motion.div>
+          )}
 
           {!isMobile && (
             <motion.div
@@ -200,18 +210,72 @@ export function StudentUnionsSection({
               <p className='text-md text-white/90 mb-6 leading-relaxed break-words'>
                 {missionDescription}
               </p>
-              <a
-                href='#'
-                className='bg-gradient-to-r from-[#074199] to-[#396ca7] w-50 text-white font-semibold px-6 py-2 rounded shadow-md hover:scale-105 transition-transform duration-300'
-              >
-                {locale === 'ar' ? 'المزيد' : 'Learn More'}
-              </a>
             </motion.div>
           )}
         </div>
       </section>
 
-      {/* === SECTION 4: CONTACT US (Reduced height, blue background, title, buttons, learn more) === */}
+      {/* === SECTION 4: OUR TEAM === */}
+      <section
+        className='w-full py-16 px-6 lg:px-16 bg-gradient-to-b from-gray-50 to-white'
+        dir={locale === 'ar' ? 'rtl' : 'ltr'}
+      >
+        <div className='max-w-6xl mx-auto'>
+          {teamTitle && (
+            <h2 className='text-3xl md:text-4xl font-extrabold text-center mb-12 text-gray-800'>
+              {teamTitle}
+            </h2>
+          )}
+
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
+            {teamData.length > 0 ? (
+              teamData.map(
+                (
+                  member: { name: string; role: string; photo: string },
+                  index: number
+                ) => (
+                  <motion.div
+                    key={index}
+                    className='bg-white rounded-xl shadow-lg overflow-hidden flex flex-col items-center text-center p-6'
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                  >
+                    {member.photo ? (
+                      <div className='w-32 h-32 rounded-full overflow-hidden mb-4 border-4 border-blue-100'>
+                        <Image
+                          src={member.photo}
+                          alt={member.name}
+                          width={128}
+                          height={128}
+                          className='object-cover w-full h-full'
+                        />
+                      </div>
+                    ) : (
+                      <div className='w-32 h-32 rounded-full bg-gray-200 mb-4 flex items-center justify-center'>
+                        <span className='text-gray-500 text-lg'>?</span>
+                      </div>
+                    )}
+                    <h3 className='text-xl font-bold text-gray-800'>
+                      {member.name}
+                    </h3>
+                    <p className='text-blue-600 mt-1'>{member.role}</p>
+                  </motion.div>
+                )
+              )
+            ) : (
+              <p className='col-span-full text-center text-gray-500'>
+                {locale === 'ar'
+                  ? 'لم يتم إضافة أعضاء للفريق بعد'
+                  : 'No team members available yet'}
+              </p>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* === SECTION 5: CONTACT US === */}
       <section
         className='mt-16 min-h-[300px] w-full flex flex-col items-center justify-center text-white px-6 lg:px-24 bg-blue-900'
         dir={locale === 'ar' ? 'rtl' : 'ltr'}
@@ -240,14 +304,23 @@ export function StudentUnionsSection({
               );
             })}
           </div>
-          <a
-            href='#'
-            className='inline-block bg-gradient-to-r from-[#077599] to-[#01778f] text-white font-semibold px-6 py-2 rounded shadow-md hover:scale-105 transition-transform duration-300'
-          >
-            {locale === 'ar' ? 'المزيد' : 'Learn More'}
-          </a>
         </div>
       </section>
+
+      {/* === FOOTER === */}
+      <footer className='w-full bg-blue-900 text-white py-8 px-6 lg:px-24'>
+        <div className='max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6'>
+          <div className='text-sm text-gray-300'>
+            © {new Date().getFullYear()} HELWAN NATIONAL UNIVERSITY. All rights
+            reserved.
+          </div>
+          <div className='flex items-center gap-4'>
+            <span className='text-sm text-gray-300'>
+              Developed by Helwan National University
+            </span>
+          </div>
+        </div>
+      </footer>
     </>
   );
 }

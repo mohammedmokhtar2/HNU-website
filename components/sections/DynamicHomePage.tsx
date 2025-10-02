@@ -96,7 +96,7 @@ export function DynamicHomePage({ universityId }: DynamicHomePageProps) {
   const additionalSections = useMemo(
     () => (
       <>
-        <div className='relative py-20 overflow-hidden'>
+        <div>
           {/* <Suspense fallback={<SectionSkeleton />}>
             <LazyFactsAndNumber {...FactsAndNumbers} local={locale} />
           </Suspense> */}
