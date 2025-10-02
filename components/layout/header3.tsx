@@ -201,7 +201,7 @@ function Header3({ navigationItems = [] }: HeaderData) {
                 >
                   {currentLocale === 'en' ? (
                     <div className='flex items-center justify-center'>
-                      <span className='text-lg'></span>
+                      <span className='text-lg'>🇪🇬</span>
                     </div>
                   ) : (
                     <div className='flex items-center justify-center'>
@@ -384,7 +384,7 @@ function Header3({ navigationItems = [] }: HeaderData) {
                 }`}
               >
                 <span className='text-lg mr-2'>
-                  {currentLocale === 'en' ? '🇸🇦' : '🇬🇧'}
+                  {currentLocale === 'en' ? '🇪🇬' : '🇬🇧'}
                 </span>
                 <span className='text-sm'>
                   {currentLocale === 'en' ? 'العربية' : 'English'}

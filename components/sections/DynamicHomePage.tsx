@@ -32,9 +32,9 @@ const LazyOurMissionSection = React.lazy(() =>
 //   import('../home/FcatsAndNumber').then(module => ({ default: module.default }))
 // );
 
-const LazyTopNews = React.lazy(() =>
-  import('../home/TopNews').then(module => ({ default: module.default }))
-);
+// const LazyTopNews = React.lazy(() =>
+//   import('../home/TopNews').then(module => ({ default: module.default }))
+// );
 
 // Lazy load college section
 const LazyCollegeSection = React.lazy(() =>
@@ -100,9 +100,9 @@ export function DynamicHomePage({ universityId }: DynamicHomePageProps) {
           {/* <Suspense fallback={<SectionSkeleton />}>
             <LazyFactsAndNumber {...FactsAndNumbers} local={locale} />
           </Suspense> */}
-          <Suspense fallback={<SectionSkeleton />}>
+          {/* <Suspense fallback={<SectionSkeleton />}>
             <LazyTopNews {...topNewsData} local={locale} />
-          </Suspense>
+          </Suspense> */}
         </div>
       </>
     ),

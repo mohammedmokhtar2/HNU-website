@@ -78,16 +78,75 @@ export interface StudentActivitiesContent {
 }
 
 export interface StudentUnionsContent {
-  title: BaseContent;
-  description: BaseContent;
-  unions: any[];
+  heroSection: {
+    bgImageUrl: string;
+    logo: string;
+    title: BaseContent;
+  };
+
+  aboutSection: {
+    imageUrl: string;
+    title: BaseContent;
+    description: BaseContent;
+  };
+
+  ourMissionSection: {
+    imageUrl: string;
+    title: BaseContent;
+    description: BaseContent;
+  };
+
+  contactUsSection: {
+    title: BaseContent;
+    buttonUrl: string;
+    socialMediaButtons: {
+      text: BaseContent;
+      url: string;
+    }[];
+  };
+
+  ourTeamSection: {
+    title: BaseContent;
+    name: BaseContent[];
+    role: BaseContent[];
+    photo: string[];
+  };
 }
 
 export interface ForEgyptGroupContent {
-  title: BaseContent;
-  description: BaseContent;
-  members: any[];
-  activities: any[];
+  heroSection: {
+    bgImageUrl: string;
+    logo: string;
+    title: BaseContent;
+  };
+
+  aboutSection: {
+    imageUrl: string;
+    title: BaseContent;
+    description: BaseContent;
+  };
+
+  ourMissionSection: {
+    imageUrl: string;
+    title: BaseContent;
+    description: BaseContent;
+  };
+
+  contactUsSection: {
+    title: BaseContent;
+    buttonUrl: string;
+    socialMediaButtons: {
+      text: string;
+      url: string;
+    }[];
+  };
+
+  ourTeamSection: {
+    title: BaseContent;
+    name: BaseContent[];
+    role: BaseContent[];
+    photo: string[];
+  };
 }
 
 export interface OurHistoryContent {
@@ -112,6 +171,7 @@ export type PageSectionContent =
   | { type: PageSectionType.CONTACT; content: ContactContent }
   | { type: PageSectionType.BLOGS; content: BlogsContent }
   | { type: PageSectionType.PRESIDENT; content: PresidentContent }
+  | { type: PageSectionType.PRESIDENT_MESSAGE; content: PresidentContent }
   | {
       type: PageSectionType.STUDENT_ACTIVITIES;
       content: StudentActivitiesContent;

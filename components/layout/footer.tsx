@@ -53,7 +53,11 @@ function Footer({ local }: FooterProps) {
   }
 
   // if the routes starts with /admin, then show the admin header
-  if (pathname?.includes('/admin')) {
+  if (
+    pathname?.includes('/admin') ||
+    pathname?.includes('/pages/student-union') ||
+    pathname?.includes('pages/family-of-egypt')
+  ) {
     return null;
   }
 
@@ -280,7 +284,7 @@ function Footer({ local }: FooterProps) {
             )}
 
             {/* Visitor Counter */}
-            <div className='max-w-sm mx-auto mb-8'>
+            <div className='w-full mb-8 px-4'>
               <VisitorCountDisplay />
             </div>
           </div>

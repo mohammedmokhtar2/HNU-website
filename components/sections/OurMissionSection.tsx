@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useUniversity } from '@/contexts/UniversityContext';
 import { useLocale } from 'next-intl';
+import { useUniversity } from '@/contexts/UniversityContext';
 import { SectionType } from '@/types/enums';
 import { OurMissionContent } from '@/types/section';
 
@@ -71,8 +71,10 @@ export function OurMissionSection({ sectionId }: OurMissionSectionProps) {
 
   return (
     <section className='relative w-full flex justify-center items-center px-4 md:px-8 py-8'>
+      {/* Full width background gradient */}
+      <div className='absolute left-1/2 right-1/2 -translate-x-1/2 w-screen h-full z-0 bg-gradient-to-b from-[#023e8a]/80 via-[#023e8a]/60 to-[#023e8a]/80' />
       <div
-        className={`relative max-w-[1400px] w-full flex ${
+        className={`relative max-w-[1800px] w-full h-[600px] flex z-10 ${
           isMobile
             ? 'flex-col items-center gap-0'
             : 'flex-row justify-center items-center gap-8'
@@ -139,7 +141,7 @@ export function OurMissionSection({ sectionId }: OurMissionSectionProps) {
               {OurMissionData.description[locale as 'en' | 'ar']}
             </p>
             <Link
-              href='#'
+              href='pages/about-us'
               className='bg-gradient-to-r from-[#074199] to-[#396ca7] w-50 text-white font-semibold px-6 py-2 rounded shadow-md hover:scale-105 transition-transform duration-300'
             >
               {OurMissionData.buttonText[locale as 'en' | 'ar']}

@@ -3,9 +3,9 @@
 import { PageSection } from '@/types/pageSections';
 import type { HeroContentOne } from '@/types/pageSections';
 import Image from 'next/image';
-import Link from 'next/link';
 
 interface HeroOneSectionProps {
+  scrollTarget: React.RefObject<HTMLDivElement | null>;
   section: PageSection;
   locale: 'ar' | 'en';
   getLocalizedContent: (content: any) => string;
@@ -15,6 +15,7 @@ export function HeroOneSection({
   section,
   locale,
   getLocalizedContent,
+  scrollTarget,
 }: HeroOneSectionProps) {
   // Type-safe content extraction
   const content = section.content as HeroContentOne;
@@ -72,21 +73,28 @@ export function HeroOneSection({
         </div>
       </div>
 
+      {/* React Refs + scrollIntoView. */}
       {/* Scroll Indicator */}
-      <div className='absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10'>
-        <Link href='#about' className='animate-bounce block'>
-          <svg
-            className='w-6 h-6 text-white'
-            fill='none'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            strokeWidth='2'
-            viewBox='0 0 24 24'
-            stroke='currentColor'
-          >
-            <path d='M19 14l-7 7m0 0l-7-7m7 7V3'></path>
-          </svg>
-        </Link>
+      <div
+        onClick={() => {
+          scrollTarget.current?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+          });
+        }}
+        className='absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 cursor-pointer'
+      >
+        <svg
+          className='w-6 h-6 text-white'
+          fill='none'
+          strokeLinecap='round'
+          strokeLinejoin='round'
+          strokeWidth='2'
+          viewBox='0 0 24 24'
+          stroke='currentColor'
+        >
+          <path d='M19 14l-7 7m0 0l-7-7m7 7V3'></path>
+        </svg>
       </div>
     </section>
   );

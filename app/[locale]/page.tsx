@@ -52,11 +52,11 @@ const LazyCollegeSection = React.lazy(() =>
 //   }))
 // );
 
-const LazyTopNews = React.lazy(() =>
-  import('@/components/home/TopNews').then(module => ({
-    default: module.default,
-  }))
-);
+// const LazyTopNews = React.lazy(() =>
+//   import('@/components/home/TopNews').then(module => ({
+//     default: module.default,
+//   }))
+// );
 
 // Memoized static content component
 const StaticContent = React.memo(({ locale }: { locale: string }) => (
@@ -81,9 +81,9 @@ const StaticContent = React.memo(({ locale }: { locale: string }) => (
       {/* <Suspense fallback={<PageSkeleton />}>
           <LazyFactsAndNumber {...FactsAndNumbers} local={locale} />
         </Suspense> */}
-      <Suspense fallback={<PageSkeleton />}>
-        <LazyTopNews {...topNewsData} local={locale} />
-      </Suspense>
+      {/* <Suspense fallback={<PageSkeleton />}>
+          <LazyTopNews {...topNewsData} local={locale} />
+        </Suspense> */}
     </div>
   </>
 ));

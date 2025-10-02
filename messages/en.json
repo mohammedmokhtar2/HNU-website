@@ -57,6 +57,10 @@
     "rights_reserved": "All rights reserved.",
     "date": "2025",
     "Total_Visitors": "Total Visitors",
-    "Unique_Visitors": "Unique Visitors"
+    "Unique_Visitors": "Unique Visitors",
+    "Today": "Today",
+    "visitors": "visitors",
+    "Devices": "Devices",
+    "Top_Country": "Top Country"
   }
 }

@@ -94,17 +94,63 @@ export function getContentForPageSectionType(
 
     case PageSectionType.STUDENT_UNIONS:
       return {
-        title: { ar: '', en: '' },
-        description: { ar: '', en: '' },
-        unions: [],
+        heroSection: {
+          title: { ar: '', en: '' },
+          logo: '',
+          bgImageUrl: '',
+        },
+        aboutSection: {
+          title: { ar: '', en: '' },
+          imageUrl: '',
+          description: { ar: '', en: '' },
+        },
+        ourMissionSection: {
+          title: { ar: '', en: '' },
+          description: { ar: '', en: '' },
+          imageUrl: '',
+        },
+        contactUsSection: {
+          title: { ar: '', en: '' },
+          buttonUrl: '',
+          socialMediaButtons: [],
+        },
+
+        ourTeamSection: {
+          title: { ar: '', en: '' },
+          name: [],
+          role: [],
+          photo: [],
+        },
       } as StudentUnionsContent;
 
     case PageSectionType.FOR_EGYPT_GROUP:
       return {
-        title: { ar: '', en: '' },
-        description: { ar: '', en: '' },
-        members: [],
-        activities: [],
+        heroSection: {
+          title: { ar: '', en: '' },
+          logo: '',
+          bgImageUrl: '',
+        },
+        aboutSection: {
+          title: { ar: '', en: '' },
+          imageUrl: '',
+          description: { ar: '', en: '' },
+        },
+        ourMissionSection: {
+          title: { ar: '', en: '' },
+          description: { ar: '', en: '' },
+          imageUrl: '',
+        },
+        contactUsSection: {
+          title: { ar: '', en: '' },
+          buttonUrl: '',
+          socialMediaButtons: [],
+        },
+        ourTeamSection: {
+          title: { ar: '', en: '' },
+          name: [],
+          role: [],
+          photo: [],
+        },
       } as ForEgyptGroupContent;
 
     case PageSectionType.OUR_HISTORY:
