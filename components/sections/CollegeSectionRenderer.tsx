@@ -12,7 +12,7 @@ interface CollegeSectionRendererProps {
   section: Section;
   locale: string;
   collageId: string;
-  sections: Section[]
+  sections: Section[];
 }
 
 // Lazy load components for better performance
@@ -21,7 +21,9 @@ const LazyHeroSection = React.lazy(() =>
 );
 
 const LazyAboutSection = React.lazy(() =>
-  import('./collageSection/CollageaboutSection').then(module => ({ default: module.default }))
+  import('./collageSection/CollageaboutSection').then(module => ({
+    default: module.default,
+  }))
 );
 
 const LazyOurMissionSection = React.lazy(() =>
@@ -83,11 +85,15 @@ export const CollegeSectionRenderer = React.memo(
     const renderSection = useMemo(() => {
       switch (section.type) {
         case SectionType.HEADER:
-          return <LazyHeaderSection sectionId={section.id} sections={sections} />;
+          return (
+            <LazyHeaderSection sectionId={section.id} sections={sections} />
+          );
         case SectionType.HERO:
           return <LazyHeroSection section={section} locale={locale} />;
         case SectionType.ABOUT:
-          return <LazyAboutSection sectionId={section.id} sections={sections} />;
+          return (
+            <LazyAboutSection sectionId={section.id} sections={sections} />
+          );
         case SectionType.OUR_MISSION:
           return <LazyOurMissionSection sectionId={section.id} />;
         case SectionType.BLOGS:
@@ -122,7 +128,6 @@ export const CollegeSectionRenderer = React.memo(
           );
       }
     }, [section, locale, collageId, sections]);
-
 
     return (
       <div data-section-type={section.type} data-section-id={section.id}>

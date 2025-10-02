@@ -5,22 +5,22 @@ import Image from 'next/image';
 
 const plusTeamData = {
   persone_1: {
-    image: '/person.png',
-    name: 'Hashem mahmoud',
-    descirption: 'hello im hasdm and here ill write something avout me',
-    roleNum: 2, // is the head
-    roleName: 'head of helwan Plus Team',
-  },
-  persone_3: {
-    image: '/person.png',
-    name: 'maged Ahmed',
+    image: 'https://qcrk6zwvxd.ufs.sh/f/YNynAnrvbHDNdbI3njpSTBfA67Q4Dj1yhaHre3MCgFwPExu5',
+    name: 'Hady hussien',
     descirption: 'hello im hasdm and here ill write something avout me',
     roleNum: 1, // is the head
     roleName: 'member of helwan plus team',
   },
   persone_2: {
-    image: '/person.png',
-    name: 'Ammar ahmed',
+    image: 'https://qcrk6zwvxd.ufs.sh/f/YNynAnrvbHDNcxFOKkNkbB9tm4zg5AKHqP1TonWUa2xeQXNs',
+    name: 'Hashem abrahim',
+    descirption: 'hello im hasdm and here ill write something avout me',
+    roleNum: 2, // is the head
+    roleName: 'head of helwan Plus Team',
+  },
+  persone_3: {
+    image: 'https://qcrk6zwvxd.ufs.sh/f/YNynAnrvbHDN17OqqmEjer6no5g4l87NBVcqC2HyaLWfkEms',
+    name: 'Ammar Yasser',
     descirption: 'hello im hasdm and here ill write something avout me',
     roleNum: 1, // is the head
     roleName: 'member of helwan plus team',
@@ -109,7 +109,7 @@ const plusTeam = () => {
               </DirectionAwareHover>
 
               {/* Enhanced Role Badge */}
-              <div className='absolute -top-2 -right-2 z-10'>
+              {/* <div className='absolute -top-2 -right-2 z-10'>
                 <div
                   className={`px-4 py-2 rounded-full text-xs font-semibold shadow-lg backdrop-blur-sm border ${
                     member.roleNum === 2
@@ -119,7 +119,7 @@ const plusTeam = () => {
                 >
                   {member.roleNum === 2 ? 'Team Lead' : 'Member'}
                 </div>
-              </div>
+              </div> */}
             </div>
           ))}
         </div>
