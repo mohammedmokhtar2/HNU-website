@@ -330,19 +330,25 @@ function UsersPage() {
       {/* Header */}
       <div className='flex items-center justify-between'>
         <div>
-          <h1 className='text-3xl font-bold tracking-tight'>User Management</h1>
+          <h1 className='text-3xl font-bold tracking-tight text-white'>
+            User Management
+          </h1>
           <p className='text-muted-foreground'>
             Manage all users, their roles, and view their created collages
           </p>
         </div>
-        <Button onClick={() => refetch()} variant='outline'>
+        <Button
+          onClick={() => refetch()}
+          variant='outline'
+          className='bg-transparent hover:bg-gray-500/20 hover:text-white text-white'
+        >
           <RefreshCw className='w-4 h-4 mr-2' />
           Refresh
         </Button>
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card className='border-dashed border-white text-white'>
         <CardHeader>
           <CardTitle className='text-lg'>Filters</CardTitle>
         </CardHeader>
@@ -364,7 +370,9 @@ function UsersPage() {
               </div>
             </div>
             <div className='w-48'>
-              <Label htmlFor='role-filter'>Filter by Role</Label>
+              <Label htmlFor='role-filter' className='mb-2'>
+                Filter by Role
+              </Label>
               <Select value={roleFilter} onValueChange={setRoleFilter}>
                 <SelectTrigger>
                   <SelectValue placeholder='All roles' />
@@ -385,7 +393,7 @@ function UsersPage() {
       </Card>
 
       {/* Users Table */}
-      <Card>
+      <Card className='border-dashed border-white text-white'>
         <CardHeader>
           <CardTitle>Users ({filteredUsers.length})</CardTitle>
           <CardDescription>
@@ -395,18 +403,18 @@ function UsersPage() {
         <CardContent>
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>User</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Collages Created</TableHead>
-                <TableHead>Collage</TableHead>
-                <TableHead>Joined</TableHead>
-                <TableHead className='text-right'>Actions</TableHead>
+              <TableRow className='hover:bg-gray-200/10'>
+                <TableHead className='text-white'>User</TableHead>
+                <TableHead className='text-white'>Role</TableHead>
+                <TableHead className='text-white'>Collages Created</TableHead>
+                <TableHead className='text-white'>Collage</TableHead>
+                <TableHead className='text-white'>Joined</TableHead>
+                <TableHead className='text-right text-white'>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredUsers.map((user: UserWithCollages) => (
-                <TableRow key={user.id}>
+                <TableRow key={user.id} className='hover:bg-gray-200/10'>
                   <TableCell>
                     <div className='flex items-center gap-3'>
                       <Avatar className='h-8 w-8'>
@@ -560,11 +568,12 @@ function UsersPage() {
                     </div>
                   </TableCell>
                   <TableCell className='text-right'>
-                    <div className='flex items-center justify-end gap-2'>
+                    <div className='flex items-center justify-end gap-2 '>
                       <Button
                         variant='outline'
                         size='sm'
                         onClick={() => handleAssignToCollage(user)}
+                        className='bg-transparent hover:bg-gray-500/20 hover:text-white text-white'
                       >
                         <Building2 className='w-4 h-4 mr-1' />
                         Assign
@@ -574,6 +583,7 @@ function UsersPage() {
                         variant='outline'
                         size='sm'
                         onClick={() => handleEditUser(user)}
+                        className='bg-transparent hover:bg-gray-500/20 hover:text-white text-white'
                       >
                         <Edit className='w-4 h-4 mr-1' />
                         Edit

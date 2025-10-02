@@ -159,7 +159,7 @@ const BlogCard = ({
             <motion.div
               layoutId={`card-${blog.id}-${id}`}
               ref={cardRef}
-              className='w-full max-w-[500px] h-full md:h-fit md:max-h-[90%] flex flex-col bg-white dark:bg-neutral-900 sm:rounded-3xl overflow-hidden'
+              className='w-full max-w-[500px] h-full md:h-fit md:max-h-[90%] flex flex-col bg-white sm:rounded-3xl overflow-hidden'
             >
               <motion.div layoutId={`image-${blog.id}-${id}`}>
                 {blogImage ? (
@@ -182,13 +182,13 @@ const BlogCard = ({
                   <div className='flex-1'>
                     <motion.h3
                       layoutId={`title-${blog.id}-${id}`}
-                      className='font-bold text-neutral-700 dark:text-neutral-200 text-lg'
+                      className='font-bold text-neutral-700  text-lg'
                     >
                       {blogTitle}
                     </motion.h3>
                     <motion.p
                       layoutId={`description-${blog.id}-${id}`}
-                      className='text-neutral-600 dark:text-neutral-400 text-sm mt-1'
+                      className='text-neutral-600  text-sm mt-1'
                     >
                       {associatedEntity?.name || 'Blog Post'}
                     </motion.p>
@@ -209,7 +209,7 @@ const BlogCard = ({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className='text-neutral-600 text-xs md:text-sm lg:text-base h-40 md:h-fit pb-10 flex flex-col items-start gap-4 overflow-auto dark:text-neutral-400 [mask:linear-gradient(to_bottom,white,white,transparent)] [scrollbar-width:none] [-ms-overflow-style:none] [-webkit-overflow-scrolling:touch]'
+                    className='text-neutral-600 text-xs md:text-sm lg:text-base h-40 md:h-fit pb-10 flex flex-col items-start gap-4 overflow-auto [mask:linear-gradient(to_bottom,white,white,transparent)] [scrollbar-width:none] [-ms-overflow-style:none] [-webkit-overflow-scrolling:touch]'
                   >
                     <p className='whitespace-pre-wrap'>{blogContent}</p>
 
@@ -230,19 +230,17 @@ const BlogCard = ({
 
                     {/* Event Information */}
                     {blog.isEvent && blog.eventConfig && (
-                      <div className='bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg border border-purple-200 dark:border-purple-800'>
+                      <div className='bg-purple-50 p-3 rounded-lg border border-purple-200'>
                         <div className='flex items-center gap-2 mb-2'>
                           <Calendar className='h-4 w-4 text-purple-600' />
-                          <span className='font-semibold text-purple-800 dark:text-purple-200'>
+                          <span className='font-semibold text-purple-800'>
                             Event Details
                           </span>
                         </div>
                         <div className='space-y-1 text-sm'>
                           {blog.eventConfig.eventType && (
                             <div className='flex items-center gap-2'>
-                              <span className='text-purple-600 dark:text-purple-400'>
-                                Type:
-                              </span>
+                              <span className='text-purple-600'>Type:</span>
                               <span className='capitalize'>
                                 {blog.eventConfig.eventType}
                               </span>
@@ -250,17 +248,13 @@ const BlogCard = ({
                           )}
                           {blog.eventConfig.location && (
                             <div className='flex items-center gap-2'>
-                              <span className='text-purple-600 dark:text-purple-400'>
-                                Location:
-                              </span>
+                              <span className='text-purple-600'>Location:</span>
                               <span>{blog.eventConfig.location}</span>
                             </div>
                           )}
                           {blog.eventConfig.status && (
                             <div className='flex items-center gap-2'>
-                              <span className='text-purple-600 dark:text-purple-400'>
-                                Status:
-                              </span>
+                              <span className='text-purple-600 '>Status:</span>
                               <Badge
                                 variant='outline'
                                 className='text-xs capitalize'

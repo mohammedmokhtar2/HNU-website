@@ -562,7 +562,7 @@ function UniversityConfigPage() {
                 className='object-contain'
               />
             ) : (
-              <Building2 className='h-6 w-6' />
+              <Building2 className='h-6 w-6 text-white' />
             )}
           </div>
 
@@ -693,17 +693,32 @@ function UniversityConfigPage() {
           className='w-full'
         >
           {/* Tab Navigation */}
-          <TabsList className='grid w-full bg-transparent! grid-cols-6 mb-6'>
+          <TabsList className='grid w-full bg-transparent grid-cols-6 mb-6'>
             {configItems.map(item => {
               const Icon = item.icon;
+              const active = item.isActive;
               return (
                 <TabsTrigger
                   key={item.id}
                   value={item.id}
-                  className='flex items-center gap-2'
+                  className={cn(
+                    'flex items-center gap-2 px-4 py-2 rounded transition-all duration-200',
+                    active
+                      ? 'text-white bg-transparent border border-gray-400 rounded-lg font-semibold cursor-pointer'
+                      : 'text-gray-400 bg-transparent border-none font-normal cursor-pointer'
+                  )}
+                  style={
+                    active ? { borderWidth: 1, background: 'transparent' } : {}
+                  }
                 >
-                  <Icon className='h-4 w-4' />
-                  <span className='hidden sm:inline'>{item.title}</span>
+                  <Icon
+                    className={
+                      active ? 'h-4 w-4 text-white' : 'h-4 w-4 text-gray-400'
+                    }
+                  />
+                  <span className={active ? 'text-white' : 'text-gray-400'}>
+                    {item.title}
+                  </span>
                 </TabsTrigger>
               );
             })}
@@ -2274,7 +2289,7 @@ function UniversityConfigPage() {
             </div>
 
             {/* Management Section */}
-            <div className='space-y-6 col-span-1'>
+            <div className='space-y-6 col-span-1 w-55'>
               {/* Quick Actions */}
               <Card className='bg-gray-800 border-gray-700'>
                 <CardHeader>
@@ -2291,7 +2306,13 @@ function UniversityConfigPage() {
                     <div className='grid grid-cols-1 gap-3'>
                       <Button
                         variant='outline'
-                        className='justify-start'
+                        className='justify-start 
+                                text-white 
+                                border border-gray-400 
+                                bg-transparent
+                                hover:bg-gray-400/20 
+                              hover:text-white
+                              cursor-pointer'
                         onClick={() => setActiveConfig('sections')}
                       >
                         <FileText className='h-4 w-4 mr-2' />
@@ -2299,7 +2320,13 @@ function UniversityConfigPage() {
                       </Button>
                       <Button
                         variant='outline'
-                        className='justify-start'
+                        className='justify-start 
+                                text-white 
+                                border border-gray-400 
+                                bg-transparent
+                                hover:bg-gray-400/20 
+                              hover:text-white
+                              cursor-pointer'
                         onClick={() => setActiveConfig('pages')}
                       >
                         <FolderOpen className='h-4 w-4 mr-2' />
@@ -2307,7 +2334,13 @@ function UniversityConfigPage() {
                       </Button>
                       <Button
                         variant='outline'
-                        className='justify-start'
+                        className='justify-start 
+                                text-white 
+                                border border-gray-400 
+                                bg-transparent
+                                hover:bg-gray-400/20 
+                              hover:text-white
+                              cursor-pointer'
                         onClick={() => setActiveConfig('menu')}
                       >
                         <Menu className='h-4 w-4 mr-2' />
@@ -2315,7 +2348,14 @@ function UniversityConfigPage() {
                       </Button>
                       <Button
                         variant='outline'
-                        className='justify-start'
+                        className='justify-start
+                                w-47
+                                text-white 
+                                border border-gray-400 
+                                bg-transparent
+                                hover:bg-gray-400/20 
+                              hover:text-white
+                              cursor-pointer'
                         onClick={() => setActiveConfig('social')}
                       >
                         <Share2 className='h-4 w-4 mr-2' />
@@ -2323,7 +2363,13 @@ function UniversityConfigPage() {
                       </Button>
                       <Button
                         variant='outline'
-                        className='justify-start'
+                        className='justify-start 
+                                text-white 
+                                border border-gray-400 
+                                bg-transparent
+                                hover:bg-gray-400/20 
+                              hover:text-white
+                              cursor-pointer'
                         onClick={() => setActiveConfig('footer')}
                       >
                         <Palette className='h-4 w-4 mr-2' />

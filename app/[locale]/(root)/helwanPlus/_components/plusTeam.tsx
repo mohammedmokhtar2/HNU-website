@@ -5,21 +5,24 @@ import Image from 'next/image';
 
 const plusTeamData = {
   persone_1: {
-    image: 'https://qcrk6zwvxd.ufs.sh/f/YNynAnrvbHDNdbI3njpSTBfA67Q4Dj1yhaHre3MCgFwPExu5',
+    image:
+      'https://qcrk6zwvxd.ufs.sh/f/YNynAnrvbHDNdbI3njpSTBfA67Q4Dj1yhaHre3MCgFwPExu5',
     name: 'Hady hussien',
     descirption: 'hello im hasdm and here ill write something avout me',
     roleNum: 1, // is the head
     roleName: 'member of helwan plus team',
   },
   persone_2: {
-    image: 'https://qcrk6zwvxd.ufs.sh/f/YNynAnrvbHDNcxFOKkNkbB9tm4zg5AKHqP1TonWUa2xeQXNs',
+    image:
+      'https://qcrk6zwvxd.ufs.sh/f/YNynAnrvbHDNcxFOKkNkbB9tm4zg5AKHqP1TonWUa2xeQXNs',
     name: 'Hashem abrahim',
     descirption: 'hello im hasdm and here ill write something avout me',
     roleNum: 2, // is the head
     roleName: 'head of helwan Plus Team',
   },
   persone_3: {
-    image: 'https://qcrk6zwvxd.ufs.sh/f/YNynAnrvbHDN17OqqmEjer6no5g4l87NBVcqC2HyaLWfkEms',
+    image:
+      'https://qcrk6zwvxd.ufs.sh/f/YNynAnrvbHDN17OqqmEjer6no5g4l87NBVcqC2HyaLWfkEms',
     name: 'Ammar Yasser',
     descirption: 'hello im hasdm and here ill write something avout me',
     roleNum: 1, // is the head
@@ -83,7 +86,7 @@ const plusTeam = () => {
             Meet Our Team
             <div className='absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-[#354eab] to-[#ffce00] rounded-full'></div>
           </h2>
-          <p className='text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto'>
+          <p className='text-lg text-gray-600 max-w-2xl mx-auto'>
             Get to know the passionate individuals behind Helwan Plus
           </p>
         </div>

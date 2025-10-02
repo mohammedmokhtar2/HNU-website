@@ -151,9 +151,7 @@ export function BlogTable({
               <div
                 key={blog.id}
                 className={`border rounded-lg p-4 hover:bg-muted/50 transition-colors ${
-                  isEvent
-                    ? 'border-blue-200 bg-blue-50/30 dark:border-blue-800 dark:bg-blue-950/20'
-                    : 'border-border'
+                  isEvent ? 'border-blue-200 bg-blue-50/30' : 'border-border'
                 }`}
               >
                 <div className='flex items-start gap-4'>
@@ -186,7 +184,7 @@ export function BlogTable({
                           {isEvent && (
                             <Badge
                               variant='outline'
-                              className='text-xs bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700'
+                              className='text-xs bg-blue-100 text-blue-800 border-blue-300'
                             >
                               <Calendar className='h-3 w-3 mr-1' />
                               Event
@@ -214,12 +212,12 @@ export function BlogTable({
 
                         {/* Event Information */}
                         {isEvent && (
-                          <div className='mt-3 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-lg border border-blue-200 dark:border-blue-800 shadow-sm'>
+                          <div className='mt-3 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 shadow-sm'>
                             <div className='flex items-center gap-2 mb-2'>
-                              <div className='p-1 bg-blue-100 dark:bg-blue-900 rounded-full'>
-                                <Calendar className='h-3 w-3 text-blue-600 dark:text-blue-400' />
+                              <div className='p-1 bg-blue-100 rounded-full'>
+                                <Calendar className='h-3 w-3 text-blue-600' />
                               </div>
-                              <span className='text-sm font-semibold text-blue-900 dark:text-blue-100'>
+                              <span className='text-sm font-semibold text-blue-900'>
                                 Event Details
                               </span>
                               <Badge
@@ -236,8 +234,8 @@ export function BlogTable({
                             </div>
                             <div className='grid grid-cols-1 md:grid-cols-2 gap-2 text-sm'>
                               {blog.eventConfig?.eventDate && (
-                                <div className='flex items-center gap-2 text-blue-800 dark:text-blue-200'>
-                                  <Clock className='h-4 w-4 text-blue-600 dark:text-blue-400' />
+                                <div className='flex items-center gap-2 text-blue-800 '>
+                                  <Clock className='h-4 w-4 text-blue-600' />
                                   <span className='font-medium'>Date:</span>
                                   <span>
                                     {formatEventDate(
@@ -247,15 +245,15 @@ export function BlogTable({
                                 </div>
                               )}
                               {blog.eventConfig?.location && (
-                                <div className='flex items-center gap-2 text-blue-800 dark:text-blue-200'>
-                                  <MapPin className='h-4 w-4 text-blue-600 dark:text-blue-400' />
+                                <div className='flex items-center gap-2 text-blue-800 '>
+                                  <MapPin className='h-4 w-4 text-blue-600' />
                                   <span className='font-medium'>Location:</span>
                                   <span className='truncate'>
                                     {blog.eventConfig.location}
                                   </span>
                                 </div>
                               )}
-                              <div className='flex items-center gap-2 text-blue-800 dark:text-blue-200'>
+                              <div className='flex items-center gap-2 text-blue-800 '>
                                 <span className='font-medium'>Type:</span>
                                 <Badge variant='secondary' className='text-xs'>
                                   {getEventTypeDisplay(
@@ -265,8 +263,8 @@ export function BlogTable({
                                 </Badge>
                               </div>
                               {blog.eventConfig?.eventEndDate && (
-                                <div className='flex items-center gap-2 text-blue-800 dark:text-blue-200'>
-                                  <Clock className='h-4 w-4 text-blue-600 dark:text-blue-400' />
+                                <div className='flex items-center gap-2 text-blue-800'>
+                                  <Clock className='h-4 w-4 text-blue-600' />
                                   <span className='font-medium'>Ends:</span>
                                   <span>
                                     {formatEventDate(

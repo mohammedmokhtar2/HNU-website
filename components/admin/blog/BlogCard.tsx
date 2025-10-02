@@ -109,7 +109,7 @@ export function BlogCard({
         !blog.isPublished ? 'bg-gray-50/50 border-gray-200' : ''
       } ${
         isEvent
-          ? 'border-blue-200 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 dark:border-blue-800 dark:from-blue-950/20 dark:to-indigo-950/20'
+          ? 'border-blue-200 bg-gradient-to-br from-blue-50/50 to-indigo-50/50'
           : ''
       }`}
     >
@@ -123,7 +123,7 @@ export function BlogCard({
               {isEvent && (
                 <Badge
                   variant='outline'
-                  className='text-xs bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700 flex-shrink-0'
+                  className='text-xs bg-blue-100 text-blue-800 border-blue-300 flex-shrink-0'
                 >
                   <Calendar className='h-3 w-3 mr-1' />
                   Event
@@ -191,12 +191,12 @@ export function BlogCard({
 
           {/* Event Information */}
           {isEvent && (
-            <div className='p-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-lg border border-blue-200 dark:border-blue-800 shadow-sm'>
+            <div className='p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 shadow-sm'>
               <div className='flex items-center gap-2 mb-2'>
-                <div className='p-1 bg-blue-100 dark:bg-blue-900 rounded-full'>
-                  <Calendar className='h-3 w-3 text-blue-600 dark:text-blue-400' />
+                <div className='p-1 bg-blue-100 rounded-full'>
+                  <Calendar className='h-3 w-3 text-blue-600' />
                 </div>
-                <span className='text-sm font-semibold text-blue-900 dark:text-blue-100'>
+                <span className='text-sm font-semibold text-blue-900'>
                   Event Details
                 </span>
                 <Badge
@@ -211,8 +211,8 @@ export function BlogCard({
               </div>
               <div className='space-y-2 text-sm'>
                 {blog.eventConfig?.eventDate && (
-                  <div className='flex items-center gap-2 text-blue-800 dark:text-blue-200'>
-                    <Clock className='h-4 w-4 text-blue-600 dark:text-blue-400' />
+                  <div className='flex items-center gap-2 text-blue-800'>
+                    <Clock className='h-4 w-4 text-blue-600' />
                     <span className='font-medium'>Date:</span>
                     <span className='truncate'>
                       {formatEventDate(blog.eventConfig.eventDate)}
@@ -220,15 +220,15 @@ export function BlogCard({
                   </div>
                 )}
                 {blog.eventConfig?.location && (
-                  <div className='flex items-center gap-2 text-blue-800 dark:text-blue-200'>
-                    <MapPin className='h-4 w-4 text-blue-600 dark:text-blue-400' />
+                  <div className='flex items-center gap-2 text-blue-800'>
+                    <MapPin className='h-4 w-4 text-blue-600' />
                     <span className='font-medium'>Location:</span>
                     <span className='truncate'>
                       {blog.eventConfig.location}
                     </span>
                   </div>
                 )}
-                <div className='flex items-center gap-2 text-blue-800 dark:text-blue-200'>
+                <div className='flex items-center gap-2 text-blue-800'>
                   <span className='font-medium'>Type:</span>
                   <Badge variant='secondary' className='text-xs'>
                     {getEventTypeDisplay(

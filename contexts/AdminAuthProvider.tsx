@@ -50,12 +50,10 @@ function AdminAuthProvider({
   // Show loading state while checking authentication
   if (!isLoaded || isChecking || loading) {
     return (
-      <div className='flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900'>
+      <div className='flex items-center justify-center min-h-screen bg-gray-50'>
         <div className='flex flex-col items-center space-y-4'>
           <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600'></div>
-          <p className='text-gray-600 dark:text-gray-400'>
-            Verifying access...
-          </p>
+          <p className='text-gray-600'>Verifying access...</p>
         </div>
       </div>
     );
@@ -66,11 +64,11 @@ function AdminAuthProvider({
     if (fallback) return <>{fallback}</>;
 
     return (
-      <div className='flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900'>
+      <div className='flex items-center justify-center min-h-screen bg-gray-50'>
         <div className='text-center space-y-4 p-8'>
-          <div className='w-16 h-16 mx-auto bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center'>
+          <div className='w-16 h-16 mx-auto bg-red-100 rounded-full flex items-center justify-center'>
             <svg
-              className='w-8 h-8 text-red-600 dark:text-red-400'
+              className='w-8 h-8 text-red-600'
               fill='none'
               stroke='currentColor'
               viewBox='0 0 24 24'
@@ -83,12 +81,10 @@ function AdminAuthProvider({
               />
             </svg>
           </div>
-          <h1 className='text-2xl font-bold text-gray-900 dark:text-white'>
+          <h1 className='text-2xl font-bold text-gray-900'>
             Authentication Required
           </h1>
-          <p className='text-gray-600 dark:text-gray-400'>
-            Please sign in to access this area.
-          </p>
+          <p className='text-gray-600'>Please sign in to access this area.</p>
           <button
             onClick={() => router.push('login')}
             className='px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
@@ -109,9 +105,9 @@ function AdminAuthProvider({
     return (
       <div className='flex items-center justify-center min-h-screen bg-gray-900'>
         <div className='text-center space-y-4 p-8 max-w-md'>
-          <div className='w-16 h-16 mx-auto bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center'>
+          <div className='w-16 h-16 mx-auto bg-red-100 rounded-full flex items-center justify-center'>
             <svg
-              className='w-8 h-8 text-red-600 dark:text-red-400'
+              className='w-8 h-8 text-red-600'
               fill='none'
               stroke='currentColor'
               viewBox='0 0 24 24'
@@ -124,17 +120,15 @@ function AdminAuthProvider({
               />
             </svg>
           </div>
-          <h1 className='text-2xl font-bold text-red-600 dark:text-red-400'>
-            Access Denied
-          </h1>
-          <p className='text-gray-600 dark:text-gray-400'>
+          <h1 className='text-2xl font-bold text-red-600 '>Access Denied</h1>
+          <p className='text-gray-600'>
             You dont have permission to access this admin area. Please contact
             your administrator if you believe this is an error.
           </p>
           <div className='flex gap-4 justify-center'>
             <button
               onClick={() => router.back()}
-              className='px-4 py-2 text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors'
+              className='px-4 py-2 text-gray-600  border border-gray-300  rounded-lg hover:bg-gray-50 transition-colors'
             >
               Go Back
             </button>

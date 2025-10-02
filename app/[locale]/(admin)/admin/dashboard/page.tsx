@@ -167,20 +167,20 @@ const ComprehensiveAnalyticsPage = () => {
     return (
       <div className='space-y-6'>
         <div className='flex items-center justify-between'>
-          <h1 className='text-3xl font-bold'>
+          <h1 className='text-3xl font-bold text-white'>
             Comprehensive Analytics Dashboard
           </h1>
-          <Skeleton className='h-10 w-20' />
+          <Skeleton className='h-10 w-20 bg-white' />
         </div>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
           {Array.from({ length: 4 }).map((_, i) => (
-            <Card key={i}>
+            <Card key={i} className='bg-transparent'>
               <CardHeader>
-                <Skeleton className='h-4 w-24' />
+                <Skeleton className='h-4 w-24 bg-white' />
               </CardHeader>
               <CardContent>
-                <Skeleton className='h-8 w-16 mb-2' />
-                <Skeleton className='h-3 w-20' />
+                <Skeleton className='h-8 w-16 mb-2 bg-white' />
+                <Skeleton className='h-3 w-20 bg-white' />
               </CardContent>
             </Card>
           ))}
@@ -193,19 +193,25 @@ const ComprehensiveAnalyticsPage = () => {
     return (
       <div className='space-y-6'>
         <div className='flex items-center justify-between'>
-          <h1 className='text-3xl font-bold'>
+          <h1 className='text-3xl font-bold text-white'>
             Comprehensive Analytics Dashboard
           </h1>
-          <Button onClick={fetchStats} variant='outline'>
-            <RefreshCw className='h-4 w-4 mr-2' />
+          <Button
+            onClick={fetchStats}
+            variant='outline'
+            className='text-white border-white'
+          >
+            <RefreshCw className='h-4 w-4 mr-2 text-white' />
             Retry
           </Button>
         </div>
-        <Card>
+        <Card className='bg-transparent'>
           <CardContent className='p-6'>
             <div className='text-center'>
-              <p className='text-destructive mb-4'>{error}</p>
-              <Button onClick={fetchStats}>Try Again</Button>
+              <p className=' mb-4 text-white'>{error}</p>
+              <Button onClick={fetchStats} className='text-white border-white'>
+                Try Again
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -216,12 +222,12 @@ const ComprehensiveAnalyticsPage = () => {
   if (!stats) {
     return (
       <div className='space-y-6'>
-        <h1 className='text-3xl font-bold'>
+        <h1 className='text-3xl font-bold text-white'>
           Comprehensive Analytics Dashboard
         </h1>
-        <Card>
+        <Card className='bg-transparent'>
           <CardContent className='p-6'>
-            <div className='text-center text-muted-foreground'>
+            <div className='text-center text-white'>
               No analytics data available
             </div>
           </CardContent>
@@ -617,42 +623,69 @@ const ComprehensiveAnalyticsPage = () => {
   return (
     <div className='space-y-6'>
       <div className='flex items-center justify-between'>
-        <h1 className='text-3xl font-bold'>
+        <h1 className='text-3xl font-bold text-white'>
           Comprehensive Analytics Dashboard
         </h1>
-        <Button onClick={fetchStats} variant='outline'>
-          <RefreshCw className='h-4 w-4 mr-2' />
+        <Button
+          onClick={fetchStats}
+          variant='ghost'
+          className='text-white border-white bg-transparent border-1 hover:text-white hover:bg-transparent cursor-pointer focus:bg-transparent active:bg-transparent'
+        >
+          <RefreshCw className='h-4 w-4 mr-2 text-white' />
           Refresh
         </Button>
       </div>
 
       {/* Overview Cards */}
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
-        <Card>
+      <div
+        className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'
+        style={{
+          border: '2px dashed white',
+          borderRadius: '16px',
+          padding: '16px',
+        }}
+      >
+        <Card
+          className='bg-transparent'
+          style={{
+            border: '2px dashed white',
+            borderRadius: '16px',
+            padding: '16px',
+          }}
+        >
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>
+            <CardTitle className='text-sm font-medium text-white'>
               Total Visitors
             </CardTitle>
-            <Users className='h-4 w-4 text-muted-foreground' />
+            <Users className='h-4 w-4 text-white' />
           </CardHeader>
           <CardContent>
-            <div className='text-2xl font-bold'>
+            <div className='text-2xl font-bold text-white'>
               {(stats.counter || 0).toLocaleString()}
             </div>
-            <p className='text-xs text-muted-foreground'>All time</p>
+            <p className='text-xs text-white'>All time</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card
+          className='bg-transparent'
+          style={{
+            border: '2px dashed white',
+            borderRadius: '16px',
+            padding: '16px',
+          }}
+        >
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>New Visitors</CardTitle>
-            <TrendingUp className='h-4 w-4 text-muted-foreground' />
+            <CardTitle className='text-sm font-medium text-white'>
+              New Visitors
+            </CardTitle>
+            <TrendingUp className='h-4 w-4 text-white' />
           </CardHeader>
           <CardContent>
-            <div className='text-2xl font-bold'>
+            <div className='text-2xl font-bold text-white'>
               {(stats.newVisitors || 0).toLocaleString()}
             </div>
-            <p className='text-xs text-muted-foreground'>
+            <p className='text-xs text-white'>
               {(stats.counter || 0) > 0
                 ? Math.round(
                     ((stats.newVisitors || 0) / (stats.counter || 1)) * 100
@@ -663,18 +696,25 @@ const ComprehensiveAnalyticsPage = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card
+          className='bg-transparent'
+          style={{
+            border: '2px dashed white',
+            borderRadius: '16px',
+            padding: '16px',
+          }}
+        >
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>
+            <CardTitle className='text-sm font-medium text-white'>
               Returning Visitors
             </CardTitle>
-            <RefreshCw className='h-4 w-4 text-muted-foreground' />
+            <RefreshCw className='h-4 w-4 text-white' />
           </CardHeader>
           <CardContent>
-            <div className='text-2xl font-bold'>
+            <div className='text-2xl font-bold text-white'>
               {(stats.returningVisitors || 0).toLocaleString()}
             </div>
-            <p className='text-xs text-muted-foreground'>
+            <p className='text-xs text-white'>
               {(stats.counter || 0) > 0
                 ? Math.round(
                     ((stats.returningVisitors || 0) / (stats.counter || 1)) *
@@ -686,16 +726,25 @@ const ComprehensiveAnalyticsPage = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card
+          className='bg-transparent'
+          style={{
+            border: '2px dashed white',
+            borderRadius: '16px',
+            padding: '16px',
+          }}
+        >
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-            <CardTitle className='text-sm font-medium'>Last Visit</CardTitle>
-            <Clock className='h-4 w-4 text-muted-foreground' />
+            <CardTitle className='text-sm font-medium text-white'>
+              Last Visit
+            </CardTitle>
+            <Clock className='h-4 w-4 text-white' />
           </CardHeader>
           <CardContent>
-            <div className='text-sm font-bold'>
+            <div className='text-sm font-bold text-white'>
               {new Date(stats.lastVisit || new Date()).toLocaleDateString()}
             </div>
-            <p className='text-xs text-muted-foreground'>
+            <p className='text-xs text-white'>
               {new Date(stats.lastVisit || new Date()).toLocaleTimeString()}
             </p>
           </CardContent>
@@ -704,17 +753,20 @@ const ComprehensiveAnalyticsPage = () => {
 
       {/* Visitor & Traffic Trends */}
       <div className='space-y-6'>
-        <h2 className='text-2xl font-bold flex items-center gap-2'>
-          <TrendingUp className='h-6 w-6' />
+        <h2 className='text-2xl font-bold flex items-center gap-2 text-white'>
+          <TrendingUp className='h-6 w-6 text-white' />
           Visitor & Traffic Trends
         </h2>
 
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
           {/* Daily Visitors Trend */}
-          <Card>
+          <Card
+            className='bg-transparent'
+            style={{ border: '2px dashed white', borderRadius: '16px' }}
+          >
             <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <Calendar className='h-5 w-5' />
+              <CardTitle className='flex items-center gap-2 text-white'>
+                <Calendar className='h-5 w-5 text-white' />
                 Daily Visitors Trend (Last 7 Days)
               </CardTitle>
             </CardHeader>
@@ -739,10 +791,13 @@ const ComprehensiveAnalyticsPage = () => {
           </Card>
 
           {/* Multi-Line Chart */}
-          <Card>
+          <Card
+            className='bg-transparent'
+            style={{ border: '2px dashed white', borderRadius: '16px' }}
+          >
             <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <BarChart3 className='h-5 w-5' />
+              <CardTitle className='flex items-center gap-2 text-white'>
+                <BarChart3 className='h-5 w-5 text-white' />
                 Visitors, Page Views & Sessions
               </CardTitle>
             </CardHeader>
@@ -769,10 +824,13 @@ const ComprehensiveAnalyticsPage = () => {
 
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
           {/* Stacked Area Chart */}
-          <Card>
+          <Card
+            className='bg-transparent'
+            style={{ border: '2px dashed white', borderRadius: '16px' }}
+          >
             <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <Activity className='h-5 w-5' />
+              <CardTitle className='flex items-center gap-2 text-white'>
+                <Activity className='h-5 w-5 text-white' />
                 New vs Returning Visitors Over Time
               </CardTitle>
             </CardHeader>
@@ -798,10 +856,13 @@ const ComprehensiveAnalyticsPage = () => {
           </Card>
 
           {/* Monthly Visitors */}
-          <Card>
+          <Card
+            className='bg-transparent'
+            style={{ border: '2px dashed white', borderRadius: '16px' }}
+          >
             <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <Calendar className='h-5 w-5' />
+              <CardTitle className='flex items-center gap-2 text-white'>
+                <Calendar className='h-5 w-5 text-white' />
                 Monthly Visitors (Last 6 Months)
               </CardTitle>
             </CardHeader>
@@ -827,10 +888,13 @@ const ComprehensiveAnalyticsPage = () => {
         </div>
 
         {/* Cumulative Growth */}
-        <Card>
+        <Card
+          className='bg-transparent'
+          style={{ border: '2px dashed white', borderRadius: '16px' }}
+        >
           <CardHeader>
-            <CardTitle className='flex items-center gap-2'>
-              <TrendingUp className='h-5 w-5' />
+            <CardTitle className='flex items-center gap-2 text-white'>
+              <TrendingUp className='h-5 w-5 text-white' />
               Cumulative Visitor Growth
             </CardTitle>
           </CardHeader>
@@ -857,15 +921,18 @@ const ComprehensiveAnalyticsPage = () => {
 
       {/* Time-Based Behavior */}
       <div className='space-y-6'>
-        <h2 className='text-2xl font-bold flex items-center gap-2'>
-          <Clock className='h-6 w-6' />
+        <h2 className='text-2xl font-bold flex items-center gap-2 text-white'>
+          <Clock className='h-6 w-6 text-white' />
           Time-Based Behavior
         </h2>
 
-        <Card>
+        <Card
+          className='bg-transparent'
+          style={{ border: '2px dashed white', borderRadius: '16px' }}
+        >
           <CardHeader>
-            <CardTitle className='flex items-center gap-2'>
-              <Clock className='h-5 w-5' />
+            <CardTitle className='flex items-center gap-2 text-white'>
+              <Clock className='h-5 w-5 text-white' />
               Hourly Traffic Distribution
             </CardTitle>
           </CardHeader>
@@ -892,17 +959,20 @@ const ComprehensiveAnalyticsPage = () => {
 
       {/* Devices & Browsers */}
       <div className='space-y-6'>
-        <h2 className='text-2xl font-bold flex items-center gap-2'>
-          <Monitor className='h-6 w-6' />
+        <h2 className='text-2xl font-bold flex items-center gap-2 text-white'>
+          <Monitor className='h-6 w-6 text-white' />
           Devices & Browsers
         </h2>
 
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
           {/* Device Distribution */}
-          <Card>
+          <Card
+            className='bg-transparent'
+            style={{ border: '2px dashed white', borderRadius: '16px' }}
+          >
             <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <Monitor className='h-5 w-5' />
+              <CardTitle className='flex items-center gap-2 text-white'>
+                <Monitor className='h-5 w-5 text-white' />
                 Device Distribution
               </CardTitle>
             </CardHeader>
@@ -914,9 +984,13 @@ const ComprehensiveAnalyticsPage = () => {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                      legend: { position: 'bottom' },
+                      legend: {
+                        position: 'bottom',
+                        labels: { color: 'white' },
+                      },
                       datalabels: {
                         display: true,
+                        color: 'white',
                         formatter: (value: number) => {
                           return `${value.toLocaleString()}`;
                         },
@@ -929,10 +1003,13 @@ const ComprehensiveAnalyticsPage = () => {
           </Card>
 
           {/* Browser Usage */}
-          <Card>
+          <Card
+            className='bg-transparent'
+            style={{ border: '2px dashed white', borderRadius: '16px' }}
+          >
             <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <Chrome className='h-5 w-5' />
+              <CardTitle className='flex items-center gap-2 text-white'>
+                <Chrome className='h-5 w-5 text-white' />
                 Browser Usage
               </CardTitle>
             </CardHeader>
@@ -949,7 +1026,8 @@ const ComprehensiveAnalyticsPage = () => {
                       datalabels: { display: false },
                     },
                     scales: {
-                      x: { beginAtZero: true },
+                      x: { beginAtZero: true, ticks: { color: 'white' } },
+                      y: { ticks: { color: 'white' } },
                     },
                   }}
                 />
@@ -991,17 +1069,20 @@ const ComprehensiveAnalyticsPage = () => {
 
       {/* Visitor Types */}
       <div className='space-y-6'>
-        <h2 className='text-2xl font-bold flex items-center gap-2'>
-          <Users className='h-6 w-6' />
+        <h2 className='text-2xl font-bold flex items-center gap-2 text-white'>
+          <Users className='h-6 w-6 text-white' />
           Visitor Types
         </h2>
 
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
           {/* New vs Returning Visitors */}
-          <Card>
+          <Card
+            className='bg-transparent'
+            style={{ border: '2px dashed white', borderRadius: '16px' }}
+          >
             <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <PieChart className='h-5 w-5' />
+              <CardTitle className='flex items-center gap-2 text-white'>
+                <PieChart className='h-5 w-5 text-white' />
                 New vs Returning Visitors
               </CardTitle>
             </CardHeader>
@@ -1013,9 +1094,13 @@ const ComprehensiveAnalyticsPage = () => {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                      legend: { position: 'bottom' },
+                      legend: {
+                        position: 'bottom',
+                        labels: { color: 'white' },
+                      },
                       datalabels: {
                         display: true,
+                        color: 'white',
                         formatter: (value: number) => {
                           return `${value.toLocaleString()}`;
                         },
@@ -1028,10 +1113,13 @@ const ComprehensiveAnalyticsPage = () => {
           </Card>
 
           {/* Daily New vs Returning Visitors */}
-          <Card>
+          <Card
+            className='bg-transparent'
+            style={{ border: '2px dashed white', borderRadius: '16px' }}
+          >
             <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <BarChart3 className='h-5 w-5' />
+              <CardTitle className='flex items-center gap-2 text-white'>
+                <BarChart3 className='h-5 w-5 text-white' />
                 Daily New vs Returning Visitors
               </CardTitle>
             </CardHeader>
@@ -1043,12 +1131,16 @@ const ComprehensiveAnalyticsPage = () => {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                      legend: { position: 'top' },
+                      legend: { position: 'top', labels: { color: 'white' } },
                       datalabels: { display: false },
                     },
                     scales: {
-                      y: { beginAtZero: true, stacked: true },
-                      x: { stacked: true },
+                      y: {
+                        beginAtZero: true,
+                        stacked: true,
+                        ticks: { color: 'white' },
+                      },
+                      x: { stacked: true, ticks: { color: 'white' } },
                     },
                   }}
                 />
@@ -1060,15 +1152,18 @@ const ComprehensiveAnalyticsPage = () => {
 
       {/* Countries */}
       <div className='space-y-6'>
-        <h2 className='text-2xl font-bold flex items-center gap-2'>
-          <Globe className='h-6 w-6' />
+        <h2 className='text-2xl font-bold flex items-center gap-2 text-white'>
+          <Globe className='h-6 w-6 text-white' />
           Geographic Distribution
         </h2>
 
-        <Card>
+        <Card
+          className='bg-transparent'
+          style={{ border: '2px dashed white', borderRadius: '16px' }}
+        >
           <CardHeader>
-            <CardTitle className='flex items-center gap-2'>
-              <MapPin className='h-5 w-5' />
+            <CardTitle className='flex items-center gap-2 text-white'>
+              <MapPin className='h-5 w-5 text-white' />
               Top 5 Countries by Visitors
             </CardTitle>
           </CardHeader>
@@ -1084,7 +1179,8 @@ const ComprehensiveAnalyticsPage = () => {
                     datalabels: { display: false },
                   },
                   scales: {
-                    y: { beginAtZero: true },
+                    y: { beginAtZero: true, ticks: { color: 'white' } },
+                    x: { ticks: { color: 'white' } },
                   },
                 }}
               />
@@ -1095,17 +1191,20 @@ const ComprehensiveAnalyticsPage = () => {
 
       {/* Engagement Ratios */}
       <div className='space-y-6'>
-        <h2 className='text-2xl font-bold flex items-center gap-2'>
-          <Eye className='h-6 w-6' />
+        <h2 className='text-2xl font-bold flex items-center gap-2 text-white'>
+          <Eye className='h-6 w-6 text-white' />
           Engagement Ratios
         </h2>
 
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
           {/* PageViews per Visitor */}
-          <Card>
+          <Card
+            className='bg-transparent'
+            style={{ border: '2px dashed white', borderRadius: '16px' }}
+          >
             <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <Eye className='h-5 w-5' />
+              <CardTitle className='flex items-center gap-2 text-white'>
+                <Eye className='h-5 w-5 text-white' />
                 Page Views & Sessions per Visitor
               </CardTitle>
             </CardHeader>
@@ -1117,11 +1216,12 @@ const ComprehensiveAnalyticsPage = () => {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                      legend: { position: 'top' },
+                      legend: { position: 'top', labels: { color: 'white' } },
                       datalabels: { display: false },
                     },
                     scales: {
-                      y: { beginAtZero: true },
+                      y: { beginAtZero: true, ticks: { color: 'white' } },
+                      x: { ticks: { color: 'white' } },
                     },
                   }}
                 />
@@ -1130,10 +1230,13 @@ const ComprehensiveAnalyticsPage = () => {
           </Card>
 
           {/* Bubble Chart */}
-          <Card>
+          <Card
+            className='bg-transparent'
+            style={{ border: '2px dashed white', borderRadius: '16px' }}
+          >
             <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <Activity className='h-5 w-5' />
+              <CardTitle className='flex items-center gap-2 text-white'>
+                <Activity className='h-5 w-5 text-white' />
                 Daily Activity Correlation
               </CardTitle>
             </CardHeader>
@@ -1150,12 +1253,22 @@ const ComprehensiveAnalyticsPage = () => {
                     },
                     scales: {
                       x: {
-                        title: { display: true, text: 'Visitors' },
+                        title: {
+                          display: true,
+                          text: 'Visitors',
+                          color: 'white',
+                        },
                         beginAtZero: true,
+                        ticks: { color: 'white' },
                       },
                       y: {
-                        title: { display: true, text: 'Sessions' },
+                        title: {
+                          display: true,
+                          text: 'Sessions',
+                          color: 'white',
+                        },
                         beginAtZero: true,
+                        ticks: { color: 'white' },
                       },
                     },
                   }}
@@ -1165,48 +1278,61 @@ const ComprehensiveAnalyticsPage = () => {
           </Card>
         </div>
         {/* Data Summary */}
-        <Card>
+        <Card
+          className='bg-transparent'
+          style={{ border: '2px dashed white', borderRadius: '16px' }}
+        >
           <CardHeader>
-            <CardTitle className='flex items-center gap-2'>
-              <Activity className='h-5 w-5' />
+            <CardTitle className='flex items-center gap-2 text-white'>
+              <Activity className='h-5 w-5 text-white' />
               Data Summary
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className='grid grid-cols-1 md:grid-cols-3 gap-4 text-sm'>
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-white'>
               <div className='space-y-2'>
-                <div className='font-medium text-muted-foreground'>
-                  Data Coverage
-                </div>
+                <div className='font-medium text-white'>Data Coverage</div>
                 <div className='space-y-1'>
                   <div className='flex justify-between'>
                     <span>Daily Records:</span>
-                    <Badge variant='outline'>
+                    <Badge
+                      variant='outline'
+                      className='text-white border-white'
+                    >
                       {Object.keys(stats.dailyStats || {}).length} days
                     </Badge>
                   </div>
                   <div className='flex justify-between'>
                     <span>Monthly Records:</span>
-                    <Badge variant='outline'>
+                    <Badge
+                      variant='outline'
+                      className='text-white border-white'
+                    >
                       {Object.keys(stats.monthlyStats || {}).length} months
                     </Badge>
                   </div>
                   <div className='flex justify-between'>
                     <span>Hourly Data Points:</span>
-                    <Badge variant='outline'>
+                    <Badge
+                      variant='outline'
+                      className='text-white border-white'
+                    >
                       {Object.keys(stats.hourlyStats || {}).length} hours
                     </Badge>
                   </div>
                 </div>
               </div>
               <div className='space-y-2'>
-                <div className='font-medium text-muted-foreground'>
+                <div className='font-medium text-white'>
                   Device & Browser Data
                 </div>
                 <div className='space-y-1'>
                   <div className='flex justify-between'>
                     <span>Device Types:</span>
-                    <Badge variant='outline'>
+                    <Badge
+                      variant='outline'
+                      className='text-white border-white'
+                    >
                       {
                         Object.values(stats.deviceStats || {}).filter(
                           v => v > 0
@@ -1217,26 +1343,33 @@ const ComprehensiveAnalyticsPage = () => {
                   </div>
                   <div className='flex justify-between'>
                     <span>Browser Types:</span>
-                    <Badge variant='outline'>
+                    <Badge
+                      variant='outline'
+                      className='text-white border-white'
+                    >
                       {Object.keys(stats.browserStats || {}).length} browsers
                     </Badge>
                   </div>
                   <div className='flex justify-between'>
                     <span>Countries:</span>
-                    <Badge variant='outline'>
+                    <Badge
+                      variant='outline'
+                      className='text-white border-white'
+                    >
                       {Object.keys(stats.countryStats || {}).length} countries
                     </Badge>
                   </div>
                 </div>
               </div>
               <div className='space-y-2'>
-                <div className='font-medium text-muted-foreground'>
-                  Data Freshness
-                </div>
+                <div className='font-medium text-white'>Data Freshness</div>
                 <div className='space-y-1'>
                   <div className='flex justify-between'>
                     <span>Last Updated:</span>
-                    <Badge variant='outline'>
+                    <Badge
+                      variant='outline'
+                      className='text-white border-white'
+                    >
                       {new Date(
                         stats.lastVisit || new Date()
                       ).toLocaleDateString()}
@@ -1244,7 +1377,10 @@ const ComprehensiveAnalyticsPage = () => {
                   </div>
                   <div className='flex justify-between'>
                     <span>Data Range:</span>
-                    <Badge variant='outline'>
+                    <Badge
+                      variant='outline'
+                      className='text-white border-white'
+                    >
                       {Object.keys(stats.dailyStats || {}).length > 0
                         ? `${Object.keys(stats.dailyStats).sort()[0]} to ${Object.keys(stats.dailyStats).sort().pop()}`
                         : 'No data'}
