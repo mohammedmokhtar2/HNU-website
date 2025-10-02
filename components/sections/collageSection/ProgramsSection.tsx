@@ -153,22 +153,18 @@ export function ProgramsSection({
       );
     });
   }
- 
-  
+
   return (
-    <main
-      className="px-4 md:px-8 lg:px-16 bg-gray-50 py-12 "
-      id="programs"
-    >
-      <section className="mb-16 bg-gray-50">
+    <main className='px-4 md:px-8 lg:px-16 bg-gray-50 py-12 ' id='programs'>
+      <section className='mb-16 bg-gray-50'>
         {/* Header */}
-        <div className="bg-[#023f8a] text-white p-8 rounded-lg shadow-md mb-8">
-          <h2 className="text-2xl font-bold text-center mb-2">
+        <div className='bg-[#023f8a] text-white p-8 rounded-lg shadow-md mb-8'>
+          <h2 className='text-2xl font-bold text-center mb-2'>
             {ProgramsSectionData.title?.[
               locale as keyof typeof ProgramsSectionData.title
             ] || (locale === 'ar' ? 'البرامج الأكاديمية' : 'Academic Programs')}
           </h2>
-          <p className="text-center text-blue-100">
+          <p className='text-center text-blue-100'>
             {ProgramsSectionData.description?.[
               locale as keyof typeof ProgramsSectionData.description
             ] ||
@@ -179,38 +175,39 @@ export function ProgramsSection({
         </div>
 
         {/* Search and Filter Section */}
-        <div className="mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
-          <div className="flex-1 max-w-md">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+        <div className='mb-8 flex flex-col md:flex-row gap-4 items-center justify-between'>
+          <div className='flex-1 max-w-md'>
+            <div className='relative'>
+              <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4' />
               <input
-                type="text"
-                placeholder={locale === 'ar' ? 'البحث في البرامج...' : 'Search programs...'}
+                type='text'
+                placeholder={
+                  locale === 'ar' ? 'البحث في البرامج...' : 'Search programs...'
+                }
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onChange={e => setSearchQuery(e.target.value)}
+                className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'
               />
             </div>
           </div>
 
-          <div className="flex gap-4 items-center">
-            <div className="flex border border-gray-300 rounded-lg overflow-hidden">
+          <div className='flex gap-4 items-center'>
+            <div className='flex border border-gray-300 rounded-lg overflow-hidden'>
               <button
                 onClick={() => setViewMode('grid')}
                 className={`px-3 py-2 ${viewMode === 'grid' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
               >
-                <Grid3X3 className="w-4 h-4" />
+                <Grid3X3 className='w-4 h-4' />
               </button>
               <button
                 onClick={() => setViewMode('list')}
                 className={`px-3 py-2 ${viewMode === 'list' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
               >
-                <List className="w-4 h-4" />
+                <List className='w-4 h-4' />
               </button>
             </div>
           </div>
         </div>
-
 
         {/* Programs Grid */}
         {programsLoading ? (
@@ -267,7 +264,6 @@ export function ProgramsSection({
             ))}
           </div>
         )}
-
       </section>
     </main>
   );
@@ -294,7 +290,6 @@ function ComprehensiveProgramCard({
     (program.collage?.name as any)?.en ||
     '';
 
-
   if (viewMode === 'list') {
     return (
       <Link href={`/colleges/${program.collage?.slug}/programs/${program.id}`}>
@@ -308,9 +303,9 @@ function ComprehensiveProgramCard({
                 width={400}
                 height={192}
                 className='w-full h-full object-cover transition-transform duration-500 hover:scale-110'
-                onError={(e) => {
+                onError={e => {
                   (e.target as HTMLImageElement).src =
-                    "https://placehold.co/400x300/6b7280/ffffff?text=No+Image";
+                    'https://placehold.co/400x300/6b7280/ffffff?text=No+Image';
                 }}
               />
               <div className='absolute top-4 right-4'>
@@ -335,7 +330,9 @@ function ComprehensiveProgramCard({
                 )}
 
                 {programDescription && (
-                  <p className='text-gray-600 mb-4 line-clamp-3'>{programDescription}</p>
+                  <p className='text-gray-600 mb-4 line-clamp-3'>
+                    {programDescription}
+                  </p>
                 )}
               </div>
 
@@ -357,7 +354,9 @@ function ComprehensiveProgramCard({
 
   // Grid view - Updated to match dummy design
   return (
-    <Link href={`/colleges/${program.collage?.slug || 'default'}/programs/${program.id}`}>
+    <Link
+      href={`/colleges/${program.collage?.slug || 'default'}/programs/${program.id}`}
+    >
       <div className='bg-white rounded-lg shadow-md min-h-[400px] max-h-[400px] hover:shadow-lg  overflow-hidden transform hover:scale-105 transition-transform duration-300 cursor-pointer flex flex-col'>
         {/* Image */}
         <div className='relative h-48 overflow-hidden'>
@@ -367,9 +366,9 @@ function ComprehensiveProgramCard({
             width={400}
             height={192}
             className='w-full h-full object-cover transition-transform duration-500 hover:scale-110'
-            onError={(e) => {
+            onError={e => {
               (e.target as HTMLImageElement).src =
-                "https://placehold.co/400x300/6b7280/ffffff?text=No+Image";
+                'https://placehold.co/400x300/6b7280/ffffff?text=No+Image';
             }}
           />
           <div className='absolute top-4 right-4'>
@@ -394,7 +393,9 @@ function ComprehensiveProgramCard({
             )}
 
             {programDescription && (
-              <p className='text-gray-600 mb-4 line-clamp-3'>{programDescription}</p>
+              <p className='text-gray-600 mb-4 line-clamp-3'>
+                {programDescription}
+              </p>
             )}
           </div>
 

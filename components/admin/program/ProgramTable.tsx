@@ -59,41 +59,43 @@ export function ProgramTable({
     <div className='overflow-x-auto'>
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Program Name</TableHead>
-            <TableHead>College</TableHead>
-            <TableHead>Degree</TableHead>
-            <TableHead>Duration</TableHead>
-            <TableHead>Credits</TableHead>
-            <TableHead>Files</TableHead>
-            <TableHead>Created</TableHead>
-            <TableHead className='w-[50px]'>Actions</TableHead>
+          <TableRow className='hover:bg-gray-200/10'>
+            <TableHead className='text-white'>Program Name</TableHead>
+            <TableHead className='text-white'>College</TableHead>
+            <TableHead className='text-white'>Degree</TableHead>
+            <TableHead className='text-white'>Duration</TableHead>
+            <TableHead className='text-white'>Credits</TableHead>
+            <TableHead className='text-white'>Files</TableHead>
+            <TableHead className='text-white'>Created</TableHead>
+            <TableHead className='text-white w-[50px]'>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {programs.map(program => (
-            <TableRow key={program.id} className='hover:bg-muted/50'>
+            <TableRow key={program.id} className='hover:bg-gray-200/10'>
               <TableCell>
                 <div className='space-y-1'>
-                  <div className='font-medium'>
+                  <div className='font-medium text-white'>
                     {program.name?.en || program.name?.ar || 'Untitled Program'}
                   </div>
                   {program.name?.ar && program.name?.en && (
-                    <div className='text-sm text-muted-foreground'>
+                    <div className='text-sm text-gray-400'>
                       {program.name.ar}
                     </div>
                   )}
                   {program.description && (
-                    <div className='text-sm text-muted-foreground line-clamp-2 max-w-xs'>
+                    <div className='text-sm text-gray-400 line-clamp-2 max-w-xs'>
                       {program.description.en || program.description.ar}
                     </div>
                   )}
                 </div>
               </TableCell>
-              <TableCell>
+
+              {/* College */}
+              <TableCell className='text-white'>
                 {program.collage ? (
                   <div className='flex items-center gap-2'>
-                    <Building2 className='h-4 w-4 text-muted-foreground' />
+                    <Building2 className='h-4 w-4 text-white' />
                     <span className='truncate max-w-[200px]'>
                       {(program.collage.name as any)?.en ||
                         (program.collage.name as any)?.ar ||
@@ -101,86 +103,93 @@ export function ProgramTable({
                     </span>
                   </div>
                 ) : (
-                  <span className='text-muted-foreground'>No college</span>
+                  <span className='text-gray-400'>No college</span>
                 )}
               </TableCell>
+
+              {/* Degree */}
               <TableCell>
                 {program.config?.degree ? (
-                  <Badge variant='secondary' className='text-xs'>
+                  <Badge className='text-xs text-white bg-gray-600 hover:bg-gray-700'>
                     <GraduationCap className='h-3 w-3 mr-1' />
                     {program.config.degree}
                   </Badge>
                 ) : (
-                  <span className='text-muted-foreground'>-</span>
+                  <span className='text-gray-400'>-</span>
                 )}
               </TableCell>
+
+              {/* Duration */}
               <TableCell>
                 {program.config?.duration ? (
-                  <Badge variant='outline' className='text-xs'>
+                  <Badge className='text-xs text-white bg-gray-600 hover:bg-gray-700'>
                     <Calendar className='h-3 w-3 mr-1' />
                     {program.config.duration}
                   </Badge>
                 ) : (
-                  <span className='text-muted-foreground'>-</span>
+                  <span className='text-gray-400'>-</span>
                 )}
               </TableCell>
-              <TableCell>
+
+              {/* Credits */}
+              <TableCell className='text-white'>
                 {program.config?.credits ? (
                   <span className='text-sm'>{program.config.credits}</span>
                 ) : (
-                  <span className='text-muted-foreground'>-</span>
+                  <span className='text-gray-400'>-</span>
                 )}
               </TableCell>
-              <TableCell>
+
+              {/* Files */}
+              <TableCell className='text-white'>
                 {program.config?.images?.length ||
                 program.config?.videos?.length ||
                 program.config?.pdfs?.length ? (
                   <div className='flex flex-wrap gap-1'>
                     {program.config?.images?.length && (
-                      <Badge
-                        variant='outline'
-                        className='text-xs flex items-center gap-1'
-                      >
+                      <Badge className='text-xs text-white bg-gray-600 hover:bg-gray-700 flex items-center gap-1'>
                         <ImageIcon className='h-3 w-3' />
                         {program.config.images.length}
                       </Badge>
                     )}
                     {program.config?.videos?.length && (
-                      <Badge
-                        variant='outline'
-                        className='text-xs flex items-center gap-1'
-                      >
+                      <Badge className='text-xs text-white bg-gray-600 hover:bg-gray-700 flex items-center gap-1'>
                         <Video className='h-3 w-3' />
                         {program.config.videos.length}
                       </Badge>
                     )}
                     {program.config?.pdfs?.length && (
-                      <Badge
-                        variant='outline'
-                        className='text-xs flex items-center gap-1'
-                      >
+                      <Badge className='text-xs text-white bg-gray-600 hover:bg-gray-700 flex items-center gap-1'>
                         <FileText className='h-3 w-3' />
                         {program.config.pdfs.length}
                       </Badge>
                     )}
                   </div>
                 ) : (
-                  <span className='text-muted-foreground'>-</span>
+                  <span className='text-gray-400'>-</span>
                 )}
               </TableCell>
-              <TableCell>
+
+              {/* Created Date */}
+              <TableCell className='text-white'>
                 <div className='text-sm'>
                   {new Date(program.createdAt).toLocaleDateString()}
                 </div>
-                <div className='text-xs text-muted-foreground'>
+                <div className='text-xs text-gray-400'>
                   {new Date(program.createdAt).toLocaleTimeString()}
                 </div>
               </TableCell>
+
+              {/* Actions */}
               <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant='ghost' size='sm'>
-                      <MoreHorizontal className='h-4 w-4' />
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      className='hover:bg-gray-500/10'
+                    >
+                      <MoreHorizontal className='h-4 w-4 text-white' />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align='end'>

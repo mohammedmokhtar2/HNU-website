@@ -57,11 +57,10 @@ export function DeleteCollegeDialog({
   if (!college) return null;
 
   const collegeTypeColors = {
-    TECHNICAL: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
-    MEDICAL:
-      'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-    ARTS: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
-    OTHER: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300',
+    TECHNICAL: 'bg-blue-100 text-blue-800',
+    MEDICAL: 'bg-green-100 text-green-800',
+    ARTS: 'bg-purple-100 text-purple-800',
+    OTHER: 'bg-gray-100 text-gray-800',
   };
 
   return (
@@ -71,8 +70,8 @@ export function DeleteCollegeDialog({
           <>
             <DialogHeader>
               <div className='flex items-center gap-3'>
-                <div className='flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-900'>
-                  <AlertTriangle className='h-5 w-5 text-red-600 dark:text-red-400' />
+                <div className='flex h-10 w-10 items-center justify-center rounded-full bg-red-100'>
+                  <AlertTriangle className='h-5 w-5 text-red-600' />
                 </div>
                 <div>
                   <DialogTitle className='text-lg'>Delete College</DialogTitle>
@@ -84,9 +83,9 @@ export function DeleteCollegeDialog({
             </DialogHeader>
 
             <div className='space-y-4'>
-              <Alert className='border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950'>
+              <Alert className='border-red-200 bg-red-50'>
                 <AlertTriangle className='h-4 w-4 text-red-600' />
-                <AlertDescription className='text-red-800 dark:text-red-200'>
+                <AlertDescription className='text-red-800'>
                   <strong>Warning:</strong> This will permanently delete the
                   college and all associated data.
                 </AlertDescription>
@@ -117,7 +116,7 @@ export function DeleteCollegeDialog({
                   The following data will be permanently deleted:
                 </h4>
                 <div className='grid grid-cols-2 gap-3'>
-                  <div className='flex items-center gap-2 p-2 bg-gray-50 dark:bg-gray-800 rounded'>
+                  <div className='flex items-center gap-2 p-2 bg-gray-50 rounded'>
                     <Users className='h-4 w-4 text-gray-500' />
                     <div className='text-sm'>
                       <div className='font-medium'>
@@ -126,7 +125,7 @@ export function DeleteCollegeDialog({
                       <div className='text-xs text-gray-600'>Users</div>
                     </div>
                   </div>
-                  <div className='flex items-center gap-2 p-2 bg-gray-50 dark:bg-gray-800 rounded'>
+                  <div className='flex items-center gap-2 p-2 bg-gray-50 rounded'>
                     <FileText className='h-4 w-4 text-gray-500' />
                     <div className='text-sm'>
                       <div className='font-medium'>
@@ -165,8 +164,8 @@ export function DeleteCollegeDialog({
           <>
             <DialogHeader>
               <div className='flex items-center gap-3'>
-                <div className='flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-900'>
-                  <AlertTriangle className='h-5 w-5 text-red-600 dark:text-red-400' />
+                <div className='flex h-10 w-10 items-center justify-center rounded-full bg-red-100'>
+                  <AlertTriangle className='h-5 w-5 text-red-600' />
                 </div>
                 <div>
                   <DialogTitle className='text-lg'>
@@ -180,9 +179,9 @@ export function DeleteCollegeDialog({
             </DialogHeader>
 
             <div className='space-y-4'>
-              <Alert className='border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950'>
+              <Alert className='border-red-200 bg-red-50'>
                 <AlertTriangle className='h-4 w-4 text-red-600' />
-                <AlertDescription className='text-red-800 dark:text-red-200'>
+                <AlertDescription className='text-red-800'>
                   This action is <strong>irreversible</strong>. All data will be
                   permanently lost.
                 </AlertDescription>

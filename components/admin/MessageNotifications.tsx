@@ -76,7 +76,7 @@ export function MessageNotifications({ className }: MessageNotificationProps) {
       case MessageType.SMS:
         return <span className='text-xs'>SMS</span>;
       case MessageType.PUSH_NOTIFICATION:
-        return <Bell className='w-3 h-3' />;
+        return <Bell className='w-3 h-3 text-white' />;
       case MessageType.SYSTEM_NOTIFICATION:
         return <AlertCircle className='w-3 h-3' />;
       default:
@@ -88,7 +88,7 @@ export function MessageNotifications({ className }: MessageNotificationProps) {
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <Button variant='ghost' size='sm' className={`relative ${className}`}>
-          <Bell className='w-4 h-4' />
+          <Bell className='w-4 h-4 text-white' />
           {unreadCount && unreadCount.total > 0 && (
             <Badge
               variant='destructive'

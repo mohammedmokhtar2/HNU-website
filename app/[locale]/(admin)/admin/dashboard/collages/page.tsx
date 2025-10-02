@@ -238,12 +238,10 @@ function Collages() {
               Colleges
             </h1>
             {isOwner && (
-              <Badge className='bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 w-fit'>
-                Owner
-              </Badge>
+              <Badge className='bg-red-100 text-red-800 w-fit'>Owner</Badge>
             )}
             {isSuperAdmin && !isOwner && (
-              <Badge className='bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 w-fit'>
+              <Badge className='bg-blue-100 text-blue-800 w-fit'>
                 Super Admin
               </Badge>
             )}
@@ -359,7 +357,7 @@ function Collages() {
                       All Colleges
                     </h2>
                   </div>
-                  <Badge className='bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 w-fit'>
+                  <Badge className='bg-blue-100 text-blue-800 w-fit'>
                     {allCollagesForOwner?.length || 0}
                   </Badge>
                 </div>
@@ -402,7 +400,7 @@ function Collages() {
                       Colleges You Created
                     </h2>
                   </div>
-                  <Badge className='bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300 w-fit'>
+                  <Badge className='bg-purple-100 text-purple-800 w-fit'>
                     {createdCollages?.length || 0}
                   </Badge>
                 </div>
@@ -464,7 +462,7 @@ function Collages() {
                     Colleges You&apos;re Member Of
                   </h2>
                 </div>
-                <Badge className='bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 w-fit'>
+                <Badge className='bg-green-100 text-green-800 w-fit'>
                   {memberCollages?.length || 0}
                 </Badge>
               </div>

@@ -54,9 +54,9 @@ export function ProgramGridView({
       {programs.map(program => (
         <Card
           key={program.id}
-          className='group hover:shadow-lg transition-shadow'
+          className='group hover:shadow-lg transition-shadow border-white'
         >
-          <CardHeader className='pb-3'>
+          <CardHeader className='pb-3 text-white'>
             <div className='flex items-start justify-between'>
               <div className='flex-1 min-w-0'>
                 <CardTitle className='text-lg font-semibold line-clamp-2 mb-2'>
@@ -106,7 +106,7 @@ export function ProgramGridView({
 
             {/* College Info */}
             {program.collage && (
-              <div className='flex items-center gap-2 text-sm'>
+              <div className='flex items-center gap-2 text-sm text-white'>
                 <Building2 className='h-4 w-4 text-muted-foreground' />
                 <span className='truncate'>
                   {(program.collage.name as any)?.en ||
@@ -120,19 +120,22 @@ export function ProgramGridView({
             {program.config && (
               <div className='space-y-2'>
                 {program.config.degree && (
-                  <Badge variant='secondary' className='text-xs'>
+                  <Badge
+                    variant='secondary'
+                    className='text-xs text-white bg-gray-600 hover:bg-gray-700'
+                  >
                     <GraduationCap className='h-3 w-3 mr-1' />
                     {program.config.degree}
                   </Badge>
                 )}
                 {program.config.duration && (
-                  <Badge variant='outline' className='text-xs'>
+                  <Badge variant='outline' className='text-xs text-white mr-2'>
                     <Calendar className='h-3 w-3 mr-1' />
                     {program.config.duration}
                   </Badge>
                 )}
                 {program.config.credits && (
-                  <Badge variant='outline' className='text-xs'>
+                  <Badge variant='outline' className='text-xs text-white'>
                     {program.config.credits} credits
                   </Badge>
                 )}
@@ -151,7 +154,7 @@ export function ProgramGridView({
                   {program.config?.images?.length && (
                     <Badge
                       variant='outline'
-                      className='text-xs flex items-center gap-1'
+                      className='text-xs flex items-center gap-1 text-white mr-2'
                     >
                       <ImageIcon className='h-3 w-3' />
                       {program.config.images.length}
@@ -160,7 +163,7 @@ export function ProgramGridView({
                   {program.config?.videos?.length && (
                     <Badge
                       variant='outline'
-                      className='text-xs flex items-center gap-1'
+                      className='text-xs flex items-center gap-1 text-white'
                     >
                       <Video className='h-3 w-3' />
                       {program.config.videos.length}
@@ -169,7 +172,7 @@ export function ProgramGridView({
                   {program.config?.pdfs?.length && (
                     <Badge
                       variant='outline'
-                      className='text-xs flex items-center gap-1'
+                      className='text-xs flex items-center gap-1 text-white'
                     >
                       <FileText className='h-3 w-3' />
                       {program.config.pdfs.length}

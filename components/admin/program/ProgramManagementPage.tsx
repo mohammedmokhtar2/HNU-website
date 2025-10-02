@@ -147,14 +147,17 @@ export function ProgramManagementPage({
       {/* Header */}
       <div className='flex items-center justify-between'>
         <div>
-          <h1 className='text-3xl font-bold tracking-tight'>
+          <h1 className='text-3xl font-bold tracking-tight text-white'>
             Programs Management
           </h1>
           <p className='text-muted-foreground'>
             Manage academic programs across all colleges
           </p>
         </div>
-        <Button onClick={handleCreateProgram} className='gap-2'>
+        <Button
+          onClick={handleCreateProgram}
+          className='gap-2 bg-white text-black'
+        >
           <Plus className='h-4 w-4' />
           Add Program
         </Button>
@@ -165,7 +168,7 @@ export function ProgramManagementPage({
         <Button
           variant={showStats ? 'default' : 'outline'}
           onClick={() => setShowStats(!showStats)}
-          className='gap-2'
+          className='gap-2 text-white bg-transparent border border-gray-500 hover:bg-gray-400/10 hover:text-white'
         >
           <BarChart3 className='h-4 w-4' />
           {showStats ? 'Hide' : 'Show'} Statistics
@@ -176,7 +179,7 @@ export function ProgramManagementPage({
       {showStats && <ProgramStats />}
 
       {/* Filters and Search */}
-      <Card>
+      <Card style={{ border: '2px dashed white', borderRadius: '16px' }}>
         <CardHeader>
           <CardTitle className='flex items-center gap-2'>
             <Filter className='h-5 w-5' />
@@ -198,13 +201,22 @@ export function ProgramManagementPage({
 
             {/* College Filter */}
             <Select value={selectedCollege} onValueChange={setSelectedCollege}>
-              <SelectTrigger>
-                <SelectValue placeholder='Filter by college' />
+              <SelectTrigger className='text-white bg-transparent border-gray-400'>
+                <SelectValue
+                  placeholder='Filter by college'
+                  className='text-white'
+                />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='all'>All Colleges</SelectItem>
+              <SelectContent className='bg-gray-900 text-white'>
+                <SelectItem value='all' className='text-white'>
+                  All Colleges
+                </SelectItem>
                 {colleges.map(college => (
-                  <SelectItem key={college.id} value={college.id}>
+                  <SelectItem
+                    key={college.id}
+                    value={college.id}
+                    className='text-white'
+                  >
                     {college.name?.en || college.name?.ar || college.slug}
                   </SelectItem>
                 ))}
@@ -216,13 +228,19 @@ export function ProgramManagementPage({
               value={sortBy}
               onValueChange={(value: any) => setSortBy(value)}
             >
-              <SelectTrigger>
-                <SelectValue placeholder='Sort by' />
+              <SelectTrigger className='text-white bg-transparent border-gray-400'>
+                <SelectValue placeholder='Sort by' className='text-white' />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='createdAt'>Created Date</SelectItem>
-                <SelectItem value='updatedAt'>Updated Date</SelectItem>
-                <SelectItem value='name'>Name</SelectItem>
+              <SelectContent className='bg-gray-900 text-white'>
+                <SelectItem value='createdAt' className='text-white'>
+                  Created Date
+                </SelectItem>
+                <SelectItem value='updatedAt' className='text-white'>
+                  Updated Date
+                </SelectItem>
+                <SelectItem value='name' className='text-white'>
+                  Name
+                </SelectItem>
               </SelectContent>
             </Select>
 
@@ -231,12 +249,19 @@ export function ProgramManagementPage({
               value={sortDirection}
               onValueChange={(value: any) => setSortDirection(value)}
             >
-              <SelectTrigger>
-                <SelectValue placeholder='Sort direction' />
+              <SelectTrigger className='text-white bg-transparent border-gray-400'>
+                <SelectValue
+                  placeholder='Sort direction'
+                  className='text-white'
+                />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='desc'>Descending</SelectItem>
-                <SelectItem value='asc'>Ascending</SelectItem>
+              <SelectContent className='bg-gray-900 text-white'>
+                <SelectItem value='desc' className='text-white'>
+                  Descending
+                </SelectItem>
+                <SelectItem value='asc' className='text-white'>
+                  Ascending
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -255,7 +280,7 @@ export function ProgramManagementPage({
                 )}
               </span>
             </div>
-            <div className='flex items-center gap-2'>
+            <div className='flex items-center gap-2 '>
               <Button
                 variant={viewMode === 'grid' ? 'default' : 'outline'}
                 size='sm'
@@ -276,7 +301,7 @@ export function ProgramManagementPage({
       </Card>
 
       {/* Programs Display */}
-      <Card>
+      <Card style={{ border: '2px dashed white', borderRadius: '16px' }}>
         <CardContent className='p-0'>
           {loading ? (
             <div className='flex items-center justify-center h-64'>

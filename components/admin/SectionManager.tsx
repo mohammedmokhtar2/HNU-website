@@ -590,9 +590,7 @@ export function SectionManager({
       {/* Header */}
       <div className='flex items-center justify-between'>
         <div>
-          <h2 className='text-2xl font-bold text-gray-900'>
-            Sections Management
-          </h2>
+          <h2 className='text-2xl font-bold text-white'>Sections Management</h2>
           <p className='text-gray-600'>
             Manage university sections and their content
           </p>

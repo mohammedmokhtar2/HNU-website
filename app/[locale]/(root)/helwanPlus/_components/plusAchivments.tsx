@@ -67,7 +67,7 @@ const plusAchivments = () => {
             Our Achievements
             <div className='absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-[#354eab] to-[#ffce00] rounded-full'></div>
           </h2>
-          <p className='text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto'>
+          <p className='text-lg text-gray-600 max-w-2xl mx-auto'>
             Discover the innovative projects and solutions we've built for the
             Helwan community
           </p>

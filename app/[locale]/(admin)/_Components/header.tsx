@@ -118,7 +118,7 @@ export function Header({
 
       {/* project name and version */}
       <div className='flex items-center space-x-2'>
-        <h1 className='text-sm md:text-2xl  font-bold'>
+        <h1 className='text-sm md:text-2xl font-bold text-white'>
           Official Website Admin Panel
         </h1>
         {/* badge for version */}
@@ -131,7 +131,7 @@ export function Header({
       </div>
 
       <div className='flex items-center space-x-2 sm:space-x-4'>
-        {/* Theme Toggle */}
+        {/* Theme Toggle
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -177,7 +177,7 @@ export function Header({
               System
             </DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu> */}
 
         {/* Help Center */}
         {/* TODO: GO TO DOCUMENTATION */}
