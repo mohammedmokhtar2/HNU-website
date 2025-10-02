@@ -375,7 +375,7 @@ export default function BlogDetailPage() {
               )}
 
               {/* Blog Content */}
-              <div className='p-8'>
+              <div className='p-8 text-black'>
                 {/* Meta Information */}
                 <div className='flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-6'>
                   <div className='flex items-center gap-1'>
