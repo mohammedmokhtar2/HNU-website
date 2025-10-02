@@ -34,14 +34,6 @@ export function AnimatedLoading({
         logo: '/logo2.png',
         duration: 1000,
       },
-      {
-        id: 2,
-        title: 'Powered by Helwan Plus',
-        subtitle: 'مدعوم من حلوان بلس',
-        description: 'Experience the future of digital education platforms',
-        logo: '/helwanBlack.png',
-        duration: 2000,
-      },
     ],
     []
   );
@@ -90,10 +82,6 @@ export function AnimatedLoading({
               fill
               className={cn(
                 'object-contain transition-all duration-700 ease-in-out',
-                // Only spin for the first two steps, not for "Powered by"
-                currentStep !== 2 && 'animate-spin',
-                currentStep === 0 && 'scale-110',
-                currentStep === 1 && 'scale-105'
               )}
               priority
             />
@@ -110,7 +98,6 @@ export function AnimatedLoading({
               'text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black transition-all duration-700 ease-in-out leading-tight',
               currentStep === 0 && 'animate-fade-in-up-loading',
               currentStep === 1 && 'animate-fade-in-up-loading',
-              currentStep === 2 && 'animate-fade-in-up-loading'
             )}
           >
             {currentStepData.title}
@@ -120,11 +107,9 @@ export function AnimatedLoading({
             className={cn(
               'text-lg sm:text-xl md:text-2xl text-gray-700 transition-all duration-700 ease-in-out font-medium',
               currentStep === 0 &&
-                'animate-fade-in-up-loading animation-delay-200',
+              'animate-fade-in-up-loading animation-delay-200',
               currentStep === 1 &&
-                'animate-fade-in-up-loading animation-delay-200',
-              currentStep === 2 &&
-                'animate-fade-in-up-loading animation-delay-200'
+              'animate-fade-in-up-loading animation-delay-200',
             )}
           >
             {currentStepData.subtitle}
@@ -135,11 +120,9 @@ export function AnimatedLoading({
             className={cn(
               'text-sm sm:text-base md:text-lg text-gray-600 transition-all duration-700 ease-in-out max-w-md mx-auto leading-relaxed',
               currentStep === 0 &&
-                'animate-fade-in-up-loading animation-delay-400',
+              'animate-fade-in-up-loading animation-delay-400',
               currentStep === 1 &&
-                'animate-fade-in-up-loading animation-delay-400',
-              currentStep === 2 &&
-                'animate-fade-in-up-loading animation-delay-400'
+              'animate-fade-in-up-loading animation-delay-400',
             )}
           >
             {currentStepData.description}
