@@ -286,7 +286,7 @@ export function ForEgyptGroupSection({
           </div>
         </div>
       </section>
-      
+
       {/* === SECTION 4: CONTACT US (Reduced height, blue background, title, buttons, learn more) === */}
       <section
         className='mt-16 min-h-[300px] w-full flex flex-col items-center justify-center text-white px-6 lg:px-24 bg-[#3f3013]'
