@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useParams } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import { CollegeService } from '@/services/collage.service';
-import { DynamicCollegePage } from '@/components/sections/DynamicCollegePage';
+import { DynamicCollegePage } from '@/components/sections/collageSection/DynamicCollegePage';
 import { CollegeProvider } from '@/contexts/CollegeContext';
 import { PageSkeleton } from '@/components/ui/skeleton';
 import { ErrorBoundary } from '@/components/ui/error-boundary';

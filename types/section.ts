@@ -1,5 +1,5 @@
 import { College } from './college';
-import { SectionType } from './enums';
+import { SectionType, CollegeType } from './enums';
 import { University } from './university';
 
 // Base content structure for all sections
@@ -195,6 +195,50 @@ export interface SectionWithRelationsResponse extends SectionResponse {
   University?: University; // Will be properly typed when imported
 }
 
+// Extended AboutContent for college sections with additional fields
+export interface CollegeAboutContent extends AboutContent {
+  title: BaseContent;
+  subtitle: BaseContent;
+  backgroundImage: string;
+}
+
+// Complete section response interface matching the provided data structure
+export interface CompleteSectionResponse {
+  id: string;
+  type: SectionType;
+  title: string | null;
+  content: CollegeAboutContent;
+  mediaUrl: string | null;
+  order: number;
+  universityId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  collageId: string;
+  collage: {
+    id: string;
+    slug: string;
+    name: BaseContent;
+    description: BaseContent;
+    config: {
+      faq: any[];
+      theme: Record<string, any>;
+      logoUrl: string;
+      galleryImages: any[];
+    };
+    type: 'TECHNICAL' | 'MEDICAL' | 'ARTS' | 'OTHER';
+    fees: BaseContent;
+    studentsCount: number;
+    programsCount: number;
+    facultyCount: number;
+    establishedYear: number;
+    createdById: string;
+    universityId: string | null;
+    createdAt: string;
+    updatedAt: string;
+  };
+  University: null;
+}
+
 // Type guards for runtime type checking
 export function isHeroContent(content: any): content is HeroContent {
   return (
@@ -207,6 +251,20 @@ export function isHeroContent(content: any): content is HeroContent {
 export function isAboutContent(content: any): content is AboutContent {
   return (
     content &&
+    typeof content.content === 'object' &&
+    content.content.ar !== undefined &&
+    content.content.en !== undefined
+  );
+}
+
+export function isCollegeAboutContent(
+  content: any
+): content is CollegeAboutContent {
+  return (
+    content &&
+    typeof content.title === 'object' &&
+    typeof content.subtitle === 'object' &&
+    typeof content.backgroundImage === 'string' &&
     typeof content.content === 'object' &&
     content.content.ar !== undefined &&
     content.content.en !== undefined

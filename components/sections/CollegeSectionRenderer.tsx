@@ -3,7 +3,7 @@
 import React, { useMemo, Suspense } from 'react';
 import { Section } from '@/types/section';
 import { SectionType } from '@/types/enums';
-import { AboutSection } from './AboutSection';
+import { AboutSection } from './uniSections/AboutSection';
 import { HeroSection } from './HeroSection';
 import { useLocale } from 'next-intl';
 import { SectionSkeleton } from '@/components/ui/skeleton';
@@ -12,6 +12,7 @@ interface CollegeSectionRendererProps {
   section: Section;
   locale: string;
   collageId: string;
+  sections: Section[]
 }
 
 // Lazy load components for better performance
@@ -20,7 +21,7 @@ const LazyHeroSection = React.lazy(() =>
 );
 
 const LazyAboutSection = React.lazy(() =>
-  import('./AboutSection').then(module => ({ default: module.AboutSection }))
+  import('./collageSection/CollageaboutSection').then(module => ({ default: module.default }))
 );
 
 const LazyOurMissionSection = React.lazy(() =>
@@ -71,14 +72,22 @@ const LazyProgramsSection = React.lazy(() =>
   }))
 );
 
+const LazyHeaderSection = React.lazy(() =>
+  import('./collageSection/HeaderSection').then(module => ({
+    default: module.default,
+  }))
+);
+
 export const CollegeSectionRenderer = React.memo(
-  ({ section, locale, collageId }: CollegeSectionRendererProps) => {
+  ({ section, locale, collageId, sections }: CollegeSectionRendererProps) => {
     const renderSection = useMemo(() => {
       switch (section.type) {
+        case SectionType.HEADER:
+          return <LazyHeaderSection sectionId={section.id} sections={sections} />;
         case SectionType.HERO:
           return <LazyHeroSection section={section} locale={locale} />;
         case SectionType.ABOUT:
-          return <LazyAboutSection sectionId={section.id} />;
+          return <LazyAboutSection sectionId={section.id} sections={sections} />;
         case SectionType.OUR_MISSION:
           return <LazyOurMissionSection sectionId={section.id} />;
         case SectionType.BLOGS:
@@ -112,7 +121,8 @@ export const CollegeSectionRenderer = React.memo(
             </div>
           );
       }
-    }, [section, locale, collageId]);
+    }, [section, locale, collageId, sections]);
+
 
     return (
       <div data-section-type={section.type} data-section-id={section.id}>

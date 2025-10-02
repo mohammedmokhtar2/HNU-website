@@ -3,7 +3,7 @@
 import React, { useMemo, Suspense } from 'react';
 import { Section } from '@/types/section';
 import { SectionType } from '@/types/enums';
-import { AboutSection } from './AboutSection';
+import { AboutSection } from './uniSections/AboutSection';
 import { HeroSection } from './HeroSection';
 import { useLocale } from 'next-intl';
 import { SectionSkeleton } from '@/components/ui/skeleton';
@@ -19,7 +19,7 @@ const LazyHeroSection = React.lazy(() =>
 );
 
 const LazyAboutSection = React.lazy(() =>
-  import('./AboutSection').then(module => ({ default: module.AboutSection }))
+  import('./uniSections/AboutSection').then(module => ({ default: module.AboutSection }))
 );
 
 const LazyCollegeSection = React.lazy(() =>
