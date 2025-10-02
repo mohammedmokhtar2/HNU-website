@@ -1,6 +1,6 @@
 # HNU Official Website
 
-A modern, feature-rich official website for Helwan National University (HNU) built with Next.js 15, TypeScript, and Tailwind CSS.
+AA modern, feature-rich official website for Helwan National University (HNU) built with Next.js 15, TypeScript, and Tailwind CSS.
 
 ## 🚀 **Live Demo**
 
