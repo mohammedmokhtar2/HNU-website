@@ -117,9 +117,7 @@ export function getContentForPageSectionType(
 
         ourTeamSection: {
           title: { ar: '', en: '' },
-          name: [],
-          role: [],
-          photo: [],
+          members: [],
         },
       } as StudentUnionsContent;
 
@@ -147,9 +145,7 @@ export function getContentForPageSectionType(
         },
         ourTeamSection: {
           title: { ar: '', en: '' },
-          name: [],
-          role: [],
-          photo: [],
+          members: [],
         },
       } as ForEgyptGroupContent;
 

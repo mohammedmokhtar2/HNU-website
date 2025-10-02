@@ -1,4 +1,5 @@
 'use client';
+<<<<<<< Updated upstream
 
 import { useParams } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
@@ -564,4 +565,15 @@ function ProgramPage() {
   );
 }
 
+=======
+import { useParams } from 'next/navigation';
+import React from 'react';
+
+function ProgramPage() {
+  const params = useParams();
+  const { programId } = params as { programId: string };
+  return <div>{programId}</div>;
+}
+
+>>>>>>> Stashed changes
 export default ProgramPage;

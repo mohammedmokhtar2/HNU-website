@@ -30,40 +30,56 @@ export function ForEgyptGroupSection({
     );
   }
 
-  const heroTitle = getLocalizedContent(content.heroSection.title);
-  const heroLogo = content.heroSection.logo;
-  const heroBg = content.heroSection.bgImageUrl;
+  // === HERO SECTION ===
+  const heroTitle = getLocalizedContent(content?.heroSection?.title);
+  const heroLogo = content?.heroSection?.logo || '';
+  const heroBg = content?.heroSection?.bgImageUrl || '';
 
-  const aboutTitle = getLocalizedContent(content.aboutSection.title);
-  const aboutImage = content.aboutSection.imageUrl;
+  // === ABOUT SECTION ===
+  const aboutTitle = getLocalizedContent(content?.aboutSection?.title);
+  const aboutImage = content?.aboutSection?.imageUrl || '';
   const aboutDescription = getLocalizedContent(
-    content.aboutSection.description
+    content?.aboutSection?.description
   );
 
-  const missionTitle = getLocalizedContent(content.ourMissionSection.title);
+  // === MISSION SECTION ===
+  const missionTitle = getLocalizedContent(content?.ourMissionSection?.title);
   const missionDescription = getLocalizedContent(
-    content.ourMissionSection.description
+    content?.ourMissionSection?.description
   );
-  const missionImage = content.ourMissionSection.imageUrl;
+  const missionImage = content?.ourMissionSection?.imageUrl || '';
 
-  const contactTitle = getLocalizedContent(content.contactUsSection.title);
-  const contactButtonUrl = content.contactUsSection.buttonUrl;
-  const socialButtons = content.contactUsSection.socialMediaButtons || [];
+  // === CONTACT SECTION ===
+  const contactTitle = getLocalizedContent(content?.contactUsSection?.title);
+  const socialButtons = content?.contactUsSection?.socialMediaButtons || [];
 
-  // this is new form line 53 to 61
-  const teamTitle = getLocalizedContent(content.ourTeamSection?.title || '');
-  const teamNames = content.ourTeamSection?.name
-    ? content.ourTeamSection.name.map(n => getLocalizedContent(n))
-    : [];
-  const teamRoles = content.ourTeamSection?.role
-    ? content.ourTeamSection.role.map(r => getLocalizedContent(r))
-    : [];
-  const teamPhotos = content.ourTeamSection?.photo || [];
-  // here
+  //  ourTeamSection: {
+  //   title: BaseContent;
+  //   name: BaseContent[];
+  //   role: BaseContent[];
+  //   photo: string[];
+  // };
 
+  // === OURTEAM SECTION ===
+  const teamTitle = getLocalizedContent(content?.ourTeamSection?.title || '');
+  const teamMembers = content?.ourTeamSection?.members || [];
+
+  const teamData = teamMembers.map((member: any) => ({
+    name: getLocalizedContent(member?.name || ''),
+    role: getLocalizedContent(member?.role || ''),
+    photo: member?.photo || '',
+  }));
+
+  console.log('Team Title:', teamTitle);
+  console.log('Team Members:', teamMembers);
+  console.log('Team Data:', teamData);
+
+  // Define the socialIcons array to match the order of socialButtons
   const socialIcons = [FaFacebookF, FaInstagram, FaTiktok];
+
   const isMobile =
     typeof window !== 'undefined' ? window.innerWidth < 1024 : false;
+
   return (
     <>
       {/* === SECTION 1: HERO (Full viewport height) === */}
@@ -211,6 +227,66 @@ export function ForEgyptGroupSection({
         </div>
       </section>
 
+      {/* === SECTION 4: OUR TEAM === */}
+      <section
+        className='w-full py-16 px-6 lg:px-16 bg-gradient-to-b from-gray-50 to-white'
+        dir={locale === 'ar' ? 'rtl' : 'ltr'}
+      >
+        <div className='max-w-6xl mx-auto'>
+          {teamTitle && (
+            <h2 className='text-3xl md:text-4xl font-extrabold text-center mb-12 text-gray-800'>
+              {teamTitle}
+            </h2>
+          )}
+
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8'>
+            {teamData.length > 0 ? (
+              teamData.map(
+                (
+                  member: { name: string; role: string; photo: string },
+                  index: number
+                ) => (
+                  <motion.div
+                    key={index}
+                    className='bg-white rounded-xl shadow-lg overflow-hidden flex flex-col items-center text-center p-6'
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                  >
+                    {member.photo ? (
+                      <div className='w-32 h-32 rounded-full overflow-hidden mb-4 border-4 border-blue-100'>
+                        <Image
+                          src={member.photo}
+                          alt={member.name}
+                          width={128}
+                          height={128}
+                          className='object-cover w-full h-full'
+                        />
+                      </div>
+                    ) : (
+                      <div className='w-32 h-32 rounded-full bg-gray-200 mb-4 flex items-center justify-center'>
+                        <span className='text-gray-500 text-lg'>?</span>
+                      </div>
+                    )}
+                    <h3 className='text-xl font-bold text-gray-800'>
+                      {member.name}
+                    </h3>
+                    <p className='text-blue-600 mt-1'>{member.role}</p>
+                  </motion.div>
+                )
+              )
+            ) : (
+              <p className='col-span-full text-center text-gray-500'>
+                {locale === 'ar'
+                  ? 'لم يتم إضافة أعضاء للفريق بعد'
+                  : 'No team members available yet'}
+              </p>
+            )}
+          </div>
+        </div>
+      </section>
+      
       {/* === SECTION 4: CONTACT US (Reduced height, blue background, title, buttons, learn more) === */}
       <section
         className='mt-16 min-h-[300px] w-full flex flex-col items-center justify-center text-white px-6 lg:px-24 bg-[#3f3013]'
