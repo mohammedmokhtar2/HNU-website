@@ -247,7 +247,6 @@ enum PageSectionType {
   FOR_EGYPT_GROUP
   CUSTOM
   OUR_HISTORY
-  PRESIDENT_MESSAGE
 }
 
 enum Action {

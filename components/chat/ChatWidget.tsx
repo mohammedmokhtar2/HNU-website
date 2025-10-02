@@ -132,12 +132,12 @@ export default function ChatWidget() {
         setShowTooltip(true);
         setCurrentTooltipIndex(prev => (prev + 1) % tooltips.length);
 
-        // Hide tooltip after 4 seconds
+        // Hide tooltip after 20 seconds
         setTimeout(() => {
           setShowTooltip(false);
-        }, 10000);
+        }, 20000);
       }
-    }, 6000); // Show new tooltip every 6 seconds
+    }, 10000); // Show new tooltip every 10 seconds
   }, [isOpen, tooltips.length]);
 
   const stopTooltipCycle = useCallback(() => {
@@ -514,7 +514,7 @@ export default function ChatWidget() {
           </div>
 
           {/* Enhanced Input Area */}
-          <div className='p-4 border-t border-gray-200/50 bg-white rounded-b-2xl'>
+          <div className='p-4 border-t border-gray-200/50 bg-white rounded-b-2xl text-black'>
             <div
               className={`flex gap-3 items-end ${locale === 'ar' ? 'flex-row-reverse' : ''}`}
             >

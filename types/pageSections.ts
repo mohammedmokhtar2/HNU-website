@@ -104,6 +104,13 @@ export interface StudentUnionsContent {
       url: string;
     }[];
   };
+
+  ourTeamSection: {
+    title: BaseContent;
+    name: BaseContent[];
+    role: BaseContent[];
+    photo: string[];
+  };
 }
 
 export interface ForEgyptGroupContent {
@@ -132,6 +139,13 @@ export interface ForEgyptGroupContent {
       text: string;
       url: string;
     }[];
+  };
+
+  ourTeamSection: {
+    title: BaseContent;
+    name: BaseContent[];
+    role: BaseContent[];
+    photo: string[];
   };
 }
 

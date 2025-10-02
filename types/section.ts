@@ -104,6 +104,7 @@ export interface ProgramsSectionContent {
 }
 
 export interface ContactUsContent {
+  imageUrl: string;
   title: BaseContent;
   subtitle: BaseContent;
   description: BaseContent;
@@ -267,6 +268,7 @@ export function isProgramsSectionContent(
 export function isContactUsContent(content: any): content is ContactUsContent {
   return (
     content &&
+    typeof content.imageUrl === 'string' &&
     typeof content.title === 'object' &&
     typeof content.subtitle === 'object' &&
     typeof content.description === 'object' &&
@@ -345,6 +347,7 @@ export function getContentForSectionType(type: SectionType): any {
       } as ProgramsSectionContent;
     case SectionType.CONTACT_US:
       return {
+        imageUrl: '',
         title: { ar: 'تواصل معنا', en: 'Contact Us' },
         subtitle: {
           ar: 'نحن هنا لمساعدتك',

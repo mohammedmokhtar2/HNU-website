@@ -3162,6 +3162,285 @@ function PageSectionForm({
                 </Button>
               </div>
             </div>
+            {/* ourTeamSection */}
+            <div className='space-y-4 mt-8'>
+              <Label>Our Team Section Title</Label>
+              <div className='grid grid-cols-2 gap-4 mt-2'>
+                <div>
+                  <Label className='text-xs text-gray-500'>English</Label>
+                  <Input
+                    value={content.ourTeamSection?.title?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          ourTeamSection: {
+                            ...content.ourTeamSection,
+                            title: {
+                              ...content.ourTeamSection?.title,
+                              en: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Enter section title in English'
+                  />
+                </div>
+                <div>
+                  <Label className='text-xs text-gray-500'>Arabic</Label>
+                  <Input
+                    value={content.ourTeamSection?.title?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          ourTeamSection: {
+                            ...content.ourTeamSection,
+                            title: {
+                              ...content.ourTeamSection?.title,
+                              ar: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='ادخل عنوان القسم بالعربية'
+                  />
+                </div>
+              </div>
+
+              {/* Team Members */}
+              <Label className='mt-4'>Team Members</Label>
+              <div className='space-y-6'>
+                {(content.ourTeamSection?.members || []).map(
+                  (member: any, idx: number) => (
+                    <div
+                      key={idx}
+                      className='p-4 rounded-lg bg-white/5 border border-neutral-700 flex flex-col gap-4'
+                    >
+                      {/* صورة العضو */}
+                      <div className='flex flex-col items-center gap-2'>
+                        <Input
+                          value={member.photo || ''}
+                          onChange={e => {
+                            const newMembers = [
+                              ...(content.ourTeamSection?.members || []),
+                            ];
+                            newMembers[idx] = {
+                              ...newMembers[idx],
+                              photo: e.target.value,
+                            };
+                            setFormData({
+                              ...formData,
+                              content: {
+                                ...content,
+                                ourTeamSection: {
+                                  ...content.ourTeamSection,
+                                  members: newMembers,
+                                },
+                              },
+                            });
+                          }}
+                          placeholder='Photo URL'
+                          className='w-full'
+                        />
+                        {member.photo && (
+                          <Image
+                            src={member.photo}
+                            alt='Preview'
+                            width={120}
+                            height={120}
+                            className='w-32 h-32 object-cover rounded-full border-2 border-blue-500 shadow'
+                            unoptimized
+                          />
+                        )}
+                      </div>
+
+                      {/* بيانات العضو */}
+                      <div className='grid grid-cols-2 gap-4'>
+                        {/* الاسم */}
+                        <div>
+                          <Label className='text-sm'>Name (EN)</Label>
+                          <Input
+                            value={member.name?.en || ''}
+                            onChange={e => {
+                              const newMembers = [
+                                ...(content.ourTeamSection?.members || []),
+                              ];
+                              newMembers[idx] = {
+                                ...newMembers[idx],
+                                name: {
+                                  ...newMembers[idx]?.name,
+                                  en: e.target.value,
+                                },
+                              };
+                              setFormData({
+                                ...formData,
+                                content: {
+                                  ...content,
+                                  ourTeamSection: {
+                                    ...content.ourTeamSection,
+                                    members: newMembers,
+                                  },
+                                },
+                              });
+                            }}
+                            placeholder='Name (EN)'
+                          />
+                        </div>
+                        <div>
+                          <Label className='text-sm'>الاسم (عربي)</Label>
+                          <Input
+                            value={member.name?.ar || ''}
+                            onChange={e => {
+                              const newMembers = [
+                                ...(content.ourTeamSection?.members || []),
+                              ];
+                              newMembers[idx] = {
+                                ...newMembers[idx],
+                                name: {
+                                  ...newMembers[idx]?.name,
+                                  ar: e.target.value,
+                                },
+                              };
+                              setFormData({
+                                ...formData,
+                                content: {
+                                  ...content,
+                                  ourTeamSection: {
+                                    ...content.ourTeamSection,
+                                    members: newMembers,
+                                  },
+                                },
+                              });
+                            }}
+                            placeholder='الاسم (عربي)'
+                          />
+                        </div>
+
+                        {/* الدور */}
+                        <div>
+                          <Label className='text-sm'>Role (EN)</Label>
+                          <Input
+                            value={member.role?.en || ''}
+                            onChange={e => {
+                              const newMembers = [
+                                ...(content.ourTeamSection?.members || []),
+                              ];
+                              newMembers[idx] = {
+                                ...newMembers[idx],
+                                role: {
+                                  ...newMembers[idx]?.role,
+                                  en: e.target.value,
+                                },
+                              };
+                              setFormData({
+                                ...formData,
+                                content: {
+                                  ...content,
+                                  ourTeamSection: {
+                                    ...content.ourTeamSection,
+                                    members: newMembers,
+                                  },
+                                },
+                              });
+                            }}
+                            placeholder='Role (EN)'
+                          />
+                        </div>
+                        <div>
+                          <Label className='text-sm'>الدور (عربي)</Label>
+                          <Input
+                            value={member.role?.ar || ''}
+                            onChange={e => {
+                              const newMembers = [
+                                ...(content.ourTeamSection?.members || []),
+                              ];
+                              newMembers[idx] = {
+                                ...newMembers[idx],
+                                role: {
+                                  ...newMembers[idx]?.role,
+                                  ar: e.target.value,
+                                },
+                              };
+                              setFormData({
+                                ...formData,
+                                content: {
+                                  ...content,
+                                  ourTeamSection: {
+                                    ...content.ourTeamSection,
+                                    members: newMembers,
+                                  },
+                                },
+                              });
+                            }}
+                            placeholder='الدور (عربي)'
+                          />
+                        </div>
+                      </div>
+
+                      {/* زر الحذف */}
+                      <Button
+                        type='button'
+                        variant='destructive'
+                        size='sm'
+                        className='self-end'
+                        onClick={() => {
+                          const newMembers = (
+                            content.ourTeamSection?.members || []
+                          ).filter((_: any, i: number) => i !== idx);
+                          setFormData({
+                            ...formData,
+                            content: {
+                              ...content,
+                              ourTeamSection: {
+                                ...content.ourTeamSection,
+                                members: newMembers,
+                              },
+                            },
+                          });
+                        }}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  )
+                )}
+
+                {/* زر إضافة عضو جديد */}
+                <Button
+                  type='button'
+                  variant='secondary'
+                  size='sm'
+                  className='mt-2'
+                  onClick={() => {
+                    const newMembers = [
+                      ...(content.ourTeamSection?.members || []),
+                      {
+                        name: { en: '', ar: '' },
+                        role: { en: '', ar: '' },
+                        photo: '',
+                      },
+                    ];
+                    setFormData({
+                      ...formData,
+                      content: {
+                        ...content,
+                        ourTeamSection: {
+                          ...content.ourTeamSection,
+                          members: newMembers,
+                        },
+                      },
+                    });
+                  }}
+                >
+                  + Add Team Member
+                </Button>
+              </div>
+            </div>
           </div>
         );
       case PageSectionType.FOR_EGYPT_GROUP:
@@ -3715,6 +3994,285 @@ function PageSectionForm({
                   }}
                 >
                   + Add Social Media Button
+                </Button>
+              </div>
+            </div>
+            {/* ourTeamSection */}
+            <div className='space-y-4 mt-8'>
+              <Label>Our Team Section Title</Label>
+              <div className='grid grid-cols-2 gap-4 mt-2'>
+                <div>
+                  <Label className='text-xs text-gray-500'>English</Label>
+                  <Input
+                    value={content.ourTeamSection?.title?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          ourTeamSection: {
+                            ...content.ourTeamSection,
+                            title: {
+                              ...content.ourTeamSection?.title,
+                              en: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Enter section title in English'
+                  />
+                </div>
+                <div>
+                  <Label className='text-xs text-gray-500'>Arabic</Label>
+                  <Input
+                    value={content.ourTeamSection?.title?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          ourTeamSection: {
+                            ...content.ourTeamSection,
+                            title: {
+                              ...content.ourTeamSection?.title,
+                              ar: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='ادخل عنوان القسم بالعربية'
+                  />
+                </div>
+              </div>
+
+              {/* Team Members */}
+              <Label className='mt-4'>Team Members</Label>
+              <div className='space-y-6'>
+                {(content.ourTeamSection?.members || []).map(
+                  (member: any, idx: number) => (
+                    <div
+                      key={idx}
+                      className='p-4 rounded-lg bg-white/5 border border-neutral-700 flex flex-col gap-4'
+                    >
+                      {/* صورة العضو */}
+                      <div className='flex flex-col items-center gap-2'>
+                        <Input
+                          value={member.photo || ''}
+                          onChange={e => {
+                            const newMembers = [
+                              ...(content.ourTeamSection?.members || []),
+                            ];
+                            newMembers[idx] = {
+                              ...newMembers[idx],
+                              photo: e.target.value,
+                            };
+                            setFormData({
+                              ...formData,
+                              content: {
+                                ...content,
+                                ourTeamSection: {
+                                  ...content.ourTeamSection,
+                                  members: newMembers,
+                                },
+                              },
+                            });
+                          }}
+                          placeholder='Photo URL'
+                          className='w-full'
+                        />
+                        {member.photo && (
+                          <Image
+                            src={member.photo}
+                            alt='Preview'
+                            width={120}
+                            height={120}
+                            className='w-32 h-32 object-cover rounded-full border-2 border-blue-500 shadow'
+                            unoptimized
+                          />
+                        )}
+                      </div>
+
+                      {/* بيانات العضو */}
+                      <div className='grid grid-cols-2 gap-4'>
+                        {/* الاسم */}
+                        <div>
+                          <Label className='text-sm'>Name (EN)</Label>
+                          <Input
+                            value={member.name?.en || ''}
+                            onChange={e => {
+                              const newMembers = [
+                                ...(content.ourTeamSection?.members || []),
+                              ];
+                              newMembers[idx] = {
+                                ...newMembers[idx],
+                                name: {
+                                  ...newMembers[idx]?.name,
+                                  en: e.target.value,
+                                },
+                              };
+                              setFormData({
+                                ...formData,
+                                content: {
+                                  ...content,
+                                  ourTeamSection: {
+                                    ...content.ourTeamSection,
+                                    members: newMembers,
+                                  },
+                                },
+                              });
+                            }}
+                            placeholder='Name (EN)'
+                          />
+                        </div>
+                        <div>
+                          <Label className='text-sm'>الاسم (عربي)</Label>
+                          <Input
+                            value={member.name?.ar || ''}
+                            onChange={e => {
+                              const newMembers = [
+                                ...(content.ourTeamSection?.members || []),
+                              ];
+                              newMembers[idx] = {
+                                ...newMembers[idx],
+                                name: {
+                                  ...newMembers[idx]?.name,
+                                  ar: e.target.value,
+                                },
+                              };
+                              setFormData({
+                                ...formData,
+                                content: {
+                                  ...content,
+                                  ourTeamSection: {
+                                    ...content.ourTeamSection,
+                                    members: newMembers,
+                                  },
+                                },
+                              });
+                            }}
+                            placeholder='الاسم (عربي)'
+                          />
+                        </div>
+
+                        {/* الدور */}
+                        <div>
+                          <Label className='text-sm'>Role (EN)</Label>
+                          <Input
+                            value={member.role?.en || ''}
+                            onChange={e => {
+                              const newMembers = [
+                                ...(content.ourTeamSection?.members || []),
+                              ];
+                              newMembers[idx] = {
+                                ...newMembers[idx],
+                                role: {
+                                  ...newMembers[idx]?.role,
+                                  en: e.target.value,
+                                },
+                              };
+                              setFormData({
+                                ...formData,
+                                content: {
+                                  ...content,
+                                  ourTeamSection: {
+                                    ...content.ourTeamSection,
+                                    members: newMembers,
+                                  },
+                                },
+                              });
+                            }}
+                            placeholder='Role (EN)'
+                          />
+                        </div>
+                        <div>
+                          <Label className='text-sm'>الدور (عربي)</Label>
+                          <Input
+                            value={member.role?.ar || ''}
+                            onChange={e => {
+                              const newMembers = [
+                                ...(content.ourTeamSection?.members || []),
+                              ];
+                              newMembers[idx] = {
+                                ...newMembers[idx],
+                                role: {
+                                  ...newMembers[idx]?.role,
+                                  ar: e.target.value,
+                                },
+                              };
+                              setFormData({
+                                ...formData,
+                                content: {
+                                  ...content,
+                                  ourTeamSection: {
+                                    ...content.ourTeamSection,
+                                    members: newMembers,
+                                  },
+                                },
+                              });
+                            }}
+                            placeholder='الدور (عربي)'
+                          />
+                        </div>
+                      </div>
+
+                      {/* زر الحذف */}
+                      <Button
+                        type='button'
+                        variant='destructive'
+                        size='sm'
+                        className='self-end'
+                        onClick={() => {
+                          const newMembers = (
+                            content.ourTeamSection?.members || []
+                          ).filter((_: any, i: number) => i !== idx);
+                          setFormData({
+                            ...formData,
+                            content: {
+                              ...content,
+                              ourTeamSection: {
+                                ...content.ourTeamSection,
+                                members: newMembers,
+                              },
+                            },
+                          });
+                        }}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  )
+                )}
+
+                {/* زر إضافة عضو جديد */}
+                <Button
+                  type='button'
+                  variant='secondary'
+                  size='sm'
+                  className='mt-2'
+                  onClick={() => {
+                    const newMembers = [
+                      ...(content.ourTeamSection?.members || []),
+                      {
+                        name: { en: '', ar: '' },
+                        role: { en: '', ar: '' },
+                        photo: '',
+                      },
+                    ];
+                    setFormData({
+                      ...formData,
+                      content: {
+                        ...content,
+                        ourTeamSection: {
+                          ...content.ourTeamSection,
+                          members: newMembers,
+                        },
+                      },
+                    });
+                  }}
+                >
+                  + Add Team Member
                 </Button>
               </div>
             </div>

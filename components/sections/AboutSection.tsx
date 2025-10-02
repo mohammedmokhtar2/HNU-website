@@ -238,7 +238,7 @@ export function AboutSection({ sectionId }: AboutSectionProps) {
                 </div>
               </div>
 
-              {/* Floating Elements */}
+              {/* Floating Elements
               <motion.div
                 animate={{
                   y: [0, -10, 0],
@@ -267,7 +267,7 @@ export function AboutSection({ sectionId }: AboutSectionProps) {
                 className='absolute -bottom-4 -left-4 w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center shadow-lg'
               >
                 <Sparkles size={20} className='text-white' />
-              </motion.div>
+              </motion.div> */}
             </motion.div>
           </div>
         </div>

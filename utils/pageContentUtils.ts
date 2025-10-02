@@ -114,6 +114,13 @@ export function getContentForPageSectionType(
           buttonUrl: '',
           socialMediaButtons: [],
         },
+
+        ourTeamSection: {
+          title: { ar: '', en: '' },
+          name: [],
+          role: [],
+          photo: [],
+        },
       } as StudentUnionsContent;
 
     case PageSectionType.FOR_EGYPT_GROUP:
@@ -137,6 +144,12 @@ export function getContentForPageSectionType(
           title: { ar: '', en: '' },
           buttonUrl: '',
           socialMediaButtons: [],
+        },
+        ourTeamSection: {
+          title: { ar: '', en: '' },
+          name: [],
+          role: [],
+          photo: [],
         },
       } as ForEgyptGroupContent;
 

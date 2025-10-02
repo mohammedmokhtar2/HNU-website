@@ -470,6 +470,32 @@ export function SectionManager({
     }
   };
 
+  //   const handleUpdate = async () => {
+  //   if (!editingSection) return;
+
+  //   try {
+  //     const updatedSection = await PageSectionService.updatePageSection(
+  //       editingSection.id,
+  //       {
+  //         type: formData.type,
+  //         title: formData.title,
+  //         content: formData.content,
+  //         order: formData.order,
+  //       }
+  //     );
+  //     setSections(
+  //       sections.map(s => (s.id === editingSection.id ? updatedSection : s))
+  //     );
+  //     setIsEditDialogOpen(false);
+  //     setEditingSection(null);
+  //     resetForm();
+  //     success('Page section updated successfully');
+  //   } catch (error) {
+  //     console.error('Error updating page section:', error);
+  //     showError('Failed to update page section');
+  //   }
+  // };
+
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this section?')) return;
 
@@ -1832,6 +1858,41 @@ function SectionForm({
                 }
                 placeholder='admin@university.edu'
               />
+            </div>
+            {/* add image url */}
+            <div>
+              <Label>Image URL</Label>
+              <div className='flex gap-2'>
+                <Input
+                  value={content.imageUrl || ''}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      content: { ...content, imageUrl: e.target.value },
+                    })
+                  }
+                  placeholder='Image URL'
+                />
+                <Button
+                  type='button'
+                  variant='outline'
+                  size='sm'
+                  onClick={() => onImageSelect('imageUrl')}
+                >
+                  <ImageIcon className='h-4 w-4' />
+                </Button>
+              </div>
+              {content.imageUrl && (
+                <div className='mt-2'>
+                  <Image
+                    width={100}
+                    height={100}
+                    src={content.imageUrl}
+                    alt='Preview'
+                    className='w-32 h-24 object-cover rounded border'
+                  />
+                </div>
+              )}
             </div>
             <div className='space-y-2'>
               <Label>Contact Information</Label>

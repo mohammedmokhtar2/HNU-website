@@ -5,7 +5,7 @@ import type { HeroContentOne } from '@/types/pageSections';
 import Image from 'next/image';
 
 interface HeroOneSectionProps {
-  scrollTarget: React.RefObject<HTMLDivElement>;
+  scrollTarget: React.RefObject<HTMLDivElement | null>;
   section: PageSection;
   locale: 'ar' | 'en';
   getLocalizedContent: (content: any) => string;
