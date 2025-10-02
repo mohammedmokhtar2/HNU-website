@@ -46,7 +46,6 @@ interface ProgramConfig {
   images?: string[];
   videos?: string[];
   pdfs?: string[]; // for the لوايح بتاعت كل قسم
-  curriculum?: string[]; // Course curriculum list
   links?: {
     title: string;
     href: string;
@@ -82,8 +81,6 @@ export function ProgramsSection({
   // State for view modes and filters
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedDegree, setSelectedDegree] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<'name' | 'duration' | 'credits'>('name');
 
   const ProgramsSection = sections.find(
     s =>
@@ -156,58 +153,11 @@ export function ProgramsSection({
       );
     });
   }
-
-  // Apply degree filter
-  if (selectedDegree !== 'all') {
-    filteredPrograms = filteredPrograms.filter(
-      program => program.config?.degree === selectedDegree
-    );
-  }
-
-  // Apply sorting
-  filteredPrograms.sort((a, b) => {
-    switch (sortBy) {
-      case 'name':
-        const nameA = a.name?.[locale] || a.name?.en || '';
-        const nameB = b.name?.[locale] || b.name?.en || '';
-        return nameA.localeCompare(nameB);
-      case 'duration':
-        const durationA = parseInt(a.config?.duration?.split(' ')[0] || '0');
-        const durationB = parseInt(b.config?.duration?.split(' ')[0] || '0');
-        return durationA - durationB;
-      case 'credits':
-        return (a.config?.credits || 0) - (b.config?.credits || 0);
-      default:
-        return 0;
-    }
-  });
-
-  // Get unique degrees for filter
-  const uniqueDegrees = Array.from(
-    new Set(programs.map(program => program.config?.degree).filter(Boolean))
-  );
-
-  // Statistics
-  const totalPrograms = filteredPrograms.length;
-  const totalCredits = filteredPrograms.reduce(
-    (sum, program) => sum + (program.config?.credits || 0),
-    0
-  );
-  const averageDuration =
-    filteredPrograms.length > 0
-      ? Math.round(
-        filteredPrograms.reduce((sum, program) => {
-          const duration = parseInt(
-            program.config?.duration?.split(' ')[0] || '0'
-          );
-          return sum + duration;
-        }, 0) / filteredPrograms.length
-      )
-      : 0;
-
+ 
+  
   return (
     <main
-      className="px-4 md:px-8 lg:px-16 bg-gray-50 py-12"
+      className="px-4 md:px-8 lg:px-16 bg-gray-50 py-12 "
       id="programs"
     >
       <section className="mb-16 bg-gray-50">
@@ -244,29 +194,6 @@ export function ProgramsSection({
           </div>
 
           <div className="flex gap-4 items-center">
-            <select
-              value={selectedDegree}
-              onChange={(e) => setSelectedDegree(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="all">{locale === 'ar' ? 'جميع الدرجات' : 'All Degrees'}</option>
-              {uniqueDegrees.map((degree) => (
-                <option key={degree} value={degree}>
-                  {degree}
-                </option>
-              ))}
-            </select>
-
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as 'name' | 'duration' | 'credits')}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="name">{locale === 'ar' ? 'الاسم' : 'Name'}</option>
-              <option value="duration">{locale === 'ar' ? 'المدة' : 'Duration'}</option>
-              <option value="credits">{locale === 'ar' ? 'الساعات المعتمدة' : 'Credits'}</option>
-            </select>
-
             <div className="flex border border-gray-300 rounded-lg overflow-hidden">
               <button
                 onClick={() => setViewMode('grid')}
@@ -284,23 +211,6 @@ export function ProgramsSection({
           </div>
         </div>
 
-        {/* Statistics */}
-        {filteredPrograms.length > 0 && (
-          <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow-md text-center">
-              <div className="text-3xl font-bold text-blue-600 mb-2">{totalPrograms}</div>
-              <div className="text-gray-600">{locale === 'ar' ? 'إجمالي البرامج' : 'Total Programs'}</div>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-md text-center">
-              <div className="text-3xl font-bold text-green-600 mb-2">{totalCredits}</div>
-              <div className="text-gray-600">{locale === 'ar' ? 'إجمالي الساعات المعتمدة' : 'Total Credits'}</div>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-md text-center">
-              <div className="text-3xl font-bold text-purple-600 mb-2">{averageDuration}</div>
-              <div className="text-gray-600">{locale === 'ar' ? 'متوسط المدة (سنوات)' : 'Average Duration (Years)'}</div>
-            </div>
-          </div>
-        )}
 
         {/* Programs Grid */}
         {programsLoading ? (
@@ -388,7 +298,7 @@ function ComprehensiveProgramCard({
   if (viewMode === 'list') {
     return (
       <Link href={`/colleges/${program.collage?.slug}/programs/${program.id}`}>
-        <div className='bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden transform hover:scale-105 transition-transform duration-300 cursor-pointer flex flex-col'>
+        <div className='bg-white rounded-lg shadow-md min-h-[400px] max-h-[400px] hover:shadow-lg  overflow-hidden transform hover:scale-105 transition-transform duration-300 cursor-pointer flex flex-col'>
           <div className='flex flex-col md:flex-row'>
             {/* Image */}
             <div className='relative h-48 md:h-auto w-full md:w-80 overflow-hidden'>
@@ -411,21 +321,33 @@ function ComprehensiveProgramCard({
             </div>
 
             {/* Content */}
-            <div className='p-6 flex flex-col flex-grow'>
-              <h3 className='text-xl font-semibold text-gray-900 mb-2'>
-                {programName}
-              </h3>
+            <div className='p-6 flex flex-col flex-grow justify-between'>
+              <div>
+                <h3 className='text-xl font-semibold text-gray-900 mb-2'>
+                  {programName}
+                </h3>
 
-              {collegeName && (
-                <div className='flex items-center gap-2 text-gray-600 mb-2'>
-                  <Building2 className='w-4 h-4' />
-                  <span className='text-sm'>{collegeName}</span>
+                {collegeName && (
+                  <div className='flex items-center gap-2 text-gray-600 mb-2'>
+                    <Building2 className='w-4 h-4' />
+                    <span className='text-sm'>{collegeName}</span>
+                  </div>
+                )}
+
+                {programDescription && (
+                  <p className='text-gray-600 mb-4 line-clamp-3'>{programDescription}</p>
+                )}
+              </div>
+
+              {/* Navigation Indicator */}
+              <div className='border-t pt-4 mt-auto'>
+                <div className='flex items-center justify-between'>
+                  <span className='text-sm text-gray-500'>
+                    {locale === 'ar' ? 'عرض التفاصيل' : 'View Details'}
+                  </span>
+                  <ChevronRight className='w-4 h-4 text-blue-600' />
                 </div>
-              )}
-
-              {programDescription && (
-                <p className='text-gray-600 mb-4'>{programDescription}</p>
-              )}
+              </div>
             </div>
           </div>
         </div>
@@ -436,7 +358,7 @@ function ComprehensiveProgramCard({
   // Grid view - Updated to match dummy design
   return (
     <Link href={`/colleges/${program.collage?.slug || 'default'}/programs/${program.id}`}>
-      <div className='bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden transform hover:scale-105 transition-transform duration-300 cursor-pointer flex flex-col'>
+      <div className='bg-white rounded-lg shadow-md min-h-[400px] max-h-[400px] hover:shadow-lg  overflow-hidden transform hover:scale-105 transition-transform duration-300 cursor-pointer flex flex-col'>
         {/* Image */}
         <div className='relative h-48 overflow-hidden'>
           <Image
@@ -458,26 +380,32 @@ function ComprehensiveProgramCard({
         </div>
 
         {/* Card Body */}
-        <div className='p-6 flex flex-col flex-grow'>
-          <h3 className='text-xl font-semibold text-gray-900 mb-2'>
-            {programName}
-          </h3>
+        <div className='p-6 flex flex-col flex-grow justify-between'>
+          <div>
+            <h3 className='text-xl font-semibold text-gray-900 mb-2'>
+              {programName}
+            </h3>
 
-          {collegeName && (
-            <div className='flex items-center gap-2 text-gray-600 mb-2'>
-              <Building2 className='w-4 h-4' />
-              <span className='text-sm'>{collegeName}</span>
+            {collegeName && (
+              <div className='flex items-center gap-2 text-gray-600 mb-2'>
+                <Building2 className='w-4 h-4' />
+                <span className='text-sm'>{collegeName}</span>
+              </div>
+            )}
+
+            {programDescription && (
+              <p className='text-gray-600 mb-4 line-clamp-3'>{programDescription}</p>
+            )}
+          </div>
+
+          {/* Navigation Indicator */}
+          <div className='border-t pt-4 mt-auto'>
+            <div className='flex items-center justify-between'>
+              <span className='text-sm text-gray-500'>
+                {locale === 'ar' ? 'عرض التفاصيل' : 'View Details'}
+              </span>
+              <ChevronRight className='w-4 h-4 text-blue-600' />
             </div>
-          )}
-
-          {programDescription && (
-            <p className='text-gray-600 mb-4'>{programDescription}</p>
-          )}
-
-          <div className='border-t pt-4 flex flex-col flex-grow'>
-            <h4 className='font-semibold text-gray-900 mb-2'>
-              {locale === 'ar' ? 'المنهج الدراسي' : 'Course Curriculum'}
-            </h4>
           </div>
         </div>
       </div>

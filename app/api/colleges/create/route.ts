@@ -18,6 +18,7 @@ export const POST = withAuditLog(
         programsCount,
         facultyCount,
         establishedYear,
+        universityId,
       } = body;
 
       if (!name || !slug || !type) {
@@ -51,7 +52,7 @@ export const POST = withAuditLog(
           facultyCount: facultyCount || null,
           establishedYear: establishedYear || null,
           createdById: createdById || null,
-          // universityId: universityId || null,
+          universityId: universityId || null,
         },
       });
 

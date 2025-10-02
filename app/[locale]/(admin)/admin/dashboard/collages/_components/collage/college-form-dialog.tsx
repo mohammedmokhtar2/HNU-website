@@ -37,6 +37,7 @@ import { useCurrentUser } from '@/contexts/userContext';
 import Image from 'next/image';
 import { CollegeType } from '@/types';
 import { Textarea } from '@/components/ui/textarea';
+import { useUniversity } from '@/contexts';
 
 const collegeSchema = z.object({
   name: z.object({
@@ -107,9 +108,8 @@ export function CollegeFormDialog({
   const user = useCurrentUser();
   const { success, error, warning, info, loading } = useToast();
 
-  const university = {
-    id: 'test',
-  };
+  const { universities } = useUniversity();
+  const university = universities[0];
 
   const form = useForm<CollegeFormData>({
     resolver: zodResolver(collegeSchema),
@@ -135,7 +135,7 @@ export function CollegeFormDialog({
       theme: '{}',
       galleryImages: '[]',
       faq: '[]',
-      universityId: university?.id || '',
+      universityId: university.id || '',
       logoUrl: logoUrl || '',
     },
   });

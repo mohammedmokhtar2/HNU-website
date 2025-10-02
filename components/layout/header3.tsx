@@ -154,7 +154,7 @@ function Header3({ navigationItems = [] }: HeaderData) {
   }, []);
 
   // if the rotues starts with /admin, then show the admin header
-  if (pathname.startsWith('/admin')) {
+  if (pathname.startsWith('/admin') || pathname.includes('/programs/')) {
     return null;
   }
 
