@@ -23,6 +23,7 @@ export function AboutSection({ sectionId }: AboutSectionProps) {
     s => s.type === SectionType.ABOUT && (!sectionId || s.id === sectionId)
   );
 
+
   if (loading) {
     return (
       <section className='py-24 relative overflow-hidden w-full min-h-screen flex items-center justify-center'>

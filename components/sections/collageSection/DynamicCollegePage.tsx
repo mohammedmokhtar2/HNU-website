@@ -7,7 +7,7 @@ import { PageSkeleton, SectionSkeleton } from '@/components/ui/skeleton';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { CollegeSectionRenderer } from './CollegeSectionRenderer';
+import { CollegeSectionRenderer } from '../CollegeSectionRenderer';
 
 interface DynamicCollegePageProps {
   collegeId: string;
@@ -18,10 +18,12 @@ const MemoizedCollegeSectionRenderer = React.memo(
     section,
     locale,
     collageId,
+    sections,
   }: {
     section: any;
     locale: string;
     collageId: string;
+    sections: any;
   }) => (
     <ErrorBoundary
       fallback={
@@ -52,6 +54,7 @@ const MemoizedCollegeSectionRenderer = React.memo(
         section={section}
         locale={locale}
         collageId={collageId}
+        sections={sections}
       />
     </ErrorBoundary>
   )
@@ -121,6 +124,7 @@ export function DynamicCollegePage({ collegeId }: DynamicCollegePageProps) {
             section={section}
             locale={locale}
             collageId={collegeId}
+            sections={sections}
           />
         ))}
       </Suspense>
