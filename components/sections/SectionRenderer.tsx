@@ -41,7 +41,7 @@ const LazyBlogSection = React.lazy(() =>
 );
 
 const LazyProgramsSection = React.lazy(() =>
-  import('./ProgramsSectionWrapper').then(module => ({
+  import('./collageSection/ProgramsSectionWrapper').then(module => ({
     default: module.ProgramsSectionWrapper,
   }))
 );

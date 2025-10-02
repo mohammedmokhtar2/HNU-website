@@ -46,6 +46,7 @@ interface ProgramConfig {
   images?: string[];
   videos?: string[];
   pdfs?: string[]; // for the لوايح بتاعت كل قسم
+  curriculum?: string[]; // Course curriculum list
   links?: {
     title: string;
     href: string;
@@ -195,30 +196,29 @@ export function ProgramsSection({
   const averageDuration =
     filteredPrograms.length > 0
       ? Math.round(
-          filteredPrograms.reduce((sum, program) => {
-            const duration = parseInt(
-              program.config?.duration?.split(' ')[0] || '0'
-            );
-            return sum + duration;
-          }, 0) / filteredPrograms.length
-        )
+        filteredPrograms.reduce((sum, program) => {
+          const duration = parseInt(
+            program.config?.duration?.split(' ')[0] || '0'
+          );
+          return sum + duration;
+        }, 0) / filteredPrograms.length
+      )
       : 0;
 
   return (
-    <section className='relative w-full bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 py-16'>
-      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-        {/* Header Section */}
-        <div className='text-center mb-12'>
-          <div className='inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium mb-4'>
-            <GraduationCap className='w-4 h-4' />
-            {locale === 'ar' ? 'البرامج الأكاديمية' : 'Academic Programs'}
-          </div>
-          <h1 className='text-4xl md:text-5xl font-bold text-gray-900 mb-4'>
+    <main
+      className="px-4 md:px-8 lg:px-16 bg-gray-50 py-12"
+      id="programs"
+    >
+      <section className="mb-16 bg-gray-50">
+        {/* Header */}
+        <div className="bg-[#023f8a] text-white p-8 rounded-lg shadow-md mb-8">
+          <h2 className="text-2xl font-bold text-center mb-2">
             {ProgramsSectionData.title?.[
               locale as keyof typeof ProgramsSectionData.title
             ] || (locale === 'ar' ? 'البرامج الأكاديمية' : 'Academic Programs')}
-          </h1>
-          <p className='text-xl text-gray-600 max-w-3xl mx-auto mb-8'>
+          </h2>
+          <p className="text-center text-blue-100">
             {ProgramsSectionData.description?.[
               locale as keyof typeof ProgramsSectionData.description
             ] ||
@@ -228,7 +228,81 @@ export function ProgramsSection({
           </p>
         </div>
 
-        {/* Programs Display */}
+        {/* Search and Filter Section */}
+        <div className="mb-8 flex flex-col md:flex-row gap-4 items-center justify-between">
+          <div className="flex-1 max-w-md">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <input
+                type="text"
+                placeholder={locale === 'ar' ? 'البحث في البرامج...' : 'Search programs...'}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-4 items-center">
+            <select
+              value={selectedDegree}
+              onChange={(e) => setSelectedDegree(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="all">{locale === 'ar' ? 'جميع الدرجات' : 'All Degrees'}</option>
+              {uniqueDegrees.map((degree) => (
+                <option key={degree} value={degree}>
+                  {degree}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as 'name' | 'duration' | 'credits')}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="name">{locale === 'ar' ? 'الاسم' : 'Name'}</option>
+              <option value="duration">{locale === 'ar' ? 'المدة' : 'Duration'}</option>
+              <option value="credits">{locale === 'ar' ? 'الساعات المعتمدة' : 'Credits'}</option>
+            </select>
+
+            <div className="flex border border-gray-300 rounded-lg overflow-hidden">
+              <button
+                onClick={() => setViewMode('grid')}
+                className={`px-3 py-2 ${viewMode === 'grid' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
+              >
+                <Grid3X3 className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`px-3 py-2 ${viewMode === 'list' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
+              >
+                <List className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Statistics */}
+        {filteredPrograms.length > 0 && (
+          <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white p-6 rounded-lg shadow-md text-center">
+              <div className="text-3xl font-bold text-blue-600 mb-2">{totalPrograms}</div>
+              <div className="text-gray-600">{locale === 'ar' ? 'إجمالي البرامج' : 'Total Programs'}</div>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow-md text-center">
+              <div className="text-3xl font-bold text-green-600 mb-2">{totalCredits}</div>
+              <div className="text-gray-600">{locale === 'ar' ? 'إجمالي الساعات المعتمدة' : 'Total Credits'}</div>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow-md text-center">
+              <div className="text-3xl font-bold text-purple-600 mb-2">{averageDuration}</div>
+              <div className="text-gray-600">{locale === 'ar' ? 'متوسط المدة (سنوات)' : 'Average Duration (Years)'}</div>
+            </div>
+          </div>
+        )}
+
+        {/* Programs Grid */}
         {programsLoading ? (
           <div className='flex items-center justify-center h-64'>
             <div className='text-center'>
@@ -284,20 +358,8 @@ export function ProgramsSection({
           </div>
         )}
 
-        {/* View All Programs Button */}
-        <div className='text-center mt-12'>
-          <Link
-            href='/programs'
-            className='inline-flex items-center gap-3 bg-blue-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1'
-          >
-            {ProgramsSectionData.buttonText?.[
-              locale as keyof typeof ProgramsSectionData.buttonText
-            ] || (locale === 'ar' ? 'عرض جميع البرامج' : 'View All Programs')}
-            <ChevronRight className='w-5 h-5' />
-          </Link>
-        </div>
-      </div>
-    </section>
+      </section>
+    </main>
   );
 }
 
@@ -322,175 +384,103 @@ function ComprehensiveProgramCard({
     (program.collage?.name as any)?.en ||
     '';
 
+
   if (viewMode === 'list') {
     return (
-      <div className='bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 overflow-hidden'>
-        <div className='flex flex-col md:flex-row'>
-          {/* Image */}
-          <div className='relative w-full md:w-80 h-48 md:h-auto'>
-            <Image
-              src={programConfig.images?.[0] || '/home.jpeg'}
-              alt={programName}
-              fill
-              className='object-cover'
-            />
-            <div className='absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium'>
-              {programConfig.degree || 'Program'}
-            </div>
-          </div>
-
-          {/* Content */}
-          <div className='flex-1 p-6'>
-            <div className='flex flex-col md:flex-row md:items-start md:justify-between mb-4'>
-              <div className='flex-1'>
-                <h3 className='text-2xl font-bold text-gray-900 mb-2'>
-                  <Link
-                    href={`/programs/${program.id}`}
-                    className='hover:text-blue-600 transition-colors duration-300'
-                  >
-                    {programName}
-                  </Link>
-                </h3>
-                {collegeName && (
-                  <div className='flex items-center gap-2 text-gray-600 mb-2'>
-                    <Building2 className='w-4 h-4' />
-                    <span className='text-sm'>{collegeName}</span>
-                  </div>
-                )}
-              </div>
-              <div className='flex gap-2 mt-2 md:mt-0'>
-                <button className='p-2 text-gray-400 hover:text-blue-600 transition-colors'>
-                  <Eye className='w-5 h-5' />
-                </button>
-                <button className='p-2 text-gray-400 hover:text-green-600 transition-colors'>
-                  <Download className='w-5 h-5' />
-                </button>
+      <Link href={`/colleges/${program.collage?.slug}/programs/${program.id}`}>
+        <div className='bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden transform hover:scale-105 transition-transform duration-300 cursor-pointer flex flex-col'>
+          <div className='flex flex-col md:flex-row'>
+            {/* Image */}
+            <div className='relative h-48 md:h-auto w-full md:w-80 overflow-hidden'>
+              <Image
+                src={programConfig.images?.[0] || '/home.jpeg'}
+                alt={programName}
+                width={400}
+                height={192}
+                className='w-full h-full object-cover transition-transform duration-500 hover:scale-110'
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src =
+                    "https://placehold.co/400x300/6b7280/ffffff?text=No+Image";
+                }}
+              />
+              <div className='absolute top-4 right-4'>
+                <span className='bg-[#023f8a] text-white text-xs font-medium px-2.5 py-0.5 rounded-full'>
+                  {programConfig.duration || '4 Years'}
+                </span>
               </div>
             </div>
 
-            {programDescription && (
-              <p className='text-gray-600 mb-4 line-clamp-2'>
-                {programDescription}
-              </p>
-            )}
+            {/* Content */}
+            <div className='p-6 flex flex-col flex-grow'>
+              <h3 className='text-xl font-semibold text-gray-900 mb-2'>
+                {programName}
+              </h3>
 
-            <div className='flex flex-wrap gap-6 text-sm text-gray-500 mb-4'>
-              {programConfig.duration && (
-                <div className='flex items-center gap-2'>
-                  <Clock className='w-4 h-4' />
-                  <span>{programConfig.duration}</span>
+              {collegeName && (
+                <div className='flex items-center gap-2 text-gray-600 mb-2'>
+                  <Building2 className='w-4 h-4' />
+                  <span className='text-sm'>{collegeName}</span>
                 </div>
               )}
-              {programConfig.credits && (
-                <div className='flex items-center gap-2'>
-                  <Award className='w-4 h-4' />
-                  <span>{programConfig.credits} credits</span>
-                </div>
-              )}
-            </div>
 
-            <div className='flex flex-wrap gap-2'>
-              <Link
-                href={`/programs/${program.id}`}
-                className='inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors'
-              >
-                <ExternalLink className='w-4 h-4' />
-                {locale === 'ar' ? 'عرض التفاصيل' : 'View Details'}
-              </Link>
-              {programConfig.pdfs?.[0] && (
-                <a
-                  href={programConfig.pdfs[0]}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  className='inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors'
-                >
-                  <FileText className='w-4 h-4' />
-                  {locale === 'ar' ? 'المنهج الدراسي' : 'Curriculum'}
-                </a>
+              {programDescription && (
+                <p className='text-gray-600 mb-4'>{programDescription}</p>
               )}
             </div>
           </div>
         </div>
-      </div>
+      </Link>
     );
   }
 
-  // Grid view
+  // Grid view - Updated to match dummy design
   return (
-    <div className='bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 overflow-hidden group'>
-      {/* Image */}
-      <div className='relative h-48 w-full'>
-        <Image
-          src={programConfig.images?.[0] || '/home.jpeg'}
-          alt={programName}
-          fill
-          className='object-cover group-hover:scale-105 transition-transform duration-300'
-        />
-        <div className='absolute inset-0 bg-gradient-to-t from-black/50 to-transparent' />
-        <div className='absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium'>
-          {programConfig.degree || 'Program'}
+    <Link href={`/colleges/${program.collage?.slug || 'default'}/programs/${program.id}`}>
+      <div className='bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden transform hover:scale-105 transition-transform duration-300 cursor-pointer flex flex-col'>
+        {/* Image */}
+        <div className='relative h-48 overflow-hidden'>
+          <Image
+            src={programConfig.images?.[0] || '/home.jpeg'}
+            alt={programName}
+            width={400}
+            height={192}
+            className='w-full h-full object-cover transition-transform duration-500 hover:scale-110'
+            onError={(e) => {
+              (e.target as HTMLImageElement).src =
+                "https://placehold.co/400x300/6b7280/ffffff?text=No+Image";
+            }}
+          />
+          <div className='absolute top-4 right-4'>
+            <span className='bg-[#023f8a] text-white text-xs font-medium px-2.5 py-0.5 rounded-full'>
+              {programConfig.duration || '4 Years'}
+            </span>
+          </div>
         </div>
-        <div className='absolute bottom-4 left-4 right-4'>
-          <h3 className='text-white text-xl font-bold mb-1'>
-            <Link
-              href={`/programs/${program.id}`}
-              className='hover:text-blue-200 transition-colors duration-300'
-            >
-              {programName}
-            </Link>
+
+        {/* Card Body */}
+        <div className='p-6 flex flex-col flex-grow'>
+          <h3 className='text-xl font-semibold text-gray-900 mb-2'>
+            {programName}
           </h3>
+
           {collegeName && (
-            <p className='text-blue-100 text-sm flex items-center gap-1'>
-              <Building2 className='w-3 h-3' />
-              {collegeName}
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className='p-6'>
-        {programDescription && (
-          <p className='text-gray-600 mb-4 line-clamp-2'>
-            {programDescription}
-          </p>
-        )}
-
-        <div className='flex flex-wrap gap-4 text-sm text-gray-500 mb-4'>
-          {programConfig.duration && (
-            <div className='flex items-center gap-2'>
-              <Clock className='w-4 h-4' />
-              <span>{programConfig.duration}</span>
+            <div className='flex items-center gap-2 text-gray-600 mb-2'>
+              <Building2 className='w-4 h-4' />
+              <span className='text-sm'>{collegeName}</span>
             </div>
           )}
-          {programConfig.credits && (
-            <div className='flex items-center gap-2'>
-              <Award className='w-4 h-4' />
-              <span>{programConfig.credits} credits</span>
-            </div>
-          )}
-        </div>
 
-        <div className='flex flex-wrap gap-2'>
-          <Link
-            href={`/programs/${program.id}`}
-            className='inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex-1 justify-center'
-          >
-            <ExternalLink className='w-4 h-4' />
-            {locale === 'ar' ? 'عرض التفاصيل' : 'View Details'}
-          </Link>
-          {programConfig.pdfs?.[0] && (
-            <a
-              href={programConfig.pdfs[0]}
-              target='_blank'
-              rel='noopener noreferrer'
-              className='inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors'
-            >
-              <FileText className='w-4 h-4' />
-            </a>
+          {programDescription && (
+            <p className='text-gray-600 mb-4'>{programDescription}</p>
           )}
+
+          <div className='border-t pt-4 flex flex-col flex-grow'>
+            <h4 className='font-semibold text-gray-900 mb-2'>
+              {locale === 'ar' ? 'المنهج الدراسي' : 'Course Curriculum'}
+            </h4>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
