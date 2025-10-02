@@ -7,7 +7,7 @@ import { PageSkeleton, SectionSkeleton } from '@/components/ui/skeleton';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { CollegeSectionRenderer } from '../CollegeSectionRenderer';
+import { CollegeSectionRenderer } from './CollegeSectionRenderer';
 
 interface DynamicCollegePageProps {
   collegeId: string;

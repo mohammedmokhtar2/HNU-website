@@ -106,7 +106,7 @@ export function DynamicHomePage({ universityId }: DynamicHomePageProps) {
         </div>
       </>
     ),
-    [locale]
+    []
   );
 
   // Show skeleton only on initial load

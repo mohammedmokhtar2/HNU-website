@@ -114,7 +114,7 @@ function Header3({ navigationItems = [] }: HeaderData) {
   }, [open]);
 
   const currentLocale = locale as 'en' | 'ar';
-  const basePath = pathname?.replace(/^\/(en|ar)/, '') || '/';
+  const basePath = '/';
   const isRTL = currentLocale === 'ar';
 
   const closeSidebar = () => {

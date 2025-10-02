@@ -96,7 +96,7 @@ export default function VisitorCountDisplay() {
   return (
     <div className='flex justify-center w-full'>
       {/* Main Counter */}
-      <div className='p-4 min-h-[150px] flex items-center rounded-lg w-full max-w-sm'>
+      <div className='p-4 min-h-[150px] flex flex-col items-center rounded-lg w-full max-w-sm'>
         <div className='flex w-full items-center text-white px-2 gap-4'>
           {/* الكلام على اليمين */}
           <div className='text-sm font-medium opacity-90 text-right flex-shrink-0'>

@@ -7,7 +7,7 @@ import { Providers } from '@/contexts';
 import Header3 from '@/components/layout/header3';
 import DecorativeWrapper from '@/components/DecorativeWrapper';
 import DockSocialMediaLinks from '@/components/layout/dockSocialMediaLinks';
-import Footer from '@/components/layout/footer';
+import FooterWrapper from '@/components/layout/footer-wrapper';
 import { headerData } from '@/data/index';
 import ChatWidget from '@/components/chat/ChatWidget';
 import { Toaster } from '@/components/ui/sonner';
@@ -47,7 +47,7 @@ export default async function LocaleLayout({
             <main className='bg-white'>
               <DecorativeWrapper>{children}</DecorativeWrapper>
             </main>
-            <Footer local={locale} />
+            <FooterWrapper local={locale} />
             {/* <DockSocialMediaLinks /> */}
             <ChatWidget />
             <VisitorCounter />

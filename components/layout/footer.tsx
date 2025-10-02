@@ -290,28 +290,6 @@ function Footer({ local }: FooterProps) {
           </div>
         </div>
       </div>
-
-      {/* Copyright and Development Team Row */}
-      <div className='py-6 sm:py-8 bg-gray-950'>
-        <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0 text-center lg:text-left'>
-            <div>
-              <p className='text-gray-500 text-sm sm:text-base'>
-                © {footerT('date')} {footerT('university_name')}.{' '}
-                {footerT('rights_reserved')}
-              </p>
-            </div>
-
-            <div className='text-center lg:text-right'>
-              <p className='text-gray-400 text-sm sm:text-base'>
-                {local === 'ar'
-                  ? footerData.development.credits.ar
-                  : footerData.development.credits.en}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
     </footer>
   );
 }

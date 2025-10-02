@@ -3,8 +3,8 @@
 import React, { useMemo, Suspense } from 'react';
 import { Section } from '@/types/section';
 import { SectionType } from '@/types/enums';
-import { AboutSection } from './uniSections/AboutSection';
-import { HeroSection } from './HeroSection';
+import { AboutSection } from '../uniSections/AboutSection';
+import { HeroSection } from '../HeroSection';
 import { useLocale } from 'next-intl';
 import { SectionSkeleton } from '@/components/ui/skeleton';
 
@@ -17,65 +17,65 @@ interface CollegeSectionRendererProps {
 
 // Lazy load components for better performance
 const LazyHeroSection = React.lazy(() =>
-  import('./HeroSection').then(module => ({ default: module.HeroSection }))
+  import('../HeroSection').then(module => ({ default: module.HeroSection }))
 );
 
 const LazyAboutSection = React.lazy(() =>
-  import('./collageSection/CollageaboutSection').then(module => ({
+  import('./CollageaboutSection').then(module => ({
     default: module.default,
   }))
 );
 
 const LazyOurMissionSection = React.lazy(() =>
-  import('./OurMissionSection').then(module => ({
+  import('../OurMissionSection').then(module => ({
     default: module.OurMissionSection,
   }))
 );
 
 const LazyBlogSection = React.lazy(() =>
-  import('./BlogSection').then(module => ({
+  import('../BlogSection').then(module => ({
     default: module.BlogSection,
   }))
 );
 
 const LazyNumbersSection = React.lazy(() =>
-  import('./NumbersSection').then(module => ({
+  import('../NumbersSection').then(module => ({
     default: module.NumbersSection,
   }))
 );
 
 const LazyActionsSection = React.lazy(() =>
-  import('./ActionsSection').then(module => ({
+  import('../ActionsSection').then(module => ({
     default: module.ActionsSection,
   }))
 );
 
 const LazyStudentUnionSection = React.lazy(() =>
-  import('./StudentUnionSection').then(module => ({
+  import('../StudentUnionSection').then(module => ({
     default: module.StudentUnionSection,
   }))
 );
 
 const LazyEgyptStudentGroupSection = React.lazy(() =>
-  import('./EgyptStudentGroupSection').then(module => ({
+  import('../EgyptStudentGroupSection').then(module => ({
     default: module.EgyptStudentGroupSection,
   }))
 );
 
 const LazyPresidentSection = React.lazy(() =>
-  import('./PresidentSection').then(module => ({
+  import('../PresidentSection').then(module => ({
     default: module.PresidentSection,
   }))
 );
 
 const LazyProgramsSection = React.lazy(() =>
-  import('./collageSection/ProgramsSectionWrapper').then(module => ({
+  import('./ProgramsSectionWrapper').then(module => ({
     default: module.ProgramsSectionWrapper,
   }))
 );
 
 const LazyHeaderSection = React.lazy(() =>
-  import('./collageSection/HeaderSection').then(module => ({
+  import('./HeaderSection').then(module => ({
     default: module.default,
   }))
 );

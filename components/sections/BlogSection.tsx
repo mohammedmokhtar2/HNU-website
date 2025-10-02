@@ -1,28 +1,22 @@
 'use client';
 
-import React, { useState, useRef, useEffect, useId } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import {
-  Calendar,
-  User,
-  Eye,
   ArrowRight,
-  ExternalLink,
-  Star,
-  Building,
-  GraduationCap,
+  ChevronLeft,
+  Calendar,
   X,
+  User,
+  Clock,
 } from 'lucide-react';
 import Image from 'next/image';
 import { format } from 'date-fns';
-import { BlogWithRelations } from '@/types/blog';
-import { getMultilingualText } from '@/utils/multilingual';
-import { useOutsideClick } from '@/hooks/useOutsideClick';
 import { AnimatePresence, motion } from 'motion/react';
+import { BlogWithRelations } from '@/types/blog';
+import { BentoGrid, BentoGridItem } from '@/components/ui/bento-grid';
+import { useOutsideClick } from '@/hooks/use-outside-click';
 
 interface BlogSectionProps {
   sectionId: string;
@@ -39,366 +33,7 @@ interface BlogSectionProps {
   };
 }
 
-interface BlogCardProps {
-  blog: BlogWithRelations;
-  locale: string;
-  onViewBlog: (slug: string) => void;
-  onViewAll: () => void;
-}
-
-const BlogCard = ({
-  blog,
-  locale,
-  onViewBlog,
-  onViewAll,
-  id,
-}: BlogCardProps & { id: string }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') {
-        setIsExpanded(false);
-      }
-    }
-
-    if (isExpanded) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-    }
-
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [isExpanded]);
-
-  useOutsideClick(cardRef as React.RefObject<HTMLDivElement>, () => {
-    if (isExpanded) {
-      setIsExpanded(false);
-    }
-  });
-
-  const getBlogTitle = (blog: BlogWithRelations): string => {
-    if (typeof blog.title === 'object' && blog.title !== null) {
-      return (
-        (blog.title as any)[locale] || (blog.title as any).en || 'Untitled'
-      );
-    }
-    return 'Untitled';
-  };
-
-  const getBlogContent = (blog: BlogWithRelations): string => {
-    if (typeof blog.content === 'object' && blog.content !== null) {
-      return (blog.content as any)[locale] || (blog.content as any).en || '';
-    }
-    return '';
-  };
-
-  const getBlogImage = (blog: BlogWithRelations) => {
-    return blog.image && blog.image.length > 0 ? blog.image[0] : null;
-  };
-
-  const getAssociatedEntity = (blog: BlogWithRelations) => {
-    if (blog.University) {
-      return {
-        type: 'university',
-        name: getMultilingualText(
-          blog.University.name as Record<string, any>,
-          locale,
-          'Unknown University'
-        ),
-      };
-    }
-    if (blog.collage) {
-      return {
-        type: 'college',
-        name: getMultilingualText(
-          blog.collage.name as Record<string, any>,
-          locale,
-          'Unknown College'
-        ),
-      };
-    }
-    return null;
-  };
-
-  const blogTitle = getBlogTitle(blog);
-  const blogContent = getBlogContent(blog);
-  const blogImage = getBlogImage(blog);
-  const associatedEntity = getAssociatedEntity(blog);
-
-  return (
-    <>
-      <AnimatePresence>
-        {isExpanded && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className='fixed inset-0 bg-black/20 h-full w-full z-10'
-          />
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {isExpanded ? (
-          <div className='fixed inset-0 grid place-items-center z-[100]'>
-            <motion.button
-              key={`button-${blog.id}-${id}`}
-              layout
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className='flex absolute top-2 right-2 lg:hidden items-center justify-center bg-white rounded-full h-6 w-6'
-              onClick={() => setIsExpanded(false)}
-            >
-              <X className='h-4 w-4 text-black' />
-            </motion.button>
-
-            <motion.div
-              layoutId={`card-${blog.id}-${id}`}
-              ref={cardRef}
-              className='w-full max-w-[500px] h-full md:h-fit md:max-h-[90%] flex flex-col bg-white sm:rounded-3xl overflow-hidden'
-            >
-              <motion.div layoutId={`image-${blog.id}-${id}`}>
-                {blogImage ? (
-                  <Image
-                    width={500}
-                    height={320}
-                    src={blogImage}
-                    alt={blogTitle}
-                    className='w-full h-80 lg:h-80 sm:rounded-tr-lg sm:rounded-tl-lg object-cover object-center'
-                  />
-                ) : (
-                  <div className='w-full h-80 bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center'>
-                    <span className='text-muted-foreground'>No Image</span>
-                  </div>
-                )}
-              </motion.div>
-
-              <div>
-                <div className='flex justify-between items-start p-4'>
-                  <div className='flex-1'>
-                    <motion.h3
-                      layoutId={`title-${blog.id}-${id}`}
-                      className='font-bold text-neutral-700  text-lg'
-                    >
-                      {blogTitle}
-                    </motion.h3>
-                    <motion.p
-                      layoutId={`description-${blog.id}-${id}`}
-                      className='text-neutral-600  text-sm mt-1'
-                    >
-                      {associatedEntity?.name || 'Blog Post'}
-                    </motion.p>
-                  </div>
-
-                  <motion.button
-                    layoutId={`button-${blog.id}-${id}`}
-                    onClick={() => onViewBlog(blog.slug)}
-                    className='px-4 py-3 text-sm rounded-full font-bold bg-green-500 text-white hover:bg-green-600 transition-colors'
-                  >
-                    View Blog
-                  </motion.button>
-                </div>
-
-                <div className='pt-4 relative px-4'>
-                  <motion.div
-                    layout
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className='text-neutral-600 text-xs md:text-sm lg:text-base h-40 md:h-fit pb-10 flex flex-col items-start gap-4 overflow-auto [mask:linear-gradient(to_bottom,white,white,transparent)] [scrollbar-width:none] [-ms-overflow-style:none] [-webkit-overflow-scrolling:touch]'
-                  >
-                    <p className='whitespace-pre-wrap'>{blogContent}</p>
-
-                    {/* Tags */}
-                    {blog.tags && blog.tags.length > 0 && (
-                      <div className='flex flex-wrap gap-2'>
-                        {blog.tags.map((tag, index) => (
-                          <Badge
-                            key={index}
-                            variant='secondary'
-                            className='text-xs'
-                          >
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Event Information */}
-                    {blog.isEvent && blog.eventConfig && (
-                      <div className='bg-purple-50 p-3 rounded-lg border border-purple-200'>
-                        <div className='flex items-center gap-2 mb-2'>
-                          <Calendar className='h-4 w-4 text-purple-600' />
-                          <span className='font-semibold text-purple-800'>
-                            Event Details
-                          </span>
-                        </div>
-                        <div className='space-y-1 text-sm'>
-                          {blog.eventConfig.eventType && (
-                            <div className='flex items-center gap-2'>
-                              <span className='text-purple-600'>Type:</span>
-                              <span className='capitalize'>
-                                {blog.eventConfig.eventType}
-                              </span>
-                            </div>
-                          )}
-                          {blog.eventConfig.location && (
-                            <div className='flex items-center gap-2'>
-                              <span className='text-purple-600'>Location:</span>
-                              <span>{blog.eventConfig.location}</span>
-                            </div>
-                          )}
-                          {blog.eventConfig.status && (
-                            <div className='flex items-center gap-2'>
-                              <span className='text-purple-600 '>Status:</span>
-                              <Badge
-                                variant='outline'
-                                className='text-xs capitalize'
-                              >
-                                {blog.eventConfig.status}
-                              </Badge>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Meta Information */}
-                    <div className='flex items-center gap-4 text-xs text-muted-foreground'>
-                      <div className='flex items-center gap-1'>
-                        <Calendar className='h-3 w-3' />
-                        {format(new Date(blog.createdAt), 'MMM dd, yyyy')}
-                      </div>
-                      {blog.createdBy && (
-                        <div className='flex items-center gap-1'>
-                          <User className='h-3 w-3' />
-                          {blog.createdBy.name || blog.createdBy.email}
-                        </div>
-                      )}
-                    </div>
-                  </motion.div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        ) : null}
-      </AnimatePresence>
-
-      {/* Main Image Card */}
-      <motion.div
-        layoutId={`card-${blog.id}-${id}`}
-        onClick={() => setIsExpanded(true)}
-        className='group cursor-pointer transition-all duration-300 hover:scale-105'
-      >
-        <div className='relative aspect-video w-full overflow-hidden rounded-lg'>
-          {blogImage ? (
-            <motion.div layoutId={`image-${blog.id}-${id}`}>
-              <Image
-                src={blogImage}
-                alt={blogTitle}
-                fill
-                className='object-cover transition-transform duration-500 group-hover:scale-110'
-              />
-            </motion.div>
-          ) : (
-            <div className='w-full h-full bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center'>
-              <span className='text-muted-foreground text-sm'>No Image</span>
-            </div>
-          )}
-
-          {/* Overlay with title on hover */}
-          <div className='absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-300 flex items-center justify-center'>
-            <div className='text-center px-4'>
-              <motion.h3
-                layoutId={`title-${blog.id}-${id}`}
-                className='text-white text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300 line-clamp-2'
-              >
-                {blogTitle}
-              </motion.h3>
-              <motion.p
-                layoutId={`description-${blog.id}-${id}`}
-                className='text-white/80 text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-1'
-              >
-                {associatedEntity?.name || 'Blog Post'}
-              </motion.p>
-            </div>
-          </div>
-
-          {/* Status Badges */}
-          <div className='absolute top-2 right-2 flex flex-col gap-1'>
-            {blog.isEvent && (
-              <Badge
-                variant='default'
-                className='text-xs bg-purple-500 hover:bg-purple-600 px-2 py-1'
-              >
-                <Calendar className='h-3 w-3 mr-1' />
-                Event
-              </Badge>
-            )}
-            {blog.isFeatured && (
-              <Badge
-                variant='default'
-                className='text-xs bg-yellow-500 hover:bg-yellow-600 px-2 py-1'
-              >
-                <Star className='h-3 w-3 mr-1' />
-                Featured
-              </Badge>
-            )}
-            <Badge
-              variant={blog.isPublished ? 'default' : 'secondary'}
-              className='text-xs px-2 py-1'
-            >
-              {blog.isPublished ? (
-                <>
-                  <Eye className='h-3 w-3 mr-1' />
-                  Published
-                </>
-              ) : (
-                'Draft'
-              )}
-            </Badge>
-          </div>
-
-          {/* Associated Entity */}
-          {associatedEntity && (
-            <div className='absolute top-2 left-2'>
-              <Badge
-                variant='secondary'
-                className='text-xs bg-white/90 text-black px-2 py-1'
-              >
-                {associatedEntity.type === 'university' ? (
-                  <Building className='h-3 w-3 mr-1' />
-                ) : (
-                  <GraduationCap className='h-3 w-3 mr-1' />
-                )}
-                {associatedEntity.name}
-              </Badge>
-            </div>
-          )}
-
-          {/* CTA Button */}
-          <motion.button
-            layoutId={`button-${blog.id}-${id}`}
-            className='absolute bottom-2 right-2 px-3 py-1 text-xs rounded-full font-bold bg-gray-100 hover:bg-green-500 hover:text-white text-black transition-colors opacity-0 group-hover:opacity-100'
-            onClick={e => {
-              e.stopPropagation();
-              onViewBlog(blog.slug);
-            }}
-          >
-            View Blog
-          </motion.button>
-        </div>
-      </motion.div>
-    </>
-  );
-};
-
 export const BlogSection = ({
-  sectionId,
   universityId,
   collegeId,
   locale = 'en',
@@ -408,7 +43,8 @@ export const BlogSection = ({
   const [blogs, setBlogs] = useState<BlogWithRelations[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const id = useId();
+  const [activeBlog, setActiveBlog] = useState<BlogWithRelations | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -448,14 +84,83 @@ export const BlogSection = ({
   }, [universityId, collegeId, content]);
 
   const handleViewBlog = (slug: string) => {
-    router.push(`/${slug}`);
+    router.push(`/${locale}/blogs/${slug}`);
   };
 
-  const handleViewAll = () => {
-    router.push('/blogs');
+  const handleViewAllBlogs = () => {
+    router.push(`/${locale}/blogs`);
   };
 
-  console.log('blogs in blog section', blogs);
+  const handleViewAllEvents = () => {
+    router.push(`/${locale}/events`);
+  };
+
+  const handleBlogClick = (blog: BlogWithRelations) => {
+    setActiveBlog(blog);
+  };
+
+  const handleViewFullBlog = (blog: BlogWithRelations) => {
+    router.push(`/${locale}/blogs/${blog.slug || blog.id}`);
+  };
+
+  // Handle escape key and outside click
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setActiveBlog(null);
+      }
+    }
+
+    if (activeBlog) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [activeBlog]);
+
+  useOutsideClick(ref as React.RefObject<HTMLDivElement>, () =>
+    setActiveBlog(null)
+  );
+
+  // Separate blogs and events based on isEvent property
+  const regularBlogs = blogs.filter(blog => !blog.isEvent);
+  const eventBlogs = blogs.filter(blog => blog.isEvent);
+
+  // Helper functions for multilingual content
+  const getBlogTitle = (blog: BlogWithRelations): string => {
+    if (typeof blog.title === 'object' && blog.title !== null) {
+      return (
+        (blog.title as any)[locale] || (blog.title as any).en || 'Untitled'
+      );
+    }
+    if (typeof blog.title === 'string') {
+      return blog.title;
+    }
+    return 'Untitled';
+  };
+
+  const getBlogContent = (blog: BlogWithRelations): string => {
+    if (typeof blog.content === 'object' && blog.content !== null) {
+      return (blog.content as any)[locale] || (blog.content as any).en || '';
+    }
+    if (typeof blog.content === 'string') {
+      return blog.content;
+    }
+    return '';
+  };
+
+  const getBlogImage = (blog: BlogWithRelations) => {
+    if (Array.isArray(blog.image)) {
+      return blog.image.length > 0 ? blog.image[0] : null;
+    }
+    if (typeof blog.image === 'string') {
+      return blog.image;
+    }
+    return null;
+  };
 
   const sectionTitle = content?.title
     ? content.title[locale as keyof typeof content.title] ||
@@ -471,30 +176,34 @@ export const BlogSection = ({
 
   if (loading) {
     return (
-      <div className='py-16'>
+      <section className='relative py-20'>
         <div className='container mx-auto px-4'>
           <div className='text-center'>
             <div className='animate-pulse'>
               <div className='h-8 bg-muted rounded w-1/3 mx-auto mb-4'></div>
               <div className='h-4 bg-muted rounded w-1/2 mx-auto mb-8'></div>
-              <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4'>
-                {[1, 2, 3, 4, 5, 6].map(i => (
-                  <div
-                    key={i}
-                    className='bg-muted rounded-lg aspect-video'
-                  ></div>
-                ))}
+              <div className='grid grid-cols-1 lg:grid-cols-2 gap-12'>
+                <div className='space-y-4'>
+                  {[1, 2, 3, 4].map(i => (
+                    <div key={i} className='bg-muted rounded-lg h-32'></div>
+                  ))}
+                </div>
+                <div className='space-y-4'>
+                  {[1, 2, 3, 4].map(i => (
+                    <div key={i} className='bg-muted rounded-lg h-24'></div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
     );
   }
 
   if (error) {
     return (
-      <div className='py-16'>
+      <section className='relative py-20'>
         <div className='container mx-auto px-4'>
           <div className='text-center'>
             <h2 className='text-2xl font-bold mb-4'>{sectionTitle}</h2>
@@ -503,45 +212,422 @@ export const BlogSection = ({
             </p>
           </div>
         </div>
-      </div>
+      </section>
     );
   }
 
   if (blogs.length === 0) {
-    console.log('no blogs found');
     return null;
   }
 
   return (
-    <div className='py-16'>
-      <div className='container mx-auto px-4'>
-        <div className='text-center mb-12'>
-          <h2 className='text-3xl font-bold mb-4'>{sectionTitle}</h2>
-          <p className='text-muted-foreground text-lg max-w-2xl mx-auto'>
-            {sectionDescription}
-          </p>
-        </div>
+    <>
+      {/* Overlay */}
+      <AnimatePresence>
+        {activeBlog && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className='fixed inset-0 bg-black/20 h-full w-full z-10'
+          />
+        )}
+      </AnimatePresence>
 
-        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-8'>
-          {blogs.map(blog => (
-            <BlogCard
-              key={blog.id}
-              blog={blog}
-              locale={locale}
-              onViewBlog={handleViewBlog}
-              onViewAll={handleViewAll}
-              id={id}
-            />
-          ))}
-        </div>
+      {/* Expanded Blog Card */}
+      <AnimatePresence>
+        {activeBlog ? (
+          <div className='fixed inset-0 grid place-items-center z-[100] p-4 sm:p-6'>
+            <motion.button
+              key={`button-${activeBlog.id}`}
+              layout
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.05 }}
+              className='flex absolute top-2 right-2 sm:top-4 sm:right-4 lg:top-8 lg:right-8 items-center justify-center bg-white rounded-full h-8 w-8 sm:h-10 sm:w-10 shadow-lg z-20'
+              onClick={() => setActiveBlog(null)}
+            >
+              <X className='h-4 w-4 sm:h-5 sm:w-5 text-gray-700' />
+            </motion.button>
 
-        <div className='text-center'>
-          <Button onClick={handleViewAll} size='lg' className='px-8'>
-            View All Blogs
-            <ArrowRight className='h-4 w-4 ml-2' />
-          </Button>
+            <motion.div
+              layoutId={`card-${activeBlog.id}`}
+              ref={ref}
+              className='w-full max-w-[95vw] sm:max-w-[600px] max-h-[90vh] flex flex-col bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl'
+            >
+              {/* Image */}
+              <motion.div
+                layoutId={`image-${activeBlog.id}`}
+                className='relative flex-shrink-0'
+              >
+                {getBlogImage(activeBlog) ? (
+                  <Image
+                    src={getBlogImage(activeBlog)!}
+                    alt={getBlogTitle(activeBlog)}
+                    width={600}
+                    height={400}
+                    className='w-full h-48 sm:h-64 md:h-80 object-cover'
+                  />
+                ) : (
+                  <div className='w-full h-48 sm:h-64 md:h-80 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center'>
+                    <span className='text-gray-500 text-4xl'>📝</span>
+                  </div>
+                )}
+
+                {/* Overlay with badges */}
+                <div className='absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent' />
+
+                {/* Featured Badge */}
+                {activeBlog.isFeatured && (
+                  <div className='absolute top-2 right-2 sm:top-4 sm:right-4'>
+                    <span className='bg-blue-600 text-white px-3 py-1 rounded-full text-xs sm:text-sm font-semibold'>
+                      {locale === 'ar' ? 'مميز' : 'Featured'}
+                    </span>
+                  </div>
+                )}
+
+                {/* Blog Type Badge */}
+                <div className='absolute top-2 left-2 sm:top-4 sm:left-4'>
+                  <span className='bg-white/90 text-gray-700 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold'>
+                    {activeBlog.isEvent
+                      ? locale === 'ar'
+                        ? 'فعالية'
+                        : 'Event'
+                      : locale === 'ar'
+                        ? 'مدونة'
+                        : 'Blog'}
+                  </span>
+                </div>
+              </motion.div>
+
+              {/* Content */}
+              <div className='p-4 sm:p-6 flex-1 overflow-y-auto'>
+                <div className='flex justify-between items-start mb-4'>
+                  <div className='flex-1'>
+                    <motion.h3
+                      layoutId={`title-${activeBlog.id}`}
+                      className='text-xl sm:text-2xl font-bold text-gray-900 mb-2'
+                    >
+                      {getBlogTitle(activeBlog)}
+                    </motion.h3>
+                    <motion.p
+                      layoutId={`description-${activeBlog.id}`}
+                      className='text-gray-600 text-base sm:text-lg'
+                    >
+                      {getBlogContent(activeBlog).length > 200
+                        ? `${getBlogContent(activeBlog).substring(0, 200)}...`
+                        : getBlogContent(activeBlog)}
+                    </motion.p>
+                  </div>
+                </div>
+
+                <div className='pt-4 relative'>
+                  <motion.div
+                    layout
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className='text-gray-600 text-sm md:text-base flex flex-col items-start gap-4'
+                  >
+                    <div className='space-y-3'>
+                      <div className='flex items-center gap-2 text-sm text-gray-500'>
+                        <Calendar className='w-4 h-4 text-blue-600' />
+                        <span>
+                          {activeBlog.createdAt
+                            ? format(
+                                new Date(activeBlog.createdAt),
+                                'MMM dd, yyyy'
+                              )
+                            : locale === 'ar'
+                              ? 'غير محدد'
+                              : 'Unknown'}
+                        </span>
+                      </div>
+                      <div className='flex items-center gap-2 text-sm text-gray-500'>
+                        <User className='w-4 h-4 text-blue-600' />
+                        <span>
+                          {activeBlog.createdBy?.name ||
+                            (locale === 'ar' ? 'الإدارة' : 'Admin')}
+                        </span>
+                      </div>
+                      {activeBlog.isEvent &&
+                        activeBlog.eventConfig?.location && (
+                          <div className='flex items-center gap-2 text-sm text-gray-500'>
+                            <span className='text-blue-600'>📍</span>
+                            <span>{activeBlog.eventConfig.location}</span>
+                          </div>
+                        )}
+                    </div>
+
+                    <div className='pt-4'>
+                      <h4 className='font-semibold text-gray-900 mb-2'>
+                        {locale === 'ar' ? 'اقرأ المزيد' : 'Read More'}
+                      </h4>
+                      <p className='text-gray-600 leading-relaxed'>
+                        {getBlogContent(activeBlog)}
+                      </p>
+                    </div>
+
+                    <div className='pt-4'>
+                      <button
+                        onClick={() => handleViewFullBlog(activeBlog)}
+                        className='w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center gap-2'
+                      >
+                        <span>
+                          {locale === 'ar'
+                            ? 'عرض المقال كاملاً'
+                            : 'View Full Article'}
+                        </span>
+                        <ArrowRight className='w-4 h-4' />
+                      </button>
+                    </div>
+                  </motion.div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        ) : null}
+      </AnimatePresence>
+
+      <section className='relative py-20'>
+        {/* Decorative background shapes */}
+        <div className='absolute -top-32 -left-32 w-96 h-96 bg-blue-200 rounded-full opacity-30 blur-3xl z-0' />
+        <div className='absolute -bottom-32 -right-32 w-96 h-96 bg-blue-300 rounded-full opacity-20 blur-3xl z-0' />
+
+        <div className='container mx-auto px-4 relative z-10'>
+          {/* Header Section */}
+          <div className='max-w-3xl mx-auto text-center mb-16 relative z-10'>
+            <h2 className='text-4xl sm:text-5xl font-extrabold text-[#023e8a] drop-shadow-lg tracking-tight mb-2'>
+              {sectionTitle}
+            </h2>
+            <p className='text-lg sm:text-2xl text-gray-700 max-w-2xl mx-auto font-medium'>
+              {sectionDescription}
+            </p>
+          </div>
+
+          {/* Main Grid Layout */}
+          <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16'>
+            {/* Blogs Section */}
+            <div className='space-y-6'>
+              <div className='flex items-center gap-3 mb-8'>
+                <div className='w-1 h-8 bg-gradient-to-b from-blue-600 to-blue-400 rounded-full'></div>
+                <h3 className='text-3xl font-bold text-[#023e8a]'>
+                  {locale === 'ar' ? 'المدونات' : 'Blogs'}
+                </h3>
+              </div>
+
+              {/* Blogs Grid */}
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                {regularBlogs
+                  .slice(0, 4)
+                  .map((blog: BlogWithRelations, index: number) => {
+                    const blogTitle = getBlogTitle(blog);
+                    const blogContent = getBlogContent(blog);
+                    const blogImage = getBlogImage(blog);
+
+                    return (
+                      <div
+                        key={blog.id}
+                        className={`group cursor-pointer transition-all duration-500 ${
+                          index === 0
+                            ? 'sm:col-span-2 bg-gradient-to-br from-blue-50 via-white to-blue-50 border-2 border-blue-200 rounded-2xl p-6 shadow-2xl hover:shadow-3xl hover:scale-[1.02]'
+                            : 'bg-white/90 border border-gray-200 rounded-xl p-4 shadow-lg hover:shadow-xl hover:border-blue-300 hover:-translate-y-1'
+                        }`}
+                        onClick={() => handleBlogClick(blog)}
+                      >
+                        {index === 0 ? (
+                          // Featured Blog Card (Large)
+                          <>
+                            <div className='relative h-48 w-full rounded-xl overflow-hidden mb-4'>
+                              {blogImage ? (
+                                <Image
+                                  src={blogImage}
+                                  alt={blogTitle}
+                                  className='object-cover w-full h-full group-hover:scale-110 transition-transform duration-700'
+                                  fill
+                                  sizes='(max-width: 640px) 100vw, 50vw'
+                                  priority
+                                />
+                              ) : (
+                                <div className='w-full h-full bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center'>
+                                  <span className='text-muted-foreground text-sm'>
+                                    No Image
+                                  </span>
+                                </div>
+                              )}
+                              <div className='absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent'></div>
+                              <span className='absolute top-4 left-4 bg-blue-600 text-white text-xs px-3 py-1.5 rounded-full font-semibold shadow-lg backdrop-blur-sm'>
+                                {blog.isFeatured
+                                  ? locale === 'ar'
+                                    ? 'مميز'
+                                    : 'Featured'
+                                  : locale === 'ar'
+                                    ? 'مدونة'
+                                    : 'Blog'}
+                              </span>
+                            </div>
+
+                            <h4 className='text-xl font-bold text-[#023e8a] mb-3 line-clamp-2 group-hover:text-blue-700 transition-colors duration-300'>
+                              {blogTitle}
+                            </h4>
+
+                            <p className='text-gray-600 mb-4 line-clamp-3 text-sm leading-relaxed'>
+                              {blogContent.length > 100
+                                ? `${blogContent.substring(0, 100)}...`
+                                : blogContent}
+                            </p>
+
+                            <div className='flex items-center justify-between'>
+                              <div className='flex items-center gap-3 text-xs text-gray-500'>
+                                <span className='font-medium'>
+                                  {blog.createdBy?.name ||
+                                    (locale === 'ar' ? 'الإدارة' : 'Admin')}
+                                </span>
+                                <span>•</span>
+                                <span>
+                                  {blog.createdAt
+                                    ? format(
+                                        new Date(blog.createdAt),
+                                        'MMM dd, yyyy'
+                                      )
+                                    : locale === 'ar'
+                                      ? 'غير محدد'
+                                      : 'Unknown'}
+                                </span>
+                              </div>
+                              <div className='flex items-center gap-2 text-blue-600 font-medium text-sm group-hover:gap-3 transition-all duration-300'>
+                                <span>
+                                  {locale === 'ar'
+                                    ? 'اقرأ المزيد'
+                                    : 'Read More'}
+                                </span>
+                                <ArrowRight className='w-4 h-4 group-hover:translate-x-1 transition-transform duration-300' />
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          // Regular Blog Cards (Small)
+                          <>
+                            <div className='relative h-32 w-full rounded-lg overflow-hidden mb-3'>
+                              {blogImage ? (
+                                <Image
+                                  src={blogImage}
+                                  alt={blogTitle}
+                                  className='object-cover w-full h-full group-hover:scale-105 transition-transform duration-500'
+                                  fill
+                                  sizes='(max-width: 640px) 100vw, 25vw'
+                                />
+                              ) : (
+                                <div className='w-full h-full bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center'>
+                                  <span className='text-muted-foreground text-sm'>
+                                    No Image
+                                  </span>
+                                </div>
+                              )}
+                              <div className='absolute inset-0 bg-gradient-to-t from-black/20 to-transparent'></div>
+                            </div>
+
+                            <h5 className='text-sm font-bold text-[#023e8a] mb-2 line-clamp-2 group-hover:text-blue-700 transition-colors duration-300'>
+                              {blogTitle}
+                            </h5>
+
+                            <div className='flex items-center justify-between'>
+                              <div className='flex items-center gap-2 text-xs text-gray-400'>
+                                <span>
+                                  {blog.createdAt
+                                    ? format(
+                                        new Date(blog.createdAt),
+                                        'MMM dd, yyyy'
+                                      )
+                                    : locale === 'ar'
+                                      ? 'غير محدد'
+                                      : 'Unknown'}
+                                </span>
+                                <span>•</span>
+                                <span>
+                                  {blog.createdBy?.name ||
+                                    (locale === 'ar' ? 'الإدارة' : 'Admin')}
+                                </span>
+                              </div>
+                              <ArrowRight className='w-3 h-3 text-blue-600 group-hover:translate-x-1 transition-transform duration-300' />
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+
+            {/* Events Section */}
+            {eventBlogs.length > 0 && (
+              <div className='space-y-6'>
+                <div className='flex items-center gap-3 mb-6'>
+                  <h3 className='text-3xl font-bold text-[#023e8a]'>
+                    {locale === 'ar' ? 'الفعاليات' : 'Events'}
+                  </h3>
+                  <div className='h-1 flex-1 bg-gradient-to-r from-blue-600 to-transparent rounded'></div>
+                </div>
+
+                {/* Events List */}
+                <div className='space-y-4'>
+                  {eventBlogs.slice(0, 4).map((event: BlogWithRelations) => {
+                    const eventTitle = getBlogTitle(event);
+                    const eventDescription = getBlogContent(event);
+                    const eventImage = getBlogImage(event);
+
+                    return (
+                      <div
+                        key={event.id}
+                        className='bg-white/80 rounded-xl shadow-lg border border-gray-200 p-4 hover:shadow-xl transition-all duration-300 group cursor-pointer'
+                        onClick={() => handleBlogClick(event)}
+                      >
+                        <div className='flex items-start justify-between mb-3'>
+                          <h4 className='text-lg font-bold text-[#023e8a] line-clamp-2 flex-1'>
+                            {eventTitle}
+                          </h4>
+                        </div>
+
+                        <p className='text-gray-600 text-sm mb-3 line-clamp-2'>
+                          {eventDescription}
+                        </p>
+
+                        <div className='space-y-2'>
+                          <div className='flex items-center gap-2 text-sm text-gray-500'>
+                            <Calendar className='w-4 h-4 text-[#023e8a]' />
+                            <span>
+                              {event.createdAt
+                                ? format(
+                                    new Date(event.createdAt),
+                                    'MMM dd, yyyy'
+                                  )
+                                : locale === 'ar'
+                                  ? 'غير محدد'
+                                  : 'Unknown'}
+                            </span>
+                          </div>
+                          {event.eventConfig?.location && (
+                            <div className='flex items-center gap-2 text-sm text-gray-500'>
+                              <span className='text-[#023e8a]'>📍</span>
+                              <span>{event.eventConfig.location}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        <button className='mt-3 text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center gap-1'>
+                          {locale === 'ar' ? 'اعرف المزيد' : 'Learn More'}
+                          <ArrowRight className='w-4 h-4' />
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </>
   );
 };
