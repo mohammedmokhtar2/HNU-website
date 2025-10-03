@@ -6,7 +6,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useLocale } from 'next-intl';
 import { ProgramService } from '@/services/program.service';
+import { BlogService } from '@/services/blog.service';
 import { Program } from '@/types/program';
+import { BlogWithRelations } from '@/types/blog';
 import { University } from '@/types/university';
 import { useUniversity } from '@/contexts/UniversityContext';
 import { useCollege } from '@/contexts/CollegeContext';
@@ -40,14 +42,28 @@ function ProgramDetailContent() {
 
   const [program, setProgram] = useState<Program | null>(null);
   const [relatedPrograms, setRelatedPrograms] = useState<Program[]>([]);
+  const [relatedBlogs, setRelatedBlogs] = useState<BlogWithRelations[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const { university } = useUniversity() as { university: University | null };
-  const { colleges } = useCollege();
+  const universityContext = useUniversity();
+  const collegeContext = useCollege();
 
-  // Find the current college
-  const currentCollege = colleges.find(college => college.slug === slug);
+  // Get university and college data
+  const university = universityContext?.university || null;
+  const colleges = collegeContext?.colleges || [];
+
+  // Debug logging
+  console.log('University Context:', universityContext);
+  console.log('College Context:', collegeContext);
+  console.log('Program Data:', program);
+  console.log('Colleges Array:', colleges);
+
+  // Find the current college - prefer the one from program data, fallback to slug search
+  const currentCollege =
+    program?.collage || colleges.find(college => college.slug === slug);
+
+  console.log('Current College:', currentCollege);
 
   useEffect(() => {
     const fetchProgramData = async () => {
@@ -59,17 +75,25 @@ function ProgramDetailContent() {
         const programData = await ProgramService.getProgramById(programId);
         setProgram(programData);
 
-        // Fetch related programs from the same college
+        // Fetch related programs and blogs from the same college
         if (programData.collageId) {
-          const relatedData = await ProgramService.getProgramsByCollege(
-            programData.collageId,
-            {
+          const [relatedProgramsData, relatedBlogsData] = await Promise.all([
+            ProgramService.getProgramsByCollege(programData.collageId, {
               limit: 6,
               orderBy: 'createdAt',
               orderDirection: 'desc',
-            }
+            }),
+            BlogService.getBlogsByCollege(programData.collageId, {
+              limit: 6,
+              orderBy: 'createdAt',
+              orderDirection: 'desc',
+              isPublished: true,
+            }),
+          ]);
+          setRelatedPrograms(
+            relatedProgramsData.data.filter(p => p.id !== programId)
           );
-          setRelatedPrograms(relatedData.data.filter(p => p.id !== programId));
+          setRelatedBlogs(relatedBlogsData.data || []);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load program');
@@ -125,35 +149,68 @@ function ProgramDetailContent() {
   const programDescription =
     program.description?.[locale] || program.description?.en || '';
   const programConfig = program.config || {};
+
+  // Get college name from multiple sources
   const collegeName =
     (program.collage?.name as any)?.[locale] ||
     (program.collage?.name as any)?.en ||
+    (currentCollege?.name as any)?.[locale] ||
+    (currentCollege?.name as any)?.en ||
     '';
 
+  // Helper functions for blog data
+  const getBlogTitle = (blog: BlogWithRelations): string => {
+    if (typeof blog.title === 'object' && blog.title !== null) {
+      return (
+        (blog.title as any)[locale] || (blog.title as any).en || 'Untitled'
+      );
+    }
+    return 'Untitled';
+  };
+
+  const getBlogImage = (blog: BlogWithRelations) => {
+    return blog.image && blog.image.length > 0 ? blog.image[0] : null;
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString(
+      locale === 'ar' ? 'ar-EG' : 'en-US',
+      {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      }
+    );
+  };
+
   return (
-    <div className='min-h-screen bg-gray-50'>
+    <div className='min-h-screen sm:h-screen bg-gray-50 flex flex-col'>
       {/* Header */}
-      <div className='bg-white shadow-sm border-b'>
-        <div className='w-full px-4 sm:px-6 lg:px-8 py-4'>
-          <div className='flex items-center justify-between'>
-            <div className='flex items-center gap-4'>
+      <div className='bg-white shadow-sm border-b flex-shrink-0'>
+        <div className='w-full px-4 sm:px-6 lg:px-8 py-3 sm:py-4'>
+          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4'>
+            <div className='flex items-center gap-2 sm:gap-4'>
               <Link
                 href={`/colleges/${slug}`}
-                className='flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors'
+                className='flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors text-sm sm:text-base'
               >
                 <ArrowLeft className='w-4 h-4' />
-                {locale === 'ar' ? 'العودة' : 'Back'}
+                <span className='hidden sm:inline'>
+                  {locale === 'ar' ? 'العودة' : 'Back'}
+                </span>
               </Link>
-              <div className='h-6 w-px bg-gray-300'></div>
-              <div>
-                <h1 className='text-2xl font-bold text-gray-900'>
+              <div className='h-4 sm:h-6 w-px bg-gray-300'></div>
+              <div className='flex-1 min-w-0'>
+                <h1 className='text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 truncate'>
                   {programName}
                 </h1>
-                <p className='text-gray-600'>{collegeName}</p>
+                <p className='text-sm sm:text-base text-gray-600 truncate'>
+                  {collegeName}
+                </p>
               </div>
             </div>
-            <div className='flex items-center gap-2'>
-              <span className='bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium'>
+            <div className='flex items-center gap-2 flex-wrap'>
+              <span className='bg-blue-100 text-blue-800 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium'>
                 {programConfig.degree || 'Program'}
               </span>
             </div>
@@ -162,57 +219,114 @@ function ProgramDetailContent() {
       </div>
 
       {/* Main Content */}
-      <div className='w-full px-4 sm:px-6 lg:px-8 py-8'>
-        <div className='grid grid-cols-1 xl:grid-cols-16 gap-8'>
+      <div className='flex-1 overflow-hidden px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8'>
+        <div className='grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8 h-full sm:h-full'>
           {/* Left Column - Related Programs */}
-          <div className='xl:col-span-4'>
-            <div className='bg-white rounded-lg shadow-md p-6 sticky top-8'>
-              <h3 className='text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2'>
-                <BookOpen className='w-5 h-5 text-blue-600' />
-                {locale === 'ar' ? 'برامج أخرى' : 'Other Programs'}
-              </h3>
-              <div className='space-y-4'>
-                {relatedPrograms.length > 0 ? (
-                  relatedPrograms.map(relatedProgram => {
-                    const relatedName =
-                      relatedProgram.name?.[locale] ||
-                      relatedProgram.name?.en ||
-                      'Program';
-                    return (
-                      <Link
-                        key={relatedProgram.id}
-                        href={`/colleges/${slug}/programs/${relatedProgram.id}`}
-                        className='block p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-md transition-all duration-200'
-                      >
-                        <h4 className='font-medium text-gray-900 mb-2 line-clamp-2'>
-                          {relatedName}
-                        </h4>
-                        <div className='flex items-center gap-2 text-sm text-gray-500'>
-                          <Clock className='w-4 h-4' />
-                          <span>
-                            {relatedProgram.config?.duration || 'N/A'}
-                          </span>
-                        </div>
-                      </Link>
-                    );
-                  })
-                ) : (
-                  <p className='text-gray-500 text-sm'>
-                    {locale === 'ar'
-                      ? 'لا توجد برامج أخرى'
-                      : 'No other programs available'}
-                  </p>
+          <div className='lg:col-span-3 h-auto sm:h-full overflow-y-auto order-2 lg:order-1'>
+            <div className='space-y-4 sm:space-y-6'>
+              <div className='bg-white rounded-lg shadow-md p-4 sm:p-6'>
+                <h3 className='text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2'>
+                  <BookOpen className='w-5 h-5 text-blue-600' />
+                  {locale === 'ar' ? 'برامج أخرى' : 'Other Programs'}
+                </h3>
+                <div className='space-y-4'>
+                  {relatedPrograms.length > 0 ? (
+                    relatedPrograms.map(relatedProgram => {
+                      const relatedName =
+                        relatedProgram.name?.[locale] ||
+                        relatedProgram.name?.en ||
+                        'Program';
+                      return (
+                        <Link
+                          key={relatedProgram.id}
+                          href={`/colleges/${slug}/programs/${relatedProgram.id}`}
+                          className='block p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-md transition-all duration-200'
+                        >
+                          <h4 className='font-medium text-gray-900 mb-2 line-clamp-2'>
+                            {relatedName}
+                          </h4>
+                          <div className='flex items-center gap-2 text-sm text-gray-500'>
+                            <Clock className='w-4 h-4' />
+                            <span>
+                              {relatedProgram.config?.duration || 'N/A'}
+                            </span>
+                          </div>
+                        </Link>
+                      );
+                    })
+                  ) : (
+                    <p className='text-gray-500 text-sm'>
+                      {locale === 'ar'
+                        ? 'لا توجد برامج أخرى'
+                        : 'No other programs available'}
+                    </p>
+                  )}
+                </div>
+
+                {/* Related Blogs */}
+                {relatedBlogs.length > 0 && (
+                  <div className='mt-6'>
+                    <h3 className='text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2'>
+                      <BookOpen className='w-5 h-5 text-green-600' />
+                      {locale === 'ar' ? 'مقالات ذات صلة' : 'Related Articles'}
+                    </h3>
+                    <div className='space-y-4'>
+                      {relatedBlogs.map(relatedBlog => {
+                        const relatedTitle = getBlogTitle(relatedBlog);
+                        const relatedImage = getBlogImage(relatedBlog);
+                        return (
+                          <Link
+                            key={relatedBlog.id}
+                            href={`/blogs/${relatedBlog.slug}`}
+                            className='block p-4 border border-gray-200 rounded-lg hover:border-green-300 hover:shadow-md transition-all duration-200'
+                          >
+                            {relatedImage && (
+                              <div className='relative h-24 w-full mb-3 rounded overflow-hidden'>
+                                <Image
+                                  src={relatedImage}
+                                  alt={relatedTitle}
+                                  fill
+                                  className='object-cover'
+                                  onError={e => {
+                                    (e.target as HTMLImageElement).src =
+                                      'https://placehold.co/300x120/6b7280/ffffff?text=No+Image';
+                                  }}
+                                />
+                              </div>
+                            )}
+                            <h4 className='font-medium text-gray-900 mb-2 line-clamp-2 text-sm'>
+                              {relatedTitle}
+                            </h4>
+                            <div className='flex items-center gap-2 text-xs text-gray-500'>
+                              <Calendar className='w-3 h-3' />
+                              <span>
+                                {formatDate(relatedBlog.createdAt.toString())}
+                              </span>
+                            </div>
+                            {relatedBlog.isFeatured && (
+                              <div className='mt-2'>
+                                <span className='inline-flex items-center gap-1 bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs'>
+                                  <Star className='w-3 h-3' />
+                                  {locale === 'ar' ? 'مميز' : 'Featured'}
+                                </span>
+                              </div>
+                            )}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
           </div>
 
           {/* Center Column - Program Details */}
-          <div className='xl:col-span-8'>
+          <div className='lg:col-span-6 h-auto sm:h-full overflow-y-auto order-1 lg:order-2'>
             <div className='bg-white rounded-lg shadow-md overflow-hidden'>
               {/* Program Image */}
               {programConfig.images?.[0] && (
-                <div className='relative h-64 w-full'>
+                <div className='relative h-48 sm:h-56 lg:h-64 w-full'>
                   <Image
                     src={programConfig.images[0]}
                     alt={programName}
@@ -232,13 +346,13 @@ function ProgramDetailContent() {
               )}
 
               {/* Program Content */}
-              <div className='p-8'>
-                <div className='mb-6'>
-                  <h2 className='text-3xl font-bold text-gray-900 mb-4'>
+              <div className='p-4 sm:p-6 lg:p-8'>
+                <div className='mb-4 sm:mb-6'>
+                  <h2 className='text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-3 sm:mb-4'>
                     {programName}
                   </h2>
                   {programDescription && (
-                    <div className='prose prose-gray max-w-none'>
+                    <div className='prose prose-sm sm:prose-base lg:prose-lg prose-gray max-w-none'>
                       <p className='text-gray-600 leading-relaxed'>
                         {programDescription}
                       </p>
@@ -247,15 +361,15 @@ function ProgramDetailContent() {
                 </div>
 
                 {/* Program Details Grid */}
-                <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-8'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8'>
                   {programConfig.duration && (
-                    <div className='flex items-center gap-3 p-4 bg-gray-50 rounded-lg'>
-                      <Clock className='w-5 h-5 text-blue-600' />
+                    <div className='flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-gray-50 rounded-lg'>
+                      <Clock className='w-4 h-4 sm:w-5 sm:h-5 text-blue-600' />
                       <div>
-                        <p className='text-sm text-gray-500'>
+                        <p className='text-xs sm:text-sm text-gray-500'>
                           {locale === 'ar' ? 'المدة' : 'Duration'}
                         </p>
-                        <p className='font-medium text-gray-900'>
+                        <p className='font-medium text-gray-900 text-sm sm:text-base'>
                           {programConfig.duration}
                         </p>
                       </div>
@@ -263,13 +377,13 @@ function ProgramDetailContent() {
                   )}
 
                   {programConfig.credits && (
-                    <div className='flex items-center gap-3 p-4 bg-gray-50 rounded-lg'>
-                      <Award className='w-5 h-5 text-green-600' />
+                    <div className='flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-gray-50 rounded-lg'>
+                      <Award className='w-4 h-4 sm:w-5 sm:h-5 text-green-600' />
                       <div>
-                        <p className='text-sm text-gray-500'>
+                        <p className='text-xs sm:text-sm text-gray-500'>
                           {locale === 'ar' ? 'الساعات المعتمدة' : 'Credits'}
                         </p>
-                        <p className='font-medium text-gray-900'>
+                        <p className='font-medium text-gray-900 text-sm sm:text-base'>
                           {programConfig.credits}
                         </p>
                       </div>
@@ -277,26 +391,28 @@ function ProgramDetailContent() {
                   )}
 
                   {programConfig.degree && (
-                    <div className='flex items-center gap-3 p-4 bg-gray-50 rounded-lg'>
-                      <GraduationCap className='w-5 h-5 text-purple-600' />
+                    <div className='flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-gray-50 rounded-lg'>
+                      <GraduationCap className='w-4 h-4 sm:w-5 sm:h-5 text-purple-600' />
                       <div>
-                        <p className='text-sm text-gray-500'>
+                        <p className='text-xs sm:text-sm text-gray-500'>
                           {locale === 'ar' ? 'الدرجة' : 'Degree'}
                         </p>
-                        <p className='font-medium text-gray-900'>
+                        <p className='font-medium text-gray-900 text-sm sm:text-base'>
                           {programConfig.degree}
                         </p>
                       </div>
                     </div>
                   )}
 
-                  <div className='flex items-center gap-3 p-4 bg-gray-50 rounded-lg'>
-                    <Building2 className='w-5 h-5 text-orange-600' />
+                  <div className='flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-gray-50 rounded-lg'>
+                    <Building2 className='w-4 h-4 sm:w-5 sm:h-5 text-orange-600' />
                     <div>
-                      <p className='text-sm text-gray-500'>
+                      <p className='text-xs sm:text-sm text-gray-500'>
                         {locale === 'ar' ? 'الكلية' : 'College'}
                       </p>
-                      <p className='font-medium text-gray-900'>{collegeName}</p>
+                      <p className='font-medium text-gray-900 text-sm sm:text-base'>
+                        {collegeName}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -305,28 +421,28 @@ function ProgramDetailContent() {
                 {(programConfig.pdfs?.length ||
                   programConfig.videos?.length ||
                   programConfig.links?.length) && (
-                  <div className='border-t pt-6'>
-                    <h3 className='text-lg font-semibold text-gray-900 mb-4'>
+                  <div className='border-t pt-4 sm:pt-6'>
+                    <h3 className='text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4'>
                       {locale === 'ar'
                         ? 'الموارد الإضافية'
                         : 'Additional Resources'}
                     </h3>
-                    <div className='space-y-3'>
+                    <div className='space-y-2 sm:space-y-3'>
                       {programConfig.pdfs?.map((pdf, index) => (
                         <a
                           key={index}
                           href={pdf}
                           target='_blank'
                           rel='noopener noreferrer'
-                          className='flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors'
+                          className='flex items-center gap-2 sm:gap-3 p-2 sm:p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors'
                         >
-                          <FileText className='w-5 h-5 text-red-600' />
-                          <span className='text-gray-900'>
+                          <FileText className='w-4 h-4 sm:w-5 sm:h-5 text-red-600' />
+                          <span className='text-gray-900 text-sm sm:text-base'>
                             {locale === 'ar'
                               ? `المنهج الدراسي ${index + 1}`
                               : `Curriculum ${index + 1}`}
                           </span>
-                          <ExternalLink className='w-4 h-4 text-gray-400 ml-auto' />
+                          <ExternalLink className='w-3 h-3 sm:w-4 sm:h-4 text-gray-400 ml-auto' />
                         </a>
                       ))}
 
@@ -336,15 +452,15 @@ function ProgramDetailContent() {
                           href={video}
                           target='_blank'
                           rel='noopener noreferrer'
-                          className='flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors'
+                          className='flex items-center gap-2 sm:gap-3 p-2 sm:p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors'
                         >
-                          <Play className='w-5 h-5 text-blue-600' />
-                          <span className='text-gray-900'>
+                          <Play className='w-4 h-4 sm:w-5 sm:h-5 text-blue-600' />
+                          <span className='text-gray-900 text-sm sm:text-base'>
                             {locale === 'ar'
                               ? `فيديو ${index + 1}`
                               : `Video ${index + 1}`}
                           </span>
-                          <ExternalLink className='w-4 h-4 text-gray-400 ml-auto' />
+                          <ExternalLink className='w-3 h-3 sm:w-4 sm:h-4 text-gray-400 ml-auto' />
                         </a>
                       ))}
 
@@ -354,11 +470,13 @@ function ProgramDetailContent() {
                           href={link.href}
                           target='_blank'
                           rel='noopener noreferrer'
-                          className='flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors'
+                          className='flex items-center gap-2 sm:gap-3 p-2 sm:p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors'
                         >
-                          <Globe className='w-5 h-5 text-green-600' />
-                          <span className='text-gray-900'>{link.title}</span>
-                          <ExternalLink className='w-4 h-4 text-gray-400 ml-auto' />
+                          <Globe className='w-4 h-4 sm:w-5 sm:h-5 text-green-600' />
+                          <span className='text-gray-900 text-sm sm:text-base'>
+                            {link.title}
+                          </span>
+                          <ExternalLink className='w-3 h-3 sm:w-4 sm:h-4 text-gray-400 ml-auto' />
                         </a>
                       ))}
                     </div>
@@ -369,10 +487,10 @@ function ProgramDetailContent() {
           </div>
 
           {/* Right Column - University & College Info */}
-          <div className='xl:col-span-4'>
-            <div className='space-y-6'>
+          <div className='lg:col-span-3 h-auto sm:h-full overflow-y-auto order-3'>
+            <div className='space-y-4 sm:space-y-6'>
               {/* University Info */}
-              <div className='bg-white rounded-lg shadow-md p-6'>
+              <div className='bg-white rounded-lg shadow-md p-4 sm:p-6'>
                 <h3 className='text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2'>
                   <Globe className='w-5 h-5 text-blue-600' />
                   {locale === 'ar'
@@ -441,16 +559,51 @@ function ProgramDetailContent() {
                       )}
                   </div>
                 ) : (
-                  <p className='text-gray-500 text-sm'>
-                    {locale === 'ar'
-                      ? 'معلومات الجامعة غير متاحة'
-                      : 'University information not available'}
-                  </p>
+                  <div className='space-y-4'>
+                    <div>
+                      <h4 className='font-medium text-gray-900 mb-2'>
+                        {locale === 'ar' ? 'جامعة حلوان' : 'Helwan University'}
+                      </h4>
+                      <p className='text-sm text-gray-500'>
+                        {locale === 'ar' ? 'جامعة حكومية' : 'Public University'}
+                      </p>
+                    </div>
+
+                    {/* Default University Logo */}
+                    <div className='flex justify-center mb-4'>
+                      <Image
+                        src='/helwanWhite.png'
+                        alt={
+                          locale === 'ar' ? 'جامعة حلوان' : 'Helwan University'
+                        }
+                        width={80}
+                        height={80}
+                        className='object-contain'
+                        onError={e => {
+                          (e.target as HTMLImageElement).src =
+                            'https://placehold.co/80x80/6b7280/ffffff?text=Logo';
+                        }}
+                      />
+                    </div>
+
+                    <div className='border-t pt-4'>
+                      <h5 className='text-sm font-medium text-gray-700 mb-2'>
+                        {locale === 'ar'
+                          ? 'معلومات عامة'
+                          : 'General Information'}
+                      </h5>
+                      <p className='text-sm text-gray-600'>
+                        {locale === 'ar'
+                          ? 'جامعة حلوان هي إحدى الجامعات الحكومية المصرية الرائدة في التعليم العالي والبحث العلمي.'
+                          : "Helwan University is one of Egypt's leading public universities in higher education and scientific research."}
+                      </p>
+                    </div>
+                  </div>
                 )}
               </div>
 
               {/* College Info */}
-              <div className='bg-white rounded-lg shadow-md p-6'>
+              <div className='bg-white rounded-lg shadow-md p-4 sm:p-6'>
                 <h3 className='text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2'>
                   <Building2 className='w-5 h-5 text-green-600' />
                   {locale === 'ar' ? 'معلومات الكلية' : 'College Information'}
@@ -461,18 +614,18 @@ function ProgramDetailContent() {
                       <h4 className='font-medium text-gray-900 mb-2'>
                         {collegeName}
                       </h4>
-                      {currentCollege.description?.[locale] && (
+                      {(currentCollege.description as any)?.[locale] && (
                         <p className='text-sm text-gray-600'>
-                          {currentCollege.description[locale]}
+                          {(currentCollege.description as any)[locale]}
                         </p>
                       )}
                     </div>
 
                     {/* College Logo */}
-                    {currentCollege.config?.logoUrl && (
+                    {(currentCollege.config as any)?.logoUrl && (
                       <div className='flex justify-center mb-4'>
                         <Image
-                          src={currentCollege.config.logoUrl}
+                          src={(currentCollege.config as any).logoUrl}
                           alt={collegeName}
                           width={60}
                           height={60}
@@ -510,9 +663,9 @@ function ProgramDetailContent() {
                     </div>
 
                     {/* Social Media Links */}
-                    {currentCollege.config?.socialMedia &&
-                      Object.keys(currentCollege.config.socialMedia).length >
-                        0 && (
+                    {(currentCollege.config as any)?.socialMedia &&
+                      Object.keys((currentCollege.config as any).socialMedia)
+                        .length > 0 && (
                         <div className='border-t pt-4'>
                           <h5 className='text-sm font-medium text-gray-700 mb-2'>
                             {locale === 'ar'
@@ -521,31 +674,67 @@ function ProgramDetailContent() {
                           </h5>
                           <div className='flex flex-wrap gap-2'>
                             {Object.entries(
-                              currentCollege.config.socialMedia
-                            ).map(
-                              ([platform, url]) =>
-                                url && (
-                                  <a
-                                    key={platform}
-                                    href={url}
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                    className='text-blue-600 hover:text-blue-800 text-sm'
-                                  >
-                                    {platform}
-                                  </a>
-                                )
+                              (currentCollege.config as any).socialMedia
+                            ).map(([platform, url]) =>
+                              url ? (
+                                <a
+                                  key={platform}
+                                  href={url as string}
+                                  target='_blank'
+                                  rel='noopener noreferrer'
+                                  className='text-blue-600 hover:text-blue-800 text-sm'
+                                >
+                                  {platform}
+                                </a>
+                              ) : null
                             )}
                           </div>
                         </div>
                       )}
                   </div>
                 ) : (
-                  <p className='text-gray-500 text-sm'>
-                    {locale === 'ar'
-                      ? 'معلومات الكلية غير متاحة'
-                      : 'College information not available'}
-                  </p>
+                  <div className='space-y-4'>
+                    <div>
+                      <h4 className='font-medium text-gray-900 mb-2'>
+                        {collegeName ||
+                          (locale === 'ar' ? 'الكلية' : 'College')}
+                      </h4>
+                      <p className='text-sm text-gray-500'>
+                        {locale === 'ar' ? 'كلية أكاديمية' : 'Academic College'}
+                      </p>
+                    </div>
+
+                    {/* Default College Logo */}
+                    <div className='flex justify-center mb-4'>
+                      <Image
+                        src='/helwanBlack.png'
+                        alt={
+                          collegeName ||
+                          (locale === 'ar' ? 'الكلية' : 'College')
+                        }
+                        width={60}
+                        height={60}
+                        className='object-contain'
+                        onError={e => {
+                          (e.target as HTMLImageElement).src =
+                            'https://placehold.co/60x60/6b7280/ffffff?text=Logo';
+                        }}
+                      />
+                    </div>
+
+                    <div className='border-t pt-4'>
+                      <h5 className='text-sm font-medium text-gray-700 mb-2'>
+                        {locale === 'ar'
+                          ? 'معلومات عامة'
+                          : 'General Information'}
+                      </h5>
+                      <p className='text-sm text-gray-600'>
+                        {locale === 'ar'
+                          ? 'كلية أكاديمية تقدم برامج تعليمية متخصصة في مختلف المجالات العلمية والأدبية.'
+                          : 'An academic college offering specialized educational programs in various scientific and literary fields.'}
+                      </p>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>

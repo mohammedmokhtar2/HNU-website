@@ -133,6 +133,19 @@ function EditBlogPage() {
           const content = typeof blog.content === 'object' ? blog.content : {};
           const eventConfig = blog.eventConfig as EventConfig | null;
 
+          // Ensure eventConfig dates are properly converted to Date objects
+          const processedEventConfig = eventConfig
+            ? {
+                ...eventConfig,
+                eventDate: eventConfig.eventDate
+                  ? new Date(eventConfig.eventDate)
+                  : null,
+                eventEndDate: eventConfig.eventEndDate
+                  ? new Date(eventConfig.eventEndDate)
+                  : null,
+              }
+            : null;
+
           setFormData({
             titleEn: (title as any).en || '',
             titleAr: (title as any).ar || '',
@@ -154,7 +167,7 @@ function EditBlogPage() {
             universityId: blog.universityId || 'none',
             collageId: blog.collageId || 'none',
             isEvent: blog.isEvent || false,
-            eventConfig: eventConfig,
+            eventConfig: processedEventConfig,
           });
 
           // Set selected university and college if they exist

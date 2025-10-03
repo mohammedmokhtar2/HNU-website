@@ -102,7 +102,7 @@ const plusDev = () => {
   return (
     <section
       id='dev_team'
-      className='relative min-h-[60vh] flex pt-10 items-center justify-center overflow-hidden bg-white'
+      className='relative min-h-[60vh] flex pt-8 sm:pt-10 items-center justify-center overflow-hidden bg-white'
     >
       {/* Background Pattern */}
       <div className='absolute inset-0 opacity-5'>
@@ -116,7 +116,7 @@ const plusDev = () => {
 
       <div className='relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
         <motion.div
-          className='space-y-12'
+          className='space-y-8 sm:space-y-12'
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -128,7 +128,7 @@ const plusDev = () => {
             transition={{ delay: 0.4, duration: 0.8 }}
             className='space-y-4'
           >
-            <h1 className='text-5xl md:text-7xl lg:text-8xl font-bold leading-tight'>
+            <h1 className='text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold leading-tight'>
               <span className='text-[#354eab]'>
                 <Cover variant='helwan' className='text-[#354eab]!'>
                   Development Team
@@ -139,16 +139,16 @@ const plusDev = () => {
 
           {/* Enhanced Description with ContainerTextFlip */}
           <motion.div
-            className='max-w-5xl mx-auto space-y-6'
+            className='max-w-5xl mx-auto space-y-4 sm:space-y-6'
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.8 }}
           >
-            <p className='text-xl md:text-2xl text-gray-800 font-medium leading-relaxed'>
+            <p className='text-lg sm:text-xl md:text-2xl text-gray-800 font-medium leading-relaxed px-4'>
               Meet our talented developers who bring ideas to life with
             </p>
 
-            <p className='text-lg md:text-xl text-gray-800 max-w-3xl mx-auto leading-relaxed'>
+            <p className='text-base sm:text-lg md:text-xl text-gray-800 max-w-3xl mx-auto leading-relaxed px-4'>
               We craft cutting-edge digital solutions that transform education
               and empower the Helwan community through technology.
             </p>
@@ -159,25 +159,23 @@ const plusDev = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.8 }}
-            className=' '
-            justify-center
-            items-center
+            className='flex justify-center items-center'
           >
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8'>
               {developers.map((developer, index) => (
                 <div
                   key={index}
-                  className={`relative ${developer.roleNum === 2 ? 'md:col-span-2 lg:col-span-1 lg:mb-10' : ''}`}
+                  className={`relative ${developer.roleNum === 2 ? 'sm:col-span-2 lg:col-span-1 lg:mb-8' : ''}`}
                 >
                   <DirectionAwareHover imageUrl={developer.image}>
-                    <div className='space-y-3'>
-                      <h3 className='font-bold text-xl text-white'>
+                    <div className='space-y-2 sm:space-y-3 p-3 sm:p-4'>
+                      <h3 className='font-bold text-lg sm:text-xl text-white'>
                         {developer.name}
                       </h3>
-                      <p className='font-normal text-sm text-gray-200'>
+                      <p className='font-normal text-xs sm:text-sm text-gray-200'>
                         {developer.roleName}
                       </p>
-                      <p className='font-normal text-sm text-gray-300 mt-2'>
+                      <p className='font-normal text-xs sm:text-sm text-gray-300 mt-2'>
                         {developer.description}
                       </p>
                     </div>
@@ -187,10 +185,10 @@ const plusDev = () => {
             </div>
           </motion.div>
 
-          {/* Floating Elements */}
-          <div className='absolute -top-10 -left-10 w-20 h-20 bg-[#354eab]/20 rounded-full animate-pulse' />
-          <div className='absolute -bottom-10 -right-10 w-32 h-32 bg-[#ffce00]/20 rounded-full animate-pulse delay-1000' />
-          <div className='absolute top-1/2 -right-20 w-16 h-16 bg-white/10 rounded-full animate-pulse delay-500' />
+          {/* Floating Elements - Hidden on mobile */}
+          <div className='hidden sm:block absolute -top-8 sm:-top-10 -left-8 sm:-left-10 w-12 sm:w-16 lg:w-20 h-12 sm:h-16 lg:h-20 bg-[#354eab]/20 rounded-full animate-pulse' />
+          <div className='hidden sm:block absolute -bottom-8 sm:-bottom-10 -right-8 sm:-right-10 w-20 sm:w-24 lg:w-32 h-20 sm:h-24 lg:h-32 bg-[#ffce00]/20 rounded-full animate-pulse delay-1000' />
+          <div className='hidden sm:block absolute top-1/2 -right-12 sm:-right-16 lg:-right-20 w-8 sm:w-12 lg:w-16 h-8 sm:h-12 lg:h-16 bg-white/10 rounded-full animate-pulse delay-500' />
         </motion.div>
       </div>
     </section>
