@@ -35,11 +35,9 @@ export default clerkMiddleware(async (auth, req) => {
     const publicApiRoutes = [
       '/api/health',
       '/api/example', // Add any public API routes here
+      '/api/messages', // Allow contact form submissions
+      '/api/messages/send', // Allow message sending
     ];
-
-    // Check if this is a public message endpoint (POST only for contact forms)
-    const isPublicMessageEndpoint =
-      pathname === '/api/messages' && req.method === 'POST';
 
     const isPublicApiRoute = publicApiRoutes.some(route =>
       pathname.startsWith(route)
@@ -48,13 +46,8 @@ export default clerkMiddleware(async (auth, req) => {
     // Allow OPTIONS requests for CORS preflight without authentication
     const isOptionsRequest = req.method === 'OPTIONS';
 
-    // If not a public route, not a public message endpoint, not an OPTIONS request, and user is not authenticated, return 401
-    if (
-      !isPublicApiRoute &&
-      !isPublicMessageEndpoint &&
-      !isOptionsRequest &&
-      !authResult.userId
-    ) {
+    // If not a public route, not an OPTIONS request, and user is not authenticated, return 401
+    if (!isPublicApiRoute && !isOptionsRequest && !authResult.userId) {
       return NextResponse.json(
         {
           error: 'Unauthorized',
@@ -68,13 +61,6 @@ export default clerkMiddleware(async (auth, req) => {
           },
         }
       );
-    }
-
-    // Add user ID to headers for authenticated requests
-    if (authResult.userId) {
-      const response = NextResponse.next();
-      response.headers.set('x-user-id', authResult.userId);
-      return response;
     }
 
     return NextResponse.next();

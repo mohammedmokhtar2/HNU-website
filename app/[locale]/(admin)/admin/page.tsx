@@ -2,7 +2,6 @@
 
 import { useUser, useUserLoading } from '@/contexts/userContext';
 import { useQuery } from '@tanstack/react-query';
-import { UserService } from '@/services/user.service';
 import { UserType } from '@/types/enums';
 import {
   Users,
@@ -12,57 +11,87 @@ import {
   AlertCircle,
   Loader2,
   RefreshCw,
+  Building2,
+  BookOpen,
+  Mail,
+  FolderOpen,
+  BarChart3,
+  TrendingUp,
+  Clock,
+  Globe,
+  Settings,
+  FileText,
+  Database,
+  ClipboardList,
+  Eye,
+  Calendar,
+  ArrowRight,
+  Plus,
+  Edit,
+  Trash2,
+  Search,
+  Filter,
+  Download,
+  Upload,
+  Bell,
+  Star,
+  Zap,
+  Target,
+  Layers,
+  PieChart,
+  LineChart,
+  BarChart,
+  Users2,
+  GraduationCap,
+  School,
+  MessageSquare,
+  FileImage,
+  ExternalLink,
 } from 'lucide-react';
 import { useState } from 'react';
+import Link from 'next/link';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function AdminDashboard() {
   const { user } = useUser();
   const loading = useUserLoading();
   const [refreshing, setRefreshing] = useState(false);
 
-  // Fetch users data
+  // Fetch comprehensive dashboard data
   const {
-    data: usersData,
-    isLoading: usersLoading,
-    error: usersError,
-    refetch: refetchUsers,
+    data: dashboardData,
+    isLoading: dashboardLoading,
+    error: dashboardError,
+    refetch: refetchDashboard,
   } = useQuery({
-    queryKey: ['admin-users'],
+    queryKey: ['admin-dashboard', user?.role],
     queryFn: async () => {
-      console.log('🔄 Fetching users data...');
+      console.log('🔄 Fetching dashboard data...');
       try {
-        const result = await UserService.getUsers({ page: 1, limit: 100 });
-        console.log('✅ Users data fetched:', result);
+        const response = await fetch(
+          `/api/admin/dashboard?role=${user?.role || 'GUEST'}`
+        );
+        const result = await response.json();
+        console.log('✅ Dashboard data fetched:', result);
         return result;
       } catch (error) {
-        console.error('❌ Error fetching users:', error);
+        console.error('❌ Error fetching dashboard data:', error);
         throw error;
       }
     },
+    enabled: !!user,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    retry: 3,
-    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
-  });
-
-  // Fetch super admins
-  const {
-    data: superAdmins,
-    isLoading: superAdminsLoading,
-    error: superAdminsError,
-  } = useQuery({
-    queryKey: ['super-admins'],
-    queryFn: async () => {
-      console.log('🔄 Fetching super admins data...');
-      try {
-        const result = await UserService.getSuperAdmins();
-        console.log('✅ Super admins data fetched:', result);
-        return result;
-      } catch (error) {
-        console.error('❌ Error fetching super admins:', error);
-        throw error;
-      }
-    },
-    staleTime: 10 * 60 * 1000, // 10 minutes
     retry: 3,
     retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
@@ -70,26 +99,15 @@ export default function AdminDashboard() {
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      console.log('🔄 Refreshing data...');
-      await refetchUsers();
-      console.log('✅ Data refreshed successfully');
+      console.log('🔄 Refreshing dashboard data...');
+      await refetchDashboard();
+      console.log('✅ Dashboard data refreshed successfully');
     } catch (error) {
-      console.error('❌ Error refreshing data:', error);
+      console.error('❌ Error refreshing dashboard data:', error);
     } finally {
       setRefreshing(false);
     }
   };
-
-  // Debug logging
-  console.log('🔍 Dashboard Debug Info:', {
-    user,
-    usersData,
-    usersLoading,
-    usersError,
-    superAdmins,
-    superAdminsLoading,
-    superAdminsError,
-  });
 
   if (loading) {
     return (
@@ -116,34 +134,56 @@ export default function AdminDashboard() {
     );
   }
 
-  const totalUsers = usersData?.pagination?.total || 0;
-  const adminUsers =
-    usersData?.data?.filter((u: any) => u.role === UserType.ADMIN).length || 0;
-  const superAdminUsers = superAdmins?.length || 0;
-  const guestUsers =
-    usersData?.data?.filter((u: any) => u.role === UserType.GUEST).length || 0;
+  const dashboard = dashboardData?.data || {};
+  const statistics = dashboard.statistics || {};
+  const detailedStats = dashboard.detailedStats || {};
+  const recentActivity = dashboard.recentActivity || [];
+  const systemHealth = dashboard.systemHealth || {};
+  const quickActions = dashboard.quickActions || [];
+
+  // Extract key statistics
+  const totalUsers = statistics.totalUsers || 0;
+  const totalColleges = statistics.totalColleges || 0;
+  const totalPrograms = statistics.totalPrograms || 0;
+  const totalBlogs = statistics.totalBlogs || 0;
+  const totalMessages = statistics.totalMessages || 0;
+  const totalAuditLogs = statistics.totalAuditLogs || 0;
+
+  // Icon mapping for quick actions
+  const iconMap: Record<string, any> = {
+    Building2,
+    School,
+    GraduationCap,
+    BookOpen,
+    MessageSquare,
+    Users2,
+    BarChart3,
+    ClipboardList,
+  };
 
   return (
-    <div className='space-y-6'>
+    <div className='space-y-8'>
+      {/* Header */}
       <div className='flex justify-between items-center'>
         <div>
-          <h1 className='text-3xl font-bold text-white'>Admin Dashboard</h1>
-          <p className='text-white mt-1'>
-            Welcome back, {user.name || 'Admin'}!
+          <h1 className='text-4xl font-bold text-white'>Admin Dashboard</h1>
+          <p className='text-gray-300 mt-2'>
+            Welcome back, {user.name || 'Admin'}! Here's your system overview.
           </p>
         </div>
-        <div className='flex space-x-2'>
-          <button
+        <div className='flex space-x-3'>
+          <Button
             onClick={handleRefresh}
             disabled={refreshing}
-            className='flex items-center space-x-2 px-4 py-2 bg-slate-00 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors'
+            variant='outline'
+            className='bg-gray-800 border-gray-700 text-white hover:bg-gray-700'
           >
             <RefreshCw
-              className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`}
+              className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`}
             />
-            <span></span>
-          </button>
-          <button
+            Refresh
+          </Button>
+          <Button
             onClick={async () => {
               try {
                 console.log('🧪 Testing API connection...');
@@ -160,240 +200,450 @@ export default function AdminDashboard() {
                 );
               }
             }}
-            className='flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors'
+            className='bg-green-600 hover:bg-green-700'
           >
-            <Activity className='h-4 w-4' />
-            <span>Test API</span>
-          </button>
+            <Activity className='h-4 w-4 mr-2' />
+            Test API
+          </Button>
         </div>
       </div>
 
-      {/* Stats Grid */}
+      {/* System Overview Stats */}
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
-        <div className='bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow'>
-          <div className='flex items-center justify-between'>
-            <div>
-              <h3 className='text-lg font-semibold text-gray-900 mb-2'>
-                Total Users
-              </h3>
-              <p className='text-3xl font-bold text-blue-600'>
-                {usersLoading ? (
-                  <Loader2 className='h-8 w-8 animate-spin' />
-                ) : (
-                  totalUsers
-                )}
-              </p>
+        <Card className='bg-gradient-to-br from-blue-500 to-blue-600 border-0 text-white'>
+          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+            <CardTitle className='text-sm font-medium'>Total Users</CardTitle>
+            <Users className='h-4 w-4' />
+          </CardHeader>
+          <CardContent>
+            <div className='text-2xl font-bold'>
+              {dashboardLoading ? (
+                <Loader2 className='h-6 w-6 animate-spin' />
+              ) : (
+                totalUsers.toLocaleString()
+              )}
             </div>
-            <Users className='h-12 w-12 text-blue-500' />
-          </div>
-          {usersError && (
-            <div className='mt-2 p-2 bg-red-50 border border-red-200 rounded'>
-              <p className='text-sm text-red-600 font-medium'>
-                Failed to load user count
-              </p>
-              <p className='text-xs text-red-500 mt-1'>
-                {usersError instanceof Error
-                  ? usersError.message
-                  : 'Unknown error'}
-              </p>
-            </div>
-          )}
-        </div>
+            <p className='text-xs text-blue-100'>
+              System administrators and guests
+            </p>
+          </CardContent>
+        </Card>
 
-        <div className='bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow'>
-          <div className='flex items-center justify-between'>
-            <div>
-              <h3 className='text-lg font-semibold text-gray-900 mb-2'>
-                Admins
-              </h3>
-              <p className='text-3xl font-bold text-green-600'>
-                {usersLoading ? (
-                  <Loader2 className='h-8 w-8 animate-spin' />
-                ) : (
-                  adminUsers
-                )}
-              </p>
+        <Card className='bg-gradient-to-br from-green-500 to-green-600 border-0 text-white'>
+          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+            <CardTitle className='text-sm font-medium'>Colleges</CardTitle>
+            <School className='h-4 w-4' />
+          </CardHeader>
+          <CardContent>
+            <div className='text-2xl font-bold'>
+              {dashboardLoading ? (
+                <Loader2 className='h-6 w-6 animate-spin' />
+              ) : (
+                totalColleges.toLocaleString()
+              )}
             </div>
-            <Shield className='h-12 w-12 text-green-500' />
-          </div>
-        </div>
+            <p className='text-xs text-green-100'>Active college departments</p>
+          </CardContent>
+        </Card>
 
-        <div className='bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow'>
-          <div className='flex items-center justify-between'>
-            <div>
-              <h3 className='text-lg font-semibold text-gray-900 mb-2'>
-                Super Admins
-              </h3>
-              <p className='text-3xl font-bold text-purple-600'>
-                {superAdminsLoading ? (
-                  <Loader2 className='h-8 w-8 animate-spin' />
-                ) : (
-                  superAdminUsers
-                )}
-              </p>
+        <Card className='bg-gradient-to-br from-purple-500 to-purple-600 border-0 text-white'>
+          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+            <CardTitle className='text-sm font-medium'>Programs</CardTitle>
+            <GraduationCap className='h-4 w-4' />
+          </CardHeader>
+          <CardContent>
+            <div className='text-2xl font-bold'>
+              {dashboardLoading ? (
+                <Loader2 className='h-6 w-6 animate-spin' />
+              ) : (
+                totalPrograms.toLocaleString()
+              )}
             </div>
-            <Shield className='h-12 w-12 text-purple-500' />
-          </div>
-        </div>
+            <p className='text-xs text-purple-100'>Academic programs offered</p>
+          </CardContent>
+        </Card>
 
-        <div className='bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow'>
-          <div className='flex items-center justify-between'>
-            <div>
-              <h3 className='text-lg font-semibold text-gray-900 mb-2'>
-                System Status
-              </h3>
-              <p className='text-3xl font-bold text-yellow-600'>Online</p>
+        <Card className='bg-gradient-to-br from-orange-500 to-orange-600 border-0 text-white'>
+          <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+            <CardTitle className='text-sm font-medium'>Blog Posts</CardTitle>
+            <BookOpen className='h-4 w-4' />
+          </CardHeader>
+          <CardContent>
+            <div className='text-2xl font-bold'>
+              {dashboardLoading ? (
+                <Loader2 className='h-6 w-6 animate-spin' />
+              ) : (
+                totalBlogs.toLocaleString()
+              )}
             </div>
-            <Activity className='h-12 w-12 text-yellow-500' />
-          </div>
-        </div>
+            <p className='text-xs text-orange-100'>
+              Published articles and news
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* User Role Distribution */}
-      <div className='bg-white p-6 rounded-lg shadow'>
-        <h2 className='text-xl font-semibold text-gray-900 mb-4'>
-          User Role Distribution
-        </h2>
-        <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-          <div className='flex items-center space-x-3 p-4 bg-blue-50 rounded-lg'>
-            <Users className='h-8 w-8 text-blue-600' />
-            <div>
-              <p className='text-sm text-gray-600'>Guests</p>
-              <p className='text-2xl font-bold text-blue-600'>
-                {usersLoading ? (
-                  <Loader2 className='h-6 w-6 animate-spin' />
-                ) : (
-                  guestUsers
-                )}
-              </p>
-            </div>
-          </div>
-          <div className='flex items-center space-x-3 p-4 bg-green-50 rounded-lg'>
-            <Shield className='h-8 w-8 text-green-600' />
-            <div>
-              <p className='text-sm text-gray-600'>Admins</p>
-              <p className='text-2xl font-bold text-green-600'>
-                {usersLoading ? (
-                  <Loader2 className='h-6 w-6 animate-spin' />
-                ) : (
-                  adminUsers
-                )}
-              </p>
-            </div>
-          </div>
-          <div className='flex items-center space-x-3 p-4 bg-purple-50 rounded-lg'>
-            <Shield className='h-8 w-8 text-purple-600' />
-            <div>
-              <p className='text-sm text-gray-600'>Super Admins</p>
-              <p className='text-2xl font-bold text-purple-600'>
-                {superAdminsLoading ? (
-                  <Loader2 className='h-6 w-6 animate-spin' />
-                ) : (
-                  superAdminUsers
-                )}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Debug Panel - Remove in production */}
-      {(usersError || superAdminsError) && (
-        <div className='bg-yellow-50 border border-yellow-200 rounded-lg p-4'>
-          <h3 className='text-lg font-semibold text-yellow-800 mb-2'>
-            Debug Information
-          </h3>
-          <div className='space-y-2 text-sm'>
-            {usersError && (
-              <div>
-                <strong>Users Error:</strong>{' '}
-                {usersError instanceof Error
-                  ? usersError.message
-                  : 'Unknown error'}
+      {/* Quick Actions */}
+      <Card className='bg-gray-900 border-gray-800'>
+        <CardHeader>
+          <CardTitle className='text-white flex items-center'>
+            <Zap className='h-5 w-5 mr-2 text-yellow-500' />
+            Quick Actions
+          </CardTitle>
+          <CardDescription className='text-gray-400'>
+            Access the most commonly used admin functions
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+            {dashboardLoading ? (
+              <div className='col-span-full flex justify-center py-8'>
+                <Loader2 className='h-8 w-8 animate-spin text-blue-500' />
               </div>
-            )}
-            {superAdminsError && (
-              <div>
-                <strong>Super Admins Error:</strong>{' '}
-                {superAdminsError instanceof Error
-                  ? superAdminsError.message
-                  : 'Unknown error'}
-              </div>
-            )}
-            <div>
-              <strong>API Base URL:</strong>{' '}
-              {typeof window !== 'undefined'
-                ? `${window.location.origin}/api`
-                : 'Server-side'}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Current User Information */}
-      <div className='bg-white p-6 rounded-lg shadow'>
-        <h2 className='text-xl font-semibold text-gray-900 mb-4'>
-          Your Information
-        </h2>
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-          <div className='space-y-3'>
-            <div className='flex items-center space-x-3'>
-              <CheckCircle className='h-5 w-5 text-green-500' />
-              <div>
-                <p className='text-sm text-gray-600'>Name</p>
-                <p className='font-medium'>{user?.name || 'Not provided'}</p>
-              </div>
-            </div>
-            <div className='flex items-center space-x-3'>
-              <CheckCircle className='h-5 w-5 text-green-500' />
-              <div>
-                <p className='text-sm text-gray-600'>Email</p>
-                <p className='font-medium'>{user?.email}</p>
-              </div>
-            </div>
-            <div className='flex items-center space-x-3'>
-              <CheckCircle className='h-5 w-5 text-green-500' />
-              <div>
-                <p className='text-sm text-gray-600'>Role</p>
-                <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800'>
-                  {user?.role}
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className='space-y-3'>
-            <div className='flex items-center space-x-3'>
-              <CheckCircle className='h-5 w-5 text-green-500' />
-              <div>
-                <p className='text-sm text-gray-600'>User ID</p>
-                <p className='font-medium text-sm font-mono'>{user?.id}</p>
-              </div>
-            </div>
-            <div className='flex items-center space-x-3'>
-              <CheckCircle className='h-5 w-5 text-green-500' />
-              <div>
-                <p className='text-sm text-gray-600'>Created</p>
-                <p className='font-medium'>
-                  {user?.createdAt
-                    ? new Date(user.createdAt).toLocaleDateString()
-                    : 'N/A'}
+            ) : quickActions.length > 0 ? (
+              quickActions.map((action: any, index: number) => {
+                const Icon = iconMap[action.icon] || Building2;
+                return (
+                  <Link key={action.id || index} href={action.href}>
+                    <Card className='bg-gray-800 border-gray-700 hover:bg-gray-700 transition-colors cursor-pointer group'>
+                      <CardContent className='p-4'>
+                        <div className='flex items-center space-x-3'>
+                          <div
+                            className={`p-2 rounded-lg ${action.color} group-hover:scale-110 transition-transform`}
+                          >
+                            <Icon className='h-5 w-5 text-white' />
+                          </div>
+                          <div className='flex-1'>
+                            <h3 className='font-medium text-white group-hover:text-blue-400 transition-colors'>
+                              {action.title}
+                            </h3>
+                            <p className='text-sm text-gray-400'>
+                              {action.description}
+                            </p>
+                          </div>
+                          <ArrowRight className='h-4 w-4 text-gray-500 group-hover:text-white transition-colors' />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                );
+              })
+            ) : (
+              <div className='col-span-full text-center py-8'>
+                <p className='text-gray-400'>
+                  No actions available for your role
                 </p>
               </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* System Status & Recent Activity */}
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+        {/* System Status */}
+        <Card className='bg-gray-900 border-gray-800'>
+          <CardHeader>
+            <CardTitle className='text-white flex items-center'>
+              <Activity className='h-5 w-5 mr-2 text-green-500' />
+              System Status
+            </CardTitle>
+            <CardDescription className='text-gray-400'>
+              Current system health and performance
+            </CardDescription>
+          </CardHeader>
+          <CardContent className='space-y-4'>
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center space-x-2'>
+                <div className='w-2 h-2 bg-green-500 rounded-full animate-pulse'></div>
+                <span className='text-white font-medium'>API Status</span>
+              </div>
+              <Badge
+                variant='secondary'
+                className='bg-green-100 text-green-800'
+              >
+                Online
+              </Badge>
             </div>
-            <div className='flex items-center space-x-3'>
-              <CheckCircle className='h-5 w-5 text-green-500' />
-              <div>
-                <p className='text-sm text-gray-600'>Last Updated</p>
-                <p className='font-medium'>
-                  {user?.updatedAt
-                    ? new Date(user.updatedAt).toLocaleDateString()
-                    : 'N/A'}
-                </p>
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center space-x-2'>
+                <Database className='h-4 w-4 text-blue-500' />
+                <span className='text-white font-medium'>Database</span>
+              </div>
+              <Badge
+                variant='secondary'
+                className='bg-green-100 text-green-800'
+              >
+                Connected
+              </Badge>
+            </div>
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center space-x-2'>
+                <Mail className='h-4 w-4 text-purple-500' />
+                <span className='text-white font-medium'>Email Service</span>
+              </div>
+              <Badge
+                variant='secondary'
+                className='bg-green-100 text-green-800'
+              >
+                Active
+              </Badge>
+            </div>
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center space-x-2'>
+                <FileImage className='h-4 w-4 text-orange-500' />
+                <span className='text-white font-medium'>File Storage</span>
+              </div>
+              <Badge
+                variant='secondary'
+                className='bg-green-100 text-green-800'
+              >
+                Available
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Recent Activity */}
+        <Card className='bg-gray-900 border-gray-800'>
+          <CardHeader>
+            <CardTitle className='text-white flex items-center'>
+              <Clock className='h-5 w-5 mr-2 text-blue-500' />
+              Recent Activity
+            </CardTitle>
+            <CardDescription className='text-gray-400'>
+              Latest system actions and changes
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className='space-y-3'>
+              {dashboardLoading ? (
+                <div className='space-y-2'>
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className='flex items-center space-x-3'>
+                      <Skeleton className='h-8 w-8 rounded-full' />
+                      <div className='space-y-1 flex-1'>
+                        <Skeleton className='h-4 w-3/4' />
+                        <Skeleton className='h-3 w-1/2' />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : recentActivity.length > 0 ? (
+                recentActivity
+                  .slice(0, 3)
+                  .map((activity: any, index: number) => (
+                    <div
+                      key={index}
+                      className='flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-800 transition-colors'
+                    >
+                      <Avatar className='h-8 w-8'>
+                        <AvatarFallback className='bg-blue-500 text-white text-xs'>
+                          {activity.clerkUser?.name?.charAt(0) || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className='flex-1 min-w-0'>
+                        <p className='text-sm text-white truncate'>
+                          {activity.clerkUser?.name || 'Unknown User'}{' '}
+                          {activity.action.toLowerCase()} {activity.entity}
+                        </p>
+                        <p className='text-xs text-gray-400'>
+                          {new Date(activity.createdAt).toLocaleString()}
+                        </p>
+                      </div>
+                      <Badge variant='outline' className='text-xs'>
+                        {activity.action}
+                      </Badge>
+                    </div>
+                  ))
+              ) : (
+                <div className='text-center py-4'>
+                  <Clock className='h-8 w-8 text-gray-500 mx-auto mb-2' />
+                  <p className='text-gray-400 text-sm'>No recent activity</p>
+                </div>
+              )}
+            </div>
+            {recentActivity.length > 5 && (
+              <div className='mt-4 pt-4 border-t border-gray-800'>
+                <Link href='/admin/system/logs'>
+                  <Button
+                    variant='outline'
+                    size='sm'
+                    className='w-full bg-gray-800 border-gray-700 text-white hover:bg-gray-700'
+                  >
+                    View All Activity
+                    <ArrowRight className='h-4 w-4 ml-2' />
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Additional Stats */}
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+        <Card className='bg-gray-900 border-gray-800'>
+          <CardHeader>
+            <CardTitle className='text-white flex items-center'>
+              <MessageSquare className='h-5 w-5 mr-2 text-red-500' />
+              Messages
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className='text-2xl font-bold text-white mb-2'>
+              {dashboardLoading ? (
+                <Loader2 className='h-6 w-6 animate-spin' />
+              ) : (
+                totalMessages.toLocaleString()
+              )}
+            </div>
+            <p className='text-sm text-gray-400'>Total messages sent</p>
+            <Link href='/admin/system/messages'>
+              <Button
+                variant='outline'
+                size='sm'
+                className='mt-3 bg-gray-800 border-gray-700 text-white hover:bg-gray-700'
+              >
+                Manage Messages
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card className='bg-gray-900 border-gray-800'>
+          <CardHeader>
+            <CardTitle className='text-white flex items-center'>
+              <ClipboardList className='h-5 w-5 mr-2 text-gray-500' />
+              Audit Logs
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className='text-2xl font-bold text-white mb-2'>
+              {dashboardLoading ? (
+                <Loader2 className='h-6 w-6 animate-spin' />
+              ) : (
+                totalAuditLogs.toLocaleString()
+              )}
+            </div>
+            <p className='text-sm text-gray-400'>System activity records</p>
+            <Link href='/admin/system/logs'>
+              <Button
+                variant='outline'
+                size='sm'
+                className='mt-3 bg-gray-800 border-gray-700 text-white hover:bg-gray-700'
+              >
+                View Logs
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card className='bg-gray-900 border-gray-800'>
+          <CardHeader>
+            <CardTitle className='text-white flex items-center'>
+              <BarChart3 className='h-5 w-5 mr-2 text-teal-500' />
+              Analytics
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className='text-2xl font-bold text-white mb-2'>
+              <TrendingUp className='h-6 w-6 inline mr-1' />
+              Live
+            </div>
+            <p className='text-sm text-gray-400'>Real-time system metrics</p>
+            <Link href='/admin/system/analysis'>
+              <Button
+                variant='outline'
+                size='sm'
+                className='mt-3 bg-gray-800 border-gray-700 text-white hover:bg-gray-700'
+              >
+                View Analytics
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* User Information */}
+      <Card className='bg-gray-900 border-gray-800'>
+        <CardHeader>
+          <CardTitle className='text-white flex items-center'>
+            <Users className='h-5 w-5 mr-2 text-blue-500' />
+            Your Profile
+          </CardTitle>
+          <CardDescription className='text-gray-400'>
+            Current user information and permissions
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+            <div className='space-y-4'>
+              <div className='flex items-center space-x-3'>
+                <CheckCircle className='h-5 w-5 text-green-500' />
+                <div>
+                  <p className='text-sm text-gray-400'>Name</p>
+                  <p className='font-medium text-white'>
+                    {user?.name || 'Not provided'}
+                  </p>
+                </div>
+              </div>
+              <div className='flex items-center space-x-3'>
+                <CheckCircle className='h-5 w-5 text-green-500' />
+                <div>
+                  <p className='text-sm text-gray-400'>Email</p>
+                  <p className='font-medium text-white'>{user?.email}</p>
+                </div>
+              </div>
+              <div className='flex items-center space-x-3'>
+                <CheckCircle className='h-5 w-5 text-green-500' />
+                <div>
+                  <p className='text-sm text-gray-400'>Role</p>
+                  <Badge
+                    variant='secondary'
+                    className='bg-blue-100 text-blue-800'
+                  >
+                    {user?.role}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+            <div className='space-y-4'>
+              <div className='flex items-center space-x-3'>
+                <CheckCircle className='h-5 w-5 text-green-500' />
+                <div>
+                  <p className='text-sm text-gray-400'>User ID</p>
+                  <p className='font-medium text-white text-sm font-mono'>
+                    {user?.id}
+                  </p>
+                </div>
+              </div>
+              <div className='flex items-center space-x-3'>
+                <CheckCircle className='h-5 w-5 text-green-500' />
+                <div>
+                  <p className='text-sm text-gray-400'>Created</p>
+                  <p className='font-medium text-white'>
+                    {user?.createdAt
+                      ? new Date(user.createdAt).toLocaleDateString()
+                      : 'N/A'}
+                  </p>
+                </div>
+              </div>
+              <div className='flex items-center space-x-3'>
+                <CheckCircle className='h-5 w-5 text-green-500' />
+                <div>
+                  <p className='text-sm text-gray-400'>Last Updated</p>
+                  <p className='font-medium text-white'>
+                    {user?.updatedAt
+                      ? new Date(user.updatedAt).toLocaleDateString()
+                      : 'N/A'}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

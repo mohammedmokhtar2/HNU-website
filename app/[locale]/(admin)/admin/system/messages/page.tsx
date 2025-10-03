@@ -33,8 +33,11 @@ import {
   Wifi,
   WifiOff,
   Reply,
+  Download,
 } from 'lucide-react';
 import { format } from 'date-fns';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 function MessagesContent() {
   const {
@@ -64,6 +67,7 @@ function MessagesContent() {
 
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isExporting, setIsExporting] = useState(false);
 
   // Auto-refresh data every 30 seconds
   useEffect(() => {
@@ -141,6 +145,101 @@ function MessagesContent() {
     }
   };
 
+  const handleExportToExcel = async () => {
+    setIsExporting(true);
+    try {
+      // Prepare data for export
+      const exportData = messages.map(message => {
+        const config = message.messageConfig as any;
+        return {
+          'Message ID': message.id,
+          Subject: config?.subject || 'No Subject',
+          From: Array.isArray(config?.from)
+            ? config.from.join(', ')
+            : config?.from || 'N/A',
+          To: Array.isArray(config?.to)
+            ? config.to.join(', ')
+            : config?.to || 'N/A',
+          Type: config?.type || 'EMAIL',
+          Status: config?.status || MessageStatus.PENDING,
+          Priority: config?.priority || MessagePriority.NORMAL,
+          'Created At': format(
+            new Date(message.createdAt),
+            'yyyy-MM-dd HH:mm:ss'
+          ),
+          'Updated At': format(
+            new Date(message.updatedAt),
+            'yyyy-MM-dd HH:mm:ss'
+          ),
+          'Message Body': config?.body || 'No content',
+          'HTML Body': config?.htmlBody || 'No HTML content',
+          'Retry Count': config?.retryCount || 0,
+          'Max Retries': config?.maxRetries || 3,
+          Source: config?.metadata?.source || 'Unknown',
+          'Section ID': config?.metadata?.sectionId || 'N/A',
+          'User Agent': config?.metadata?.userAgent || 'N/A',
+          'Admin Reply': config?.metadata?.adminReply ? 'Yes' : 'No',
+          'Original Message ID': config?.metadata?.originalMessageId || 'N/A',
+          'Replied At': config?.repliedAt
+            ? format(new Date(config.repliedAt), 'yyyy-MM-dd HH:mm:ss')
+            : 'N/A',
+          'Reply Message ID': config?.replyMessageId || 'N/A',
+        };
+      });
+
+      // Create workbook and worksheet
+      const workbook = XLSX.utils.book_new();
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+
+      // Set column widths
+      const columnWidths = [
+        { wch: 15 }, // Message ID
+        { wch: 30 }, // Subject
+        { wch: 25 }, // From
+        { wch: 25 }, // To
+        { wch: 10 }, // Type
+        { wch: 12 }, // Status
+        { wch: 10 }, // Priority
+        { wch: 20 }, // Created At
+        { wch: 20 }, // Updated At
+        { wch: 50 }, // Message Body
+        { wch: 50 }, // HTML Body
+        { wch: 12 }, // Retry Count
+        { wch: 12 }, // Max Retries
+        { wch: 15 }, // Source
+        { wch: 15 }, // Section ID
+        { wch: 30 }, // User Agent
+        { wch: 12 }, // Admin Reply
+        { wch: 20 }, // Original Message ID
+        { wch: 20 }, // Replied At
+        { wch: 20 }, // Reply Message ID
+      ];
+      worksheet['!cols'] = columnWidths;
+
+      // Add worksheet to workbook
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Messages');
+
+      // Generate Excel file
+      const excelBuffer = XLSX.write(workbook, {
+        bookType: 'xlsx',
+        type: 'array',
+      });
+
+      // Create blob and download
+      const blob = new Blob([excelBuffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+      const fileName = `messages_export_${format(new Date(), 'yyyy-MM-dd_HH-mm-ss')}.xlsx`;
+
+      saveAs(blob, fileName);
+    } catch (error) {
+      console.error('Export failed:', error);
+      alert('Failed to export messages. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       [MessageStatus.PENDING]: {
@@ -209,6 +308,25 @@ function MessagesContent() {
           </div>
         </div>
         <div className='flex gap-2'>
+          <Button
+            onClick={handleExportToExcel}
+            variant='outline'
+            size='sm'
+            className='hover:bg-green-50 border-green-200 text-green-700 hover:text-green-800'
+            disabled={isExporting || messages.length === 0}
+          >
+            {isExporting ? (
+              <>
+                <RefreshCw className='w-4 h-4 mr-2 animate-spin' />
+                Exporting...
+              </>
+            ) : (
+              <>
+                <Download className='w-4 h-4 mr-2' />
+                Export to Excel
+              </>
+            )}
+          </Button>
           <Button
             onClick={() => refetch()}
             variant='outline'

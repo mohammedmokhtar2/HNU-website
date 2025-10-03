@@ -29,6 +29,8 @@ import {
 } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import annotationPlugin from 'chartjs-plugin-annotation';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 // Register Chart.js components
 ChartJS.register(
@@ -62,6 +64,7 @@ import {
   Activity,
   BarChart3,
   PieChart,
+  Download,
 } from 'lucide-react';
 
 interface VisitorStats {
@@ -118,6 +121,7 @@ const ComprehensiveAnalyticsPage = () => {
   const [stats, setStats] = useState<VisitorStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
 
   const fetchStats = async () => {
     try {
@@ -162,6 +166,202 @@ const ComprehensiveAnalyticsPage = () => {
   useEffect(() => {
     fetchStats();
   }, []);
+
+  const handleExportToExcel = async () => {
+    if (!stats) return;
+
+    setIsExporting(true);
+    try {
+      // Prepare daily stats data
+      const dailyStatsData = Object.entries(stats.dailyStats || {}).map(
+        ([date, data]) => ({
+          Date: date,
+          Visitors: data?.visitors || 0,
+          'Page Views': data?.pageViews || 0,
+          Sessions: data?.sessions || 0,
+          'New Visitors': data?.newVisitors || 0,
+          'Returning Visitors': data?.returningVisitors || 0,
+        })
+      );
+
+      // Prepare monthly stats data
+      const monthlyStatsData = Object.entries(stats.monthlyStats || {}).map(
+        ([month, data]) => ({
+          Month: month,
+          Visitors: data?.visitors || 0,
+          'Page Views': data?.pageViews || 0,
+          Sessions: data?.sessions || 0,
+          'New Visitors': data?.newVisitors || 0,
+          'Returning Visitors': data?.returningVisitors || 0,
+        })
+      );
+
+      // Prepare hourly stats data
+      const hourlyStatsData = Object.entries(stats.hourlyStats || {}).map(
+        ([hour, count]) => ({
+          Hour: `${hour}:00`,
+          Visitors: count || 0,
+        })
+      );
+
+      // Prepare device stats data
+      const deviceStatsData = [
+        { Device: 'Desktop', Visitors: stats.deviceStats?.desktop || 0 },
+        { Device: 'Mobile', Visitors: stats.deviceStats?.mobile || 0 },
+        { Device: 'Tablet', Visitors: stats.deviceStats?.tablet || 0 },
+      ];
+
+      // Prepare browser stats data
+      const browserStatsData = Object.entries(stats.browserStats || {}).map(
+        ([browser, count]) => ({
+          Browser: browser,
+          Visitors: count || 0,
+        })
+      );
+
+      // Prepare country stats data
+      const countryStatsData = Object.entries(stats.countryStats || {}).map(
+        ([country, count]) => ({
+          Country: country,
+          Visitors: count || 0,
+        })
+      );
+
+      // Prepare summary data
+      const summaryData = [
+        {
+          Metric: 'Total Visitors',
+          Value: stats.counter || 0,
+        },
+        {
+          Metric: 'New Visitors',
+          Value: stats.newVisitors || 0,
+        },
+        {
+          Metric: 'Returning Visitors',
+          Value: stats.returningVisitors || 0,
+        },
+        {
+          Metric: 'Last Visit',
+          Value: new Date(stats.lastVisit || new Date()).toLocaleString(),
+        },
+        {
+          Metric: 'Daily Records Count',
+          Value: Object.keys(stats.dailyStats || {}).length,
+        },
+        {
+          Metric: 'Monthly Records Count',
+          Value: Object.keys(stats.monthlyStats || {}).length,
+        },
+        {
+          Metric: 'Device Types Count',
+          Value: Object.values(stats.deviceStats || {}).filter(v => v > 0)
+            .length,
+        },
+        {
+          Metric: 'Browser Types Count',
+          Value: Object.keys(stats.browserStats || {}).length,
+        },
+        {
+          Metric: 'Countries Count',
+          Value: Object.keys(stats.countryStats || {}).length,
+        },
+      ];
+
+      // Create workbook
+      const workbook = XLSX.utils.book_new();
+
+      // Add worksheets
+      if (dailyStatsData.length > 0) {
+        const dailyWS = XLSX.utils.json_to_sheet(dailyStatsData);
+        dailyWS['!cols'] = [
+          { wch: 12 }, // Date
+          { wch: 12 }, // Visitors
+          { wch: 12 }, // Page Views
+          { wch: 12 }, // Sessions
+          { wch: 15 }, // New Visitors
+          { wch: 18 }, // Returning Visitors
+        ];
+        XLSX.utils.book_append_sheet(workbook, dailyWS, 'Daily Stats');
+      }
+
+      if (monthlyStatsData.length > 0) {
+        const monthlyWS = XLSX.utils.json_to_sheet(monthlyStatsData);
+        monthlyWS['!cols'] = [
+          { wch: 12 }, // Month
+          { wch: 12 }, // Visitors
+          { wch: 12 }, // Page Views
+          { wch: 12 }, // Sessions
+          { wch: 15 }, // New Visitors
+          { wch: 18 }, // Returning Visitors
+        ];
+        XLSX.utils.book_append_sheet(workbook, monthlyWS, 'Monthly Stats');
+      }
+
+      if (hourlyStatsData.length > 0) {
+        const hourlyWS = XLSX.utils.json_to_sheet(hourlyStatsData);
+        hourlyWS['!cols'] = [
+          { wch: 10 }, // Hour
+          { wch: 12 }, // Visitors
+        ];
+        XLSX.utils.book_append_sheet(workbook, hourlyWS, 'Hourly Stats');
+      }
+
+      if (deviceStatsData.length > 0) {
+        const deviceWS = XLSX.utils.json_to_sheet(deviceStatsData);
+        deviceWS['!cols'] = [
+          { wch: 12 }, // Device
+          { wch: 12 }, // Visitors
+        ];
+        XLSX.utils.book_append_sheet(workbook, deviceWS, 'Device Stats');
+      }
+
+      if (browserStatsData.length > 0) {
+        const browserWS = XLSX.utils.json_to_sheet(browserStatsData);
+        browserWS['!cols'] = [
+          { wch: 15 }, // Browser
+          { wch: 12 }, // Visitors
+        ];
+        XLSX.utils.book_append_sheet(workbook, browserWS, 'Browser Stats');
+      }
+
+      if (countryStatsData.length > 0) {
+        const countryWS = XLSX.utils.json_to_sheet(countryStatsData);
+        countryWS['!cols'] = [
+          { wch: 15 }, // Country
+          { wch: 12 }, // Visitors
+        ];
+        XLSX.utils.book_append_sheet(workbook, countryWS, 'Country Stats');
+      }
+
+      // Add summary sheet
+      const summaryWS = XLSX.utils.json_to_sheet(summaryData);
+      summaryWS['!cols'] = [
+        { wch: 25 }, // Metric
+        { wch: 15 }, // Value
+      ];
+      XLSX.utils.book_append_sheet(workbook, summaryWS, 'Summary');
+
+      // Generate Excel file
+      const excelBuffer = XLSX.write(workbook, {
+        bookType: 'xlsx',
+        type: 'array',
+      });
+
+      // Create blob and download
+      const blob = new Blob([excelBuffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+      const fileName = `analytics_export_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.xlsx`;
+
+      saveAs(blob, fileName);
+    } catch (error) {
+      console.error('Export failed:', error);
+      alert('Failed to export analytics data. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -626,14 +826,35 @@ const ComprehensiveAnalyticsPage = () => {
         <h1 className='text-3xl font-bold text-white'>
           Comprehensive Analytics Dashboard
         </h1>
-        <Button
-          onClick={fetchStats}
-          variant='ghost'
-          className='text-white border-white bg-transparent border-1 hover:text-white hover:bg-transparent cursor-pointer focus:bg-transparent active:bg-transparent'
-        >
-          <RefreshCw className='h-4 w-4 mr-2 text-white' />
-          Refresh
-        </Button>
+        <div className='flex gap-2'>
+          <Button
+            onClick={handleExportToExcel}
+            variant='outline'
+            size='sm'
+            className='hover:bg-green-50 border-green-200 text-green-700 hover:text-green-800'
+            disabled={isExporting || !stats}
+          >
+            {isExporting ? (
+              <>
+                <RefreshCw className='w-4 h-4 mr-2 animate-spin' />
+                Exporting...
+              </>
+            ) : (
+              <>
+                <Download className='w-4 h-4 mr-2' />
+                Export to Excel
+              </>
+            )}
+          </Button>
+          <Button
+            onClick={fetchStats}
+            variant='ghost'
+            className='text-white border-white bg-transparent border-1 hover:text-white hover:bg-transparent cursor-pointer focus:bg-transparent active:bg-transparent'
+          >
+            <RefreshCw className='h-4 w-4 mr-2 text-white' />
+            Refresh
+          </Button>
+        </div>
       </div>
 
       {/* Overview Cards */}
