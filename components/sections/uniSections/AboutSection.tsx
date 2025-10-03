@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Star, Sparkles, Play } from 'lucide-react';
 import { VideoPlayer } from '@/components/ui';
 import { useUniversity } from '@/contexts/UniversityContext';
@@ -160,10 +161,25 @@ export function AboutSection({ sectionId }: AboutSectionProps) {
                 <p className='text-lg sm:text-xl text-white leading-relaxed'>
                   {
                     aboutData.description[
-                      locale as keyof typeof aboutData.description
+                    locale as keyof typeof aboutData.description
                     ]
                   }
                 </p>
+              </motion.div>
+
+              {/* Learn More Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.8 }}
+                viewport={{ once: true }}
+              >
+                <Link
+                  href='pages/about-us'
+                  className='inline-block bg-white text-[#023e8a] font-semibold px-8 py-3 rounded-lg shadow-lg hover:bg-gray-100 hover:scale-105 transition-all duration-300'
+                >
+                  {locale === 'ar' ? 'اعرف المزيد' : 'Learn More'}
+                </Link>
               </motion.div>
             </motion.div>
 
