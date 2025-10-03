@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { withAuditLog } from '@/lib/middleware/withAuditLog';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { SectionType } from '@/types/enums';
 
-export async function GET(request: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(req.url);
     const universityId = searchParams.get('universityId');
     const collegeId = searchParams.get('collegeId');
     const type = searchParams.get('type');
@@ -48,7 +51,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { type, content, order, collageId, universityId } = body;

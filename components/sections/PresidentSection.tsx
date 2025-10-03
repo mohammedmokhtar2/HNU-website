@@ -68,13 +68,15 @@ export function PresidentSection({ sectionId }: PresidentSectionProps) {
         {/* President Message Card */}
         <div className='bg-white rounded-2xl shadow-xl overflow-hidden'>
           <div
-            className={`grid md:grid-cols-2 gap-8 md:gap-12 items-center ${isRTL ? 'md:grid-flow-dense' : ''
-              }`}
+            className={`grid md:grid-cols-2 gap-8 md:gap-12 items-center ${
+              isRTL ? 'md:grid-flow-dense' : ''
+            }`}
           >
             {/* President Image */}
             <div
-              className={`relative ${isRTL ? 'md:col-start-2' : ''
-                } p-8 md:p-12`}
+              className={`relative ${
+                isRTL ? 'md:col-start-2' : ''
+              } p-8 md:p-12`}
             >
               <div className='relative aspect-square max-w-md mx-auto'>
                 {/* Decorative frame */}
@@ -135,8 +137,9 @@ export function PresidentSection({ sectionId }: PresidentSectionProps) {
 
                 {/* Message text */}
                 <div
-                  className={`relative prose prose-lg max-w-none ${isRTL ? 'prose-rtl' : ''
-                    }`}
+                  className={`relative prose prose-lg max-w-none ${
+                    isRTL ? 'prose-rtl' : ''
+                  }`}
                 >
                   <div
                     className='text-gray-700 leading-relaxed whitespace-pre-line'

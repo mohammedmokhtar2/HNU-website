@@ -1,4 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 
 interface RouteParams {
@@ -7,7 +11,7 @@ interface RouteParams {
   }>;
 }
 
-export async function GET(request: NextRequest, { params }: RouteParams) {
+async function handleGET(request: NextRequest, { params }: RouteParams) {
   try {
     const { collageId } = await params;
     const { searchParams } = new URL(request.url);
@@ -101,3 +105,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     );
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { GET } = withApiTrackingMethods(
+  { GET: handleGET },
+  ApiTrackingPresets.crud('Program')
+);

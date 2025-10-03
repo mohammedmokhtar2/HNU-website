@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 
-export async function GET(
+async function handleGET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
@@ -33,7 +37,7 @@ export async function GET(
   }
 }
 
-export async function PATCH(
+async function handlePATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
@@ -69,7 +73,7 @@ export async function PATCH(
   }
 }
 
-export async function DELETE(
+async function handleDELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
@@ -90,3 +94,9 @@ export async function DELETE(
     );
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { GET, PATCH, DELETE } = withApiTrackingMethods(
+  { GET: handleGET, PATCH: handlePATCH, DELETE: handleDELETE },
+  ApiTrackingPresets.crud('PageSection')
+);

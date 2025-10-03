@@ -1,4 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 import {
   UserResponse,
@@ -7,7 +11,7 @@ import {
 } from '@/types/user';
 
 // Handle CORS preflight requests
-export async function OPTIONS() {
+async function handleOPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {
@@ -18,9 +22,9 @@ export async function OPTIONS() {
   });
 }
 
-export async function GET(request: NextRequest) {
+async function handleGET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(req.url);
     const includeCollege = searchParams.get('includeCollege') === 'true';
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '100');
@@ -83,3 +87,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(errorResponse, { status: 500 });
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { OPTIONS, GET } = withApiTrackingMethods(
+  { OPTIONS: handleOPTIONS, GET: handleGET },
+  ApiTrackingPresets.crud('User')
+);

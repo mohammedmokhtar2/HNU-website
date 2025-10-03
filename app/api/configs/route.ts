@@ -1,4 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { PrismaClient } from '@prisma/client';
 import { VisitorData } from '@/types/configa';
 
@@ -59,7 +63,7 @@ function getDefaultConfig() {
   };
 }
 
-export async function GET() {
+async function handleGET() {
   try {
     // Get the latest config
     const config = await prisma.config.findFirst({
@@ -90,9 +94,9 @@ export async function GET() {
   }
 }
 
-export async function POST(request: NextRequest) {
+async function handlePOST(req: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await req.json();
 
     if (body.action === 'track_visitor') {
       const visitorData: VisitorData = body.data;
@@ -302,3 +306,9 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { GET, POST } = withApiTrackingMethods(
+  { GET: handleGET, POST: handlePOST },
+  ApiTrackingPresets.crud('Config')
+);

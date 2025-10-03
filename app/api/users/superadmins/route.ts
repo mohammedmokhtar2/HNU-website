@@ -1,10 +1,14 @@
 import { NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 import { UserType } from '@/types/enums';
 import { UserResponse, ApiErrorResponse } from '@/types/user';
 
 // Handle CORS preflight requests
-export async function OPTIONS() {
+async function handleOPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {
@@ -15,7 +19,7 @@ export async function OPTIONS() {
   });
 }
 
-export async function GET() {
+async function handleGET() {
   try {
     const superAdmins = await db.user.findMany({
       where: {
@@ -47,3 +51,9 @@ export async function GET() {
     return NextResponse.json(errorResponse, { status: 500 });
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { OPTIONS, GET } = withApiTrackingMethods(
+  { OPTIONS: handleOPTIONS, GET: handleGET },
+  ApiTrackingPresets.crud('User')
+);

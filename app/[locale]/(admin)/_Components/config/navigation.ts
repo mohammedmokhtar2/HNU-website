@@ -41,10 +41,10 @@ export const navigationSections: NavSection[] = [
         roles: ['OWNER', 'SUPERADMIN', 'ADMIN'],
       },
       {
-        title: 'Analytics',
+        title: 'Visitors  Analtyics',
         href: '/admin/dashboard',
         icon: BarChart3,
-        description: 'University statistics and insights',
+        description: 'University visitors analytics and insights',
         roles: ['OWNER', 'SUPERADMIN', 'ADMIN'],
       },
     ],
@@ -80,6 +80,13 @@ export const navigationSections: NavSection[] = [
   {
     title: 'System',
     items: [
+      {
+        title: 'System Analysis',
+        href: '/admin/system/analysis',
+        icon: BarChart3,
+        description: 'System analysis and insights',
+        roles: ['OWNER'],
+      },
       {
         title: 'User Management',
         href: '/admin/system/users',
@@ -122,7 +129,7 @@ export const navigationSections: NavSection[] = [
         icon: Shield,
         description: 'Manage permissions',
         roles: ['OWNER', 'SUPERADMIN'],
-        badge: 'Soon',
+        badge: 'Phase two',
       },
       {
         title: 'Database',

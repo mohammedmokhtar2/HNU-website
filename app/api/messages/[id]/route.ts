@@ -1,4 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 import { UpdateMessageInputSchema } from '@/types/message';
 
@@ -6,7 +10,7 @@ interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
-export async function GET(request: NextRequest, { params }: RouteParams) {
+async function handleGET(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
 
@@ -40,7 +44,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function PUT(request: NextRequest, { params }: RouteParams) {
+async function handlePUT(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
     const body = await request.json();
@@ -104,7 +108,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+async function handleDELETE(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
 
@@ -143,3 +147,9 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     );
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { GET, PUT, DELETE } = withApiTrackingMethods(
+  { GET: handleGET, PUT: handlePUT, DELETE: handleDELETE },
+  ApiTrackingPresets.crud('Message')
+);

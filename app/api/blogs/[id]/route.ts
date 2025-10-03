@@ -1,4 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 import { UpdateBlogInput } from '@/types/blog';
 
@@ -8,7 +12,7 @@ interface RouteParams {
   }>;
 }
 
-export async function GET(request: NextRequest, { params }: RouteParams) {
+async function handleGET(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
 
@@ -35,7 +39,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function PATCH(request: NextRequest, { params }: RouteParams) {
+async function handlePATCH(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
     const body: UpdateBlogInput = await request.json();
@@ -90,7 +94,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+async function handleDELETE(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
 
@@ -120,3 +124,9 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     );
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { GET, PATCH, DELETE } = withApiTrackingMethods(
+  { GET: handleGET, PATCH: handlePATCH, DELETE: handleDELETE },
+  ApiTrackingPresets.crud('Blog')
+);

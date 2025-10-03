@@ -154,7 +154,11 @@ function Header3({ navigationItems = [] }: HeaderData) {
   }, []);
 
   // if the rotues starts with /admin, then show the admin header
-  if (pathname.startsWith('/admin') || pathname.includes('/programs/') || pathname.includes('/blogs')) {
+  if (
+    pathname.startsWith('/admin') ||
+    pathname.includes('/programs/') ||
+    pathname.includes('/blogs')
+  ) {
     return null;
   }
 
@@ -163,6 +167,8 @@ function Header3({ navigationItems = [] }: HeaderData) {
     : isScrolled
       ? '/logo-hnu-web2.png'
       : '/logossss.png';
+
+  const logo = config?.logo || headerLogo;
 
   return (
     <>
@@ -178,7 +184,7 @@ function Header3({ navigationItems = [] }: HeaderData) {
             <div className='flex-shrink-0'>
               <Link href={basePath} className='text-white font-bold text-xl'>
                 <Image
-                  src={headerLogo}
+                  src={logo}
                   alt='HNU Logo'
                   width={isMobile ? 190 : 220}
                   height={isMobile ? 190 : 220}

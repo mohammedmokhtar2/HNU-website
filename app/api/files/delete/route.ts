@@ -1,4 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { cloudinary } from '@/lib/cloudinary';
 import { DeleteFileInput, DeleteFileResponse } from '@/types/file';
 import { z } from 'zod';
@@ -12,9 +16,9 @@ const deleteFileSchema = z.object({
     .default('image'),
 });
 
-export async function DELETE(request: NextRequest) {
+async function handleDELETE(req: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(req.url);
     const public_id = searchParams.get('public_id');
     const resource_type =
       (searchParams.get('resource_type') as
@@ -109,7 +113,7 @@ export async function DELETE(request: NextRequest) {
 }
 
 // Handle OPTIONS request for CORS
-export async function OPTIONS() {
+async function handleOPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {
@@ -119,3 +123,9 @@ export async function OPTIONS() {
     },
   });
 }
+
+// Apply tracking to all methods using fileOperation preset
+export const { DELETE, OPTIONS } = withApiTrackingMethods(
+  { DELETE: handleDELETE, OPTIONS: handleOPTIONS },
+  ApiTrackingPresets.fileOperation('delete')
+);

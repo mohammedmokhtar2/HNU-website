@@ -1,4 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  createAuthenticatedRoute,
+  requireAuth,
+} from '@/lib/middleware/authMiddleware';
 import { db } from '@/lib/db';
 import { contactFormRateLimiter } from '@/lib/rate-limit';
 import {
@@ -9,9 +13,15 @@ import {
   MessagePriority,
 } from '@/types/message';
 
-export async function GET(request: NextRequest) {
+async function handleGET(req: NextRequest) {
+  // Require authentication for GET requests (admin users viewing messages)
+  const authError = await requireAuth(req);
+  if (authError) {
+    return authError;
+  }
+
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(req.url);
 
     // Parse query parameters
     const params = {
@@ -156,7 +166,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
+async function handlePOST(req: NextRequest) {
   try {
     // Rate limiting check
     const clientIP =
@@ -226,3 +236,9 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+// Export handlers with mixed authentication:
+// - GET requires authentication (admin users viewing messages)
+// - POST doesn't require authentication (public contact form submissions)
+export const GET = handleGET;
+export const POST = handlePOST;

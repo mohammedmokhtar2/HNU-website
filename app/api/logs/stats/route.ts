@@ -1,15 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { withApiTrackingMethods, ApiTrackingPresets } from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 import { handleCORS, addCORSHeaders } from '@/lib/cors';
 
 // GET /api/logs/stats - Get log statistics and analytics
-export async function GET(request: NextRequest) {
+async function handleGET(req: NextRequest) {
+
   // Handle CORS preflight
-  const corsResponse = handleCORS(request);
+  const corsResponse = handleCORS(req);
   if (corsResponse) return corsResponse;
 
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(req.url);
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
 
@@ -130,7 +132,7 @@ export async function GET(request: NextRequest) {
     const recentLogs = await db.auditLog.findMany({
       where,
       include: {
-        user: {
+        clerkUser: {
           select: {
             id: true,
             name: true,
@@ -166,10 +168,17 @@ export async function GET(request: NextRequest) {
 }
 
 // Handle OPTIONS requests for CORS preflight
-export async function OPTIONS(request: NextRequest) {
-  const corsResponse = handleCORS(request);
+async function handleOPTIONS(req: NextRequest) {
+
+  const corsResponse = handleCORS(req);
   if (corsResponse) return corsResponse;
 
   // If not a preflight request, return a simple response
   return new NextResponse(null, { status: 200 });
 }
+
+// Apply tracking to all methods using crud preset
+export const { GET, OPTIONS } = withApiTrackingMethods(
+  { GET: handleGET, OPTIONS: handleOPTIONS },
+  ApiTrackingPresets.crud('Log')
+);

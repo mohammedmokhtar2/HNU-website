@@ -1,11 +1,15 @@
 import { db } from '@/lib/db';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { NextRequest, NextResponse } from 'next/server';
 import { clerkClient } from '@clerk/nextjs/server';
 import { UserType } from '@/types/enums';
 import { UserResponse, ApiErrorResponse } from '@/types/user';
 
 // Handle CORS preflight requests
-export async function OPTIONS() {
+async function handleOPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {
@@ -16,10 +20,10 @@ export async function OPTIONS() {
   });
 }
 
-export async function POST(request: NextRequest) {
+async function handlePOST(req: NextRequest) {
   try {
     const clerk = await clerkClient();
-    const body = await request.json();
+    const body = await req.json();
     const { clerkId } = body;
 
     // Validate input
@@ -104,3 +108,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(errorResponse, { status: 500 });
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { OPTIONS, POST } = withApiTrackingMethods(
+  { OPTIONS: handleOPTIONS, POST: handlePOST },
+  ApiTrackingPresets.crud('User')
+);

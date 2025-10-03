@@ -81,7 +81,7 @@ export function AnimatedLoading({
               alt={currentStepData.title}
               fill
               className={cn(
-                'object-contain transition-all duration-700 ease-in-out',
+                'object-contain transition-all duration-700 ease-in-out'
               )}
               priority
             />
@@ -97,7 +97,7 @@ export function AnimatedLoading({
             className={cn(
               'text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black transition-all duration-700 ease-in-out leading-tight',
               currentStep === 0 && 'animate-fade-in-up-loading',
-              currentStep === 1 && 'animate-fade-in-up-loading',
+              currentStep === 1 && 'animate-fade-in-up-loading'
             )}
           >
             {currentStepData.title}
@@ -107,9 +107,9 @@ export function AnimatedLoading({
             className={cn(
               'text-lg sm:text-xl md:text-2xl text-gray-700 transition-all duration-700 ease-in-out font-medium',
               currentStep === 0 &&
-              'animate-fade-in-up-loading animation-delay-200',
+                'animate-fade-in-up-loading animation-delay-200',
               currentStep === 1 &&
-              'animate-fade-in-up-loading animation-delay-200',
+                'animate-fade-in-up-loading animation-delay-200'
             )}
           >
             {currentStepData.subtitle}
@@ -120,9 +120,9 @@ export function AnimatedLoading({
             className={cn(
               'text-sm sm:text-base md:text-lg text-gray-600 transition-all duration-700 ease-in-out max-w-md mx-auto leading-relaxed',
               currentStep === 0 &&
-              'animate-fade-in-up-loading animation-delay-400',
+                'animate-fade-in-up-loading animation-delay-400',
               currentStep === 1 &&
-              'animate-fade-in-up-loading animation-delay-400',
+                'animate-fade-in-up-loading animation-delay-400'
             )}
           >
             {currentStepData.description}

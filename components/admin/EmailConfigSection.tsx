@@ -227,7 +227,7 @@ export function EmailConfigSection() {
                 <label className='text-sm font-medium text-gray-600'>
                   SMTP Host
                 </label>
-                <div className='p-3 bg-gray-50 rounded-lg border'>
+                <div className='p-3   rounded-lg border'>
                   <span className='text-sm font-mono'>{config.host}</span>
                 </div>
               </div>
@@ -236,7 +236,7 @@ export function EmailConfigSection() {
                 <label className='text-sm font-medium text-gray-600'>
                   Port
                 </label>
-                <div className='p-3 bg-gray-50 rounded-lg border'>
+                <div className='p-3   rounded-lg border'>
                   <span className='text-sm font-mono'>{config.port}</span>
                 </div>
               </div>
@@ -245,7 +245,7 @@ export function EmailConfigSection() {
                 <label className='text-sm font-medium text-gray-600'>
                   Secure Connection
                 </label>
-                <div className='p-3 bg-gray-50 rounded-lg border'>
+                <div className='p-3   rounded-lg border'>
                   <span className='text-sm font-mono'>{config.secure}</span>
                 </div>
               </div>
@@ -254,7 +254,7 @@ export function EmailConfigSection() {
                 <label className='text-sm font-medium text-gray-600'>
                   From Email
                 </label>
-                <div className='p-3 bg-gray-50 rounded-lg border'>
+                <div className='p-3   rounded-lg border'>
                   <span className='text-sm font-mono'>{config.fromEmail}</span>
                 </div>
               </div>
@@ -265,7 +265,7 @@ export function EmailConfigSection() {
               <label className='text-sm font-medium text-gray-600'>
                 Email Account
               </label>
-              <div className='p-3 bg-gray-50 rounded-lg border flex items-center justify-between'>
+              <div className='p-3   rounded-lg border flex items-center justify-between'>
                 <span className='text-sm font-mono'>{config.user}</span>
                 <div className='flex items-center gap-2'>
                   <Badge variant='outline' className='text-xs'>
@@ -283,89 +283,6 @@ export function EmailConfigSection() {
                       <Eye className='w-4 h-4' />
                     )}
                   </Button>
-                </div>
-              </div>
-            </div>
-
-            {/* Test Section */}
-            <div className='border-t pt-6'>
-              <h3 className='text-lg font-semibold mb-4 flex items-center gap-2'>
-                <Mail className='w-5 h-5' />
-                Test Email Configuration
-              </h3>
-
-              <div className='space-y-4'>
-                <div className='flex gap-2'>
-                  <Button
-                    onClick={testConnection}
-                    disabled={testing || !config.hasPassword}
-                    variant='outline'
-                    className='flex-1'
-                  >
-                    {testing ? (
-                      <>
-                        <RefreshCw className='w-4 h-4 mr-2 animate-spin' />
-                        Testing...
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle className='w-4 h-4 mr-2' />
-                        Test Connection
-                      </>
-                    )}
-                  </Button>
-                </div>
-
-                <div className='flex gap-2'>
-                  <Input
-                    type='email'
-                    placeholder='Enter test email address'
-                    value={testEmail}
-                    onChange={e => setTestEmail(e.target.value)}
-                    className='flex-1'
-                    disabled={!config.hasPassword}
-                  />
-                  <Button
-                    onClick={sendTestEmail}
-                    disabled={
-                      sendingTest || !testEmail.trim() || !config.hasPassword
-                    }
-                    className='px-6'
-                  >
-                    {sendingTest ? (
-                      <>
-                        <RefreshCw className='w-4 h-4 mr-2 animate-spin' />
-                        Sending...
-                      </>
-                    ) : (
-                      <>
-                        <Send className='w-4 h-4 mr-2' />
-                        Send Test
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            {/* Environment Variables Info */}
-            <div className='border-t pt-6'>
-              <h3 className='text-lg font-semibold mb-4'>
-                Environment Variables
-              </h3>
-              <div className='bg-gray-50 p-4 rounded-lg'>
-                <p className='text-sm text-gray-600 mb-2'>
-                  Configure these environment variables in your{' '}
-                  <code className='bg-gray-200 px-1 rounded'>.env.local</code>{' '}
-                  file:
-                </p>
-                <div className='space-y-1 text-sm font-mono'>
-                  <div>NODEMAILER_HOST=smtp.gmail.com</div>
-                  <div>NODEMAILER_PORT=587</div>
-                  <div>NODEMAILER_SECURE=false</div>
-                  <div>NODEMAILER_USER=your-email@gmail.com</div>
-                  <div>NODEMAILER_PASS=your-app-password</div>
-                  <div>NODEMAILER_FROM_EMAIL=noreply@hnu.edu</div>
                 </div>
               </div>
             </div>

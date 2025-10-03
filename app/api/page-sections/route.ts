@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 
-export async function GET(request: NextRequest) {
+async function handleGET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(req.url);
     const pageId = searchParams.get('pageId');
 
     const whereClause: any = {};
@@ -31,9 +35,9 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+async function handlePOST(req: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await req.json();
     const { type, title, content, mediaUrl, order, pageId } = body;
 
     const section = await db.pageSection.create({
@@ -60,9 +64,9 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function PATCH(request: NextRequest) {
+async function handlePATCH(req: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await req.json();
     const { sections } = body;
 
     // Bulk update for reordering
@@ -91,3 +95,9 @@ export async function PATCH(request: NextRequest) {
     );
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { GET, POST, PATCH } = withApiTrackingMethods(
+  { GET: handleGET, POST: handlePOST, PATCH: handlePATCH },
+  ApiTrackingPresets.crud('PageSection')
+);

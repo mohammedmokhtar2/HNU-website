@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 
-export async function GET(request: NextRequest) {
+async function handleGET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(req.url);
 
     // Parse query parameters
     const query = searchParams.get('q');
@@ -140,3 +144,9 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+// Apply tracking to all methods using search preset
+export const { GET } = withApiTrackingMethods(
+  { GET: handleGET },
+  ApiTrackingPresets.search('blogs')
+);

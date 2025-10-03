@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 
-export async function GET(request: NextRequest) {
+async function handleGET(req: NextRequest) {
   try {
     // Get total counts
     const total = await db.blogs.count();
@@ -98,3 +102,9 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { GET } = withApiTrackingMethods(
+  { GET: handleGET },
+  ApiTrackingPresets.crud('Blog')
+);

@@ -12,10 +12,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Search, Filter, Building2, GraduationCap, ChevronRight, ChevronLeft } from 'lucide-react';
+import {
+  Search,
+  Filter,
+  Building2,
+  GraduationCap,
+  ChevronRight,
+  ChevronLeft,
+} from 'lucide-react';
 import { College } from '@/types/college';
 import Image from 'next/image';
-import { getCollegeName, getCollegeDescription, getCollegeImage } from '@/utils/multilingual';
+import {
+  getCollegeName,
+  getCollegeDescription,
+  getCollegeImage,
+} from '@/utils/multilingual';
 
 function CollagesPage() {
   const router = useRouter();
@@ -33,10 +44,17 @@ function CollagesPage() {
     // Filter by search query
     if (searchQuery) {
       filtered = filtered.filter(college => {
-        const name = (college.name as any)?.[locale] || (college.name as any)?.en || '';
-        const description = (college.description as any)?.[locale] || (college.description as any)?.en || '';
+        const name =
+          (college.name as any)?.[locale] || (college.name as any)?.en || '';
+        const description =
+          (college.description as any)?.[locale] ||
+          (college.description as any)?.en ||
+          '';
         const query = searchQuery.toLowerCase();
-        return name.toLowerCase().includes(query) || description.toLowerCase().includes(query);
+        return (
+          name.toLowerCase().includes(query) ||
+          description.toLowerCase().includes(query)
+        );
       });
     }
 
@@ -73,7 +91,9 @@ function CollagesPage() {
       <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-50'>
         <div className='text-center'>
           <Building2 className='h-16 w-16 text-red-400 mx-auto mb-4' />
-          <p className='text-red-600 text-lg mb-4'>{t('error')}: {error}</p>
+          <p className='text-red-600 text-lg mb-4'>
+            {t('error')}: {error}
+          </p>
         </div>
       </div>
     );
@@ -109,7 +129,7 @@ function CollagesPage() {
               type='text'
               placeholder={t('search_placeholder')}
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={e => setSearchQuery(e.target.value)}
               className='pl-12 h-14 border-2 text-black border-gray-200 focus:border-[#023e8a] rounded-xl text-lg shadow-sm'
             />
           </div>
@@ -122,16 +142,17 @@ function CollagesPage() {
             <h3 className='text-2xl font-semibold text-gray-600 mb-2'>
               {t('no_colleges_found')}
             </h3>
-            <p className='text-gray-500'>
-              {t('no_colleges_description')}
-            </p>
+            <p className='text-gray-500'>{t('no_colleges_description')}</p>
           </div>
         ) : (
           <>
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
-              {filteredAndSortedColleges.map((college) => {
+              {filteredAndSortedColleges.map(college => {
                 const collegeName = getCollegeName(college, locale);
-                const collegeDescription = getCollegeDescription(college, locale);
+                const collegeDescription = getCollegeDescription(
+                  college,
+                  locale
+                );
                 const collegeImage = getCollegeImage(college);
 
                 return (

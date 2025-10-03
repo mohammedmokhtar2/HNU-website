@@ -1,4 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { cloudinary } from '@/lib/cloudinary';
 
 export interface CloudinaryUsageResponse {
@@ -38,7 +42,7 @@ export interface CloudinaryUsageResponse {
   error?: string;
 }
 
-export async function GET(request: NextRequest) {
+async function handleGET(req: NextRequest) {
   try {
     // Get usage statistics from Cloudinary
     const usageData = await cloudinary.api.usage();
@@ -139,7 +143,7 @@ export async function GET(request: NextRequest) {
 }
 
 // Handle OPTIONS request for CORS
-export async function OPTIONS() {
+async function handleOPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {
@@ -149,3 +153,9 @@ export async function OPTIONS() {
     },
   });
 }
+
+// Apply tracking to all methods using crud preset
+export const { GET, OPTIONS } = withApiTrackingMethods(
+  { GET: handleGET, OPTIONS: handleOPTIONS },
+  ApiTrackingPresets.crud('File')
+);

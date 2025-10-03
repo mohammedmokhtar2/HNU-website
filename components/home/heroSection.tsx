@@ -120,8 +120,9 @@ const HeroSection = ({
             loop
             muted={true}
             disablePictureInPicture
-            className={`w-full h-full object-cover transition-all duration-500 ${isTransitioning ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
-              }`}
+            className={`w-full h-full object-cover transition-all duration-500 ${
+              isTransitioning ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
+            }`}
           />
         )}
         {image && mediaType === 'image' && (
@@ -129,8 +130,9 @@ const HeroSection = ({
             src={image}
             alt='Hero background'
             fill
-            className={`object-cover transition-all duration-500 ${isTransitioning ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
-              }`}
+            className={`object-cover transition-all duration-500 ${
+              isTransitioning ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
+            }`}
             priority
           />
         )}
@@ -143,8 +145,9 @@ const HeroSection = ({
           <button
             onClick={() => switchMediaType('video')}
             disabled={isTransitioning}
-            className={`relative p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 group ${mediaType === 'video' ? 'bg-white/40 ring-2 ring-white/50' : ''
-              } ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
+            className={`relative p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 group ${
+              mediaType === 'video' ? 'bg-white/40 ring-2 ring-white/50' : ''
+            } ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
             aria-label='Switch to video'
           >
             <svg
@@ -164,8 +167,9 @@ const HeroSection = ({
           <button
             onClick={() => switchMediaType('image')}
             disabled={isTransitioning}
-            className={`relative p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 group ${mediaType === 'image' ? 'bg-white/40 ring-2 ring-white/50' : ''
-              } ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
+            className={`relative p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 group ${
+              mediaType === 'image' ? 'bg-white/40 ring-2 ring-white/50' : ''
+            } ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
             aria-label='Switch to image'
           >
             <svg

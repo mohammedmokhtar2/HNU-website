@@ -1,4 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 import { NodeMailerService } from '@/services/nodemailer.service';
 import { EmailTemplateService } from '@/lib/email-templates';
@@ -12,9 +16,9 @@ const ReplyRequestSchema = z.object({
   htmlBody: z.string().optional(),
 });
 
-export async function POST(request: NextRequest) {
+async function handlePOST(req: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await req.json();
 
     // Validate request body
     const validationResult = ReplyRequestSchema.safeParse(body);
@@ -102,19 +106,33 @@ export async function POST(request: NextRequest) {
     const originalMessageBody = originalConfig.body;
     const originalDate = originalMessage.createdAt.toISOString();
 
+    // Get university data for template branding
+    let universityConfig = null;
+    try {
+      const universities = await db.university.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: 1, // Get the first (most recent) university
+      });
+
+      if (universities.length > 0) {
+        universityConfig = universities[0].config;
+      }
+    } catch (error) {
+      console.warn(
+        'Failed to fetch university config for email template:',
+        error
+      );
+    }
+
     // Prepare template data
     const templateData = {
       replyMessage: replyBody,
       originalSubject: originalSubject || 'No Subject',
       originalFrom: originalFrom || 'Unknown',
-      originalDate: new Date(originalDate).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
+      originalDate: originalDate, // Pass the ISO string directly, let the template handle formatting
       originalMessage: originalMessageBody || 'No message content',
+      universityConfig: universityConfig,
+      baseUrl: process.env.NEXT_PUBLIC_BASE_URL || 'https://hnu.edu.eg',
     };
 
     // Process the reply template
@@ -236,9 +254,9 @@ export async function POST(request: NextRequest) {
 }
 
 // Get reply history for a message
-export async function GET(request: NextRequest) {
+async function handleGET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(req.url);
     const messageId = searchParams.get('messageId');
 
     if (!messageId) {
@@ -279,3 +297,9 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+// Apply tracking to all methods using formSubmission preset
+export const { POST, GET } = withApiTrackingMethods(
+  { POST: handlePOST, GET: handleGET },
+  ApiTrackingPresets.formSubmission('messages')
+);

@@ -29,6 +29,11 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { MessageStatus, MessagePriority } from '@/types/message';
+import {
+  generateMessageReplyHTML,
+  generateMessageReplyText,
+} from '@/lib/email-templates';
+import { useUniversity } from '@/contexts/UniversityContext';
 
 interface MessageViewModalProps {
   message: Message;
@@ -56,6 +61,7 @@ export function MessageViewModal({
   const [isSubmittingReply, setIsSubmittingReply] = useState(false);
 
   const config = message.messageConfig as any;
+  const { university } = useUniversity();
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
@@ -144,33 +150,34 @@ export function MessageViewModal({
 
     setIsSubmittingReply(true);
     try {
-      // Create HTML version of the reply
-      const htmlBody = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0;">
-            <h2 style="color: #333; margin-top: 0;">Reply from HNU Official Website</h2>
-            <p style="margin: 0; color: #666;">This is a reply to your contact form submission.</p>
-          </div>
-          <div style="background-color: #fff; padding: 20px; border: 1px solid #dee2e6; border-radius: 5px;">
-            <h3 style="color: #333; margin-top: 0;">Message:</h3>
-            <div style="white-space: pre-wrap; line-height: 1.6;">${replyData.body}</div>
-          </div>
-          <hr style="margin: 30px 0; border: none; border-top: 1px solid #dee2e6;">
-          <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; font-size: 12px; color: #6c757d;">
-            <p style="margin: 0;"><strong>Original Message:</strong></p>
-            <p style="margin: 5px 0 0 0;"><strong>Subject:</strong> ${config?.subject || 'No Subject'}</p>
-            <p style="margin: 5px 0 0 0;"><strong>From:</strong> ${config?.from || 'Unknown'}</p>
-            <p style="margin: 5px 0 0 0;"><strong>Date:</strong> ${format(new Date(message.createdAt), 'MMM dd, yyyy HH:mm')}</p>
-          </div>
-          <p style="color: #6c757d; font-size: 12px; text-align: center; margin-top: 20px;">
-            This message was sent from the HNU Official Website contact system.
-          </p>
-        </div>
-      `;
+      // Generate comprehensive HTML and text versions using the template
+      const htmlBody = generateMessageReplyHTML({
+        subject: replyData.subject,
+        body: replyData.body,
+        originalMessage: {
+          subject: config?.subject || 'No Subject',
+          from: config?.from || 'Unknown',
+          date: new Date(message.createdAt),
+          body: config?.body || 'No content available',
+        },
+        universityConfig: university?.config,
+      });
+
+      const textBody = generateMessageReplyText({
+        subject: replyData.subject,
+        body: replyData.body,
+        originalMessage: {
+          subject: config?.subject || 'No Subject',
+          from: config?.from || 'Unknown',
+          date: new Date(message.createdAt),
+          body: config?.body || 'No content available',
+        },
+        universityConfig: university?.config,
+      });
 
       await onReply({
         subject: replyData.subject,
-        body: replyData.body,
+        body: textBody, // Use the formatted text version as the plain text body
         htmlBody,
       });
 
@@ -258,8 +265,8 @@ export function MessageViewModal({
               <CardTitle className='text-lg'>Message Content</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className='bg-gray-50 p-4 rounded-lg'>
-                <pre className='whitespace-pre-wrap text-sm text-gray-800 font-sans'>
+              <div className='p-4 rounded-lg'>
+                <pre className='whitespace-pre-wrap text-sm text-white font-sans'>
                   {config?.body || 'No content available'}
                 </pre>
               </div>

@@ -43,7 +43,6 @@ function MessagesContent() {
     stats,
     unreadCount,
     loading,
-    loadingStats,
     queryParams,
     setQueryParams,
     refetch,
@@ -71,7 +70,7 @@ function MessagesContent() {
     const interval = setInterval(() => {
       refetch();
       refetchStats();
-    }, 30000);
+    }, 50000);
 
     return () => clearInterval(interval);
   }, [refetch, refetchStats]);
@@ -222,9 +221,6 @@ function MessagesContent() {
         </div>
       </div>
 
-      {/* Email Configuration Section */}
-      <EmailConfigSection />
-
       {/* Stats Cards */}
       {stats && (
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
@@ -296,7 +292,7 @@ function MessagesContent() {
       )}
 
       {/* Filters and Search */}
-      <Card className='border-0 shadow-sm bg-gradient-to-r from-gray-50 to-gray-100'>
+      <Card className='border-0 shadow-sm '>
         <CardContent className='p-6'>
           <div className='flex flex-col md:flex-row gap-4'>
             <div className='flex-1'>
@@ -343,18 +339,6 @@ function MessagesContent() {
                   <SelectItem value={MessageType.SYSTEM_NOTIFICATION}>
                     System
                   </SelectItem>
-                </SelectContent>
-              </Select>
-              <Select onValueChange={handlePriorityFilter}>
-                <SelectTrigger className='w-36 h-11 border-gray-200'>
-                  <SelectValue placeholder='Priority' />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value='all'>All Priority</SelectItem>
-                  <SelectItem value={MessagePriority.LOW}>Low</SelectItem>
-                  <SelectItem value={MessagePriority.NORMAL}>Normal</SelectItem>
-                  <SelectItem value={MessagePriority.HIGH}>High</SelectItem>
-                  <SelectItem value={MessagePriority.URGENT}>Urgent</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -404,9 +388,9 @@ function MessagesContent() {
         <CardContent className='p-0'>
           <div className='overflow-x-auto'>
             <table className='w-full'>
-              <thead className='bg-gray-50 border-b'>
+              <thead className='text-white border-b'>
                 <tr>
-                  <th className='text-left p-4 font-semibold text-gray-700'>
+                  <th className='text-left p-4 font-semibold text-white'>
                     <input
                       type='checkbox'
                       checked={
@@ -417,25 +401,25 @@ function MessagesContent() {
                       className='rounded border-gray-300 text-blue-600 focus:ring-blue-500'
                     />
                   </th>
-                  <th className='text-left p-4 font-semibold text-gray-700'>
+                  <th className='text-left p-4 font-semibold text-white'>
                     Subject
                   </th>
-                  <th className='text-left p-4 font-semibold text-gray-700'>
+                  <th className='text-left p-4 font-semibold  text-white'>
                     from
                   </th>
-                  <th className='text-left p-4 font-semibold text-gray-700'>
+                  <th className='text-left p-4 font-semibold text-white'>
                     Type
                   </th>
-                  <th className='text-left p-4 font-semibold text-gray-700'>
+                  <th className='text-left p-4 font-semibold  text-white'>
                     Status
                   </th>
-                  <th className='text-left p-4 font-semibold text-gray-700'>
+                  <th className='text-left p-4 font-semibold  text-white'>
                     Priority
                   </th>
-                  <th className='text-left p-4 font-semibold text-gray-700'>
+                  <th className='text-left p-4 font-semibold  text-white'>
                     Created
                   </th>
-                  <th className='text-left p-4 font-semibold text-gray-700'>
+                  <th className='text-left p-4 font-semibold  text-white'>
                     Actions
                   </th>
                 </tr>
@@ -466,6 +450,9 @@ function MessagesContent() {
                   </tr>
                 ) : (
                   messages.map(message => {
+                    const isReply =
+                      message.messageConfig?.metadata?.source === 'admin_reply';
+                    if (isReply) return null;
                     const config = message.messageConfig as any;
                     return (
                       <tr
@@ -541,49 +528,56 @@ function MessagesContent() {
                         </td>
                         <td className='p-4'>
                           <div className='flex gap-1'>
-                            {config?.status === MessageStatus.PENDING && (
+                            {config?.status === MessageStatus.PENDING &&
+                              !isReply && (
+                                <Button
+                                  variant='outline'
+                                  size='sm'
+                                  onClick={() => sendMessage(message.id)}
+                                >
+                                  <Send className='w-3 h-3' />
+                                </Button>
+                              )}
+                            {config?.status === MessageStatus.FAILED &&
+                              !isReply && (
+                                <Button
+                                  variant='outline'
+                                  size='sm'
+                                  onClick={() => retryMessage(message.id)}
+                                >
+                                  <RotateCcw className='w-3 h-3' />
+                                </Button>
+                              )}
+                            {config?.status === MessageStatus.SCHEDULED &&
+                              !isReply && (
+                                <Button
+                                  variant='outline'
+                                  size='sm'
+                                  onClick={() =>
+                                    cancelScheduledMessage(message.id)
+                                  }
+                                >
+                                  <XCircle className='w-3 h-3' />
+                                </Button>
+                              )}
+                            {!isReply && (
                               <Button
                                 variant='outline'
                                 size='sm'
-                                onClick={() => sendMessage(message.id)}
+                                onClick={() => markAsRead(message.id)}
                               >
-                                <Send className='w-3 h-3' />
+                                <Eye className='w-3 h-3' />
                               </Button>
                             )}
-                            {config?.status === MessageStatus.FAILED && (
+                            {!isReply && (
                               <Button
                                 variant='outline'
                                 size='sm'
-                                onClick={() => retryMessage(message.id)}
+                                onClick={() => deleteMessage(message.id)}
                               >
-                                <RotateCcw className='w-3 h-3' />
+                                <Trash2 className='w-3 h-3' />
                               </Button>
                             )}
-                            {config?.status === MessageStatus.SCHEDULED && (
-                              <Button
-                                variant='outline'
-                                size='sm'
-                                onClick={() =>
-                                  cancelScheduledMessage(message.id)
-                                }
-                              >
-                                <XCircle className='w-3 h-3' />
-                              </Button>
-                            )}
-                            <Button
-                              variant='outline'
-                              size='sm'
-                              onClick={() => markAsRead(message.id)}
-                            >
-                              <Eye className='w-3 h-3' />
-                            </Button>
-                            <Button
-                              variant='outline'
-                              size='sm'
-                              onClick={() => deleteMessage(message.id)}
-                            >
-                              <Trash2 className='w-3 h-3' />
-                            </Button>
                           </div>
                         </td>
                       </tr>
@@ -627,6 +621,9 @@ function MessagesContent() {
           </div>
         </div>
       )}
+
+      {/* Email Configuration Section */}
+      <EmailConfigSection />
     </div>
   );
 }

@@ -1,4 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { cloudinary } from '@/lib/cloudinary';
 import {
   UploadFileInput,
@@ -53,9 +57,9 @@ const uploadSchema = z
     }
   );
 
-export async function POST(request: NextRequest) {
+async function handlePOST(req: NextRequest) {
   try {
-    const formData = await request.formData();
+    const formData = await req.formData();
     const file = formData.get('file') as File;
     const folder = formData.get('folder') as string;
     const public_id = formData.get('public_id') as string | null;
@@ -244,7 +248,7 @@ export async function POST(request: NextRequest) {
 }
 
 // Handle OPTIONS request for CORS
-export async function OPTIONS() {
+async function handleOPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {
@@ -254,3 +258,9 @@ export async function OPTIONS() {
     },
   });
 }
+
+// Apply tracking to all methods using fileOperation preset
+export const { POST, OPTIONS } = withApiTrackingMethods(
+  { POST: handlePOST, OPTIONS: handleOPTIONS },
+  ApiTrackingPresets.fileOperation('upload')
+);

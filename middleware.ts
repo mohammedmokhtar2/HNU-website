@@ -27,8 +27,56 @@ export default clerkMiddleware(async (auth, req) => {
   const { pathname, searchParams } = req.nextUrl;
   const isApiRoute = pathname.startsWith('/api');
 
-  // Skip middleware for API routes if needed
+  // Handle API routes with authentication
   if (isApiRoute) {
+    const authResult = await auth();
+
+    // Check if this is a public API route that doesn't require authentication
+    const publicApiRoutes = [
+      '/api/health',
+      '/api/example', // Add any public API routes here
+    ];
+
+    // Check if this is a public message endpoint (POST only for contact forms)
+    const isPublicMessageEndpoint =
+      pathname === '/api/messages' && req.method === 'POST';
+
+    const isPublicApiRoute = publicApiRoutes.some(route =>
+      pathname.startsWith(route)
+    );
+
+    // Allow OPTIONS requests for CORS preflight without authentication
+    const isOptionsRequest = req.method === 'OPTIONS';
+
+    // If not a public route, not a public message endpoint, not an OPTIONS request, and user is not authenticated, return 401
+    if (
+      !isPublicApiRoute &&
+      !isPublicMessageEndpoint &&
+      !isOptionsRequest &&
+      !authResult.userId
+    ) {
+      return NextResponse.json(
+        {
+          error: 'Unauthorized',
+          message: 'Authentication required',
+          statusCode: 401,
+        },
+        {
+          status: 401,
+          headers: {
+            'WWW-Authenticate': 'Bearer',
+          },
+        }
+      );
+    }
+
+    // Add user ID to headers for authenticated requests
+    if (authResult.userId) {
+      const response = NextResponse.next();
+      response.headers.set('x-user-id', authResult.userId);
+      return response;
+    }
+
     return NextResponse.next();
   }
 
@@ -72,7 +120,7 @@ export const config = {
   matcher: [
     // Match all routes except static files and Next.js internals
     '/((?!_next|.*\\..*).*)',
-    // Optionally include API routes
-    // '/(api|trpc)(.*)',
+    // Include API routes for authentication
+    '/(api|trpc)(.*)',
   ],
 };

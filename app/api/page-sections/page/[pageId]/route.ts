@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 
-export async function GET(
+async function handleGET(
   request: NextRequest,
   { params }: { params: Promise<{ pageId: string }> }
 ) {
@@ -28,3 +32,9 @@ export async function GET(
     );
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { GET } = withApiTrackingMethods(
+  { GET: handleGET },
+  ApiTrackingPresets.crud('PageSection')
+);

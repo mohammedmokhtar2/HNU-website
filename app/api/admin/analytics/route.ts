@@ -1,9 +1,13 @@
 import { db } from '@/lib/db';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
+async function handleGET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(req.url);
     const timeRange = searchParams.get('timeRange') || '30'; // days
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - parseInt(timeRange));
@@ -64,7 +68,7 @@ export async function GET(request: NextRequest) {
             orderBy: { createdAt: 'desc' },
             take: 10,
             include: {
-              user: {
+              clerkUser: {
                 select: {
                   id: true,
                   name: true,
@@ -413,3 +417,9 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+// Apply tracking to all methods using search preset
+export const { GET } = withApiTrackingMethods(
+  { GET: handleGET },
+  ApiTrackingPresets.search('admin')
+);

@@ -1,15 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 import { handleCORS, addCORSHeaders } from '@/lib/cors';
 
 // GET /api/logs - Get all audit logs with pagination and filtering
-export async function GET(request: NextRequest) {
+async function handleGET(req: NextRequest) {
   // Handle CORS preflight
-  const corsResponse = handleCORS(request);
+  const corsResponse = handleCORS(req);
   if (corsResponse) return corsResponse;
 
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '20');
     const userId = searchParams.get('userId');
@@ -40,7 +44,7 @@ export async function GET(request: NextRequest) {
     const logs = await db.auditLog.findMany({
       where,
       include: {
-        user: {
+        clerkUser: {
           select: {
             id: true,
             name: true,
@@ -82,18 +86,22 @@ export async function GET(request: NextRequest) {
 }
 
 // DELETE /api/logs - Delete logs (bulk deletion)
-export async function DELETE(request: NextRequest) {
+async function handleDELETE(req: NextRequest) {
   // Handle CORS preflight
-  const corsResponse = handleCORS(request);
+  const corsResponse = handleCORS(req);
   if (corsResponse) return corsResponse;
 
   try {
-    const body = await request.json();
-    const { logIds, filters } = body;
+    const body = await req.json();
+    const { logIds, filters, deleteAll } = body;
 
     let deletedCount = 0;
 
-    if (logIds && logIds.length > 0) {
+    if (deleteAll) {
+      // Delete all logs
+      const result = await db.auditLog.deleteMany({});
+      deletedCount = result.count;
+    } else if (logIds && logIds.length > 0) {
       // Delete specific logs by IDs
       if (logIds.length > 100) {
         return NextResponse.json(
@@ -142,7 +150,7 @@ export async function DELETE(request: NextRequest) {
       deletedCount = result.count;
     } else {
       return NextResponse.json(
-        { error: 'Either logIds or filters must be provided' },
+        { error: 'Either logIds, filters, or deleteAll must be provided' },
         { status: 400 }
       );
     }
@@ -161,10 +169,16 @@ export async function DELETE(request: NextRequest) {
 }
 
 // Handle OPTIONS requests for CORS preflight
-export async function OPTIONS(request: NextRequest) {
-  const corsResponse = handleCORS(request);
+async function handleOPTIONS(req: NextRequest) {
+  const corsResponse = handleCORS(req);
   if (corsResponse) return corsResponse;
 
   // If not a preflight request, return a simple response
   return new NextResponse(null, { status: 200 });
 }
+
+// Apply tracking to all methods using crud preset
+export const { GET, DELETE, OPTIONS } = withApiTrackingMethods(
+  { GET: handleGET, DELETE: handleDELETE, OPTIONS: handleOPTIONS },
+  ApiTrackingPresets.crud('Log')
+);

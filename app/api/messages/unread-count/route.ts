@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 import { MessageStatus, MessageType, MessagePriority } from '@/types/message';
 
-export async function GET(request: NextRequest) {
+async function handleGET(req: NextRequest) {
   try {
     // Get unread messages count (messages with status PENDING or SENT)
     const unreadCount = await db.messages.count({
@@ -287,3 +291,9 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { GET } = withApiTrackingMethods(
+  { GET: handleGET },
+  ApiTrackingPresets.crud('Message')
+);

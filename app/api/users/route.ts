@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 
-export async function GET() {
+async function handleGET() {
   try {
     const users = await db.user.findMany({
       orderBy: { createdAt: 'desc' },
@@ -16,3 +20,9 @@ export async function GET() {
     );
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { GET } = withApiTrackingMethods(
+  { GET: handleGET },
+  ApiTrackingPresets.crud('User')
+);

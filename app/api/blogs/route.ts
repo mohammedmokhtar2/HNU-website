@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 import { BlogQueryParams, CreateBlogInput } from '@/types/blog';
 
-export async function GET(request: NextRequest) {
+async function handleGET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(req.url);
 
     // Parse query parameters
     const params: BlogQueryParams = {
@@ -148,9 +152,9 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+async function handlePOST(req: NextRequest) {
   try {
-    const body: CreateBlogInput = await request.json();
+    const body: CreateBlogInput = await req.json();
 
     // Validate required fields
     if (!body.title || !body.content || !body.slug) {
@@ -204,3 +208,9 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { GET, POST } = withApiTrackingMethods(
+  { GET: handleGET, POST: handlePOST },
+  ApiTrackingPresets.crud('Blog')
+);

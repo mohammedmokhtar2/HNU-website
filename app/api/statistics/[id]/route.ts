@@ -1,6 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { withAuditLog } from '@/lib/middleware/withAuditLog';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 
 interface Params {
   params: Promise<{
@@ -8,7 +11,7 @@ interface Params {
   }>;
 }
 
-export async function GET(req: Request, { params }: Params) {
+async function handleGET(req: NextRequest, { params }: Params) {
   try {
     const { id } = await params;
 
@@ -36,88 +39,74 @@ export async function GET(req: Request, { params }: Params) {
   }
 }
 
-export const PATCH = withAuditLog(
-  async (req: Request, { params }: Params) => {
-    try {
-      const { id } = await params;
-      const body = await req.json();
-      const { label, collageId } = body;
+async function handlePATCH(req: NextRequest, { params }: Params) {
+  try {
+    const { id } = await params;
+    const body = await req.json();
+    const { label, collageId } = body;
 
-      const existingStatistic = await db.statistic.findUnique({
-        where: { id },
-      });
+    const existingStatistic = await db.statistic.findUnique({
+      where: { id },
+    });
 
-      if (!existingStatistic) {
-        return NextResponse.json(
-          { error: 'Statistic not found' },
-          { status: 404 }
-        );
-      }
-
-      const statistic = await db.statistic.update({
-        where: { id },
-        data: {
-          label: label !== undefined ? label : undefined,
-          collageId: collageId !== undefined ? collageId : undefined,
-        },
-      });
-
-      return NextResponse.json(statistic);
-    } catch (error) {
-      console.error('Error updating statistic:', error);
+    if (!existingStatistic) {
       return NextResponse.json(
-        { error: 'Failed to update statistic' },
-        { status: 500 }
+        { error: 'Statistic not found' },
+        { status: 404 }
       );
     }
-  },
-  {
-    action: 'UPDATE_STATISTIC',
-    extract: () => {
-      return {
-        entity: 'Statistic',
-      };
-    },
+
+    const statistic = await db.statistic.update({
+      where: { id },
+      data: {
+        label: label !== undefined ? label : undefined,
+        collageId: collageId !== undefined ? collageId : undefined,
+      },
+    });
+
+    return NextResponse.json(statistic);
+  } catch (error) {
+    console.error('Error updating statistic:', error);
+    return NextResponse.json(
+      { error: 'Failed to update statistic' },
+      { status: 500 }
+    );
   }
-);
+}
 
-export const DELETE = withAuditLog(
-  async (req: Request, { params }: Params) => {
-    try {
-      const { id } = await params;
+async function handleDELETE(req: NextRequest, { params }: Params) {
+  try {
+    const { id } = await params;
 
-      // Check if statistic exists
-      const existingStatistic = await db.statistic.findUnique({
-        where: { id },
-      });
+    // Check if statistic exists
+    const existingStatistic = await db.statistic.findUnique({
+      where: { id },
+    });
 
-      if (!existingStatistic) {
-        return NextResponse.json(
-          { error: 'Statistic not found' },
-          { status: 404 }
-        );
-      }
-
-      // Delete the statistic
-      await db.statistic.delete({
-        where: { id },
-      });
-
-      return NextResponse.json({ message: 'Statistic deleted successfully' });
-    } catch (error) {
-      console.error('Error deleting statistic:', error);
+    if (!existingStatistic) {
       return NextResponse.json(
-        { error: 'Failed to delete statistic' },
-        { status: 500 }
+        { error: 'Statistic not found' },
+        { status: 404 }
       );
     }
-  },
-  {
-    action: 'DELETE_STATISTIC',
-    extract: () => {
-      return {
-        entity: 'Statistic',
-      };
-    },
+
+    // Delete the statistic
+    await db.statistic.delete({
+      where: { id },
+    });
+
+    return NextResponse.json({ message: 'Statistic deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting statistic:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete statistic' },
+      { status: 500 }
+    );
   }
+}
+
+// Apply tracking to all methods using CRUD preset
+export const { GET, PATCH, DELETE } = withApiTrackingMethods(
+  { GET: handleGET, PATCH: handlePATCH, DELETE: handleDELETE },
+  ApiTrackingPresets.crud('Statistic')
 );

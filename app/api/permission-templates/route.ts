@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { Action } from '@/types/enums';
 
 // Handle CORS preflight requests
-export async function OPTIONS() {
+async function handleOPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {
@@ -13,7 +17,7 @@ export async function OPTIONS() {
   });
 }
 
-export async function GET() {
+async function handleGET() {
   try {
     // Mock permission templates data
     const mockTemplates = [
@@ -73,3 +77,9 @@ export async function GET() {
     );
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { OPTIONS, GET } = withApiTrackingMethods(
+  { OPTIONS: handleOPTIONS, GET: handleGET },
+  ApiTrackingPresets.crud('PermissionTemplate')
+);

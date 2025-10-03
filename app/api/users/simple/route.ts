@@ -1,22 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createAuthenticatedRoute } from '@/lib/middleware/authMiddleware';
+import { getUserIdFromHeaders } from '@/lib/auth-headers';
 import { handleCORS, addCORSHeaders } from '@/lib/cors';
 
-export async function GET(request: NextRequest) {
+async function handleGET(req: NextRequest) {
   console.log('GET /api/users/simple - Request received');
-  console.log(
-    'Request headers:',
-    Object.fromEntries(request.headers.entries())
-  );
+  console.log('Request headers:', Object.fromEntries(req.headers.entries()));
+
+  // Get the authenticated user ID
+  const userId = getUserIdFromHeaders(req);
+  console.log('Authenticated user ID:', userId);
 
   // Handle CORS preflight
-  const corsResponse = handleCORS(request);
+  const corsResponse = handleCORS(req);
   if (corsResponse) {
     console.log('CORS preflight response sent');
     return corsResponse;
   }
 
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(req.url);
     const includeCollege = searchParams.get('includeCollege') === 'true';
 
     // Return mock data instead of database query
@@ -49,6 +52,7 @@ export async function GET(request: NextRequest) {
         total: 2,
         totalPages: 1,
       },
+      authenticatedUserId: userId, // Include the authenticated user ID
     });
 
     console.log('Mock users created, adding CORS headers');
@@ -68,11 +72,23 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function OPTIONS(request: NextRequest) {
+async function handleOPTIONS(req: NextRequest) {
   console.log('OPTIONS /api/users/simple - Preflight request received');
-  const corsResponse = handleCORS(request);
+  const corsResponse = handleCORS(req);
   if (corsResponse) return corsResponse;
 
   // If not a preflight request, return a simple response
   return new NextResponse(null, { status: 200 });
 }
+
+// Apply authentication middleware to all methods
+export const { GET, OPTIONS } = createAuthenticatedRoute(
+  {
+    GET: handleGET,
+    OPTIONS: handleOPTIONS,
+  },
+  {
+    // OPTIONS requests don't need authentication for CORS preflight
+    allowUnauthenticated: false, // Keep this false to require auth for GET
+  }
+);

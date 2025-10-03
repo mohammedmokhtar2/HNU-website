@@ -1,4 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 
 interface RouteParams {
@@ -7,10 +11,10 @@ interface RouteParams {
   }>;
 }
 
-export async function GET(request: NextRequest, { params }: RouteParams) {
+async function handleGET(req: NextRequest, { params }: RouteParams) {
   try {
     const { createdById } = await params;
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(req.url);
 
     // Parse query parameters
     const page = parseInt(searchParams.get('page') || '1');
@@ -129,3 +133,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     );
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { GET } = withApiTrackingMethods(
+  { GET: handleGET },
+  ApiTrackingPresets.crud('Blog')
+);

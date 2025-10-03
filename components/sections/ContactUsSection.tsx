@@ -313,7 +313,6 @@ This message was sent from the contact form on the website.
                 </CardTitle>
               </CardHeader>
               <CardContent className='space-y-6'>
-
                 {content.contactInfo.email && (
                   <div className='flex items-start gap-3'>
                     <Mail className='w-5 h-5 text-black mt-1' />

@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 import { UserType } from '@prisma/client';
 
-export async function PATCH(
+async function handlePATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
@@ -61,3 +65,9 @@ export async function PATCH(
     );
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { PATCH } = withApiTrackingMethods(
+  { PATCH: handlePATCH },
+  ApiTrackingPresets.crud('User')
+);

@@ -290,7 +290,7 @@ function SortableSectionItem({
                 <Badge variant='outline' className='text-xs'>
                   {
                     sectionTypeLabels[
-                    section.type as keyof typeof sectionTypeLabels
+                      section.type as keyof typeof sectionTypeLabels
                     ]
                   }
                 </Badge>
@@ -338,17 +338,17 @@ function SortableSectionItem({
                   (section.content as any)?.videoUrl) ||
                   (section.type === 'ABOUT' &&
                     (section.content as any)?.videoUrl)) && (
-                    <div className='flex items-center gap-2'>
-                      <video
-                        width={100}
-                        height={100}
-                        src={(section.content as any).videoUrl}
-                        className='w-16 h-12 object-cover rounded border'
-                        muted
-                      />
-                      <span className='text-xs text-gray-500'>Video</span>
-                    </div>
-                  )}
+                  <div className='flex items-center gap-2'>
+                    <video
+                      width={100}
+                      height={100}
+                      src={(section.content as any).videoUrl}
+                      className='w-16 h-12 object-cover rounded border'
+                      muted
+                    />
+                    <span className='text-xs text-gray-500'>Video</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -447,7 +447,9 @@ export function SectionManager({
       // Clean content object by removing any properties with dots in their names
       // These are invalid properties created by previous image upload attempts
       const cleanContent = { ...formData.content };
-      const keysToRemove = Object.keys(cleanContent).filter(key => key.includes('.'));
+      const keysToRemove = Object.keys(cleanContent).filter(key =>
+        key.includes('.')
+      );
 
       if (keysToRemove.length > 0) {
         console.log('🧹 Cleaning invalid properties:', keysToRemove);
@@ -489,7 +491,9 @@ export function SectionManager({
     try {
       // Clean content object by removing any properties with dots in their names
       const cleanContent = { ...formData.content };
-      const keysToRemove = Object.keys(cleanContent).filter(key => key.includes('.'));
+      const keysToRemove = Object.keys(cleanContent).filter(key =>
+        key.includes('.')
+      );
 
       if (keysToRemove.length > 0) {
         console.log('🧹 Cleaning invalid properties:', keysToRemove);
@@ -511,7 +515,9 @@ export function SectionManager({
       );
 
       // Invalidate queries to refresh the section on the frontend
-      queryClient.invalidateQueries({ queryKey: ['section', editingSection.id] });
+      queryClient.invalidateQueries({
+        queryKey: ['section', editingSection.id],
+      });
       queryClient.invalidateQueries({ queryKey: ['sections'] });
 
       setIsEditDialogOpen(false);
@@ -2499,7 +2505,7 @@ function SectionForm({
                       },
                     })
                   }
-                  placeholder="e.g., Student Activities"
+                  placeholder='e.g., Student Activities'
                 />
               </div>
               <div>
@@ -2522,11 +2528,15 @@ function SectionForm({
 
             {/* Student Union Section */}
             <div className='p-4 bg-white border-2 border-blue-300 rounded-lg space-y-4'>
-              <h4 className='font-semibold text-blue-700 text-lg bg-blue-100 -m-4 mb-4 p-4 rounded-t-md'>Student Union</h4>
+              <h4 className='font-semibold text-blue-700 text-lg bg-blue-100 -m-4 mb-4 p-4 rounded-t-md'>
+                Student Union
+              </h4>
 
               <div className='grid grid-cols-2 gap-4'>
                 <div>
-                  <Label className='text-gray-800 font-medium'>Title (English)</Label>
+                  <Label className='text-gray-800 font-medium'>
+                    Title (English)
+                  </Label>
                   <Input
                     className='text-gray-900'
                     value={content.studentUnion?.title?.en || ''}
@@ -2537,7 +2547,10 @@ function SectionForm({
                           ...content,
                           studentUnion: {
                             ...content.studentUnion,
-                            title: { ...content.studentUnion?.title, en: e.target.value },
+                            title: {
+                              ...content.studentUnion?.title,
+                              en: e.target.value,
+                            },
                           },
                         },
                       })
@@ -2546,7 +2559,9 @@ function SectionForm({
                   />
                 </div>
                 <div>
-                  <Label className='text-gray-800 font-medium'>Title (Arabic)</Label>
+                  <Label className='text-gray-800 font-medium'>
+                    Title (Arabic)
+                  </Label>
                   <Input
                     className='text-gray-900'
                     value={content.studentUnion?.title?.ar || ''}
@@ -2557,7 +2572,10 @@ function SectionForm({
                           ...content,
                           studentUnion: {
                             ...content.studentUnion,
-                            title: { ...content.studentUnion?.title, ar: e.target.value },
+                            title: {
+                              ...content.studentUnion?.title,
+                              ar: e.target.value,
+                            },
                           },
                         },
                       })
@@ -2569,7 +2587,9 @@ function SectionForm({
 
               <div className='grid grid-cols-2 gap-4'>
                 <div>
-                  <Label className='text-gray-800 font-medium'>Description (English)</Label>
+                  <Label className='text-gray-800 font-medium'>
+                    Description (English)
+                  </Label>
                   <Textarea
                     className='text-gray-900'
                     value={content.studentUnion?.description?.en || ''}
@@ -2580,7 +2600,10 @@ function SectionForm({
                           ...content,
                           studentUnion: {
                             ...content.studentUnion,
-                            description: { ...content.studentUnion?.description, en: e.target.value },
+                            description: {
+                              ...content.studentUnion?.description,
+                              en: e.target.value,
+                            },
                           },
                         },
                       })
@@ -2590,7 +2613,9 @@ function SectionForm({
                   />
                 </div>
                 <div>
-                  <Label className='text-gray-800 font-medium'>Description (Arabic)</Label>
+                  <Label className='text-gray-800 font-medium'>
+                    Description (Arabic)
+                  </Label>
                   <Textarea
                     className='text-gray-900'
                     value={content.studentUnion?.description?.ar || ''}
@@ -2601,7 +2626,10 @@ function SectionForm({
                           ...content,
                           studentUnion: {
                             ...content.studentUnion,
-                            description: { ...content.studentUnion?.description, ar: e.target.value },
+                            description: {
+                              ...content.studentUnion?.description,
+                              ar: e.target.value,
+                            },
                           },
                         },
                       })
@@ -2658,42 +2686,24 @@ function SectionForm({
               <div>
                 <Label className='text-gray-800 font-medium'>Items</Label>
                 <div className='space-y-3'>
-                  {(content.studentUnion?.items || []).map((item: any, index: number) => (
-                    <div key={index} className='border border-blue-200 rounded-lg p-3 bg-blue-50/30'>
-                      <div className='flex items-center justify-between mb-2'>
-                        <span className='text-sm font-semibold text-blue-800'>Item {index + 1}</span>
-                        <Button
-                          type='button'
-                          variant='outline'
-                          size='sm'
-                          onClick={() => {
-                            const newItems = (content.studentUnion?.items || []).filter(
-                              (_: any, i: number) => i !== index
-                            );
-                            setFormData({
-                              ...formData,
-                              content: {
-                                ...content,
-                                studentUnion: {
-                                  ...content.studentUnion,
-                                  items: newItems,
-                                },
-                              },
-                            });
-                          }}
-                        >
-                          <X className='h-4 w-4' />
-                        </Button>
-                      </div>
-                      <div className='grid grid-cols-2 gap-3'>
-                        <div>
-                          <Label className='text-xs text-gray-700'>English</Label>
-                          <Input
-                            className='text-gray-900'
-                            value={item?.en || ''}
-                            onChange={e => {
-                              const newItems = [...(content.studentUnion?.items || [])];
-                              newItems[index] = { ...newItems[index], en: e.target.value };
+                  {(content.studentUnion?.items || []).map(
+                    (item: any, index: number) => (
+                      <div
+                        key={index}
+                        className='border border-blue-200 rounded-lg p-3 bg-blue-50/30'
+                      >
+                        <div className='flex items-center justify-between mb-2'>
+                          <span className='text-sm font-semibold text-blue-800'>
+                            Item {index + 1}
+                          </span>
+                          <Button
+                            type='button'
+                            variant='outline'
+                            size='sm'
+                            onClick={() => {
+                              const newItems = (
+                                content.studentUnion?.items || []
+                              ).filter((_: any, i: number) => i !== index);
                               setFormData({
                                 ...formData,
                                 content: {
@@ -2705,40 +2715,82 @@ function SectionForm({
                                 },
                               });
                             }}
-                            placeholder='Enter item in English'
-                          />
+                          >
+                            <X className='h-4 w-4' />
+                          </Button>
                         </div>
-                        <div>
-                          <Label className='text-xs text-gray-700'>Arabic</Label>
-                          <Input
-                            className='text-gray-900'
-                            value={item?.ar || ''}
-                            onChange={e => {
-                              const newItems = [...(content.studentUnion?.items || [])];
-                              newItems[index] = { ...newItems[index], ar: e.target.value };
-                              setFormData({
-                                ...formData,
-                                content: {
-                                  ...content,
-                                  studentUnion: {
-                                    ...content.studentUnion,
-                                    items: newItems,
+                        <div className='grid grid-cols-2 gap-3'>
+                          <div>
+                            <Label className='text-xs text-gray-700'>
+                              English
+                            </Label>
+                            <Input
+                              className='text-gray-900'
+                              value={item?.en || ''}
+                              onChange={e => {
+                                const newItems = [
+                                  ...(content.studentUnion?.items || []),
+                                ];
+                                newItems[index] = {
+                                  ...newItems[index],
+                                  en: e.target.value,
+                                };
+                                setFormData({
+                                  ...formData,
+                                  content: {
+                                    ...content,
+                                    studentUnion: {
+                                      ...content.studentUnion,
+                                      items: newItems,
+                                    },
                                   },
-                                },
-                              });
-                            }}
-                            placeholder='أدخل العنصر بالعربية'
-                          />
+                                });
+                              }}
+                              placeholder='Enter item in English'
+                            />
+                          </div>
+                          <div>
+                            <Label className='text-xs text-gray-700'>
+                              Arabic
+                            </Label>
+                            <Input
+                              className='text-gray-900'
+                              value={item?.ar || ''}
+                              onChange={e => {
+                                const newItems = [
+                                  ...(content.studentUnion?.items || []),
+                                ];
+                                newItems[index] = {
+                                  ...newItems[index],
+                                  ar: e.target.value,
+                                };
+                                setFormData({
+                                  ...formData,
+                                  content: {
+                                    ...content,
+                                    studentUnion: {
+                                      ...content.studentUnion,
+                                      items: newItems,
+                                    },
+                                  },
+                                });
+                              }}
+                              placeholder='أدخل العنصر بالعربية'
+                            />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  )}
                   <Button
                     type='button'
                     variant='outline'
                     size='sm'
                     onClick={() => {
-                      const newItems = [...(content.studentUnion?.items || []), { en: '', ar: '' }];
+                      const newItems = [
+                        ...(content.studentUnion?.items || []),
+                        { en: '', ar: '' },
+                      ];
                       setFormData({
                         ...formData,
                         content: {
@@ -2759,10 +2811,14 @@ function SectionForm({
 
               {/* Head Member */}
               <div className='border-t-2 border-blue-200 pt-4 mt-4'>
-                <Label className='text-base font-bold mb-3 block text-blue-800 bg-blue-50 px-3 py-2 rounded'>👤 Head Member</Label>
+                <Label className='text-base font-bold mb-3 block text-blue-800 bg-blue-50 px-3 py-2 rounded'>
+                  👤 Head Member
+                </Label>
                 <div className='grid grid-cols-2 gap-4'>
                   <div>
-                    <Label className='text-gray-800 font-medium'>Name (English)</Label>
+                    <Label className='text-gray-800 font-medium'>
+                      Name (English)
+                    </Label>
                     <Input
                       className='text-gray-900'
                       value={content.studentUnion?.head?.name?.en || ''}
@@ -2775,7 +2831,10 @@ function SectionForm({
                               ...content.studentUnion,
                               head: {
                                 ...content.studentUnion?.head,
-                                name: { ...content.studentUnion?.head?.name, en: e.target.value },
+                                name: {
+                                  ...content.studentUnion?.head?.name,
+                                  en: e.target.value,
+                                },
                               },
                             },
                           },
@@ -2785,7 +2844,9 @@ function SectionForm({
                     />
                   </div>
                   <div>
-                    <Label className='text-gray-800 font-medium'>Name (Arabic)</Label>
+                    <Label className='text-gray-800 font-medium'>
+                      Name (Arabic)
+                    </Label>
                     <Input
                       className='text-gray-900'
                       value={content.studentUnion?.head?.name?.ar || ''}
@@ -2798,7 +2859,10 @@ function SectionForm({
                               ...content.studentUnion,
                               head: {
                                 ...content.studentUnion?.head,
-                                name: { ...content.studentUnion?.head?.name, ar: e.target.value },
+                                name: {
+                                  ...content.studentUnion?.head?.name,
+                                  ar: e.target.value,
+                                },
                               },
                             },
                           },
@@ -2835,7 +2899,9 @@ function SectionForm({
                       type='button'
                       variant='outline'
                       size='sm'
-                      onClick={() => onImageSelect('studentUnion.head.imageUrl')}
+                      onClick={() =>
+                        onImageSelect('studentUnion.head.imageUrl')
+                      }
                     >
                       <ImageIcon className='h-4 w-4' />
                     </Button>
@@ -2856,10 +2922,14 @@ function SectionForm({
 
               {/* Vice Member */}
               <div className='border-t-2 border-blue-200 pt-4 mt-4'>
-                <Label className='text-base font-bold mb-3 block text-blue-800 bg-blue-50 px-3 py-2 rounded'>👤 Vice Head Member</Label>
+                <Label className='text-base font-bold mb-3 block text-blue-800 bg-blue-50 px-3 py-2 rounded'>
+                  👤 Vice Head Member
+                </Label>
                 <div className='grid grid-cols-2 gap-4'>
                   <div>
-                    <Label className='text-gray-800 font-medium'>Name (English)</Label>
+                    <Label className='text-gray-800 font-medium'>
+                      Name (English)
+                    </Label>
                     <Input
                       className='text-gray-900'
                       value={content.studentUnion?.vice?.name?.en || ''}
@@ -2872,7 +2942,10 @@ function SectionForm({
                               ...content.studentUnion,
                               vice: {
                                 ...content.studentUnion?.vice,
-                                name: { ...content.studentUnion?.vice?.name, en: e.target.value },
+                                name: {
+                                  ...content.studentUnion?.vice?.name,
+                                  en: e.target.value,
+                                },
                               },
                             },
                           },
@@ -2894,7 +2967,10 @@ function SectionForm({
                               ...content.studentUnion,
                               vice: {
                                 ...content.studentUnion?.vice,
-                                name: { ...content.studentUnion?.vice?.name, ar: e.target.value },
+                                name: {
+                                  ...content.studentUnion?.vice?.name,
+                                  ar: e.target.value,
+                                },
                               },
                             },
                           },
@@ -2931,7 +3007,9 @@ function SectionForm({
                       type='button'
                       variant='outline'
                       size='sm'
-                      onClick={() => onImageSelect('studentUnion.vice.imageUrl')}
+                      onClick={() =>
+                        onImageSelect('studentUnion.vice.imageUrl')
+                      }
                     >
                       <ImageIcon className='h-4 w-4' />
                     </Button>
@@ -2952,9 +3030,13 @@ function SectionForm({
 
               {/* Link */}
               <div className='border-t-2 border-blue-200 pt-4 mt-4'>
-                <Label className='text-base font-bold mb-3 block text-blue-800 bg-blue-50 px-3 py-2 rounded'>🔗 Page Link</Label>
+                <Label className='text-base font-bold mb-3 block text-blue-800 bg-blue-50 px-3 py-2 rounded'>
+                  🔗 Page Link
+                </Label>
                 <div>
-                  <Label className='text-gray-800 font-medium'>Link URL (e.g., /student-union)</Label>
+                  <Label className='text-gray-800 font-medium'>
+                    Link URL (e.g., /student-union)
+                  </Label>
                   <Input
                     className='text-gray-900'
                     value={content.studentUnion?.link || ''}
@@ -2978,11 +3060,15 @@ function SectionForm({
 
             {/* Student Family Section */}
             <div className='p-4 bg-white border-2 border-purple-300 rounded-lg space-y-4'>
-              <h4 className='font-semibold text-purple-700 text-lg bg-purple-100 -m-4 mb-4 p-4 rounded-t-md'>Student Family</h4>
+              <h4 className='font-semibold text-purple-700 text-lg bg-purple-100 -m-4 mb-4 p-4 rounded-t-md'>
+                Student Family
+              </h4>
 
               <div className='grid grid-cols-2 gap-4'>
                 <div>
-                  <Label className='text-gray-800 font-medium'>Title (English)</Label>
+                  <Label className='text-gray-800 font-medium'>
+                    Title (English)
+                  </Label>
                   <Input
                     className='text-gray-900'
                     value={content.studentFamily?.title?.en || ''}
@@ -2993,7 +3079,10 @@ function SectionForm({
                           ...content,
                           studentFamily: {
                             ...content.studentFamily,
-                            title: { ...content.studentFamily?.title, en: e.target.value },
+                            title: {
+                              ...content.studentFamily?.title,
+                              en: e.target.value,
+                            },
                           },
                         },
                       })
@@ -3002,7 +3091,9 @@ function SectionForm({
                   />
                 </div>
                 <div>
-                  <Label className='text-gray-800 font-medium'>Title (Arabic)</Label>
+                  <Label className='text-gray-800 font-medium'>
+                    Title (Arabic)
+                  </Label>
                   <Input
                     className='text-gray-900'
                     value={content.studentFamily?.title?.ar || ''}
@@ -3013,7 +3104,10 @@ function SectionForm({
                           ...content,
                           studentFamily: {
                             ...content.studentFamily,
-                            title: { ...content.studentFamily?.title, ar: e.target.value },
+                            title: {
+                              ...content.studentFamily?.title,
+                              ar: e.target.value,
+                            },
                           },
                         },
                       })
@@ -3025,7 +3119,9 @@ function SectionForm({
 
               <div className='grid grid-cols-2 gap-4'>
                 <div>
-                  <Label className='text-gray-800 font-medium'>Description (English)</Label>
+                  <Label className='text-gray-800 font-medium'>
+                    Description (English)
+                  </Label>
                   <Textarea
                     className='text-gray-900'
                     value={content.studentFamily?.description?.en || ''}
@@ -3036,7 +3132,10 @@ function SectionForm({
                           ...content,
                           studentFamily: {
                             ...content.studentFamily,
-                            description: { ...content.studentFamily?.description, en: e.target.value },
+                            description: {
+                              ...content.studentFamily?.description,
+                              en: e.target.value,
+                            },
                           },
                         },
                       })
@@ -3046,7 +3145,9 @@ function SectionForm({
                   />
                 </div>
                 <div>
-                  <Label className='text-gray-800 font-medium'>Description (Arabic)</Label>
+                  <Label className='text-gray-800 font-medium'>
+                    Description (Arabic)
+                  </Label>
                   <Textarea
                     className='text-gray-900'
                     value={content.studentFamily?.description?.ar || ''}
@@ -3057,7 +3158,10 @@ function SectionForm({
                           ...content,
                           studentFamily: {
                             ...content.studentFamily,
-                            description: { ...content.studentFamily?.description, ar: e.target.value },
+                            description: {
+                              ...content.studentFamily?.description,
+                              ar: e.target.value,
+                            },
                           },
                         },
                       })
@@ -3114,42 +3218,24 @@ function SectionForm({
               <div>
                 <Label className='text-gray-800 font-medium'>Items</Label>
                 <div className='space-y-3'>
-                  {(content.studentFamily?.items || []).map((item: any, index: number) => (
-                    <div key={index} className='border border-purple-200 rounded-lg p-3 bg-purple-50/30'>
-                      <div className='flex items-center justify-between mb-2'>
-                        <span className='text-sm font-semibold text-purple-800'>Item {index + 1}</span>
-                        <Button
-                          type='button'
-                          variant='outline'
-                          size='sm'
-                          onClick={() => {
-                            const newItems = (content.studentFamily?.items || []).filter(
-                              (_: any, i: number) => i !== index
-                            );
-                            setFormData({
-                              ...formData,
-                              content: {
-                                ...content,
-                                studentFamily: {
-                                  ...content.studentFamily,
-                                  items: newItems,
-                                },
-                              },
-                            });
-                          }}
-                        >
-                          <X className='h-4 w-4' />
-                        </Button>
-                      </div>
-                      <div className='grid grid-cols-2 gap-3'>
-                        <div>
-                          <Label className='text-xs text-gray-700'>English</Label>
-                          <Input
-                            className='text-gray-900'
-                            value={item?.en || ''}
-                            onChange={e => {
-                              const newItems = [...(content.studentFamily?.items || [])];
-                              newItems[index] = { ...newItems[index], en: e.target.value };
+                  {(content.studentFamily?.items || []).map(
+                    (item: any, index: number) => (
+                      <div
+                        key={index}
+                        className='border border-purple-200 rounded-lg p-3 bg-purple-50/30'
+                      >
+                        <div className='flex items-center justify-between mb-2'>
+                          <span className='text-sm font-semibold text-purple-800'>
+                            Item {index + 1}
+                          </span>
+                          <Button
+                            type='button'
+                            variant='outline'
+                            size='sm'
+                            onClick={() => {
+                              const newItems = (
+                                content.studentFamily?.items || []
+                              ).filter((_: any, i: number) => i !== index);
                               setFormData({
                                 ...formData,
                                 content: {
@@ -3161,40 +3247,82 @@ function SectionForm({
                                 },
                               });
                             }}
-                            placeholder='Enter item in English'
-                          />
+                          >
+                            <X className='h-4 w-4' />
+                          </Button>
                         </div>
-                        <div>
-                          <Label className='text-xs text-gray-700'>Arabic</Label>
-                          <Input
-                            className='text-gray-900'
-                            value={item?.ar || ''}
-                            onChange={e => {
-                              const newItems = [...(content.studentFamily?.items || [])];
-                              newItems[index] = { ...newItems[index], ar: e.target.value };
-                              setFormData({
-                                ...formData,
-                                content: {
-                                  ...content,
-                                  studentFamily: {
-                                    ...content.studentFamily,
-                                    items: newItems,
+                        <div className='grid grid-cols-2 gap-3'>
+                          <div>
+                            <Label className='text-xs text-gray-700'>
+                              English
+                            </Label>
+                            <Input
+                              className='text-gray-900'
+                              value={item?.en || ''}
+                              onChange={e => {
+                                const newItems = [
+                                  ...(content.studentFamily?.items || []),
+                                ];
+                                newItems[index] = {
+                                  ...newItems[index],
+                                  en: e.target.value,
+                                };
+                                setFormData({
+                                  ...formData,
+                                  content: {
+                                    ...content,
+                                    studentFamily: {
+                                      ...content.studentFamily,
+                                      items: newItems,
+                                    },
                                   },
-                                },
-                              });
-                            }}
-                            placeholder='أدخل العنصر بالعربية'
-                          />
+                                });
+                              }}
+                              placeholder='Enter item in English'
+                            />
+                          </div>
+                          <div>
+                            <Label className='text-xs text-gray-700'>
+                              Arabic
+                            </Label>
+                            <Input
+                              className='text-gray-900'
+                              value={item?.ar || ''}
+                              onChange={e => {
+                                const newItems = [
+                                  ...(content.studentFamily?.items || []),
+                                ];
+                                newItems[index] = {
+                                  ...newItems[index],
+                                  ar: e.target.value,
+                                };
+                                setFormData({
+                                  ...formData,
+                                  content: {
+                                    ...content,
+                                    studentFamily: {
+                                      ...content.studentFamily,
+                                      items: newItems,
+                                    },
+                                  },
+                                });
+                              }}
+                              placeholder='أدخل العنصر بالعربية'
+                            />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  )}
                   <Button
                     type='button'
                     variant='outline'
                     size='sm'
                     onClick={() => {
-                      const newItems = [...(content.studentFamily?.items || []), { en: '', ar: '' }];
+                      const newItems = [
+                        ...(content.studentFamily?.items || []),
+                        { en: '', ar: '' },
+                      ];
                       setFormData({
                         ...formData,
                         content: {
@@ -3215,10 +3343,14 @@ function SectionForm({
 
               {/* Head Member */}
               <div className='border-t-2 border-purple-200 pt-4 mt-4'>
-                <Label className='text-base font-bold mb-3 block text-purple-800 bg-purple-50 px-3 py-2 rounded'>👤 Head Member</Label>
+                <Label className='text-base font-bold mb-3 block text-purple-800 bg-purple-50 px-3 py-2 rounded'>
+                  👤 Head Member
+                </Label>
                 <div className='grid grid-cols-2 gap-4'>
                   <div>
-                    <Label className='text-gray-800 font-medium'>Name (English)</Label>
+                    <Label className='text-gray-800 font-medium'>
+                      Name (English)
+                    </Label>
                     <Input
                       className='text-gray-900'
                       value={content.studentFamily?.head?.name?.en || ''}
@@ -3231,7 +3363,10 @@ function SectionForm({
                               ...content.studentFamily,
                               head: {
                                 ...content.studentFamily?.head,
-                                name: { ...content.studentFamily?.head?.name, en: e.target.value },
+                                name: {
+                                  ...content.studentFamily?.head?.name,
+                                  en: e.target.value,
+                                },
                               },
                             },
                           },
@@ -3241,7 +3376,9 @@ function SectionForm({
                     />
                   </div>
                   <div>
-                    <Label className='text-gray-800 font-medium'>Name (Arabic)</Label>
+                    <Label className='text-gray-800 font-medium'>
+                      Name (Arabic)
+                    </Label>
                     <Input
                       className='text-gray-900'
                       value={content.studentFamily?.head?.name?.ar || ''}
@@ -3254,7 +3391,10 @@ function SectionForm({
                               ...content.studentFamily,
                               head: {
                                 ...content.studentFamily?.head,
-                                name: { ...content.studentFamily?.head?.name, ar: e.target.value },
+                                name: {
+                                  ...content.studentFamily?.head?.name,
+                                  ar: e.target.value,
+                                },
                               },
                             },
                           },
@@ -3291,7 +3431,9 @@ function SectionForm({
                       type='button'
                       variant='outline'
                       size='sm'
-                      onClick={() => onImageSelect('studentFamily.head.imageUrl')}
+                      onClick={() =>
+                        onImageSelect('studentFamily.head.imageUrl')
+                      }
                     >
                       <ImageIcon className='h-4 w-4' />
                     </Button>
@@ -3312,10 +3454,14 @@ function SectionForm({
 
               {/* Vice Member */}
               <div className='border-t-2 border-purple-200 pt-4 mt-4'>
-                <Label className='text-base font-bold mb-3 block text-purple-800 bg-purple-50 px-3 py-2 rounded'>👤 Vice Head Member</Label>
+                <Label className='text-base font-bold mb-3 block text-purple-800 bg-purple-50 px-3 py-2 rounded'>
+                  👤 Vice Head Member
+                </Label>
                 <div className='grid grid-cols-2 gap-4'>
                   <div>
-                    <Label className='text-gray-800 font-medium'>Name (English)</Label>
+                    <Label className='text-gray-800 font-medium'>
+                      Name (English)
+                    </Label>
                     <Input
                       className='text-gray-900'
                       value={content.studentFamily?.vice?.name?.en || ''}
@@ -3328,7 +3474,10 @@ function SectionForm({
                               ...content.studentFamily,
                               vice: {
                                 ...content.studentFamily?.vice,
-                                name: { ...content.studentFamily?.vice?.name, en: e.target.value },
+                                name: {
+                                  ...content.studentFamily?.vice?.name,
+                                  en: e.target.value,
+                                },
                               },
                             },
                           },
@@ -3338,7 +3487,9 @@ function SectionForm({
                     />
                   </div>
                   <div>
-                    <Label className='text-gray-800 font-medium'>Name (Arabic)</Label>
+                    <Label className='text-gray-800 font-medium'>
+                      Name (Arabic)
+                    </Label>
                     <Input
                       className='text-gray-900'
                       value={content.studentFamily?.vice?.name?.ar || ''}
@@ -3351,7 +3502,10 @@ function SectionForm({
                               ...content.studentFamily,
                               vice: {
                                 ...content.studentFamily?.vice,
-                                name: { ...content.studentFamily?.vice?.name, ar: e.target.value },
+                                name: {
+                                  ...content.studentFamily?.vice?.name,
+                                  ar: e.target.value,
+                                },
                               },
                             },
                           },
@@ -3388,7 +3542,9 @@ function SectionForm({
                       type='button'
                       variant='outline'
                       size='sm'
-                      onClick={() => onImageSelect('studentFamily.vice.imageUrl')}
+                      onClick={() =>
+                        onImageSelect('studentFamily.vice.imageUrl')
+                      }
                     >
                       <ImageIcon className='h-4 w-4' />
                     </Button>
@@ -3409,9 +3565,13 @@ function SectionForm({
 
               {/* Link */}
               <div className='border-t-2 border-purple-200 pt-4 mt-4'>
-                <Label className='text-base font-bold mb-3 block text-purple-800 bg-purple-50 px-3 py-2 rounded'>🔗 Page Link</Label>
+                <Label className='text-base font-bold mb-3 block text-purple-800 bg-purple-50 px-3 py-2 rounded'>
+                  🔗 Page Link
+                </Label>
                 <div>
-                  <Label className='text-gray-800 font-medium'>Link URL (e.g., /student-family)</Label>
+                  <Label className='text-gray-800 font-medium'>
+                    Link URL (e.g., /student-family)
+                  </Label>
                   <Input
                     className='text-gray-900'
                     value={content.studentFamily?.link || ''}
@@ -3501,7 +3661,7 @@ function SectionForm({
 
       {/* Submit Button */}
       <div className='flex justify-end gap-2'>
-        <Button type='button' variant='outline' onClick={() => { }}>
+        <Button type='button' variant='outline' onClick={() => {}}>
           Cancel
         </Button>
         <Button onClick={onSubmit} className='bg-blue-600 hover:bg-blue-700'>

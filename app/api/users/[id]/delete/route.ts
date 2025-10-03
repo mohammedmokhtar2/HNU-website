@@ -1,7 +1,11 @@
 import { db } from '@/lib/db';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function DELETE(
+async function handleDELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
@@ -28,3 +32,9 @@ export async function DELETE(
     );
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { DELETE } = withApiTrackingMethods(
+  { DELETE: handleDELETE },
+  ApiTrackingPresets.crud('User')
+);

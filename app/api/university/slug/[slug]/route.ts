@@ -1,4 +1,8 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 
 interface Params {
@@ -7,7 +11,7 @@ interface Params {
   }>;
 }
 
-export async function GET(req: Request, { params }: Params) {
+async function handleGET(req: NextRequest, { params }: Params) {
   try {
     const { slug } = await params;
 
@@ -39,3 +43,9 @@ export async function GET(req: Request, { params }: Params) {
     );
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { GET } = withApiTrackingMethods(
+  { GET: handleGET },
+  ApiTrackingPresets.crud('University')
+);

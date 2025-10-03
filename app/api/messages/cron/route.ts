@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 import { NodeMailerService } from '@/services/nodemailer.service';
 import { MessageStatus } from '@/types/message';
 
-export async function POST(request: NextRequest) {
+async function handlePOST(req: NextRequest) {
   try {
     // Verify this is a cron job request (you might want to add authentication)
-    const authHeader = request.headers.get('authorization');
+    const authHeader = req.headers.get('authorization');
     const cronSecret = process.env.CRON_SECRET;
 
     if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
@@ -202,7 +206,7 @@ export async function POST(request: NextRequest) {
 }
 
 // GET endpoint to check cron job status
-export async function GET(request: NextRequest) {
+async function handleGET(req: NextRequest) {
   try {
     const now = new Date();
 
@@ -259,3 +263,9 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { POST, GET } = withApiTrackingMethods(
+  { POST: handlePOST, GET: handleGET },
+  ApiTrackingPresets.crud('Message')
+);

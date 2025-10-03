@@ -1,15 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 import { handleCORS, addCORSHeaders } from '@/lib/cors';
 
 // GET /api/logs/search - Search logs with advanced filtering
-export async function GET(request: NextRequest) {
+async function handleGET(req: NextRequest) {
   // Handle CORS preflight
-  const corsResponse = handleCORS(request);
+  const corsResponse = handleCORS(req);
   if (corsResponse) return corsResponse;
 
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(req.url);
     const query = searchParams.get('query') || '';
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '20');
@@ -30,7 +34,7 @@ export async function GET(request: NextRequest) {
         { action: { contains: query, mode: 'insensitive' } },
         { entity: { contains: query, mode: 'insensitive' } },
         {
-          user: {
+          clerkUser: {
             OR: [
               { name: { contains: query, mode: 'insensitive' } },
               { email: { contains: query, mode: 'insensitive' } },
@@ -58,7 +62,7 @@ export async function GET(request: NextRequest) {
     const logs = await db.auditLog.findMany({
       where,
       include: {
-        user: {
+        clerkUser: {
           select: {
             id: true,
             name: true,
@@ -101,10 +105,16 @@ export async function GET(request: NextRequest) {
 }
 
 // Handle OPTIONS requests for CORS preflight
-export async function OPTIONS(request: NextRequest) {
-  const corsResponse = handleCORS(request);
+async function handleOPTIONS(req: NextRequest) {
+  const corsResponse = handleCORS(req);
   if (corsResponse) return corsResponse;
 
   // If not a preflight request, return a simple response
   return new NextResponse(null, { status: 200 });
 }
+
+// Apply tracking to all methods using crud preset
+export const { GET, OPTIONS } = withApiTrackingMethods(
+  { GET: handleGET, OPTIONS: handleOPTIONS },
+  ApiTrackingPresets.crud('Log')
+);

@@ -141,7 +141,7 @@ export default function AdminDashboard() {
             <RefreshCw
               className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`}
             />
-            <span>Refresh</span>
+            <span></span>
           </button>
           <button
             onClick={async () => {

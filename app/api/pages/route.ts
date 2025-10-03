@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 
-export async function GET(request: NextRequest) {
+async function handleGET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(req.url);
     const universityId = searchParams.get('universityId');
     const collegeId = searchParams.get('collegeId');
 
@@ -35,9 +39,9 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+async function handlePOST(req: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await req.json();
     const { title, slug, config, isActive, collageId, universityId } = body;
 
     const page = await db.page.create({
@@ -64,3 +68,9 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { GET, POST } = withApiTrackingMethods(
+  { GET: handleGET, POST: handlePOST },
+  ApiTrackingPresets.crud('Page')
+);

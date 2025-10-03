@@ -58,21 +58,43 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import Image from 'next/image';
 
 // Types
+interface AuditLogMetadata {
+  ip?: string;
+  url?: string;
+  entity?: string;
+  method?: string;
+  referer?: string;
+  duration?: number;
+  resource?: string;
+  operation?: string;
+  timestamp?: string;
+  userAgent?: string;
+  statusCode?: number;
+  [key: string]: any; // For any additional fields
+}
+
 interface AuditLog {
   id: string;
   action: string;
   entity: string;
   entityId?: string;
-  metadata?: any;
+  metadata?: AuditLogMetadata;
   userId?: string;
+  clerkId?: string;
+  sessionId?: string;
+  isGuest: boolean;
+  ipAddress?: string;
+  userAgent?: string;
   createdAt: string;
-  user?: {
+  clerkUser?: {
     id: string;
     name?: string;
     email: string;
     role: string;
+    imageUrl?: string;
   };
 }
 
@@ -99,7 +121,7 @@ const LogsAPI = {
       if (value) searchParams.append(key, value.toString());
     });
 
-    const response = await fetch(`/api/logs?${searchParams}`);
+    const response = await fetch(`/api/user-actions/logs?${searchParams}`);
     if (!response.ok) throw new Error('Failed to fetch logs');
     return response.json();
   },
@@ -110,29 +132,65 @@ const LogsAPI = {
       if (value) searchParams.append(key, value.toString());
     });
 
-    const response = await fetch(`/api/logs/search?${searchParams}`);
+    const response = await fetch(`/api/user-actions/logs?${searchParams}`);
     if (!response.ok) throw new Error('Failed to search logs');
     return response.json();
   },
 
   getStats: async (params: any) => {
+    // For now, we'll get stats from the logs endpoint
+    // In the future, you can create a dedicated stats endpoint
     const searchParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
       if (value) searchParams.append(key, value.toString());
     });
 
-    const response = await fetch(`/api/logs/stats?${searchParams}`);
+    const response = await fetch(`/api/user-actions/logs?${searchParams}&limit=1000`);
     if (!response.ok) throw new Error('Failed to fetch stats');
-    return response.json();
+    const data = await response.json();
+
+    // Calculate stats from the logs data
+    const logs = data.logs || [];
+    const stats = {
+      totalLogs: logs.length,
+      logsByAction: logs.reduce((acc: any, log: AuditLog) => {
+        const action = log.action;
+        acc[action] = (acc[action] || 0) + 1;
+        return acc;
+      }, {}),
+      logsByEntity: logs.reduce((acc: any, log: AuditLog) => {
+        const entity = log.entity;
+        acc[entity] = (acc[entity] || 0) + 1;
+        return acc;
+      }, {}),
+      guestLogs: logs.filter((log: AuditLog) => log.isGuest).length,
+      authenticatedLogs: logs.filter((log: AuditLog) => !log.isGuest).length,
+    };
+
+    return { stats };
   },
 
   deleteLogs: async (data: { logIds?: string[]; filters?: any }) => {
     const response = await fetch('/api/logs', {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(data),
     });
     if (!response.ok) throw new Error('Failed to delete logs');
+    return response.json();
+  },
+
+  deleteAllLogs: async () => {
+    const response = await fetch('/api/logs', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ deleteAll: true }),
+    });
+    if (!response.ok) throw new Error('Failed to delete all logs');
     return response.json();
   },
 };
@@ -145,15 +203,18 @@ export default function LogsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUser, setSelectedUser] = useState<string>('all');
   const [selectedAction, setSelectedAction] = useState<string>('all');
-  const [selectedEntity, setSelectedEntity] = useState<string>('all');
+  const [userType, setUserType] = useState<string>('all'); // all, guest, authenticated
+  const [sessionId, setSessionId] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedLogs, setSelectedLogs] = useState<string[]>([]);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [deleteMode, setDeleteMode] = useState<'selected' | 'filtered'>(
+  const [deleteMode, setDeleteMode] = useState<'selected' | 'filtered' | 'all'>(
     'selected'
   );
+  const [showMetadataModal, setShowMetadataModal] = useState(false);
+  const [selectedMetadata, setSelectedMetadata] = useState<AuditLogMetadata | null>(null);
 
   const limit = 20;
 
@@ -164,7 +225,8 @@ export default function LogsPage() {
       limit,
       userId: selectedUser === 'all' ? undefined : selectedUser,
       action: selectedAction === 'all' ? undefined : selectedAction,
-      entity: selectedEntity === 'all' ? undefined : selectedEntity,
+      isGuest: userType === 'all' ? undefined : userType === 'guest',
+      sessionId: sessionId || undefined,
       startDate: startDate || undefined,
       endDate: endDate || undefined,
     }),
@@ -172,7 +234,8 @@ export default function LogsPage() {
       currentPage,
       selectedUser,
       selectedAction,
-      selectedEntity,
+      userType,
+      sessionId,
       startDate,
       endDate,
     ]
@@ -215,6 +278,21 @@ export default function LogsPage() {
     },
   });
 
+  const deleteAllLogsMutation = useMutation({
+    mutationFn: LogsAPI.deleteAllLogs,
+    onSuccess: data => {
+      queryClient.invalidateQueries({ queryKey: ['logs'] });
+      queryClient.invalidateQueries({ queryKey: ['logs-search'] });
+      queryClient.invalidateQueries({ queryKey: ['logs-stats'] });
+      setSelectedLogs([]);
+      setShowDeleteDialog(false);
+      toast.success(`Successfully deleted all logs`);
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'Failed to delete all logs');
+    },
+  });
+
   // Get current data (search results or regular logs)
   const currentData = searchQuery ? searchData : logsData;
   const logs = useMemo(() => currentData?.logs || [], [currentData]);
@@ -229,7 +307,8 @@ export default function LogsPage() {
     setSearchQuery('');
     setSelectedUser('all');
     setSelectedAction('all');
-    setSelectedEntity('all');
+    setUserType('all');
+    setSessionId('');
     setStartDate('');
     setEndDate('');
     setCurrentPage(1);
@@ -264,13 +343,99 @@ export default function LogsPage() {
     setShowDeleteDialog(true);
   }, []);
 
+  const handleDeleteAll = useCallback(() => {
+    setDeleteMode('all');
+    setShowDeleteDialog(true);
+  }, []);
+
+  const handleViewMetadata = useCallback((metadata: AuditLogMetadata) => {
+    setSelectedMetadata(metadata);
+    setShowMetadataModal(true);
+  }, []);
+
+  const renderMetadataDetails = (metadata: AuditLogMetadata) => {
+    const knownFields = [
+      { key: 'ip', label: 'IP Address', icon: '🌐' },
+      { key: 'url', label: 'URL', icon: '🔗' },
+      { key: 'entity', label: 'Entity', icon: '📦' },
+      { key: 'method', label: 'HTTP Method', icon: '⚡' },
+      { key: 'referer', label: 'Referer', icon: '↩️' },
+      { key: 'duration', label: 'Duration (ms)', icon: '⏱️' },
+      { key: 'resource', label: 'Resource', icon: '📄' },
+      { key: 'operation', label: 'Operation', icon: '🔧' },
+      { key: 'timestamp', label: 'Timestamp', icon: '🕒' },
+      { key: 'userAgent', label: 'User Agent', icon: '🖥️' },
+      { key: 'statusCode', label: 'Status Code', icon: '📊' },
+    ];
+
+    const unknownFields = Object.keys(metadata).filter(
+      key => !knownFields.some(field => field.key === key)
+    );
+
+    return (
+      <div className='space-y-4'>
+        {/* Known Fields */}
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+          {knownFields.map(field => {
+            const value = metadata[field.key as keyof AuditLogMetadata];
+            if (value === undefined || value === null) return null;
+
+            return (
+              <div key={field.key} className='bg-gray-800/50 rounded-lg p-3 border border-gray-600'>
+                <div className='flex items-center gap-2 mb-1'>
+                  <span className='text-lg'>{field.icon}</span>
+                  <span className='text-sm font-medium text-gray-300'>{field.label}</span>
+                </div>
+                <div className='text-white text-sm break-all'>
+                  {field.key === 'duration' ? `${value}ms` :
+                    field.key === 'statusCode' ? (
+                      <span className={`px-2 py-1 rounded text-xs ${Number(value) >= 200 && Number(value) < 300 ? 'bg-green-600' :
+                        Number(value) >= 300 && Number(value) < 400 ? 'bg-yellow-600' :
+                          Number(value) >= 400 ? 'bg-red-600' : 'bg-gray-600'
+                        }`}>
+                        {value}
+                      </span>
+                    ) : String(value)}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Unknown Fields */}
+        {unknownFields.length > 0 && (
+          <div className='mt-6'>
+            <h4 className='text-white font-medium mb-3 flex items-center gap-2'>
+              <span>📋</span>
+              Additional Data
+            </h4>
+            <div className='bg-gray-900/50 rounded-lg p-4 border border-gray-700'>
+              <pre className='text-white text-sm whitespace-pre-wrap font-mono'>
+                {JSON.stringify(
+                  unknownFields.reduce((acc, key) => {
+                    acc[key] = metadata[key];
+                    return acc;
+                  }, {} as Record<string, any>),
+                  null,
+                  2
+                )}
+              </pre>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const confirmDelete = useCallback(() => {
     if (deleteMode === 'selected') {
       deleteLogsMutation.mutate({ logIds: selectedLogs });
-    } else {
+    } else if (deleteMode === 'filtered') {
       deleteLogsMutation.mutate({ filters: queryParams });
+    } else if (deleteMode === 'all') {
+      deleteAllLogsMutation.mutate();
     }
-  }, [deleteMode, selectedLogs, queryParams, deleteLogsMutation]);
+  }, [deleteMode, selectedLogs, queryParams, deleteLogsMutation, deleteAllLogsMutation]);
 
   // Note: Access control removed - all users can access logs for now
 
@@ -284,7 +449,16 @@ export default function LogsPage() {
       return 'bg-blue-500';
     if (action.includes('DELETE')) return 'bg-red-500';
     if (action.includes('GET')) return 'bg-gray-500';
-    return 'bg-purple-500';
+    if (action.includes('PAGE_VISIT')) return 'bg-purple-500';
+    if (action.includes('API_CALL')) return 'bg-indigo-500';
+    if (action.includes('FORM_SUBMIT')) return 'bg-yellow-500';
+    if (action.includes('FILE_UPLOAD')) return 'bg-orange-500';
+    if (action.includes('FILE_DOWNLOAD')) return 'bg-cyan-500';
+    if (action.includes('SEARCH')) return 'bg-pink-500';
+    if (action.includes('BUTTON_CLICK')) return 'bg-teal-500';
+    if (action.includes('LINK_CLICK')) return 'bg-lime-500';
+    if (action.includes('CUSTOM_ACTION')) return 'bg-violet-500';
+    return 'bg-gray-500';
   };
 
   const getEntityIcon = (entity: string) => {
@@ -299,6 +473,18 @@ export default function LogsPage() {
         return '📄';
       case 'permission':
         return '🔐';
+      case 'page':
+        return '📄';
+      case 'file':
+        return '📁';
+      case 'form':
+        return '📝';
+      case 'search':
+        return '🔍';
+      case 'api':
+        return '⚡';
+      case 'example':
+        return '🧪';
       default:
         return '📝';
     }
@@ -332,6 +518,14 @@ export default function LogsPage() {
             <Trash2 className='h-4 w-4 mr-2' />
             Delete Filtered
           </Button>
+          <Button
+            variant='destructive'
+            onClick={handleDeleteAll}
+            disabled={!logs.length}
+          >
+            <Trash2 className='h-4 w-4 mr-2' />
+            Delete All
+          </Button>
         </div>
       </div>
 
@@ -349,7 +543,7 @@ export default function LogsPage() {
               <CardTitle className='text-lg'>Filters & Search</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4'>
+              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4'>
                 <div>
                   <Label htmlFor='search'>Search</Label>
                   <div className='relative'>
@@ -378,27 +572,42 @@ export default function LogsPage() {
                       <SelectItem value='UPDATE'>UPDATE</SelectItem>
                       <SelectItem value='DELETE'>DELETE</SelectItem>
                       <SelectItem value='GET'>GET</SelectItem>
+                      <SelectItem value='PAGE_VISIT'>PAGE_VISIT</SelectItem>
+                      <SelectItem value='API_CALL'>API_CALL</SelectItem>
+                      <SelectItem value='FORM_SUBMIT'>FORM_SUBMIT</SelectItem>
+                      <SelectItem value='FILE_UPLOAD'>FILE_UPLOAD</SelectItem>
+                      <SelectItem value='FILE_DOWNLOAD'>FILE_DOWNLOAD</SelectItem>
+                      <SelectItem value='SEARCH'>SEARCH</SelectItem>
+                      <SelectItem value='BUTTON_CLICK'>BUTTON_CLICK</SelectItem>
+                      <SelectItem value='LINK_CLICK'>LINK_CLICK</SelectItem>
+                      <SelectItem value='CUSTOM_ACTION'>CUSTOM_ACTION</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor='entity'>Entity</Label>
+                  <Label htmlFor='userType'>User Type</Label>
                   <Select
-                    value={selectedEntity}
-                    onValueChange={setSelectedEntity}
+                    value={userType}
+                    onValueChange={setUserType}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder='All entities' />
+                      <SelectValue placeholder='All users' />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value='all'>All entities</SelectItem>
-                      <SelectItem value='User'>User</SelectItem>
-                      <SelectItem value='College'>College</SelectItem>
-                      <SelectItem value='University'>University</SelectItem>
-                      <SelectItem value='Section'>Section</SelectItem>
-                      <SelectItem value='Permission'>Permission</SelectItem>
+                      <SelectItem value='all'>All users</SelectItem>
+                      <SelectItem value='guest'>Guest users</SelectItem>
+                      <SelectItem value='authenticated'>Authenticated users</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+                <div>
+                  <Label htmlFor='sessionId'>Session ID</Label>
+                  <Input
+                    id='sessionId'
+                    placeholder='Enter session ID...'
+                    value={sessionId}
+                    onChange={e => setSessionId(e.target.value)}
+                  />
                 </div>
                 <div>
                   <Label htmlFor='startDate'>Start Date</Label>
@@ -418,15 +627,15 @@ export default function LogsPage() {
                     onChange={e => setEndDate(e.target.value)}
                   />
                 </div>
-                <div className='flex items-end gap-2'>
-                  <Button onClick={handleSearch} className='flex-1'>
-                    <Search className='h-4 w-4 mr-2' />
-                    Search
-                  </Button>
-                  <Button variant='outline' onClick={handleClearFilters}>
-                    Clear
-                  </Button>
-                </div>
+              </div>
+              <div className='flex items-end gap-2 mt-4'>
+                <Button onClick={handleSearch} className='flex-1'>
+                  <Search className='h-4 w-4 mr-2' />
+                  Search
+                </Button>
+                <Button variant='outline' onClick={handleClearFilters}>
+                  Clear
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -492,6 +701,7 @@ export default function LogsPage() {
                         <TableHead>Action</TableHead>
                         <TableHead>Entity</TableHead>
                         <TableHead>Details</TableHead>
+                        <TableHead>IP/Session</TableHead>
                         <TableHead>Date</TableHead>
                         <TableHead className='text-right'>Actions</TableHead>
                       </TableRow>
@@ -509,19 +719,49 @@ export default function LogsPage() {
                           </TableCell>
                           <TableCell>
                             <div className='flex items-center gap-2'>
-                              <div className='w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center'>
-                                <User className='h-4 w-4' />
-                              </div>
+                              {log.isGuest ? (
+                                <div className='w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center'>
+                                  <User className='h-4 w-4 text-orange-600' />
+                                </div>
+                              ) : log.clerkUser?.imageUrl ? (
+                                <Image
+                                  width={32}
+                                  height={32}
+                                  src={log.clerkUser.imageUrl}
+                                  alt={log.clerkUser.name || 'User'}
+                                  className='w-8 h-8 rounded-full object-cover'
+                                />
+                              ) : (
+                                <div className='w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center'>
+                                  <User className='h-4 w-4' />
+                                </div>
+                              )}
                               <div>
-                                <div className='font-medium'>
-                                  {log.user?.name || 'Unknown User'}
-                                </div>
-                                <div className='text-sm text-muted-foreground'>
-                                  {log.user?.email}
-                                </div>
-                                <Badge variant='outline' className='text-xs'>
-                                  {log.user?.role}
-                                </Badge>
+                                {log.isGuest ? (
+                                  <>
+                                    <div className='font-medium text-orange-600'>
+                                      Guest User
+                                    </div>
+                                    <div className='text-sm text-muted-foreground'>
+                                      Session: {log.sessionId?.substring(0, 12)}...
+                                    </div>
+                                    <Badge variant='outline' className='text-xs bg-orange-100 text-orange-700'>
+                                      Guest
+                                    </Badge>
+                                  </>
+                                ) : (
+                                  <>
+                                    <div className='font-medium'>
+                                      {log.clerkUser?.name || 'Unknown User'}
+                                    </div>
+                                    <div className='text-sm text-muted-foreground'>
+                                      {log.clerkUser?.email || log.clerkId}
+                                    </div>
+                                    <Badge variant='outline' className='text-xs'>
+                                      {log.clerkUser?.role || 'User'}
+                                    </Badge>
+                                  </>
+                                )}
                               </div>
                             </div>
                           </TableCell>
@@ -539,13 +779,39 @@ export default function LogsPage() {
                           <TableCell>
                             <div className='max-w-xs'>
                               {log.entityId && (
-                                <div className='text-sm text-muted-foreground'>
-                                  ID: {log.entityId}
+                                <div className='text-sm text-muted-foreground mb-1'>
+                                  <span className='font-medium'>ID:</span> {log.entityId}
                                 </div>
                               )}
                               {log.metadata && (
-                                <div className='text-xs text-muted-foreground truncate'>
-                                  {JSON.stringify(log.metadata)}
+                                <div className='text-xs'>
+                                  <Button
+                                    variant='ghost'
+                                    size='sm'
+                                    onClick={() => log.metadata && handleViewMetadata(log.metadata)}
+                                    className='h-6 px-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50'
+                                  >
+                                    View Details
+                                  </Button>
+                                </div>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className='text-sm'>
+                              {log.ipAddress && (
+                                <div className='text-muted-foreground'>
+                                  IP: {log.ipAddress}
+                                </div>
+                              )}
+                              {log.sessionId && (
+                                <div className='text-xs text-blue-600 font-mono'>
+                                  {log.sessionId.substring(0, 8)}...
+                                </div>
+                              )}
+                              {log.userAgent && (
+                                <div className='text-xs text-muted-foreground truncate max-w-32'>
+                                  {log.userAgent.split(' ')[0]}
                                 </div>
                               )}
                             </div>
@@ -593,37 +859,67 @@ export default function LogsPage() {
 
                   {/* Pagination */}
                   {pagination && pagination.totalPages > 1 && (
-                    <div className='flex items-center justify-between mt-4'>
+                    <div className='flex items-center justify-between mt-6'>
                       <div className='text-sm text-muted-foreground'>
                         Showing {(pagination.page - 1) * pagination.limit + 1}{' '}
                         to{' '}
                         {Math.min(
                           pagination.page * pagination.limit,
-                          pagination.totalCount
+                          pagination.total
                         )}{' '}
-                        of {pagination.totalCount} results
+                        of {pagination.total} results
                       </div>
                       <div className='flex items-center gap-2'>
                         <Button
                           variant='outline'
                           size='sm'
+                          onClick={() => setCurrentPage(1)}
+                          disabled={pagination.page === 1}
+                        >
+                          First
+                        </Button>
+                        <Button
+                          variant='outline'
+                          size='sm'
                           onClick={() => setCurrentPage(pagination.page - 1)}
-                          disabled={!pagination.hasPrev}
+                          disabled={!pagination.hasPrevPage}
                         >
                           <ChevronLeft className='h-4 w-4' />
                           Previous
                         </Button>
-                        <span className='text-sm'>
-                          Page {pagination.page} of {pagination.totalPages}
-                        </span>
+                        <div className='flex items-center gap-1'>
+                          {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                            const pageNum = Math.max(1, Math.min(pagination.totalPages - 4, pagination.page - 2)) + i;
+                            if (pageNum > pagination.totalPages) return null;
+                            return (
+                              <Button
+                                key={pageNum}
+                                variant={pageNum === pagination.page ? 'default' : 'outline'}
+                                size='sm'
+                                onClick={() => setCurrentPage(pageNum)}
+                                className='w-8 h-8 p-0'
+                              >
+                                {pageNum}
+                              </Button>
+                            );
+                          })}
+                        </div>
                         <Button
                           variant='outline'
                           size='sm'
                           onClick={() => setCurrentPage(pagination.page + 1)}
-                          disabled={!pagination.hasNext}
+                          disabled={!pagination.hasNextPage}
                         >
                           Next
                           <ChevronRight className='h-4 w-4' />
+                        </Button>
+                        <Button
+                          variant='outline'
+                          size='sm'
+                          onClick={() => setCurrentPage(pagination.totalPages)}
+                          disabled={pagination.page === pagination.totalPages}
+                        >
+                          Last
                         </Button>
                       </div>
                     </div>
@@ -652,10 +948,36 @@ export default function LogsPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className='text-3xl font-bold'>{stats.totalLogs}</div>
+                  <div className='text-3xl font-bold'>{stats.stats.totalLogs}</div>
                   <p className='text-sm text-muted-foreground'>
                     All time activity
                   </p>
+                </CardContent>
+              </Card>
+
+              {/* Guest vs Authenticated */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className='flex items-center gap-2'>
+                    <User className='h-5 w-5' />
+                    User Types
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className='space-y-2'>
+                    <div className='flex justify-between items-center'>
+                      <span className='text-sm'>Guest Users</span>
+                      <Badge variant='outline' className='bg-orange-100 text-orange-700'>
+                        {stats.stats.guestLogs}
+                      </Badge>
+                    </div>
+                    <div className='flex justify-between items-center'>
+                      <span className='text-sm'>Authenticated Users</span>
+                      <Badge variant='outline' className='bg-blue-100 text-blue-700'>
+                        {stats.stats.authenticatedLogs}
+                      </Badge>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
 
@@ -669,69 +991,18 @@ export default function LogsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className='space-y-2'>
-                    {stats.logsByAction.slice(0, 5).map((item: any) => (
-                      <div
-                        key={item.action}
-                        className='flex justify-between items-center'
-                      >
-                        <span className='text-sm'>{item.action}</span>
-                        <Badge variant='outline'>{item._count.action}</Badge>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Top Entities */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className='flex items-center gap-2'>
-                    <BarChart3 className='h-5 w-5' />
-                    Top Entities
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className='space-y-2'>
-                    {stats.logsByEntity.slice(0, 5).map((item: any) => (
-                      <div
-                        key={item.entity}
-                        className='flex justify-between items-center'
-                      >
-                        <span className='text-sm'>{item.entity}</span>
-                        <Badge variant='outline'>{item._count.entity}</Badge>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Top Users */}
-              <Card className='md:col-span-2 lg:col-span-3'>
-                <CardHeader>
-                  <CardTitle className='flex items-center gap-2'>
-                    <User className='h-5 w-5' />
-                    Most Active Users
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className='space-y-2'>
-                    {stats.userStats.slice(0, 10).map((user: any) => (
-                      <div
-                        key={user.userId}
-                        className='flex justify-between items-center p-2 border rounded'
-                      >
-                        <div>
-                          <div className='font-medium'>{user.userName}</div>
-                          <div className='text-sm text-muted-foreground'>
-                            {user.userEmail}
-                          </div>
-                          <Badge variant='outline' className='text-xs'>
-                            {user.userRole}
-                          </Badge>
+                    {Object.entries(stats.stats.logsByAction)
+                      .sort(([, a], [, b]) => (b as number) - (a as number))
+                      .slice(0, 5)
+                      .map(([action, count]) => (
+                        <div
+                          key={action}
+                          className='flex justify-between items-center'
+                        >
+                          <span className='text-sm'>{action}</span>
+                          <Badge variant='outline'>{count as number}</Badge>
                         </div>
-                        <Badge variant='default'>{user.count} actions</Badge>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 </CardContent>
               </Card>
@@ -755,7 +1026,9 @@ export default function LogsPage() {
             <DialogDescription>
               {deleteMode === 'selected'
                 ? `Are you sure you want to delete ${selectedLogs.length} selected logs? This action cannot be undone.`
-                : 'Are you sure you want to delete all logs matching the current filters? This action cannot be undone.'}
+                : deleteMode === 'filtered'
+                  ? 'Are you sure you want to delete all logs matching the current filters? This action cannot be undone.'
+                  : 'Are you sure you want to delete ALL logs in the system? This action cannot be undone and will remove all audit history.'}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -768,9 +1041,33 @@ export default function LogsPage() {
             <Button
               variant='destructive'
               onClick={confirmDelete}
-              disabled={deleteLogsMutation.isPending}
+              disabled={deleteLogsMutation.isPending || deleteAllLogsMutation.isPending}
             >
-              {deleteLogsMutation.isPending ? 'Deleting...' : 'Delete'}
+              {(deleteLogsMutation.isPending || deleteAllLogsMutation.isPending) ? 'Deleting...' : 'Delete'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Metadata Modal */}
+      <Dialog open={showMetadataModal} onOpenChange={setShowMetadataModal}>
+        <DialogContent className='max-w-6xl max-h-[90vh] bg-black/90 border-gray-700'>
+          <DialogHeader>
+            <DialogTitle className='text-white'>Metadata Details</DialogTitle>
+            <DialogDescription className='text-gray-300'>
+              Detailed information about this log entry
+            </DialogDescription>
+          </DialogHeader>
+          <div className='overflow-auto max-h-[70vh]'>
+            {selectedMetadata && renderMetadataDetails(selectedMetadata)}
+          </div>
+          <DialogFooter>
+            <Button
+              variant='outline'
+              onClick={() => setShowMetadataModal(false)}
+              className='border-gray-600 text-gray-300 hover:bg-gray-800'
+            >
+              Close
             </Button>
           </DialogFooter>
         </DialogContent>

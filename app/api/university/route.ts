@@ -1,8 +1,11 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { withAuditLog } from '@/lib/middleware/withAuditLog';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 
-export async function GET() {
+async function handleGET() {
   try {
     const universities = await db.university.findMany({
       orderBy: { createdAt: 'desc' },
@@ -22,53 +25,49 @@ export async function GET() {
   }
 }
 
-export const POST = withAuditLog(
-  async (req: Request) => {
-    try {
-      const body = await req.json();
-      const { name, slug, config } = body;
+async function handlePOST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { name, slug, config } = body;
 
-      if (!name || !slug) {
-        return NextResponse.json(
-          { error: 'Name and slug are required' },
-          { status: 400 }
-        );
-      }
-
-      const exists = await db.university.findUnique({
-        where: { slug },
-      });
-
-      if (exists) {
-        return NextResponse.json(
-          { error: 'University with this slug already exists' },
-          { status: 400 }
-        );
-      }
-
-      const university = await db.university.create({
-        data: {
-          name,
-          slug,
-          config: config || {},
-        },
-      });
-
-      return NextResponse.json(university);
-    } catch (error) {
-      console.error('Error creating university:', error);
+    if (!name || !slug) {
       return NextResponse.json(
-        { error: 'Failed to create university' },
-        { status: 500 }
+        { error: 'Name and slug are required' },
+        { status: 400 }
       );
     }
-  },
-  {
-    action: 'CREATE_UNIVERSITY',
-    extract: () => {
-      return {
-        entity: 'University',
-      };
-    },
+
+    const exists = await db.university.findUnique({
+      where: { slug },
+    });
+
+    if (exists) {
+      return NextResponse.json(
+        { error: 'University with this slug already exists' },
+        { status: 400 }
+      );
+    }
+
+    const university = await db.university.create({
+      data: {
+        name,
+        slug,
+        config: config || {},
+      },
+    });
+
+    return NextResponse.json(university);
+  } catch (error) {
+    console.error('Error creating university:', error);
+    return NextResponse.json(
+      { error: 'Failed to create university' },
+      { status: 500 }
+    );
   }
+}
+
+// Apply tracking to all methods using CRUD preset
+export const { GET, POST } = withApiTrackingMethods(
+  { GET: handleGET, POST: handlePOST },
+  ApiTrackingPresets.crud('University')
 );

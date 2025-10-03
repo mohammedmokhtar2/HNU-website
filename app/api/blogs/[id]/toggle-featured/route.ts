@@ -1,4 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 
 interface RouteParams {
@@ -7,7 +11,7 @@ interface RouteParams {
   }>;
 }
 
-export async function PATCH(request: NextRequest, { params }: RouteParams) {
+async function handlePATCH(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
 
@@ -37,3 +41,9 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     );
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { PATCH } = withApiTrackingMethods(
+  { PATCH: handlePATCH },
+  ApiTrackingPresets.crud('Blog')
+);

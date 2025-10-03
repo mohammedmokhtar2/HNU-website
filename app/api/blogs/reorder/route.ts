@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 
-export async function PATCH(request: NextRequest) {
+async function handlePATCH(req: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await req.json();
     const { blogIds } = body;
 
     if (!blogIds || !Array.isArray(blogIds) || blogIds.length === 0) {
@@ -35,3 +39,9 @@ export async function PATCH(request: NextRequest) {
     );
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { PATCH } = withApiTrackingMethods(
+  { PATCH: handlePATCH },
+  ApiTrackingPresets.crud('Blog')
+);

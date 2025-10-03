@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { withAuditLog } from '@/lib/middleware/withAuditLog';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { UpdateProgramInput } from '@/types/program';
 
 interface RouteParams {
@@ -9,7 +12,7 @@ interface RouteParams {
   }>;
 }
 
-export async function GET(request: NextRequest, { params }: RouteParams) {
+async function handleGET(req: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
 
@@ -34,109 +37,89 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export const PUT = withAuditLog(
-  async (request: NextRequest, { params }: RouteParams) => {
-    try {
-      const { id } = await params;
-      const body: UpdateProgramInput = await request.json();
+async function handlePUT(req: NextRequest, { params }: RouteParams) {
+  try {
+    const { id } = await params;
+    const body: UpdateProgramInput = await req.json();
 
-      // Check if program exists
-      const existingProgram = await db.program.findUnique({
-        where: { id },
+    // Check if program exists
+    const existingProgram = await db.program.findUnique({
+      where: { id },
+    });
+
+    if (!existingProgram) {
+      return NextResponse.json({ error: 'Program not found' }, { status: 404 });
+    }
+
+    // Check if collage exists if collageId is provided
+    if (body.collageId) {
+      const collage = await db.college.findUnique({
+        where: { id: body.collageId },
       });
 
-      if (!existingProgram) {
+      if (!collage) {
         return NextResponse.json(
-          { error: 'Program not found' },
+          { error: 'College not found' },
           { status: 404 }
         );
       }
-
-      // Check if collage exists if collageId is provided
-      if (body.collageId) {
-        const collage = await db.college.findUnique({
-          where: { id: body.collageId },
-        });
-
-        if (!collage) {
-          return NextResponse.json(
-            { error: 'College not found' },
-            { status: 404 }
-          );
-        }
-      }
-
-      const program = await db.program.update({
-        where: { id },
-        data: {
-          name: body.name,
-          description: body.description,
-          config: body.config,
-          collageId: body.collageId,
-        },
-        include: {
-          collage: true,
-        },
-      });
-
-      return NextResponse.json(program);
-    } catch (error) {
-      console.error('Error updating program:', error);
-      return NextResponse.json(
-        { error: 'Failed to update program' },
-        { status: 500 }
-      );
     }
-  },
-  {
-    action: 'UPDATE_PROGRAM',
-    extract: () => {
-      return {
-        entity: 'Program',
-      };
-    },
+
+    const program = await db.program.update({
+      where: { id },
+      data: {
+        name: body.name,
+        description: body.description,
+        config: body.config,
+        collageId: body.collageId,
+      },
+      include: {
+        collage: true,
+      },
+    });
+
+    return NextResponse.json(program);
+  } catch (error) {
+    console.error('Error updating program:', error);
+    return NextResponse.json(
+      { error: 'Failed to update program' },
+      { status: 500 }
+    );
   }
-);
+}
 
-export const DELETE = withAuditLog(
-  async (request: NextRequest, { params }: RouteParams) => {
-    try {
-      const { id } = await params;
+async function handleDELETE(req: NextRequest, { params }: RouteParams) {
+  try {
+    const { id } = await params;
 
-      // Check if program exists
-      const existingProgram = await db.program.findUnique({
-        where: { id },
-      });
+    // Check if program exists
+    const existingProgram = await db.program.findUnique({
+      where: { id },
+    });
 
-      if (!existingProgram) {
-        return NextResponse.json(
-          { error: 'Program not found' },
-          { status: 404 }
-        );
-      }
-
-      await db.program.delete({
-        where: { id },
-      });
-
-      return NextResponse.json(
-        { message: 'Program deleted successfully' },
-        { status: 200 }
-      );
-    } catch (error) {
-      console.error('Error deleting program:', error);
-      return NextResponse.json(
-        { error: 'Failed to delete program' },
-        { status: 500 }
-      );
+    if (!existingProgram) {
+      return NextResponse.json({ error: 'Program not found' }, { status: 404 });
     }
-  },
-  {
-    action: 'DELETE_PROGRAM',
-    extract: () => {
-      return {
-        entity: 'Program',
-      };
-    },
+
+    await db.program.delete({
+      where: { id },
+    });
+
+    return NextResponse.json(
+      { message: 'Program deleted successfully' },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Error deleting program:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete program' },
+      { status: 500 }
+    );
   }
+}
+
+// Apply tracking to all methods using CRUD preset
+export const { GET, PUT, DELETE } = withApiTrackingMethods(
+  { GET: handleGET, PUT: handlePUT, DELETE: handleDELETE },
+  ApiTrackingPresets.crud('Program')
 );

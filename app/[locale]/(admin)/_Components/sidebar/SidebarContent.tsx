@@ -168,7 +168,8 @@ export function SidebarContent({
                   {filteredItems.map((item: NavItem) => {
                     const isActive = pathname === `/${locale}${item.href}`;
                     const Icon = item.icon;
-                    const isDisabled = item.badge === 'Soon';
+                    const isDisabled =
+                      item.badge === 'Soon' || item.badge === 'Phase two';
                     const hasSubItems =
                       item.subItems && item.subItems.length > 0;
 
@@ -245,7 +246,8 @@ export function SidebarContent({
                                     {badgeValue && (
                                       <Badge
                                         variant={
-                                          badgeValue === 'Soon'
+                                          badgeValue === 'Soon' ||
+                                          badgeValue === 'Phase two'
                                             ? 'secondary'
                                             : 'default'
                                         }
@@ -343,7 +345,8 @@ export function SidebarContent({
                             {badgeValue && (
                               <Badge
                                 variant={
-                                  badgeValue === 'Soon'
+                                  badgeValue === 'Soon' ||
+                                  badgeValue === 'Phase two'
                                     ? 'secondary'
                                     : 'default'
                                 }

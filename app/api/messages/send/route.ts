@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { db } from '@/lib/db';
 import { NodeMailerService } from '@/services/nodemailer.service';
 import { MessageStatus } from '@/types/message';
 
-export async function POST(request: NextRequest) {
+async function handlePOST(req: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await req.json();
     const { messageId } = body;
 
     if (!messageId) {
@@ -99,7 +103,7 @@ export async function POST(request: NextRequest) {
 
     // Update message status to failed
     try {
-      const body = await request.json();
+      const body = await req.json();
       const { messageId } = body;
 
       if (messageId) {
@@ -134,3 +138,9 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+// Apply tracking to all methods using formSubmission preset
+export const { POST } = withApiTrackingMethods(
+  { POST: handlePOST },
+  ApiTrackingPresets.formSubmission('messages')
+);

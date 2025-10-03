@@ -1,7 +1,11 @@
 import { db } from '@/lib/db';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(
+async function handleGET(
   request: NextRequest,
   { params }: { params: Promise<{ clerkId: string }> }
 ) {
@@ -24,3 +28,9 @@ export async function GET(
     );
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { GET } = withApiTrackingMethods(
+  { GET: handleGET },
+  ApiTrackingPresets.crud('User')
+);

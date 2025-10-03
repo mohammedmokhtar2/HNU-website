@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { withAuditLog } from '@/lib/middleware/withAuditLog';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { CreateProgramInput, ProgramQueryParams } from '@/types/program';
 
-export async function GET(request: NextRequest) {
+async function handleGET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
     const collageId = searchParams.get('collageId');
@@ -91,60 +94,56 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export const POST = withAuditLog(
-  async (request: NextRequest) => {
-    try {
-      const body: CreateProgramInput = await request.json();
+async function handlePOST(req: NextRequest) {
+  try {
+    const body: CreateProgramInput = await req.json();
 
-      // Validate required fields
-      if (!body.name) {
-        return NextResponse.json(
-          { error: 'Program name is required' },
-          { status: 400 }
-        );
-      }
-
-      // Check if collage exists if collageId is provided
-      if (body.collageId) {
-        const collage = await db.college.findUnique({
-          where: { id: body.collageId },
-        });
-
-        if (!collage) {
-          return NextResponse.json(
-            { error: 'College not found' },
-            { status: 404 }
-          );
-        }
-      }
-
-      const program = await db.program.create({
-        data: {
-          name: body.name,
-          description: body.description,
-          config: body.config,
-          collageId: body.collageId,
-        },
-        include: {
-          collage: true,
-        },
-      });
-
-      return NextResponse.json(program, { status: 201 });
-    } catch (error) {
-      console.error('Error creating program:', error);
+    // Validate required fields
+    if (!body.name) {
       return NextResponse.json(
-        { error: 'Failed to create program' },
-        { status: 500 }
+        { error: 'Program name is required' },
+        { status: 400 }
       );
     }
-  },
-  {
-    action: 'CREATE_PROGRAM',
-    extract: () => {
-      return {
-        entity: 'Program',
-      };
-    },
+
+    // Check if collage exists if collageId is provided
+    if (body.collageId) {
+      const collage = await db.college.findUnique({
+        where: { id: body.collageId },
+      });
+
+      if (!collage) {
+        return NextResponse.json(
+          { error: 'College not found' },
+          { status: 404 }
+        );
+      }
+    }
+
+    const program = await db.program.create({
+      data: {
+        name: body.name,
+        description: body.description,
+        config: body.config,
+        collageId: body.collageId,
+      },
+      include: {
+        collage: true,
+      },
+    });
+
+    return NextResponse.json(program, { status: 201 });
+  } catch (error) {
+    console.error('Error creating program:', error);
+    return NextResponse.json(
+      { error: 'Failed to create program' },
+      { status: 500 }
+    );
   }
+}
+
+// Apply tracking to all methods using CRUD preset
+export const { GET, POST } = withApiTrackingMethods(
+  { GET: handleGET, POST: handlePOST },
+  ApiTrackingPresets.crud('Program')
 );

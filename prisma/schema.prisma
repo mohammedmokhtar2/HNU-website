@@ -14,8 +14,24 @@ model AuditLog {
   entityId  String?
   metadata  Json?
   userId    String?
+  clerkId   String?
+  sessionId String?
+  isGuest   Boolean  @default(false)
+  ipAddress String?
+  userAgent String?
   createdAt DateTime @default(now())
-  user      User?    @relation(fields: [userId], references: [id])
+  clerkUser User?    @relation(fields: [clerkId], references: [clerkId])
+
+  @@index([sessionId])
+  @@index([isGuest])
+  @@index([clerkId])
+  @@index([action])
+  @@index([entity])
+  @@index([createdAt])
+  @@index([userId, action])
+  @@index([clerkId, action])
+  @@index([sessionId, action])
+  @@index([isGuest, createdAt])
 }
 
 model User {

@@ -1,9 +1,13 @@
 import { db } from '@/lib/db';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(request: NextRequest) {
+async function handlePOST(req: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await req.json();
     const { email, name, role } = body;
 
     if (!email) {
@@ -38,3 +42,9 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+// Apply tracking to all methods using crud preset
+export const { POST } = withApiTrackingMethods(
+  { POST: handlePOST },
+  ApiTrackingPresets.crud('User')
+);

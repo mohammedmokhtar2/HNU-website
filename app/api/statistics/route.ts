@@ -1,8 +1,11 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { withAuditLog } from '@/lib/middleware/withAuditLog';
+import {
+  withApiTrackingMethods,
+  ApiTrackingPresets,
+} from '@/lib/middleware/apiTrackingMiddleware';
 
-export async function GET() {
+async function handleGET(req: NextRequest) {
   try {
     const statistics = await db.statistic.findMany({
       include: {
@@ -20,41 +23,34 @@ export async function GET() {
   }
 }
 
-export const POST = withAuditLog(
-  async (req: Request) => {
-    try {
-      const body = await req.json();
-      const { label, collageId } = body;
+async function handlePOST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { label, collageId } = body;
 
-      if (!label) {
-        return NextResponse.json(
-          { error: 'Label is required' },
-          { status: 400 }
-        );
-      }
-
-      const statistic = await db.statistic.create({
-        data: {
-          label,
-          collageId,
-        },
-      });
-
-      return NextResponse.json(statistic);
-    } catch (error) {
-      console.error('Error creating statistic:', error);
-      return NextResponse.json(
-        { error: 'Failed to create statistic' },
-        { status: 500 }
-      );
+    if (!label) {
+      return NextResponse.json({ error: 'Label is required' }, { status: 400 });
     }
-  },
-  {
-    action: 'CREATE_STATISTIC',
-    extract: () => {
-      return {
-        entity: 'Statistic',
-      };
-    },
+
+    const statistic = await db.statistic.create({
+      data: {
+        label,
+        collageId,
+      },
+    });
+
+    return NextResponse.json(statistic);
+  } catch (error) {
+    console.error('Error creating statistic:', error);
+    return NextResponse.json(
+      { error: 'Failed to create statistic' },
+      { status: 500 }
+    );
   }
+}
+
+// Apply tracking to all methods using CRUD preset
+export const { GET, POST } = withApiTrackingMethods(
+  { GET: handleGET, POST: handlePOST },
+  ApiTrackingPresets.crud('Statistic')
 );
