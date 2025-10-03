@@ -84,12 +84,12 @@ export function CollageSection({ sectionId }: CollegeSectionProps) {
       <div className='flex flex-col md:flex-row h-full'>
         {/* Left Panel (sidebar or top) */}
         <aside className='w-full md:w-1/3 bg-white text-black p-10 flex flex-col md:sticky md:top-0 md:h-screen'>
-          <h2 className='text-xl font-bold mb-4 text-[#023e8a]'>
+          <h2 className='text-4xl md:text-5xl font-bold text-[#023e8a] drop-shadow-lg tracking-tight mb-2'>
             {CollageSectionData.title?.[
               locale as keyof typeof CollageSectionData.title
             ] || (locale === 'ar' ? 'برامج الكليات' : 'College Programs')}
           </h2>
-          <h3 className='text-3xl font-extrabold mb-3'>
+          <h3 className='text-2xl font-bold mb-3'>
             {CollageSectionData.subtitle?.[
               locale as keyof typeof CollageSectionData.subtitle
             ] ||

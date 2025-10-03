@@ -66,7 +66,7 @@ export function StudentActivitiesSection({
       <div className='container mx-auto px-4 max-w-[1400px]'>
         {/* Section Title */}
         <div className='text-center mb-16'>
-          <h2 className='text-4xl md:text-5xl font-bold text-gray-900 mb-4'>
+          <h2 className='text-4xl md:text-5xl font-bold text-[#023e8a] drop-shadow-lg tracking-tight mb-2'>
             {content.title[currentLocale]}
           </h2>
           <div className='w-24 h-1 bg-gradient-to-r from-blue-700 to-yellow-600 mx-auto rounded-full' />

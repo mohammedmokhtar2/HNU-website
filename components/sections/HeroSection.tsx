@@ -251,7 +251,7 @@ export function HeroSection({ section, locale }: HeroSectionProps) {
         >
           {/* Main Title with Enhanced Styling */}
           <h1
-            className={`text-xl sm:text-3xl lg:text-5xl xl:text-6xl font-extrabold text-white mb-6 leading-tight animate-fade-in-up drop-shadow-2xl ${locale === 'ar' ? 'text-right' : 'text-left'}`}
+            className={`text-lg sm:text-2xl lg:text-4xl xl:text-5xl font-extrabold text-white mb-6 leading-tight animate-fade-in-up drop-shadow-2xl ${locale === 'ar' ? 'text-right' : 'text-left'}`}
           >
             <span className='relative inline-block'>
               <span className='relative z-10 bg-gradient-to-r from-white via-blue-50 to-white bg-clip-text'>

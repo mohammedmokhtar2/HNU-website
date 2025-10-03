@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Star, Sparkles, Play } from 'lucide-react';
 import { VideoPlayer } from '@/components/ui';
 
@@ -119,6 +120,21 @@ function AboutSection({
                     ? 'نتميز ببرامجنا الفريدة القائمة على التكنولوجيا والأعمال، ومراكزنا البحثية المتطورة، وتركيزنا على الابتكار وريادة الأعمال لمعالجة التحديات الحرجة في مجتمعنا، من خلال البحث التطبيقي المتقدم والشراكات الاستراتيجية.'
                     : 'We feature unique technology and business-based programs, advanced research centers, and focus on innovation and entrepreneurship to address critical challenges in our society through cutting-edge applied research and strategic partnerships.'}
                 </p>
+              </motion.div>
+
+              {/* Learn More Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.8 }}
+                viewport={{ once: true }}
+              >
+                <Link
+                  href='pages/about-us'
+                  className='inline-block bg-white text-[#023e8a] font-semibold px-8 py-3 rounded-lg shadow-lg hover:bg-gray-100 hover:scale-105 transition-all duration-300'
+                >
+                  {local === 'ar' ? 'اعرف المزيد' : 'Learn More'}
+                </Link>
               </motion.div>
             </motion.div>
 

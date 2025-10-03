@@ -59,7 +59,7 @@ export function PresidentSection({ sectionId }: PresidentSectionProps) {
       <div className='container mx-auto px-4 max-w-6xl'>
         {/* Section Title */}
         <div className='text-center mb-12'>
-          <h2 className='text-4xl md:text-5xl font-bold text-gray-900 mb-4'>
+          <h2 className='text-4xl md:text-5xl font-bold text-[#023e8a] drop-shadow-lg tracking-tight mb-2'>
             {content.title[currentLocale]}
           </h2>
           <div className='w-24 h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto rounded-full' />
@@ -142,7 +142,7 @@ export function PresidentSection({ sectionId }: PresidentSectionProps) {
                   }`}
                 >
                   <div
-                    className='text-gray-700 leading-relaxed whitespace-pre-line'
+                    className='text-gray-700 text-lg sm:text-xl leading-relaxed whitespace-pre-line'
                     dangerouslySetInnerHTML={{
                       __html: content.message[currentLocale],
                     }}

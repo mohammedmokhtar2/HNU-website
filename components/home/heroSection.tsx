@@ -108,7 +108,7 @@ const HeroSection = ({
   return (
     <section
       id='home'
-      className='relative w-full min-h-screen flex items-center justify-center overflow-hidden'
+      className='relative w-full min-h-screen flex items-center justify-center overflow-hidden mb-16'
     >
       {/* Background Video/Image */}
       <div className='absolute inset-0 w-full h-full'>
@@ -120,9 +120,8 @@ const HeroSection = ({
             loop
             muted={true}
             disablePictureInPicture
-            className={`w-full h-full object-cover transition-all duration-500 ${
-              isTransitioning ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
-            }`}
+            className={`w-full h-full object-cover transition-all duration-500 ${isTransitioning ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
+              }`}
           />
         )}
         {image && mediaType === 'image' && (
@@ -130,9 +129,8 @@ const HeroSection = ({
             src={image}
             alt='Hero background'
             fill
-            className={`object-cover transition-all duration-500 ${
-              isTransitioning ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
-            }`}
+            className={`object-cover transition-all duration-500 ${isTransitioning ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
+              }`}
             priority
           />
         )}
@@ -145,9 +143,8 @@ const HeroSection = ({
           <button
             onClick={() => switchMediaType('video')}
             disabled={isTransitioning}
-            className={`relative p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 group ${
-              mediaType === 'video' ? 'bg-white/40 ring-2 ring-white/50' : ''
-            } ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
+            className={`relative p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 group ${mediaType === 'video' ? 'bg-white/40 ring-2 ring-white/50' : ''
+              } ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
             aria-label='Switch to video'
           >
             <svg
@@ -167,9 +164,8 @@ const HeroSection = ({
           <button
             onClick={() => switchMediaType('image')}
             disabled={isTransitioning}
-            className={`relative p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 group ${
-              mediaType === 'image' ? 'bg-white/40 ring-2 ring-white/50' : ''
-            } ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
+            className={`relative p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 group ${mediaType === 'image' ? 'bg-white/40 ring-2 ring-white/50' : ''
+              } ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
             aria-label='Switch to image'
           >
             <svg
@@ -220,14 +216,14 @@ const HeroSection = ({
 
       {/* Content Container */}
       <div
-        className={`relative top-60 z-10 w-full h-full flex items-end px-4 sm:px-6 lg:px-8 justify-start`}
+        className={`relative top-60 z-10 w-full h-full flex items-end px-4 sm:px-6 lg:px-8 mb-16 justify-start`}
       >
         <div
           className={`max-w-2xl ${local === 'ar' ? 'text-right' : 'text-left'}`}
         >
           {/* Main Title */}
           <h1
-            className={`text-2xl sm:text-4xl lg:text-6xl xl:text-7xl font-bold text-white mb-6 leading-tight animate-fade-in-up ${local === 'ar' ? 'text-right' : 'text-left'}`}
+            className={`text-xl sm:text-2xl lg:text-4xl xl:text-5xl font-bold text-white mb-6 leading-tight animate-fade-in-up ${local === 'ar' ? 'text-right' : 'text-left'}`}
           >
             {local === 'ar' ? title.ar : title.en}
           </h1>
