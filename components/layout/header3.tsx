@@ -190,23 +190,26 @@ function Header3({ navigationItems = [] }: HeaderData) {
             {/* Right Controls */}
             <div className='flex items-center gap-2 flex-shrink-0 mr-4 sm:mr-8 ml-4 sm:ml-20'>
               {/* Switch Language */}
-              <Link href='/'>
+              <Link
+                href={pathname}
+                locale={currentLocale === 'en' ? 'ar' : 'en'}
+                onClick={closeSidebar}
+              >
                 <Button
                   variant={isScrolled ? 'default' : 'outline'}
                   size={isMobile ? 'sm' : 'lg'}
                   className={`rounded-lg border-white/30 text-white transition-all duration-300
-                    h-10 w-10 text-xs bg-transparent
-                    ${isScrolled ? 'bg-slate-900 hover:bg-slate-900/80' : 'hover:bg-slate-200/80'}`}
+      h-10 px-3 text-xs bg-transparent flex items-center gap-2
+      ${isScrolled ? 'bg-slate-900 hover:bg-slate-900/80' : 'hover:bg-slate-200/80'}`}
                   aria-label={`Switch to ${currentLocale === 'en' ? 'Arabic' : 'English'}`}
                 >
                   {currentLocale === 'en' ? (
-                    <div className='flex items-center justify-center'>
+                    <>
                       <span className='text-lg'>🇪🇬</span>
-                    </div>
+                      <span className='text-sm'>العربية</span>
+                    </>
                   ) : (
-                    <div className='flex items-center justify-center'>
-                      <span className='text-lg'>🇬🇧</span>
-                    </div>
+                    <span className='text-sm'>English</span>
                   )}
                 </Button>
               </Link>

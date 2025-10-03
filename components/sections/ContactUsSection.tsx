@@ -313,19 +313,6 @@ This message was sent from the contact form on the website.
                 </CardTitle>
               </CardHeader>
               <CardContent className='space-y-6'>
-                {content.contactInfo.phone && (
-                  <div className='flex items-start gap-3'>
-                    <Phone className='w-5 h-5 text-black mt-1' />
-                    <div>
-                      <h3 className='font-semibold text-black mb-1'>
-                        {locale === 'ar' ? 'الهاتف' : 'Phone'}
-                      </h3>
-                      <p className='text-black'>
-                        {getLocalizedText(content.contactInfo.phone)}
-                      </p>
-                    </div>
-                  </div>
-                )}
 
                 {content.contactInfo.email && (
                   <div className='flex items-start gap-3'>
