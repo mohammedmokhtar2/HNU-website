@@ -90,57 +90,6 @@ export function StudentActivitiesSection({
 
             {/* Content */}
             <div className='p-6 space-y-6 flex-1 flex flex-col'>
-              {/* Head and Vice Members */}
-              {(content.studentUnion.head?.name?.[currentLocale] ||
-                content.studentUnion.vice?.name?.[currentLocale]) && (
-                <div className='grid grid-cols-2 gap-4 mb-6'>
-                  {/* Head */}
-                  {content.studentUnion.head?.name?.[currentLocale] && (
-                    <div className='text-center'>
-                      {content.studentUnion.head.imageUrl && (
-                        <div className='relative w-24 h-24 mx-auto mb-3'>
-                          <Image
-                            src={content.studentUnion.head.imageUrl}
-                            alt={content.studentUnion.head.name[currentLocale]}
-                            fill
-                            className='object-cover rounded-full border-4 border-blue-200'
-                            unoptimized
-                          />
-                        </div>
-                      )}
-                      <p className='font-semibold text-gray-900'>
-                        {content.studentUnion.head.name[currentLocale]}
-                      </p>
-                      <p className='text-sm text-blue-700 font-bold'>
-                        {currentLocale === 'ar' ? 'الرئيس' : 'Head'}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Vice */}
-                  {content.studentUnion.vice?.name?.[currentLocale] && (
-                    <div className='text-center'>
-                      {content.studentUnion.vice.imageUrl && (
-                        <div className='relative w-24 h-24 mx-auto mb-3'>
-                          <Image
-                            src={content.studentUnion.vice.imageUrl}
-                            alt={content.studentUnion.vice.name[currentLocale]}
-                            fill
-                            className='object-cover rounded-full border-4 border-blue-200'
-                            unoptimized
-                          />
-                        </div>
-                      )}
-                      <p className='font-semibold text-gray-900'>
-                        {content.studentUnion.vice.name[currentLocale]}
-                      </p>
-                      <p className='text-sm text-blue-700 font-bold'>
-                        {currentLocale === 'ar' ? 'نائب الرئيس' : 'Vice Head'}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
 
               {/* Image */}
               {content.studentUnion.imageUrl && (
@@ -213,57 +162,6 @@ export function StudentActivitiesSection({
 
             {/* Content */}
             <div className='p-6 space-y-6 flex-1 flex flex-col'>
-              {/* Head and Vice Members */}
-              {(content.studentFamily.head?.name?.[currentLocale] ||
-                content.studentFamily.vice?.name?.[currentLocale]) && (
-                <div className='grid grid-cols-2 gap-4 mb-6'>
-                  {/* Head */}
-                  {content.studentFamily.head?.name?.[currentLocale] && (
-                    <div className='text-center'>
-                      {content.studentFamily.head.imageUrl && (
-                        <div className='relative w-24 h-24 mx-auto mb-3'>
-                          <Image
-                            src={content.studentFamily.head.imageUrl}
-                            alt={content.studentFamily.head.name[currentLocale]}
-                            fill
-                            className='object-cover rounded-full border-4 border-purple-200'
-                            unoptimized
-                          />
-                        </div>
-                      )}
-                      <p className='font-semibold text-gray-900'>
-                        {content.studentFamily.head.name[currentLocale]}
-                      </p>
-                      <p className='text-sm text-yellow-600 font-bold'>
-                        {currentLocale === 'ar' ? 'الرئيس' : 'Head'}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Vice */}
-                  {content.studentFamily.vice?.name?.[currentLocale] && (
-                    <div className='text-center'>
-                      {content.studentFamily.vice.imageUrl && (
-                        <div className='relative w-24 h-24 mx-auto mb-3'>
-                          <Image
-                            src={content.studentFamily.vice.imageUrl}
-                            alt={content.studentFamily.vice.name[currentLocale]}
-                            fill
-                            className='object-cover rounded-full border-4 border-purple-200'
-                            unoptimized
-                          />
-                        </div>
-                      )}
-                      <p className='font-semibold text-gray-900'>
-                        {content.studentFamily.vice.name[currentLocale]}
-                      </p>
-                      <p className='text-sm text-yellow-600 font-bold'>
-                        {currentLocale === 'ar' ? 'نائب الرئيس' : 'Vice Head'}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
 
               {/* Image */}
               {content.studentFamily.imageUrl && (

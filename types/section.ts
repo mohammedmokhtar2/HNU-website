@@ -14,6 +14,15 @@ export interface HeroContent {
   content: BaseContent;
   imageUrl: string;
   videoUrl?: string;
+  // Linked blog/event feature
+  displayType?: 'default' | 'blog' | 'event'; // What to display in hero
+  linkedBlogId?: string; // ID of linked blog
+  linkedEventId?: string; // ID of linked event
+  buttonConfig?: {
+    // Custom button configuration
+    text?: BaseContent; // Custom button text
+    url?: string; // Custom URL for button
+  };
 }
 
 export interface AboutContent {

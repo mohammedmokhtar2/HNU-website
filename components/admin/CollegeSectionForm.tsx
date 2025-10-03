@@ -16,6 +16,7 @@ import { SectionType } from '@/types/enums';
 import { useCollege } from '@/contexts/CollegeContext';
 import { Save, Image as ImageIcon, Video, Link } from 'lucide-react';
 import Image from 'next/image';
+import { useBlogsAndEvents, getBlogTitle } from '@/hooks/use-blogs-events';
 
 interface CollegeSectionFormProps {
   formData: {
@@ -55,6 +56,8 @@ export function CollegeSectionForm({
   submitLabel,
 }: CollegeSectionFormProps) {
   const { colleges, loading: collegesLoading } = useCollege();
+  const { blogs, events, isLoading: loadingBlogsEvents } = useBlogsAndEvents();
+
   const renderContentFields = () => {
     const { type, content } = formData;
 
@@ -62,149 +65,336 @@ export function CollegeSectionForm({
       case SectionType.HERO:
         return (
           <div className='space-y-4'>
+            {/* Display Type Selector */}
             <div>
-              <Label className='text-white'>Title (English)</Label>
-              <Input
-                value={content.title?.en || ''}
-                onChange={e =>
+              <Label className='text-white'>Display Type</Label>
+              <Select
+                value={content.displayType || 'default'}
+                onValueChange={value =>
                   setFormData({
                     ...formData,
                     content: {
                       ...content,
-                      title: { ...content.title, en: e.target.value },
+                      displayType: value as 'default' | 'blog' | 'event',
+                      linkedBlogId:
+                        value === 'blog' ? content.linkedBlogId : undefined,
+                      linkedEventId:
+                        value === 'event' ? content.linkedEventId : undefined,
                     },
                   })
                 }
-                placeholder='Enter English title'
-                className='bg-gray-700 text-white border-gray-600'
-              />
+              >
+                <SelectTrigger className='bg-gray-700 text-white border-gray-600'>
+                  <SelectValue placeholder='Select display type' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='default'>Default (Static Content)</SelectItem>
+                  <SelectItem value='blog'>Link to Blog</SelectItem>
+                  <SelectItem value='event'>Link to Event</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            <div>
-              <Label className='text-white'>Title (Arabic)</Label>
-              <Input
-                value={content.title?.ar || ''}
-                onChange={e =>
-                  setFormData({
-                    ...formData,
-                    content: {
-                      ...content,
-                      title: { ...content.title, ar: e.target.value },
-                    },
-                  })
-                }
-                placeholder='Enter Arabic title'
-                className='bg-gray-700 text-white border-gray-600'
-              />
-            </div>
-            <div>
-              <Label className='text-white'>Content (English)</Label>
-              <Textarea
-                value={content.content?.en || ''}
-                onChange={e =>
-                  setFormData({
-                    ...formData,
-                    content: {
-                      ...content,
-                      content: { ...content.content, en: e.target.value },
-                    },
-                  })
-                }
-                placeholder='Enter English content'
-                rows={4}
-                className='bg-gray-700 text-white border-gray-600'
-              />
-            </div>
-            <div>
-              <Label className='text-white'>Content (Arabic)</Label>
-              <Textarea
-                value={content.content?.ar || ''}
-                onChange={e =>
-                  setFormData({
-                    ...formData,
-                    content: {
-                      ...content,
-                      content: { ...content.content, ar: e.target.value },
-                    },
-                  })
-                }
-                placeholder='Enter Arabic content'
-                rows={4}
-                className='bg-gray-700 text-white border-gray-600'
-              />
-            </div>
-            <div>
-              <Label className='text-white'>Image URL</Label>
-              <div className='flex gap-2'>
-                <Input
-                  value={content.imageUrl || ''}
-                  onChange={e =>
-                    setFormData({
-                      ...formData,
-                      content: { ...content, imageUrl: e.target.value },
-                    })
-                  }
-                  placeholder='Image URL'
-                  className='bg-gray-700 text-white border-gray-600'
-                />
-                <Button
-                  type='button'
-                  variant='outline'
-                  size='sm'
-                  onClick={() => onImageSelect('imageUrl')}
-                  className='border-gray-600 text-gray-300 hover:bg-gray-700'
-                >
-                  <ImageIcon className='h-4 w-4' />
-                </Button>
+
+            {/* Blog Selection */}
+            {content.displayType === 'blog' && (
+              <div className='bg-blue-900/30 p-4 rounded-lg space-y-4'>
+                <div>
+                  <Label className='text-white'>Select Blog</Label>
+                  <Select
+                    value={content.linkedBlogId || ''}
+                    onValueChange={value =>
+                      setFormData({
+                        ...formData,
+                        content: { ...content, linkedBlogId: value },
+                      })
+                    }
+                  >
+                    <SelectTrigger className='bg-gray-700 text-white border-gray-600'>
+                      <SelectValue placeholder='Choose a blog to link' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {loadingBlogsEvents ? (
+                        <SelectItem value='loading' disabled>
+                          Loading blogs...
+                        </SelectItem>
+                      ) : blogs.length === 0 ? (
+                        <SelectItem value='empty' disabled>
+                          No published blogs found
+                        </SelectItem>
+                      ) : (
+                        blogs.map(blog => (
+                          <SelectItem key={blog.id} value={blog.id}>
+                            {getBlogTitle(blog, 'en')} | {getBlogTitle(blog, 'ar')}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              {content.imageUrl && (
-                <div className='mt-2'>
-                  <Image
-                    width={100}
-                    height={100}
-                    src={content.imageUrl}
-                    alt='Preview'
-                    className='w-32 h-24 object-cover rounded border'
+            )}
+
+            {/* Event Selection */}
+            {content.displayType === 'event' && (
+              <div className='bg-green-900/30 p-4 rounded-lg space-y-4'>
+                <div>
+                  <Label className='text-white'>Select Event</Label>
+                  <Select
+                    value={content.linkedEventId || ''}
+                    onValueChange={value =>
+                      setFormData({
+                        ...formData,
+                        content: { ...content, linkedEventId: value },
+                      })
+                    }
+                  >
+                    <SelectTrigger className='bg-gray-700 text-white border-gray-600'>
+                      <SelectValue placeholder='Choose an event to link' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {loadingBlogsEvents ? (
+                        <SelectItem value='loading' disabled>
+                          Loading events...
+                        </SelectItem>
+                      ) : events.length === 0 ? (
+                        <SelectItem value='empty' disabled>
+                          No published events found
+                        </SelectItem>
+                      ) : (
+                        events.map(event => (
+                          <SelectItem key={event.id} value={event.id}>
+                            {getBlogTitle(event, 'en')} | {getBlogTitle(event, 'ar')}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
+
+            {/* Default Content Fields */}
+            {(!content.displayType || content.displayType === 'default') && (
+              <>
+                <div>
+                  <Label className='text-white'>Title (English)</Label>
+                  <Input
+                    value={content.title?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          title: { ...content.title, en: e.target.value },
+                        },
+                      })
+                    }
+                    placeholder='Enter English title'
+                    className='bg-gray-700 text-white border-gray-600'
                   />
                 </div>
-              )}
-            </div>
-            <div>
-              <Label className='text-white'>Video URL</Label>
-              <div className='flex gap-2'>
-                <Input
-                  value={content.videoUrl || ''}
-                  onChange={e =>
-                    setFormData({
-                      ...formData,
-                      content: { ...content, videoUrl: e.target.value },
-                    })
-                  }
-                  placeholder='Video URL'
-                  className='bg-gray-700 text-white border-gray-600'
-                />
-                <Button
-                  type='button'
-                  variant='outline'
-                  size='sm'
-                  onClick={() => onImageSelect('videoUrl')}
-                  className='border-gray-600 text-gray-300 hover:bg-gray-700'
-                >
-                  <Video className='h-4 w-4' />
-                </Button>
-              </div>
-              {content.videoUrl && (
-                <div className='mt-2'>
-                  <video
-                    src={content.videoUrl}
-                    className='w-32 h-24 object-cover rounded border'
-                    controls
-                    muted
+                <div>
+                  <Label className='text-white'>Title (Arabic)</Label>
+                  <Input
+                    value={content.title?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          title: { ...content.title, ar: e.target.value },
+                        },
+                      })
+                    }
+                    placeholder='Enter Arabic title'
+                    className='bg-gray-700 text-white border-gray-600'
                   />
                 </div>
-              )}
+                <div>
+                  <Label className='text-white'>Content (English)</Label>
+                  <Textarea
+                    value={content.content?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          content: { ...content.content, en: e.target.value },
+                        },
+                      })
+                    }
+                    placeholder='Enter English content'
+                    rows={4}
+                    className='bg-gray-700 text-white border-gray-600'
+                  />
+                </div>
+                <div>
+                  <Label className='text-white'>Content (Arabic)</Label>
+                  <Textarea
+                    value={content.content?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          content: { ...content.content, ar: e.target.value },
+                        },
+                      })
+                    }
+                    placeholder='Enter Arabic content'
+                    rows={4}
+                    className='bg-gray-700 text-white border-gray-600'
+                  />
+                </div>
+                <div>
+                  <Label className='text-white'>Image URL</Label>
+                  <div className='flex gap-2'>
+                    <Input
+                      value={content.imageUrl || ''}
+                      onChange={e =>
+                        setFormData({
+                          ...formData,
+                          content: { ...content, imageUrl: e.target.value },
+                        })
+                      }
+                      placeholder='Image URL'
+                      className='bg-gray-700 text-white border-gray-600'
+                    />
+                    <Button
+                      type='button'
+                      variant='outline'
+                      size='sm'
+                      onClick={() => onImageSelect('imageUrl')}
+                      className='border-gray-600 text-gray-300 hover:bg-gray-700'
+                    >
+                      <ImageIcon className='h-4 w-4' />
+                    </Button>
+                  </div>
+                  {content.imageUrl && (
+                    <div className='mt-2'>
+                      <Image
+                        width={100}
+                        height={100}
+                        src={content.imageUrl}
+                        alt='Preview'
+                        className='w-32 h-24 object-cover rounded border'
+                      />
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <Label className='text-white'>Video URL</Label>
+                  <div className='flex gap-2'>
+                    <Input
+                      value={content.videoUrl || ''}
+                      onChange={e =>
+                        setFormData({
+                          ...formData,
+                          content: { ...content, videoUrl: e.target.value },
+                        })
+                      }
+                      placeholder='Video URL'
+                      className='bg-gray-700 text-white border-gray-600'
+                    />
+                    <Button
+                      type='button'
+                      variant='outline'
+                      size='sm'
+                      onClick={() => onImageSelect('videoUrl')}
+                      className='border-gray-600 text-gray-300 hover:bg-gray-700'
+                    >
+                      <Video className='h-4 w-4' />
+                    </Button>
+                  </div>
+                  {content.videoUrl && (
+                    <div className='mt-2'>
+                      <video
+                        src={content.videoUrl}
+                        className='w-32 h-24 object-cover rounded border'
+                        controls
+                        muted
+                      />
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+
+            {/* Custom Button Configuration */}
+            <div className='border-t border-gray-600 pt-4'>
+              <h4 className='font-medium text-white mb-3'>Button Configuration</h4>
+              <div className='space-y-3'>
+                <div>
+                  <Label className='text-white'>Button Text (English) - Optional</Label>
+                  <Input
+                    value={content.buttonConfig?.text?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          buttonConfig: {
+                            ...content.buttonConfig,
+                            text: {
+                              ...content.buttonConfig?.text,
+                              en: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='e.g., View Blog'
+                    className='bg-gray-700 text-white border-gray-600'
+                  />
+                </div>
+                <div>
+                  <Label className='text-white'>Button Text (Arabic) - Optional</Label>
+                  <Input
+                    value={content.buttonConfig?.text?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          buttonConfig: {
+                            ...content.buttonConfig,
+                            text: {
+                              ...content.buttonConfig?.text,
+                              ar: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='مثال: عرض المدونة'
+                    className='bg-gray-700 text-white border-gray-600'
+                  />
+                </div>
+                <div>
+                  <Label className='text-white'>Custom Button URL - Optional</Label>
+                  <Input
+                    value={content.buttonConfig?.url || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          buttonConfig: {
+                            ...content.buttonConfig,
+                            url: e.target.value,
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Leave empty for auto-generated URLs'
+                    className='bg-gray-700 text-white border-gray-600'
+                  />
+                </div>
+              </div>
             </div>
           </div>
         );
+
 
       case SectionType.ABOUT:
         return (
@@ -1327,7 +1517,7 @@ export function CollegeSectionForm({
         <Button
           type='button'
           variant='outline'
-          onClick={() => {}}
+          onClick={() => { }}
           className='border-gray-600 text-gray-300 hover:bg-gray-700'
         >
           Cancel
