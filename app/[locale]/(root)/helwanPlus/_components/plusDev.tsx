@@ -15,7 +15,7 @@ const devTeamData = {
     image: '/devs/me.jpeg',
     name: 'Mahmoud Matter',
     description:
-      'Tech Lead @ Helwan Plus, Full-stack developer with expertise in React, Node.js, and Next.js',
+      'Tech Lead @ Helwan Plus, Scintific Commite Head @ FCSIT SU, Full-stack developer with expertise in React, Node.js, and Next.js',
     roleNum: 2, // is the lead
     roleName: 'Lead Developer',
     portfolio: 'https://matter-portofilio.vercel.app',
@@ -98,6 +98,12 @@ const devTeamData = {
 
   },
 };
+
+const handleDevClick = (developer: any) => {
+  if (developer.portfolio) {
+    window.open(developer.portfolio, '_blank');
+  }
+}
 const plusDev = () => {
   // Enhanced dev team hero section with modern animations and effects
   // Features: Spotlight effect, ripple background, animated text, and interactive elements
@@ -179,21 +185,21 @@ const plusDev = () => {
               {developers.map((developer, index) => (
                 <div
                   key={index}
-                  onClick={() => window.open(developer.portfolio || '', '_blank')}
+                  onClick={() => handleDevClick(developer)}
                   className={`relative ${developer.portfolio ? 'cursor-pointer' : ''} ${developer.roleNum === 2 ? 'sm:col-span-2 lg:col-span-1 lg:mb-8' : ''}`}
                 >
-                  <DirectionAwareHover imageUrl={developer.image}>
+                  <DirectionAwareHover className='justify-center text-center' imageUrl={developer.image}>
                     <div className='space-y-2 sm:space-y-3 p-3 sm:p-4'>
                       <h3 className='font-bold text-lg sm:text-xl text-white'>
                         {developer.name}
                       </h3>
-                      <p className='font-normal text-xs sm:text-sm text-gray-200'>
+                      <p className='font-normal text-xs sm:text-sm text-white'>
                         {developer.roleName}
                       </p>
-                      <p className='font-normal text-xs sm:text-sm text-gray-300 mt-2'>
+                      <p className='font-normal text-xs sm:text-sm text-white mt-2'>
                         {developer.description}
                       </p>
-                      <p className='font-normal text-xs sm:text-sm text-gray-300 mt-2'>
+                      <p className='font-normal text-xs sm:text-sm text-white mt-2'>
                         {developer.portfolio && (
                           <a href={developer.portfolio} target='_blank' rel='noopener noreferrer' className='text-blue-500'>
                             View Portfolio
