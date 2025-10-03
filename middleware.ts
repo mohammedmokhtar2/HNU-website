@@ -1,11 +1,11 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
-import createMiddleware from 'next-intl/middleware';
-import { NextResponse } from 'next/server';
-import { routing } from './i18n/routing';
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import createMiddleware from "next-intl/middleware";
+import { NextResponse } from "next/server";
+import { routing } from "./i18n/routing";
 
 // Define protected routes
 const isProtectedRoute = createRouteMatcher([
-  '/admin(.*)',
+  "/admin(.*)",
   // '/account(.*)',
   // '/settings(.*)',
   // Add more protected routes as needed
@@ -15,63 +15,54 @@ const isProtectedRoute = createRouteMatcher([
 const intlMiddleware = createMiddleware({
   locales: routing.locales,
   defaultLocale: routing.defaultLocale,
-  localePrefix: 'always',
-  // Optional: domain-based routing if using multiple domains
-  // domains: [
-  //   {domain: 'example.com', defaultLocale: 'en'},
-  //   {domain: 'example.es', defaultLocale: 'es'}
-  // ]
+  localePrefix: "always",
 });
 
 export default clerkMiddleware(async (auth, req) => {
   const { pathname, searchParams } = req.nextUrl;
-  const isApiRoute = pathname.startsWith('/api');
+  const isApiRoute = pathname.startsWith("/api");
 
-  // Handle API routes with authentication
+  // Handle API routes - protect all except GET requests
   if (isApiRoute) {
+    const method = req.method;
+    
+    // Allow GET requests without authentication
+    if (method === "GET") {
+      return NextResponse.next();
+    }
+    
+    // Allow POST requests to /api/messages without authentication
+    if (method === "POST" && pathname.includes("/api/messages")) {
+      return NextResponse.next();
+    }
+    
+    // Require authentication for all other methods (POST, PUT, DELETE, PATCH, etc.)
     const authResult = await auth();
-
-    // Check if this is a public API route that doesn't require authentication
-    const publicApiRoutes = [
-      '/api/health',
-      '/api/example', // Add any public API routes here
-      '/api/messages', // Allow contact form submissions
-      '/api/messages/send', // Allow message sending
-    ];
-
-    const isPublicApiRoute = publicApiRoutes.some(route =>
-      pathname.startsWith(route)
-    );
-
-    // Allow OPTIONS requests for CORS preflight without authentication
-    const isOptionsRequest = req.method === 'OPTIONS';
-
-    // If not a public route, not an OPTIONS request, and user is not authenticated, return 401
-    if (!isPublicApiRoute && !isOptionsRequest && !authResult.userId) {
+    
+    if (!authResult.userId) {
       return NextResponse.json(
-        {
-          error: 'Unauthorized',
-          message: 'Authentication required',
-          statusCode: 401,
-        },
-        {
-          status: 401,
-          headers: {
-            'WWW-Authenticate': 'Bearer',
-          },
-        }
+        { error: "Unauthorized", message: "Authentication required" },
+        { status: 401 }
       );
     }
-
+    
+    // Optional: Add role-based checks for specific API routes
+    // if (pathname.startsWith("/api/admin") && authResult.orgRole !== "admin") {
+    //   return NextResponse.json(
+    //     { error: "Forbidden", message: "Admin access required" },
+    //     { status: 403 }
+    //   );
+    // }
+    
     return NextResponse.next();
   }
 
   // Redirect root to default locale
-  if (pathname === '/') {
+  if (pathname === "/") {
     return NextResponse.redirect(
       new URL(
         `/${routing.defaultLocale}${pathname}${
-          searchParams ? `?${searchParams}` : ''
+          searchParams ? `?${searchParams}` : ""
         }`,
         req.url
       )
@@ -85,14 +76,14 @@ export default clerkMiddleware(async (auth, req) => {
   // Handle protected routes
   if (isProtectedRoute(req)) {
     const authResult = await auth();
-
+    
     // Redirect unauthenticated users
     if (!authResult.userId) {
-      const signInUrl = new URL('/login', req.url);
-      signInUrl.searchParams.set('redirect_url', req.url);
+      const signInUrl = new URL("/login", req.url);
+      signInUrl.searchParams.set("redirect_url", req.url);
       return NextResponse.redirect(signInUrl);
     }
-
+    
     // Optional: Check user role or other permissions
     // if (authResult.orgRole !== 'admin') {
     //   return NextResponse.redirect(new URL('/unauthorized', req.url));
@@ -105,8 +96,8 @@ export default clerkMiddleware(async (auth, req) => {
 export const config = {
   matcher: [
     // Match all routes except static files and Next.js internals
-    '/((?!_next|.*\\..*).*)',
-    // Include API routes for authentication
-    '/(api|trpc)(.*)',
+    "/((?!_next|.*\\..*).*)",
+    // Include API routes
+    "/(api|trpc)(.*)",
   ],
 };
