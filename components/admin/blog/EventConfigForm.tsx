@@ -65,9 +65,16 @@ export function EventConfigForm({
     } as EventConfig);
   };
 
-  const formatDateTimeForInput = (date: Date | null): string => {
+  const formatDateTimeForInput = (date: Date | string | null): string => {
     if (!date) return '';
-    return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+
+    // Convert to Date object if it's a string
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+
+    // Check if the date is valid
+    if (isNaN(dateObj.getTime())) return '';
+
+    return new Date(dateObj.getTime() - dateObj.getTimezoneOffset() * 60000)
       .toISOString()
       .slice(0, 16);
   };

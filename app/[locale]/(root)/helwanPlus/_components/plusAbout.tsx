@@ -58,7 +58,7 @@ const AboutPage = () => {
       <DecorativeWrapper>
         {/* Hero Section */}
         <section
-          className='relative h-[80vh]! flex items-center justify-center bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 text-white'
+          className='relative min-h-[80vh] flex items-center justify-center bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 text-white'
           style={{
             backgroundImage: `url(${aboutData.hero.bgImage})`,
             backgroundSize: 'cover',
@@ -66,46 +66,46 @@ const AboutPage = () => {
           }}
         >
           <div className='absolute inset-0 bg-black/40' />
-          <div className='relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20'>
-            <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
+          <div className='relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20'>
+            <div className='grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center'>
               {/* Content */}
-              <div className='space-y-8'>
-                <div className='space-y-6'>
+              <div className='space-y-6 sm:space-y-8 order-2 lg:order-1'>
+                <div className='space-y-4 sm:space-y-6'>
                   <Badge
                     variant='secondary'
-                    className='px-4 py-2 text-sm bg-white/20 backdrop-blur-sm'
+                    className='px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm bg-white/20 backdrop-blur-sm'
                   >
                     Innovation in Education
                   </Badge>
-                  <h1 className='text-4xl md:text-5xl lg:text-6xl font-bold leading-tight'>
+                  <h1 className='text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight'>
                     {aboutData.hero.title}
                   </h1>
-                  <p className='text-xl md:text-2xl text-blue-100 font-medium'>
+                  <p className='text-lg sm:text-xl md:text-2xl text-blue-100 font-medium'>
                     {aboutData.hero.subtitle}
                   </p>
-                  <p className='text-lg md:text-xl text-blue-200 leading-relaxed'>
+                  <p className='text-base sm:text-lg md:text-xl text-blue-200 leading-relaxed'>
                     {aboutData.hero.description}
                   </p>
                 </div>
 
                 {/* Stats */}
-                <div className='grid grid-cols-2 md:grid-cols-3 gap-6 pt-8'>
+                <div className='grid grid-cols-3 gap-4 sm:gap-6 pt-6 sm:pt-8'>
                   {aboutData.hero.stats.map((stat, index) => (
                     <div key={index} className='text-center'>
-                      <div className='text-2xl md:text-3xl font-bold text-white'>
+                      <div className='text-xl sm:text-2xl md:text-3xl font-bold text-white'>
                         {stat.number}
                       </div>
-                      <div className='text-sm md:text-base text-blue-200'>
+                      <div className='text-xs sm:text-sm md:text-base text-blue-200'>
                         {stat.label}
                       </div>
                     </div>
                   ))}
                 </div>
 
-                <div className='pt-4'>
+                <div className='pt-2 sm:pt-4'>
                   <Button
                     size='lg'
-                    className='bg-[#ffce00] hover:bg-[#ffce00]/90 text-black font-semibold px-8 py-4 text-lg transition-all duration-300 transform hover:scale-105'
+                    className='bg-[#ffce00] hover:bg-[#ffce00]/90 text-black font-semibold px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg transition-all duration-300 transform hover:scale-105 w-full sm:w-auto'
                     onClick={() => {
                       const element = document.querySelector('#team');
                       element?.scrollIntoView({ behavior: 'smooth' });
@@ -117,8 +117,8 @@ const AboutPage = () => {
               </div>
 
               {/* Image */}
-              <div className='relative'>
-                <div className='relative rounded-2xl overflow-hidden shadow-2xl'>
+              <div className='relative order-1 lg:order-2'>
+                <div className='relative rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl'>
                   <div className='aspect-[4/3] relative'>
                     <Image
                       src={aboutData.hero.imageUrl}
@@ -132,9 +132,9 @@ const AboutPage = () => {
                   </div>
                 </div>
 
-                {/* Floating Elements */}
-                <div className='absolute -top-4 -right-4 w-24 h-24 bg-[#ffce00] rounded-full opacity-20 animate-pulse' />
-                <div className='absolute -bottom-4 -left-4 w-32 h-32 bg-blue-400 rounded-full opacity-20 animate-pulse delay-1000' />
+                {/* Floating Elements - Hidden on mobile */}
+                <div className='hidden sm:block absolute -top-4 -right-4 w-16 sm:w-24 h-16 sm:h-24 bg-[#ffce00] rounded-full opacity-20 animate-pulse' />
+                <div className='hidden sm:block absolute -bottom-4 -left-4 w-20 sm:w-32 h-20 sm:h-32 bg-blue-400 rounded-full opacity-20 animate-pulse delay-1000' />
               </div>
             </div>
           </div>
