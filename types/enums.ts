@@ -29,6 +29,7 @@ export enum SectionType {
   BLOGS = 'BLOGS',
   CONTACT_US = 'CONTACT_US',
   CUSTOM = 'CUSTOM',
+  STUDENT_ACTIVITIES = 'STUDENT_ACTIVITIES',
 }
 
 export enum PageSectionType {

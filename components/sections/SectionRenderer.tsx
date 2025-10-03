@@ -60,6 +60,12 @@ const LazyPresidentSection = React.lazy(() =>
   }))
 );
 
+const LazyStudentActivitiesSection = React.lazy(() =>
+  import('./StudentActivitiesSection').then(module => ({
+    default: module.StudentActivitiesSection,
+  }))
+);
+
 export const SectionRenderer = React.memo(
   ({ section, locale }: SectionRendererProps) => {
     const renderSection = useMemo(() => {
@@ -98,6 +104,8 @@ export const SectionRenderer = React.memo(
           );
         case SectionType.PRESIDENT:
           return <LazyPresidentSection sectionId={section.id} />;
+        case SectionType.STUDENT_ACTIVITIES:
+          return <LazyStudentActivitiesSection sectionId={section.id} />;
         default:
           return (
             <div className='p-8 text-center text-gray-500'>
