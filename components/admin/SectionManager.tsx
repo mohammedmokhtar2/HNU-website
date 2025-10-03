@@ -37,6 +37,7 @@ import {
   StudentUnionContent,
   EgyptStudentGroupContent,
   ContactUsContent,
+  PresidentMessageContent,
   getContentForSectionType,
   isHeroContent,
   isAboutContent,
@@ -46,6 +47,7 @@ import {
   isEgyptStudentGroupContent,
   isProgramsSectionContent,
   isContactUsContent,
+  isPresidentMessageContent,
 } from '@/types/section';
 import { SectionType } from '@/types/enums';
 import {
@@ -127,7 +129,7 @@ const sectionTypeLabels = {
   [SectionType.STUDENT_UNION]: 'Student Union',
   [SectionType.COLLEGES_SECTION]: 'Colleges Section',
   [SectionType.EGYPT_STUDENT_GROUP]: 'Egypt Student Group',
-  [SectionType.PRESIDENT]: 'President',
+  [SectionType.PRESIDENT]: "President's Message",
   [SectionType.BLOGS]: 'Blogs',
   [SectionType.CUSTOM]: 'Custom',
   [SectionType.PROGRAMS_SECTION]: 'Programs Section',
@@ -239,6 +241,13 @@ function SortableSectionItem({
         }
         break;
       case SectionType.PRESIDENT:
+        if (
+          content &&
+          typeof content.title === 'object' &&
+          typeof content.presidentName === 'object'
+        ) {
+          return `${content.title?.en || content.title?.ar || "President's Message"} - ${content.presidentName?.en || content.presidentName?.ar || 'President'}`;
+        }
         return 'President Section';
       default:
         return 'Custom Section';
@@ -276,7 +285,7 @@ function SortableSectionItem({
                 <Badge variant='outline' className='text-xs'>
                   {
                     sectionTypeLabels[
-                      section.type as keyof typeof sectionTypeLabels
+                    section.type as keyof typeof sectionTypeLabels
                     ]
                   }
                 </Badge>
@@ -324,17 +333,17 @@ function SortableSectionItem({
                   (section.content as any)?.videoUrl) ||
                   (section.type === 'ABOUT' &&
                     (section.content as any)?.videoUrl)) && (
-                  <div className='flex items-center gap-2'>
-                    <video
-                      width={100}
-                      height={100}
-                      src={(section.content as any).videoUrl}
-                      className='w-16 h-12 object-cover rounded border'
-                      muted
-                    />
-                    <span className='text-xs text-gray-500'>Video</span>
-                  </div>
-                )}
+                    <div className='flex items-center gap-2'>
+                      <video
+                        width={100}
+                        height={100}
+                        src={(section.content as any).videoUrl}
+                        className='w-16 h-12 object-cover rounded border'
+                        muted
+                      />
+                      <span className='text-xs text-gray-500'>Video</span>
+                    </div>
+                  )}
               </div>
             </div>
           </div>
@@ -2157,28 +2166,240 @@ function SectionForm({
       case SectionType.PRESIDENT:
         return (
           <div className='space-y-4'>
-            <div>
-              <Label>Custom Content (JSON)</Label>
-              <Textarea
-                value={JSON.stringify(content, null, 2)}
-                onChange={e => {
-                  try {
-                    const parsed = JSON.parse(e.target.value);
+            {/* Title */}
+            <div className='grid grid-cols-2 gap-4'>
+              <div>
+                <Label>Title (English)</Label>
+                <Input
+                  value={content.title?.en || ''}
+                  onChange={e =>
                     setFormData({
                       ...formData,
-                      content: parsed,
-                    });
-                  } catch (error) {
-                    // Invalid JSON, keep the text as is
-                    setFormData({
-                      ...formData,
-                      content: e.target.value,
-                    });
+                      content: {
+                        ...content,
+                        title: { ...content.title, en: e.target.value },
+                      },
+                    })
                   }
-                }}
-                placeholder='Enter custom content as JSON'
-                rows={6}
-              />
+                  placeholder="e.g., President's Message"
+                />
+              </div>
+              <div>
+                <Label>Title (Arabic)</Label>
+                <Input
+                  value={content.title?.ar || ''}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      content: {
+                        ...content,
+                        title: { ...content.title, ar: e.target.value },
+                      },
+                    })
+                  }
+                  placeholder='مثال: رسالة الرئيس'
+                  dir='rtl'
+                />
+              </div>
+            </div>
+
+            {/* President Name */}
+            <div className='grid grid-cols-2 gap-4'>
+              <div>
+                <Label>President Name (English)</Label>
+                <Input
+                  value={content.presidentName?.en || ''}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      content: {
+                        ...content,
+                        presidentName: {
+                          ...content.presidentName,
+                          en: e.target.value,
+                        },
+                      },
+                    })
+                  }
+                  placeholder='e.g., Dr. John Smith'
+                />
+              </div>
+              <div>
+                <Label>President Name (Arabic)</Label>
+                <Input
+                  value={content.presidentName?.ar || ''}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      content: {
+                        ...content,
+                        presidentName: {
+                          ...content.presidentName,
+                          ar: e.target.value,
+                        },
+                      },
+                    })
+                  }
+                  placeholder='مثال: د. محمد أحمد'
+                  dir='rtl'
+                />
+              </div>
+            </div>
+
+            {/* President Position */}
+            <div className='grid grid-cols-2 gap-4'>
+              <div>
+                <Label>Position (English)</Label>
+                <Input
+                  value={content.presidentPosition?.en || ''}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      content: {
+                        ...content,
+                        presidentPosition: {
+                          ...content.presidentPosition,
+                          en: e.target.value,
+                        },
+                      },
+                    })
+                  }
+                  placeholder='e.g., University President'
+                />
+              </div>
+              <div>
+                <Label>Position (Arabic)</Label>
+                <Input
+                  value={content.presidentPosition?.ar || ''}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      content: {
+                        ...content,
+                        presidentPosition: {
+                          ...content.presidentPosition,
+                          ar: e.target.value,
+                        },
+                      },
+                    })
+                  }
+                  placeholder='مثال: رئيس الجامعة'
+                  dir='rtl'
+                />
+              </div>
+            </div>
+
+            {/* President Image */}
+            <div>
+              <Label>President Image</Label>
+              <div className='flex gap-2'>
+                <Input
+                  value={content.imageUrl || ''}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      content: { ...content, imageUrl: e.target.value },
+                    })
+                  }
+                  placeholder='Enter image URL or click to select'
+                  readOnly
+                />
+                <Button
+                  type='button'
+                  variant='outline'
+                  onClick={() => onImageSelect('imageUrl')}
+                >
+                  <ImageIcon className='h-4 w-4' />
+                </Button>
+              </div>
+              {content.imageUrl && (
+                <div className='mt-2'>
+                  <Image
+                    src={content.imageUrl}
+                    alt='President'
+                    width={150}
+                    height={150}
+                    className='rounded-lg object-cover'
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Signature Image (Optional) */}
+            <div>
+              <Label>Signature Image (Optional)</Label>
+              <div className='flex gap-2'>
+                <Input
+                  value={content.signature || ''}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      content: { ...content, signature: e.target.value },
+                    })
+                  }
+                  placeholder='Enter signature image URL or click to select'
+                  readOnly
+                />
+                <Button
+                  type='button'
+                  variant='outline'
+                  onClick={() => onImageSelect('signature')}
+                >
+                  <ImageIcon className='h-4 w-4' />
+                </Button>
+              </div>
+              {content.signature && (
+                <div className='mt-2'>
+                  <Image
+                    src={content.signature}
+                    alt='Signature'
+                    width={120}
+                    height={60}
+                    className='object-contain'
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Message */}
+            <div className='grid grid-cols-2 gap-4'>
+              <div>
+                <Label>Message (English)</Label>
+                <Textarea
+                  value={content.message?.en || ''}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      content: {
+                        ...content,
+                        message: { ...content.message, en: e.target.value },
+                      },
+                    })
+                  }
+                  placeholder='Enter the president message in English...'
+                  rows={8}
+                  className='font-serif'
+                />
+              </div>
+              <div>
+                <Label>Message (Arabic)</Label>
+                <Textarea
+                  value={content.message?.ar || ''}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      content: {
+                        ...content,
+                        message: { ...content.message, ar: e.target.value },
+                      },
+                    })
+                  }
+                  placeholder='أدخل رسالة الرئيس بالعربية...'
+                  rows={8}
+                  dir='rtl'
+                  className='font-serif'
+                />
+              </div>
             </div>
           </div>
         );
@@ -2249,7 +2470,7 @@ function SectionForm({
 
       {/* Submit Button */}
       <div className='flex justify-end gap-2'>
-        <Button type='button' variant='outline' onClick={() => {}}>
+        <Button type='button' variant='outline' onClick={() => { }}>
           Cancel
         </Button>
         <Button onClick={onSubmit} className='bg-blue-600 hover:bg-blue-700'>

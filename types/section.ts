@@ -125,6 +125,15 @@ export interface ContactUsContent {
   };
 }
 
+export interface PresidentMessageContent {
+  title: BaseContent;
+  presidentName: BaseContent;
+  presidentPosition: BaseContent;
+  message: BaseContent;
+  imageUrl: string;
+  signature?: string; // Optional signature image
+}
+
 export interface CustomContent {
   [key: string]: any; // Flexible content for custom sections
 }
@@ -141,7 +150,7 @@ export type SectionContent =
   | { type: SectionType.COLLEGES_SECTION; content: CollegeSectionContent }
   | { type: SectionType.PROGRAMS_SECTION; content: ProgramsSectionContent }
   | { type: SectionType.EGYPT_STUDENT_GROUP; content: EgyptStudentGroupContent }
-  | { type: SectionType.PRESIDENT; content: CustomContent }
+  | { type: SectionType.PRESIDENT; content: PresidentMessageContent }
   | { type: SectionType.BLOGS; content: BlogsContent }
   | { type: SectionType.CONTACT_US; content: ContactUsContent }
   | { type: SectionType.CUSTOM; content: CustomContent };
@@ -335,6 +344,19 @@ export function isContactUsContent(content: any): content is ContactUsContent {
   );
 }
 
+export function isPresidentMessageContent(
+  content: any
+): content is PresidentMessageContent {
+  return (
+    content &&
+    typeof content.title === 'object' &&
+    typeof content.presidentName === 'object' &&
+    typeof content.presidentPosition === 'object' &&
+    typeof content.message === 'object' &&
+    typeof content.imageUrl === 'string'
+  );
+}
+
 // Helper function to get the correct content type based on section type
 export function getContentForSectionType(type: SectionType): any {
   switch (type) {
@@ -376,7 +398,17 @@ export function getContentForSectionType(type: SectionType): any {
         items: [],
       } as EgyptStudentGroupContent;
     case SectionType.PRESIDENT:
-      return {} as CustomContent;
+      return {
+        title: { ar: 'رسالة الرئيس', en: "President's Message" },
+        presidentName: { ar: 'د. اسم الرئيس', en: 'Dr. President Name' },
+        presidentPosition: { ar: 'رئيس الجامعة', en: 'University President' },
+        message: {
+          ar: 'أهلاً بكم في جامعتنا...',
+          en: 'Welcome to our university...',
+        },
+        imageUrl: '',
+        signature: '',
+      } as PresidentMessageContent;
     case SectionType.BLOGS:
       return {
         title: { ar: 'أحدث المقالات', en: 'Latest Blogs' },

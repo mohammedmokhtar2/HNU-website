@@ -54,6 +54,12 @@ const LazyContactUsSection = React.lazy(() =>
   }))
 );
 
+const LazyPresidentSection = React.lazy(() =>
+  import('./PresidentSection').then(module => ({
+    default: module.PresidentSection,
+  }))
+);
+
 export const SectionRenderer = React.memo(
   ({ section, locale }: SectionRendererProps) => {
     const renderSection = useMemo(() => {
@@ -90,6 +96,8 @@ export const SectionRenderer = React.memo(
               content={section.content as any}
             />
           );
+        case SectionType.PRESIDENT:
+          return <LazyPresidentSection sectionId={section.id} />;
         default:
           return (
             <div className='p-8 text-center text-gray-500'>
