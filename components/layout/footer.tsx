@@ -233,19 +233,19 @@ function Footer({ local }: FooterProps) {
                           );
                         }
 
-                        // Custom Section style - regular links
+                        // Custom Section style - regular links with responsive width
                         return 'href' in item && item.href ? (
                           <Link
                             key={itemIndex}
                             href={item.href}
-                            className='block text-gray-300 hover:text-purple-400 transition-all duration-300 text-left text-base font-medium w-20 mb-2'
+                            className='block text-gray-300 hover:text-purple-400 transition-all duration-300 text-left text-sm font-medium py-2 px-3 mb-2 hover:underline whitespace-nowrap overflow-hidden text-ellipsis'
                           >
                             {itemTitle}
                           </Link>
                         ) : (
                           <div
                             key={itemIndex}
-                            className='block text-gray-400 text-left text-base font-medium'
+                            className='block text-gray-400 text-left text-sm font-medium py-2 px-3 whitespace-nowrap overflow-hidden text-ellipsis'
                           >
                             {itemTitle}
                           </div>
