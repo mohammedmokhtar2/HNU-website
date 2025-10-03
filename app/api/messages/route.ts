@@ -1,8 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import {
-  createAuthenticatedRoute,
-  requireAuth,
-} from '@/lib/middleware/authMiddleware';
 import { db } from '@/lib/db';
 import { contactFormRateLimiter } from '@/lib/rate-limit';
 import {
@@ -14,12 +10,6 @@ import {
 } from '@/types/message';
 
 async function handleGET(req: NextRequest) {
-  // Require authentication for GET requests (admin users viewing messages)
-  const authError = await requireAuth(req);
-  if (authError) {
-    return authError;
-  }
-
   try {
     const { searchParams } = new URL(req.url);
 
