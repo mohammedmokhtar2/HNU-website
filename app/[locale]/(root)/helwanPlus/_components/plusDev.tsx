@@ -15,73 +15,87 @@ const devTeamData = {
     image: '/devs/me.jpeg',
     name: 'Mahmoud Matter',
     description:
-      'Full-stack developer with expertise in React, Node.js, and Next.js',
+      'Tech Lead @ Helwan Plus, Full-stack developer with expertise in React, Node.js, and Next.js',
     roleNum: 2, // is the lead
     roleName: 'Lead Developer',
+    portfolio: 'https://matter-portofilio.vercel.app',
   },
   developer_2: {
-    image: '/person.png',
-    name: 'Sarah Mohamed',
+    image: 'https://qcrk6zwvxd.ufs.sh/f/YNynAnrvbHDNDLhpC75wXsYhIbmJ8Pg0zefVuTKdrWSGyv6c',
+    name: 'Mohamed Ibrahim',
     description:
-      'Frontend specialist passionate about creating beautiful and intuitive user experiences',
+      'Full-stack developer with expertise in React, Node.js',
     roleNum: 1,
     roleName: 'Frontend Developer',
+    portfolio: 'https://mohamed-ibrahim-omar.vercel.app/',
   },
   developer_3: {
-    image: '/person.png',
-    name: 'Omar Ali',
+    image: 'https://qcrk6zwvxd.ufs.sh/f/YNynAnrvbHDN2RqAjb7ZDoBaElAg1NTj8iIz5pdw03VmSMnR',
+    name: 'Ahmed Khairy ',
     description:
-      'Backend engineer focused on scalable architecture and database optimization',
+      'Full-stack developer with expertise in React, Node.js',
     roleNum: 1,
     roleName: 'Backend Developer',
+    portfolio: 'https://ahmed-khairy0106.vercel.app/',
   },
   developer_4: {
-    image: '/person.png',
-    name: 'Ahmed Hassan',
+    image: 'https://qcrk6zwvxd.ufs.sh/f/YNynAnrvbHDNrKr22DONPpMR7jbTfXulOCvnYGz9V6ABU2Hq',
+    name: 'Ahmed Salah',
     description:
-      'Full-stack developer with expertise in React, Node.js, and cloud technologies',
+      'AI Developer and Workflow Automation Specialist',
     roleNum: 2, // is the lead
     roleName: 'Lead Developer',
+    portfolio: null,
   },
   developer_5: {
-    image: '/person.png',
-    name: 'Sarah Mohamed',
+    image: 'https://qcrk6zwvxd.ufs.sh/f/YNynAnrvbHDNPnXFAyUUvVrHIubZJXfkaQDgmnoW5YC21lie',
+    name: 'Yousef Ahmed',
     description:
-      'Frontend specialist passionate about creating beautiful and intuitive user experiences',
+      'Student Union Representative',
     roleNum: 1,
     roleName: 'Frontend Developer',
+    portfolio: null,
+
   },
   developer_6: {
-    image: '/person.png',
-    name: 'Omar Ali',
+    image: 'https://qcrk6zwvxd.ufs.sh/f/YNynAnrvbHDN4dUDXBcVcTedoMjmikQ8uLUbqhtSsGgD3E50',
+    name: 'Ammar Ahmed',
     description:
-      'Backend engineer focused on scalable architecture and database optimization',
+      'Student Union Representative',
     roleNum: 1,
     roleName: 'Backend Developer',
+    portfolio: null,
+
   },
   developer_7: {
-    image: '/person.png',
-    name: 'Ahmed Hassan',
+    image: 'https://qcrk6zwvxd.ufs.sh/f/YNynAnrvbHDNoG4eHT2TLrER4WNiuj9Z5fSAemgh8YvHJ0cw',
+    name: 'Omar Wassem',
     description:
-      'Full-stack developer with expertise in React, Node.js, and cloud technologies',
+      'Frontend specialist passionate about creating beautiful and intuitive user experiences',
     roleNum: 2, // is the lead
     roleName: 'Lead Developer',
+    portfolio: null,
+
   },
   developer_8: {
-    image: '/person.png',
-    name: 'Sarah Mohamed',
+    image: 'https://qcrk6zwvxd.ufs.sh/f/YNynAnrvbHDNbYNIEDe8VuOnGQMHB3kzhFZKp1LtqjUfvXlY',
+    name: 'Abdelrahman Hany',
     description:
       'Frontend specialist passionate about creating beautiful and intuitive user experiences',
     roleNum: 1,
     roleName: 'Frontend Developer',
+    portfolio: null,
+
   },
   developer_9: {
-    image: '/person.png',
-    name: 'Omar Ali',
+    image: 'https://qcrk6zwvxd.ufs.sh/f/YNynAnrvbHDNytoLqhYG9OKAbuoqx10QkIcMfCjtNmUBiy4r',
+    name: 'Moukhtar',
     description:
-      'Backend engineer focused on scalable architecture and database optimization',
+      'AI Developer and Workflow Automation Specialist',
     roleNum: 1,
     roleName: 'Backend Developer',
+    portfolio: null,
+
   },
 };
 const plusDev = () => {
@@ -165,7 +179,8 @@ const plusDev = () => {
               {developers.map((developer, index) => (
                 <div
                   key={index}
-                  className={`relative ${developer.roleNum === 2 ? 'sm:col-span-2 lg:col-span-1 lg:mb-8' : ''}`}
+                  onClick={() => window.open(developer.portfolio || '', '_blank')}
+                  className={`relative ${developer.portfolio ? 'cursor-pointer' : ''} ${developer.roleNum === 2 ? 'sm:col-span-2 lg:col-span-1 lg:mb-8' : ''}`}
                 >
                   <DirectionAwareHover imageUrl={developer.image}>
                     <div className='space-y-2 sm:space-y-3 p-3 sm:p-4'>
@@ -177,6 +192,13 @@ const plusDev = () => {
                       </p>
                       <p className='font-normal text-xs sm:text-sm text-gray-300 mt-2'>
                         {developer.description}
+                      </p>
+                      <p className='font-normal text-xs sm:text-sm text-gray-300 mt-2'>
+                        {developer.portfolio && (
+                          <a href={developer.portfolio} target='_blank' rel='noopener noreferrer' className='text-blue-500'>
+                            View Portfolio
+                          </a>
+                        )}
                       </p>
                     </div>
                   </DirectionAwareHover>
