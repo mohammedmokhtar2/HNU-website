@@ -48,6 +48,40 @@ export interface EgyptStudentGroupContent {
   items: string[]; // Array of strings to be defined later
 }
 
+export interface StudentActivitiesContent {
+  title: BaseContent;
+  studentUnion: {
+    title: BaseContent;
+    description: BaseContent;
+    imageUrl: string;
+    items: BaseContent[];
+    link?: string;
+    head?: {
+      name: BaseContent;
+      imageUrl: string;
+    };
+    vice?: {
+      name: BaseContent;
+      imageUrl: string;
+    };
+  };
+  studentFamily: {
+    title: BaseContent;
+    description: BaseContent;
+    imageUrl: string;
+    items: BaseContent[];
+    link?: string;
+    head?: {
+      name: BaseContent;
+      imageUrl: string;
+    };
+    vice?: {
+      name: BaseContent;
+      imageUrl: string;
+    };
+  };
+}
+
 export interface BlogsContent {
   title: BaseContent;
   description: BaseContent;
@@ -153,6 +187,7 @@ export type SectionContent =
   | { type: SectionType.PRESIDENT; content: PresidentMessageContent }
   | { type: SectionType.BLOGS; content: BlogsContent }
   | { type: SectionType.CONTACT_US; content: ContactUsContent }
+  | { type: SectionType.STUDENT_ACTIVITIES; content: StudentActivitiesContent }
   | { type: SectionType.CUSTOM; content: CustomContent };
 
 export interface Section {
@@ -357,6 +392,19 @@ export function isPresidentMessageContent(
   );
 }
 
+export function isStudentActivitiesContent(
+  content: any
+): content is StudentActivitiesContent {
+  return (
+    content &&
+    typeof content.title === 'object' &&
+    typeof content.studentUnion === 'object' &&
+    typeof content.studentFamily === 'object' &&
+    typeof content.studentUnion.title === 'object' &&
+    typeof content.studentFamily.title === 'object'
+  );
+}
+
 // Helper function to get the correct content type based on section type
 export function getContentForSectionType(type: SectionType): any {
   switch (type) {
@@ -472,6 +520,44 @@ export function getContentForSectionType(type: SectionType): any {
           email: { ar: 'info@university.edu', en: 'info@university.edu' },
         },
       } as ContactUsContent;
+    case SectionType.STUDENT_ACTIVITIES:
+      return {
+        title: { ar: 'الأنشطة الطلابية', en: 'Student Activities' },
+        studentUnion: {
+          title: { ar: 'اتحاد الطلاب', en: 'Student Union' },
+          description: {
+            ar: 'اتحاد الطلاب هو صوت الطلاب في الجامعة',
+            en: 'The Student Union is the voice of students at the university',
+          },
+          imageUrl: '',
+          items: [],
+          head: {
+            name: { ar: '', en: '' },
+            imageUrl: '',
+          },
+          vice: {
+            name: { ar: '', en: '' },
+            imageUrl: '',
+          },
+        },
+        studentFamily: {
+          title: { ar: 'الأسر الطلابية', en: 'Student Family' },
+          description: {
+            ar: 'الأسر الطلابية توفر بيئة داعمة للطلاب',
+            en: 'Student families provide a supportive environment for students',
+          },
+          imageUrl: '',
+          items: [],
+          head: {
+            name: { ar: '', en: '' },
+            imageUrl: '',
+          },
+          vice: {
+            name: { ar: '', en: '' },
+            imageUrl: '',
+          },
+        },
+      } as StudentActivitiesContent;
     case SectionType.HEADER:
     case SectionType.CUSTOM:
       return {} as CustomContent;

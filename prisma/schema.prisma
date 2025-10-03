@@ -231,6 +231,7 @@ enum SectionType {
   CUSTOM
   PROGRAMS
   CONTACT_US
+  STUDENT_ACTIVITIES
 }
 
 enum PageSectionType {

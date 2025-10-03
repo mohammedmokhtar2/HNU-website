@@ -38,6 +38,7 @@ import {
   EgyptStudentGroupContent,
   ContactUsContent,
   PresidentMessageContent,
+  StudentActivitiesContent,
   getContentForSectionType,
   isHeroContent,
   isAboutContent,
@@ -48,6 +49,7 @@ import {
   isProgramsSectionContent,
   isContactUsContent,
   isPresidentMessageContent,
+  isStudentActivitiesContent,
 } from '@/types/section';
 import { SectionType } from '@/types/enums';
 import {
@@ -77,6 +79,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { ImageSelectorModal } from '@/components/ui/image-selector-modal';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   DndContext,
   closestCenter,
@@ -117,6 +120,7 @@ const sectionTypeIcons = {
   [SectionType.CUSTOM]: FileText,
   [SectionType.PROGRAMS_SECTION]: Building2,
   [SectionType.CONTACT_US]: Mail,
+  [SectionType.STUDENT_ACTIVITIES]: Users,
 };
 
 const sectionTypeLabels = {
@@ -134,6 +138,7 @@ const sectionTypeLabels = {
   [SectionType.CUSTOM]: 'Custom',
   [SectionType.PROGRAMS_SECTION]: 'Programs Section',
   [SectionType.CONTACT_US]: 'Contact Us',
+  [SectionType.STUDENT_ACTIVITIES]: 'Student Activities',
 };
 
 // Sortable Section Item Component
@@ -378,6 +383,7 @@ export function SectionManager({
   const [showImageModal, setShowImageModal] = useState(false);
   const [imageField, setImageField] = useState<string>('image');
   const { success, error: showError } = useToast();
+  const queryClient = useQueryClient();
 
   const collegeContext = useCollege();
   const colleges = collegeContext.colleges.map(college => ({
@@ -438,13 +444,36 @@ export function SectionManager({
 
   const handleCreate = async () => {
     try {
+      // Clean content object by removing any properties with dots in their names
+      // These are invalid properties created by previous image upload attempts
+      const cleanContent = { ...formData.content };
+      const keysToRemove = Object.keys(cleanContent).filter(key => key.includes('.'));
+
+      if (keysToRemove.length > 0) {
+        console.log('🧹 Cleaning invalid properties:', keysToRemove);
+        keysToRemove.forEach(key => {
+          delete cleanContent[key];
+        });
+      }
+
+      console.log('📤 Sending section data:', {
+        type: formData.type,
+        contentKeys: Object.keys(cleanContent),
+        order: formData.order,
+      });
+
       const newSection = await SectionService.createSection({
         type: formData.type,
-        content: formData.content,
+        content: cleanContent,
         order: formData.order,
         universityId,
       });
       setSections([...sections, newSection]);
+
+      // Invalidate queries to refresh the section on the frontend
+      queryClient.invalidateQueries({ queryKey: ['section', newSection.id] });
+      queryClient.invalidateQueries({ queryKey: ['sections'] });
+
       setIsCreateDialogOpen(false);
       resetForm();
       success('Section created successfully');
@@ -458,17 +487,33 @@ export function SectionManager({
     if (!editingSection) return;
 
     try {
+      // Clean content object by removing any properties with dots in their names
+      const cleanContent = { ...formData.content };
+      const keysToRemove = Object.keys(cleanContent).filter(key => key.includes('.'));
+
+      if (keysToRemove.length > 0) {
+        console.log('🧹 Cleaning invalid properties:', keysToRemove);
+        keysToRemove.forEach(key => {
+          delete cleanContent[key];
+        });
+      }
+
       const updatedSection = await SectionService.updateSection(
         editingSection.id,
         {
           type: formData.type,
-          content: formData.content,
+          content: cleanContent,
           order: formData.order,
         }
       );
       setSections(
         sections.map(s => (s.id === editingSection.id ? updatedSection : s))
       );
+
+      // Invalidate queries to refresh the section on the frontend
+      queryClient.invalidateQueries({ queryKey: ['section', editingSection.id] });
+      queryClient.invalidateQueries({ queryKey: ['sections'] });
+
       setIsEditDialogOpen(false);
       setEditingSection(null);
       resetForm();
@@ -511,6 +556,11 @@ export function SectionManager({
     try {
       await SectionService.deleteSection(id);
       setSections(sections.filter(s => s.id !== id));
+
+      // Invalidate queries to remove deleted section from cache
+      queryClient.invalidateQueries({ queryKey: ['section', id] });
+      queryClient.invalidateQueries({ queryKey: ['sections'] });
+
       success('Section deleted successfully');
     } catch (error) {
       console.error('Error deleting section:', error);
@@ -563,13 +613,41 @@ export function SectionManager({
   };
 
   const handleImageSelect = (url: string) => {
-    setFormData(prev => ({
-      ...prev,
-      content: {
-        ...prev.content,
-        [imageField]: url,
-      },
-    }));
+    setFormData(prev => {
+      // Handle nested field paths (e.g., "studentUnion.imageUrl", "studentFamily.head.imageUrl")
+      if (imageField.includes('.')) {
+        const parts = imageField.split('.');
+        const updatedContent = { ...prev.content };
+
+        // Navigate through the nested structure
+        let current: any = updatedContent;
+        for (let i = 0; i < parts.length - 1; i++) {
+          if (!current[parts[i]]) {
+            current[parts[i]] = {};
+          } else {
+            current[parts[i]] = { ...current[parts[i]] };
+          }
+          current = current[parts[i]];
+        }
+
+        // Set the final value
+        current[parts[parts.length - 1]] = url;
+
+        return {
+          ...prev,
+          content: updatedContent,
+        };
+      }
+
+      // Handle simple field paths (backward compatibility)
+      return {
+        ...prev,
+        content: {
+          ...prev.content,
+          [imageField]: url,
+        },
+      };
+    });
     setShowImageModal(false);
   };
 
@@ -2399,6 +2477,959 @@ function SectionForm({
                   dir='rtl'
                   className='font-serif'
                 />
+              </div>
+            </div>
+          </div>
+        );
+      case SectionType.STUDENT_ACTIVITIES:
+        return (
+          <div className='space-y-6'>
+            {/* Main Title */}
+            <div className='grid grid-cols-2 gap-4'>
+              <div>
+                <Label>Section Title (English)</Label>
+                <Input
+                  value={content.title?.en || ''}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      content: {
+                        ...content,
+                        title: { ...content.title, en: e.target.value },
+                      },
+                    })
+                  }
+                  placeholder="e.g., Student Activities"
+                />
+              </div>
+              <div>
+                <Label>Section Title (Arabic)</Label>
+                <Input
+                  value={content.title?.ar || ''}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      content: {
+                        ...content,
+                        title: { ...content.title, ar: e.target.value },
+                      },
+                    })
+                  }
+                  placeholder='مثال: الأنشطة الطلابية'
+                />
+              </div>
+            </div>
+
+            {/* Student Union Section */}
+            <div className='p-4 bg-white border-2 border-blue-300 rounded-lg space-y-4'>
+              <h4 className='font-semibold text-blue-700 text-lg bg-blue-100 -m-4 mb-4 p-4 rounded-t-md'>Student Union</h4>
+
+              <div className='grid grid-cols-2 gap-4'>
+                <div>
+                  <Label className='text-gray-800 font-medium'>Title (English)</Label>
+                  <Input
+                    className='text-gray-900'
+                    value={content.studentUnion?.title?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          studentUnion: {
+                            ...content.studentUnion,
+                            title: { ...content.studentUnion?.title, en: e.target.value },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Student Union'
+                  />
+                </div>
+                <div>
+                  <Label className='text-gray-800 font-medium'>Title (Arabic)</Label>
+                  <Input
+                    className='text-gray-900'
+                    value={content.studentUnion?.title?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          studentUnion: {
+                            ...content.studentUnion,
+                            title: { ...content.studentUnion?.title, ar: e.target.value },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='اتحاد الطلاب'
+                  />
+                </div>
+              </div>
+
+              <div className='grid grid-cols-2 gap-4'>
+                <div>
+                  <Label className='text-gray-800 font-medium'>Description (English)</Label>
+                  <Textarea
+                    className='text-gray-900'
+                    value={content.studentUnion?.description?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          studentUnion: {
+                            ...content.studentUnion,
+                            description: { ...content.studentUnion?.description, en: e.target.value },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Description...'
+                    rows={3}
+                  />
+                </div>
+                <div>
+                  <Label className='text-gray-800 font-medium'>Description (Arabic)</Label>
+                  <Textarea
+                    className='text-gray-900'
+                    value={content.studentUnion?.description?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          studentUnion: {
+                            ...content.studentUnion,
+                            description: { ...content.studentUnion?.description, ar: e.target.value },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='الوصف...'
+                    rows={3}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label className='text-gray-800 font-medium'>Image URL</Label>
+                <div className='flex gap-2'>
+                  <Input
+                    className='text-gray-900'
+                    value={content.studentUnion?.imageUrl || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          studentUnion: {
+                            ...content.studentUnion,
+                            imageUrl: e.target.value,
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Image URL'
+                  />
+                  <Button
+                    type='button'
+                    variant='outline'
+                    size='sm'
+                    onClick={() => onImageSelect('studentUnion.imageUrl')}
+                  >
+                    <ImageIcon className='h-4 w-4' />
+                  </Button>
+                </div>
+                {content.studentUnion?.imageUrl && (
+                  <div className='mt-2'>
+                    <Image
+                      width={150}
+                      height={100}
+                      src={content.studentUnion.imageUrl}
+                      alt='Student Union'
+                      className='rounded-lg object-cover'
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Items List */}
+              <div>
+                <Label className='text-gray-800 font-medium'>Items</Label>
+                <div className='space-y-3'>
+                  {(content.studentUnion?.items || []).map((item: any, index: number) => (
+                    <div key={index} className='border border-blue-200 rounded-lg p-3 bg-blue-50/30'>
+                      <div className='flex items-center justify-between mb-2'>
+                        <span className='text-sm font-semibold text-blue-800'>Item {index + 1}</span>
+                        <Button
+                          type='button'
+                          variant='outline'
+                          size='sm'
+                          onClick={() => {
+                            const newItems = (content.studentUnion?.items || []).filter(
+                              (_: any, i: number) => i !== index
+                            );
+                            setFormData({
+                              ...formData,
+                              content: {
+                                ...content,
+                                studentUnion: {
+                                  ...content.studentUnion,
+                                  items: newItems,
+                                },
+                              },
+                            });
+                          }}
+                        >
+                          <X className='h-4 w-4' />
+                        </Button>
+                      </div>
+                      <div className='grid grid-cols-2 gap-3'>
+                        <div>
+                          <Label className='text-xs text-gray-700'>English</Label>
+                          <Input
+                            className='text-gray-900'
+                            value={item?.en || ''}
+                            onChange={e => {
+                              const newItems = [...(content.studentUnion?.items || [])];
+                              newItems[index] = { ...newItems[index], en: e.target.value };
+                              setFormData({
+                                ...formData,
+                                content: {
+                                  ...content,
+                                  studentUnion: {
+                                    ...content.studentUnion,
+                                    items: newItems,
+                                  },
+                                },
+                              });
+                            }}
+                            placeholder='Enter item in English'
+                          />
+                        </div>
+                        <div>
+                          <Label className='text-xs text-gray-700'>Arabic</Label>
+                          <Input
+                            className='text-gray-900'
+                            value={item?.ar || ''}
+                            onChange={e => {
+                              const newItems = [...(content.studentUnion?.items || [])];
+                              newItems[index] = { ...newItems[index], ar: e.target.value };
+                              setFormData({
+                                ...formData,
+                                content: {
+                                  ...content,
+                                  studentUnion: {
+                                    ...content.studentUnion,
+                                    items: newItems,
+                                  },
+                                },
+                              });
+                            }}
+                            placeholder='أدخل العنصر بالعربية'
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <Button
+                    type='button'
+                    variant='outline'
+                    size='sm'
+                    onClick={() => {
+                      const newItems = [...(content.studentUnion?.items || []), { en: '', ar: '' }];
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          studentUnion: {
+                            ...content.studentUnion,
+                            items: newItems,
+                          },
+                        },
+                      });
+                    }}
+                  >
+                    <Plus className='h-4 w-4 mr-2' />
+                    Add Item
+                  </Button>
+                </div>
+              </div>
+
+              {/* Head Member */}
+              <div className='border-t-2 border-blue-200 pt-4 mt-4'>
+                <Label className='text-base font-bold mb-3 block text-blue-800 bg-blue-50 px-3 py-2 rounded'>👤 Head Member</Label>
+                <div className='grid grid-cols-2 gap-4'>
+                  <div>
+                    <Label className='text-gray-800 font-medium'>Name (English)</Label>
+                    <Input
+                      className='text-gray-900'
+                      value={content.studentUnion?.head?.name?.en || ''}
+                      onChange={e =>
+                        setFormData({
+                          ...formData,
+                          content: {
+                            ...content,
+                            studentUnion: {
+                              ...content.studentUnion,
+                              head: {
+                                ...content.studentUnion?.head,
+                                name: { ...content.studentUnion?.head?.name, en: e.target.value },
+                              },
+                            },
+                          },
+                        })
+                      }
+                      placeholder='John Doe'
+                    />
+                  </div>
+                  <div>
+                    <Label className='text-gray-800 font-medium'>Name (Arabic)</Label>
+                    <Input
+                      className='text-gray-900'
+                      value={content.studentUnion?.head?.name?.ar || ''}
+                      onChange={e =>
+                        setFormData({
+                          ...formData,
+                          content: {
+                            ...content,
+                            studentUnion: {
+                              ...content.studentUnion,
+                              head: {
+                                ...content.studentUnion?.head,
+                                name: { ...content.studentUnion?.head?.name, ar: e.target.value },
+                              },
+                            },
+                          },
+                        })
+                      }
+                      placeholder='جون دو'
+                    />
+                  </div>
+                </div>
+                <div className='mt-3'>
+                  <Label className='text-gray-800 font-medium'>Photo URL</Label>
+                  <div className='flex gap-2'>
+                    <Input
+                      className='text-gray-900'
+                      value={content.studentUnion?.head?.imageUrl || ''}
+                      onChange={e =>
+                        setFormData({
+                          ...formData,
+                          content: {
+                            ...content,
+                            studentUnion: {
+                              ...content.studentUnion,
+                              head: {
+                                ...content.studentUnion?.head,
+                                imageUrl: e.target.value,
+                              },
+                            },
+                          },
+                        })
+                      }
+                      placeholder='Image URL'
+                    />
+                    <Button
+                      type='button'
+                      variant='outline'
+                      size='sm'
+                      onClick={() => onImageSelect('studentUnion.head.imageUrl')}
+                    >
+                      <ImageIcon className='h-4 w-4' />
+                    </Button>
+                  </div>
+                  {content.studentUnion?.head?.imageUrl && (
+                    <div className='mt-2'>
+                      <Image
+                        width={80}
+                        height={80}
+                        src={content.studentUnion.head.imageUrl}
+                        alt='Head'
+                        className='rounded-full object-cover'
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Vice Member */}
+              <div className='border-t-2 border-blue-200 pt-4 mt-4'>
+                <Label className='text-base font-bold mb-3 block text-blue-800 bg-blue-50 px-3 py-2 rounded'>👤 Vice Head Member</Label>
+                <div className='grid grid-cols-2 gap-4'>
+                  <div>
+                    <Label className='text-gray-800 font-medium'>Name (English)</Label>
+                    <Input
+                      className='text-gray-900'
+                      value={content.studentUnion?.vice?.name?.en || ''}
+                      onChange={e =>
+                        setFormData({
+                          ...formData,
+                          content: {
+                            ...content,
+                            studentUnion: {
+                              ...content.studentUnion,
+                              vice: {
+                                ...content.studentUnion?.vice,
+                                name: { ...content.studentUnion?.vice?.name, en: e.target.value },
+                              },
+                            },
+                          },
+                        })
+                      }
+                      placeholder='Jane Smith'
+                    />
+                  </div>
+                  <div>
+                    <Label>Name (Arabic)</Label>
+                    <Input
+                      value={content.studentUnion?.vice?.name?.ar || ''}
+                      onChange={e =>
+                        setFormData({
+                          ...formData,
+                          content: {
+                            ...content,
+                            studentUnion: {
+                              ...content.studentUnion,
+                              vice: {
+                                ...content.studentUnion?.vice,
+                                name: { ...content.studentUnion?.vice?.name, ar: e.target.value },
+                              },
+                            },
+                          },
+                        })
+                      }
+                      placeholder='جين سميث'
+                    />
+                  </div>
+                </div>
+                <div className='mt-3'>
+                  <Label className='text-gray-800 font-medium'>Photo URL</Label>
+                  <div className='flex gap-2'>
+                    <Input
+                      className='text-gray-900'
+                      value={content.studentUnion?.vice?.imageUrl || ''}
+                      onChange={e =>
+                        setFormData({
+                          ...formData,
+                          content: {
+                            ...content,
+                            studentUnion: {
+                              ...content.studentUnion,
+                              vice: {
+                                ...content.studentUnion?.vice,
+                                imageUrl: e.target.value,
+                              },
+                            },
+                          },
+                        })
+                      }
+                      placeholder='Image URL'
+                    />
+                    <Button
+                      type='button'
+                      variant='outline'
+                      size='sm'
+                      onClick={() => onImageSelect('studentUnion.vice.imageUrl')}
+                    >
+                      <ImageIcon className='h-4 w-4' />
+                    </Button>
+                  </div>
+                  {content.studentUnion?.vice?.imageUrl && (
+                    <div className='mt-2'>
+                      <Image
+                        width={80}
+                        height={80}
+                        src={content.studentUnion.vice.imageUrl}
+                        alt='Vice'
+                        className='rounded-full object-cover'
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Link */}
+              <div className='border-t-2 border-blue-200 pt-4 mt-4'>
+                <Label className='text-base font-bold mb-3 block text-blue-800 bg-blue-50 px-3 py-2 rounded'>🔗 Page Link</Label>
+                <div>
+                  <Label className='text-gray-800 font-medium'>Link URL (e.g., /student-union)</Label>
+                  <Input
+                    className='text-gray-900'
+                    value={content.studentUnion?.link || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          studentUnion: {
+                            ...content.studentUnion,
+                            link: e.target.value,
+                          },
+                        },
+                      })
+                    }
+                    placeholder='/student-union'
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Student Family Section */}
+            <div className='p-4 bg-white border-2 border-purple-300 rounded-lg space-y-4'>
+              <h4 className='font-semibold text-purple-700 text-lg bg-purple-100 -m-4 mb-4 p-4 rounded-t-md'>Student Family</h4>
+
+              <div className='grid grid-cols-2 gap-4'>
+                <div>
+                  <Label className='text-gray-800 font-medium'>Title (English)</Label>
+                  <Input
+                    className='text-gray-900'
+                    value={content.studentFamily?.title?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          studentFamily: {
+                            ...content.studentFamily,
+                            title: { ...content.studentFamily?.title, en: e.target.value },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Student Family'
+                  />
+                </div>
+                <div>
+                  <Label className='text-gray-800 font-medium'>Title (Arabic)</Label>
+                  <Input
+                    className='text-gray-900'
+                    value={content.studentFamily?.title?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          studentFamily: {
+                            ...content.studentFamily,
+                            title: { ...content.studentFamily?.title, ar: e.target.value },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='الأسر الطلابية'
+                  />
+                </div>
+              </div>
+
+              <div className='grid grid-cols-2 gap-4'>
+                <div>
+                  <Label className='text-gray-800 font-medium'>Description (English)</Label>
+                  <Textarea
+                    className='text-gray-900'
+                    value={content.studentFamily?.description?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          studentFamily: {
+                            ...content.studentFamily,
+                            description: { ...content.studentFamily?.description, en: e.target.value },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Description...'
+                    rows={3}
+                  />
+                </div>
+                <div>
+                  <Label className='text-gray-800 font-medium'>Description (Arabic)</Label>
+                  <Textarea
+                    className='text-gray-900'
+                    value={content.studentFamily?.description?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          studentFamily: {
+                            ...content.studentFamily,
+                            description: { ...content.studentFamily?.description, ar: e.target.value },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='الوصف...'
+                    rows={3}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label className='text-gray-800 font-medium'>Image URL</Label>
+                <div className='flex gap-2'>
+                  <Input
+                    className='text-gray-900'
+                    value={content.studentFamily?.imageUrl || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          studentFamily: {
+                            ...content.studentFamily,
+                            imageUrl: e.target.value,
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Image URL'
+                  />
+                  <Button
+                    type='button'
+                    variant='outline'
+                    size='sm'
+                    onClick={() => onImageSelect('studentFamily.imageUrl')}
+                  >
+                    <ImageIcon className='h-4 w-4' />
+                  </Button>
+                </div>
+                {content.studentFamily?.imageUrl && (
+                  <div className='mt-2'>
+                    <Image
+                      width={150}
+                      height={100}
+                      src={content.studentFamily.imageUrl}
+                      alt='Student Family'
+                      className='rounded-lg object-cover'
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Items List */}
+              <div>
+                <Label className='text-gray-800 font-medium'>Items</Label>
+                <div className='space-y-3'>
+                  {(content.studentFamily?.items || []).map((item: any, index: number) => (
+                    <div key={index} className='border border-purple-200 rounded-lg p-3 bg-purple-50/30'>
+                      <div className='flex items-center justify-between mb-2'>
+                        <span className='text-sm font-semibold text-purple-800'>Item {index + 1}</span>
+                        <Button
+                          type='button'
+                          variant='outline'
+                          size='sm'
+                          onClick={() => {
+                            const newItems = (content.studentFamily?.items || []).filter(
+                              (_: any, i: number) => i !== index
+                            );
+                            setFormData({
+                              ...formData,
+                              content: {
+                                ...content,
+                                studentFamily: {
+                                  ...content.studentFamily,
+                                  items: newItems,
+                                },
+                              },
+                            });
+                          }}
+                        >
+                          <X className='h-4 w-4' />
+                        </Button>
+                      </div>
+                      <div className='grid grid-cols-2 gap-3'>
+                        <div>
+                          <Label className='text-xs text-gray-700'>English</Label>
+                          <Input
+                            className='text-gray-900'
+                            value={item?.en || ''}
+                            onChange={e => {
+                              const newItems = [...(content.studentFamily?.items || [])];
+                              newItems[index] = { ...newItems[index], en: e.target.value };
+                              setFormData({
+                                ...formData,
+                                content: {
+                                  ...content,
+                                  studentFamily: {
+                                    ...content.studentFamily,
+                                    items: newItems,
+                                  },
+                                },
+                              });
+                            }}
+                            placeholder='Enter item in English'
+                          />
+                        </div>
+                        <div>
+                          <Label className='text-xs text-gray-700'>Arabic</Label>
+                          <Input
+                            className='text-gray-900'
+                            value={item?.ar || ''}
+                            onChange={e => {
+                              const newItems = [...(content.studentFamily?.items || [])];
+                              newItems[index] = { ...newItems[index], ar: e.target.value };
+                              setFormData({
+                                ...formData,
+                                content: {
+                                  ...content,
+                                  studentFamily: {
+                                    ...content.studentFamily,
+                                    items: newItems,
+                                  },
+                                },
+                              });
+                            }}
+                            placeholder='أدخل العنصر بالعربية'
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <Button
+                    type='button'
+                    variant='outline'
+                    size='sm'
+                    onClick={() => {
+                      const newItems = [...(content.studentFamily?.items || []), { en: '', ar: '' }];
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          studentFamily: {
+                            ...content.studentFamily,
+                            items: newItems,
+                          },
+                        },
+                      });
+                    }}
+                  >
+                    <Plus className='h-4 w-4 mr-2' />
+                    Add Item
+                  </Button>
+                </div>
+              </div>
+
+              {/* Head Member */}
+              <div className='border-t-2 border-purple-200 pt-4 mt-4'>
+                <Label className='text-base font-bold mb-3 block text-purple-800 bg-purple-50 px-3 py-2 rounded'>👤 Head Member</Label>
+                <div className='grid grid-cols-2 gap-4'>
+                  <div>
+                    <Label className='text-gray-800 font-medium'>Name (English)</Label>
+                    <Input
+                      className='text-gray-900'
+                      value={content.studentFamily?.head?.name?.en || ''}
+                      onChange={e =>
+                        setFormData({
+                          ...formData,
+                          content: {
+                            ...content,
+                            studentFamily: {
+                              ...content.studentFamily,
+                              head: {
+                                ...content.studentFamily?.head,
+                                name: { ...content.studentFamily?.head?.name, en: e.target.value },
+                              },
+                            },
+                          },
+                        })
+                      }
+                      placeholder='John Doe'
+                    />
+                  </div>
+                  <div>
+                    <Label className='text-gray-800 font-medium'>Name (Arabic)</Label>
+                    <Input
+                      className='text-gray-900'
+                      value={content.studentFamily?.head?.name?.ar || ''}
+                      onChange={e =>
+                        setFormData({
+                          ...formData,
+                          content: {
+                            ...content,
+                            studentFamily: {
+                              ...content.studentFamily,
+                              head: {
+                                ...content.studentFamily?.head,
+                                name: { ...content.studentFamily?.head?.name, ar: e.target.value },
+                              },
+                            },
+                          },
+                        })
+                      }
+                      placeholder='جون دو'
+                    />
+                  </div>
+                </div>
+                <div className='mt-3'>
+                  <Label className='text-gray-800 font-medium'>Photo URL</Label>
+                  <div className='flex gap-2'>
+                    <Input
+                      className='text-gray-900'
+                      value={content.studentFamily?.head?.imageUrl || ''}
+                      onChange={e =>
+                        setFormData({
+                          ...formData,
+                          content: {
+                            ...content,
+                            studentFamily: {
+                              ...content.studentFamily,
+                              head: {
+                                ...content.studentFamily?.head,
+                                imageUrl: e.target.value,
+                              },
+                            },
+                          },
+                        })
+                      }
+                      placeholder='Image URL'
+                    />
+                    <Button
+                      type='button'
+                      variant='outline'
+                      size='sm'
+                      onClick={() => onImageSelect('studentFamily.head.imageUrl')}
+                    >
+                      <ImageIcon className='h-4 w-4' />
+                    </Button>
+                  </div>
+                  {content.studentFamily?.head?.imageUrl && (
+                    <div className='mt-2'>
+                      <Image
+                        width={80}
+                        height={80}
+                        src={content.studentFamily.head.imageUrl}
+                        alt='Head'
+                        className='rounded-full object-cover'
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Vice Member */}
+              <div className='border-t-2 border-purple-200 pt-4 mt-4'>
+                <Label className='text-base font-bold mb-3 block text-purple-800 bg-purple-50 px-3 py-2 rounded'>👤 Vice Head Member</Label>
+                <div className='grid grid-cols-2 gap-4'>
+                  <div>
+                    <Label className='text-gray-800 font-medium'>Name (English)</Label>
+                    <Input
+                      className='text-gray-900'
+                      value={content.studentFamily?.vice?.name?.en || ''}
+                      onChange={e =>
+                        setFormData({
+                          ...formData,
+                          content: {
+                            ...content,
+                            studentFamily: {
+                              ...content.studentFamily,
+                              vice: {
+                                ...content.studentFamily?.vice,
+                                name: { ...content.studentFamily?.vice?.name, en: e.target.value },
+                              },
+                            },
+                          },
+                        })
+                      }
+                      placeholder='Jane Smith'
+                    />
+                  </div>
+                  <div>
+                    <Label className='text-gray-800 font-medium'>Name (Arabic)</Label>
+                    <Input
+                      className='text-gray-900'
+                      value={content.studentFamily?.vice?.name?.ar || ''}
+                      onChange={e =>
+                        setFormData({
+                          ...formData,
+                          content: {
+                            ...content,
+                            studentFamily: {
+                              ...content.studentFamily,
+                              vice: {
+                                ...content.studentFamily?.vice,
+                                name: { ...content.studentFamily?.vice?.name, ar: e.target.value },
+                              },
+                            },
+                          },
+                        })
+                      }
+                      placeholder='جين سميث'
+                    />
+                  </div>
+                </div>
+                <div className='mt-3'>
+                  <Label className='text-gray-800 font-medium'>Photo URL</Label>
+                  <div className='flex gap-2'>
+                    <Input
+                      className='text-gray-900'
+                      value={content.studentFamily?.vice?.imageUrl || ''}
+                      onChange={e =>
+                        setFormData({
+                          ...formData,
+                          content: {
+                            ...content,
+                            studentFamily: {
+                              ...content.studentFamily,
+                              vice: {
+                                ...content.studentFamily?.vice,
+                                imageUrl: e.target.value,
+                              },
+                            },
+                          },
+                        })
+                      }
+                      placeholder='Image URL'
+                    />
+                    <Button
+                      type='button'
+                      variant='outline'
+                      size='sm'
+                      onClick={() => onImageSelect('studentFamily.vice.imageUrl')}
+                    >
+                      <ImageIcon className='h-4 w-4' />
+                    </Button>
+                  </div>
+                  {content.studentFamily?.vice?.imageUrl && (
+                    <div className='mt-2'>
+                      <Image
+                        width={80}
+                        height={80}
+                        src={content.studentFamily.vice.imageUrl}
+                        alt='Vice'
+                        className='rounded-full object-cover'
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Link */}
+              <div className='border-t-2 border-purple-200 pt-4 mt-4'>
+                <Label className='text-base font-bold mb-3 block text-purple-800 bg-purple-50 px-3 py-2 rounded'>🔗 Page Link</Label>
+                <div>
+                  <Label className='text-gray-800 font-medium'>Link URL (e.g., /student-family)</Label>
+                  <Input
+                    className='text-gray-900'
+                    value={content.studentFamily?.link || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          studentFamily: {
+                            ...content.studentFamily,
+                            link: e.target.value,
+                          },
+                        },
+                      })
+                    }
+                    placeholder='/student-family'
+                  />
+                </div>
               </div>
             </div>
           </div>
