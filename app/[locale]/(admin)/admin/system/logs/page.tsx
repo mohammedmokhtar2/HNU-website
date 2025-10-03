@@ -59,6 +59,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import Image from 'next/image';
+import { LogService, AuditLog } from '@/services/log.service';
 
 // Types
 interface AuditLogMetadata {
@@ -75,125 +76,6 @@ interface AuditLogMetadata {
   statusCode?: number;
   [key: string]: any; // For any additional fields
 }
-
-interface AuditLog {
-  id: string;
-  action: string;
-  entity: string;
-  entityId?: string;
-  metadata?: AuditLogMetadata;
-  userId?: string;
-  clerkId?: string;
-  sessionId?: string;
-  isGuest: boolean;
-  ipAddress?: string;
-  userAgent?: string;
-  createdAt: string;
-  clerkUser?: {
-    id: string;
-    name?: string;
-    email: string;
-    role: string;
-    imageUrl?: string;
-  };
-}
-
-// interface LogStats {
-//   totalLogs: number;
-//   logsByAction: Array<{ action: string; _count: { action: number } }>;
-//   logsByEntity: Array<{ entity: string; _count: { entity: number } }>;
-//   userStats: Array<{
-//     userId: string;
-//     userName: string;
-//     userEmail: string;
-//     userRole: string;
-//     count: number;
-//   }>;
-//   dailyStats: Array<{ date: string; count: number }>;
-//   recentLogs: AuditLog[];
-// }
-
-// API functions
-const LogsAPI = {
-  getLogs: async (params: any) => {
-    const searchParams = new URLSearchParams();
-    Object.entries(params).forEach(([key, value]) => {
-      if (value) searchParams.append(key, value.toString());
-    });
-
-    const response = await fetch(`/api/user-actions/logs?${searchParams}`);
-    if (!response.ok) throw new Error('Failed to fetch logs');
-    return response.json();
-  },
-
-  searchLogs: async (params: any) => {
-    const searchParams = new URLSearchParams();
-    Object.entries(params).forEach(([key, value]) => {
-      if (value) searchParams.append(key, value.toString());
-    });
-
-    const response = await fetch(`/api/user-actions/logs?${searchParams}`);
-    if (!response.ok) throw new Error('Failed to search logs');
-    return response.json();
-  },
-
-  getStats: async (params: any) => {
-    // For now, we'll get stats from the logs endpoint
-    // In the future, you can create a dedicated stats endpoint
-    const searchParams = new URLSearchParams();
-    Object.entries(params).forEach(([key, value]) => {
-      if (value) searchParams.append(key, value.toString());
-    });
-
-    const response = await fetch(`/api/user-actions/logs?${searchParams}&limit=1000`);
-    if (!response.ok) throw new Error('Failed to fetch stats');
-    const data = await response.json();
-
-    // Calculate stats from the logs data
-    const logs = data.logs || [];
-    const stats = {
-      totalLogs: logs.length,
-      logsByAction: logs.reduce((acc: any, log: AuditLog) => {
-        const action = log.action;
-        acc[action] = (acc[action] || 0) + 1;
-        return acc;
-      }, {}),
-      logsByEntity: logs.reduce((acc: any, log: AuditLog) => {
-        const entity = log.entity;
-        acc[entity] = (acc[entity] || 0) + 1;
-        return acc;
-      }, {}),
-      guestLogs: logs.filter((log: AuditLog) => log.isGuest).length,
-      authenticatedLogs: logs.filter((log: AuditLog) => !log.isGuest).length,
-    };
-
-    return { stats };
-  },
-
-  deleteLogs: async (data: { logIds?: string[]; filters?: any }) => {
-    const response = await fetch('/api/logs', {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-    if (!response.ok) throw new Error('Failed to delete logs');
-    return response.json();
-  },
-
-  deleteAllLogs: async () => {
-    const response = await fetch('/api/logs', {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ deleteAll: true }),
-    });
-    if (!response.ok) throw new Error('Failed to delete all logs');
-    return response.json();
-  },
-};
 
 export default function LogsPage() {
   // Note: Permission checks removed - all users can access logs for now
@@ -248,23 +130,23 @@ export default function LogsPage() {
     error: logsError,
   } = useQuery({
     queryKey: ['logs', queryParams],
-    queryFn: () => LogsAPI.getLogs(queryParams),
+    queryFn: () => LogService.getLogs(queryParams),
   });
 
   const { data: searchData } = useQuery({
     queryKey: ['logs-search', { ...queryParams, query: searchQuery }],
-    queryFn: () => LogsAPI.searchLogs({ ...queryParams, query: searchQuery }),
+    queryFn: () => LogService.searchLogs({ ...queryParams, query: searchQuery }),
     enabled: !!searchQuery,
   });
 
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['logs-stats', { startDate, endDate }],
-    queryFn: () => LogsAPI.getStats({ startDate, endDate }),
+    queryFn: () => LogService.getLogStats({ startDate, endDate }),
   });
 
   // Mutations
   const deleteLogsMutation = useMutation({
-    mutationFn: LogsAPI.deleteLogs,
+    mutationFn: LogService.deleteLogs,
     onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: ['logs'] });
       queryClient.invalidateQueries({ queryKey: ['logs-search'] });
@@ -279,7 +161,7 @@ export default function LogsPage() {
   });
 
   const deleteAllLogsMutation = useMutation({
-    mutationFn: LogsAPI.deleteAllLogs,
+    mutationFn: LogService.deleteAllLogs,
     onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: ['logs'] });
       queryClient.invalidateQueries({ queryKey: ['logs-search'] });
@@ -429,9 +311,9 @@ export default function LogsPage() {
 
   const confirmDelete = useCallback(() => {
     if (deleteMode === 'selected') {
-      deleteLogsMutation.mutate({ logIds: selectedLogs });
+      deleteLogsMutation.mutate(selectedLogs);
     } else if (deleteMode === 'filtered') {
-      deleteLogsMutation.mutate({ filters: queryParams });
+      deleteLogsMutation.mutate(queryParams as any);
     } else if (deleteMode === 'all') {
       deleteAllLogsMutation.mutate();
     }
@@ -840,9 +722,7 @@ export default function LogsPage() {
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                   onClick={() =>
-                                    deleteLogsMutation.mutate({
-                                      logIds: [log.id],
-                                    })
+                                    deleteLogsMutation.mutate([log.id])
                                   }
                                   className='text-red-600'
                                 >
