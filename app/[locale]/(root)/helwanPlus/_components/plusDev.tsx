@@ -89,12 +89,12 @@ const devTeamData = {
   },
   developer_9: {
     image: 'https://qcrk6zwvxd.ufs.sh/f/YNynAnrvbHDNytoLqhYG9OKAbuoqx10QkIcMfCjtNmUBiy4r',
-    name: 'Moukhtar',
+    name: 'Mohammed Mokhtar',
     description:
       'AI Developer and Workflow Automation Specialist',
     roleNum: 1,
     roleName: 'Backend Developer',
-    portfolio: null,
+    portfolio: "https://mohammedmokhtar2.github.io/Portfolio/",
 
   },
 };
