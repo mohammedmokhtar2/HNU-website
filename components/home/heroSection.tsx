@@ -1,6 +1,7 @@
 'use client';
 import Image from 'next/image';
 import React, { useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 // import { socialMediaLinks } from '@/data';
 // import { Facebook, Linkedin, Instagram, Twitter, Youtube } from 'lucide-react';
 // import { FaTelegram, FaTiktok } from 'react-icons/fa';
@@ -27,6 +28,7 @@ const HeroSection = ({
   image,
   local,
 }: HeroSectionProps) => {
+  const router = useRouter();
   // const [isMuted, setIsMuted] = useState(true);
   const [mediaType, setMediaType] = useState<'video' | 'image'>('video');
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -118,9 +120,8 @@ const HeroSection = ({
             loop
             muted={true}
             disablePictureInPicture
-            className={`w-full h-full object-cover transition-all duration-500 ${
-              isTransitioning ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
-            }`}
+            className={`w-full h-full object-cover transition-all duration-500 ${isTransitioning ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
+              }`}
           />
         )}
         {image && mediaType === 'image' && (
@@ -128,9 +129,8 @@ const HeroSection = ({
             src={image}
             alt='Hero background'
             fill
-            className={`object-cover transition-all duration-500 ${
-              isTransitioning ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
-            }`}
+            className={`object-cover transition-all duration-500 ${isTransitioning ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
+              }`}
             priority
           />
         )}
@@ -143,9 +143,8 @@ const HeroSection = ({
           <button
             onClick={() => switchMediaType('video')}
             disabled={isTransitioning}
-            className={`relative p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 group ${
-              mediaType === 'video' ? 'bg-white/40 ring-2 ring-white/50' : ''
-            } ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
+            className={`relative p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 group ${mediaType === 'video' ? 'bg-white/40 ring-2 ring-white/50' : ''
+              } ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
             aria-label='Switch to video'
           >
             <svg
@@ -165,9 +164,8 @@ const HeroSection = ({
           <button
             onClick={() => switchMediaType('image')}
             disabled={isTransitioning}
-            className={`relative p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 group ${
-              mediaType === 'image' ? 'bg-white/40 ring-2 ring-white/50' : ''
-            } ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
+            className={`relative p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 group ${mediaType === 'image' ? 'bg-white/40 ring-2 ring-white/50' : ''
+              } ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
             aria-label='Switch to image'
           >
             <svg
@@ -242,7 +240,10 @@ const HeroSection = ({
             className={`flex flex-col ${local === 'ar' ? 'justify-end' : 'justify-start'} sm:flex-row gap-4 animate-fade-in-up animation-delay-400 ${local === 'ar' ? 'sm:flex-row-reverse' : 'sm:flex-row'}`}
           >
             <button
-              onClick={() => scrollToSection('programs')}
+              onClick={() => {
+                console.log('Navigating to:', `/${local}/colleges`);
+                router.push(`/${local}/colleges`);
+              }}
               className='px-8 py-4 bg-white text-[#023e8a] font-semibold rounded-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl'
             >
               {heroT('discover_all_programs')}

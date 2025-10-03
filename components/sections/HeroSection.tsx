@@ -1,6 +1,7 @@
 'use client';
 import Image from 'next/image';
 import React, { useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Section, HeroContent } from '@/types/section';
 
@@ -10,6 +11,7 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ section, locale }: HeroSectionProps) {
+  const router = useRouter();
   // Cast content to HeroContent type for type safety
   const content = section.content as HeroContent;
 
@@ -79,9 +81,8 @@ export function HeroSection({ section, locale }: HeroSectionProps) {
             loop={true}
             muted={true}
             disablePictureInPicture
-            className={`w-full h-full object-cover transition-all duration-500 ${
-              isTransitioning ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
-            }`}
+            className={`w-full h-full object-cover transition-all duration-500 ${isTransitioning ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
+              }`}
           />
         )}
         {hasImage && mediaType === 'image' && (
@@ -89,9 +90,8 @@ export function HeroSection({ section, locale }: HeroSectionProps) {
             src={heroData.imageUrl}
             alt='Hero background'
             fill
-            className={`object-cover transition-all duration-500 ${
-              isTransitioning ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
-            }`}
+            className={`object-cover transition-all duration-500 ${isTransitioning ? 'opacity-0 scale-105' : 'opacity-100 scale-100'
+              }`}
             priority
           />
         )}
@@ -104,9 +104,8 @@ export function HeroSection({ section, locale }: HeroSectionProps) {
           <button
             onClick={() => switchMediaType('video')}
             disabled={isTransitioning}
-            className={`relative p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 group ${
-              mediaType === 'video' ? 'bg-white/40 ring-2 ring-white/50' : ''
-            } ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
+            className={`relative p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 group ${mediaType === 'video' ? 'bg-white/40 ring-2 ring-white/50' : ''
+              } ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
             aria-label='Switch to video'
           >
             <svg
@@ -126,9 +125,8 @@ export function HeroSection({ section, locale }: HeroSectionProps) {
           <button
             onClick={() => switchMediaType('image')}
             disabled={isTransitioning}
-            className={`relative p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 group ${
-              mediaType === 'image' ? 'bg-white/40 ring-2 ring-white/50' : ''
-            } ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
+            className={`relative p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-all duration-300 group ${mediaType === 'image' ? 'bg-white/40 ring-2 ring-white/50' : ''
+              } ${isTransitioning ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
             aria-label='Switch to image'
           >
             <svg
@@ -178,7 +176,10 @@ export function HeroSection({ section, locale }: HeroSectionProps) {
             className={`flex flex-col ${locale === 'ar' ? 'justify-end' : 'justify-start'} sm:flex-row gap-4 mb-50 animate-fade-in-up animation-delay-400 ${locale === 'ar' ? 'sm:flex-row-reverse' : 'sm:flex-row'}`}
           >
             <button
-              onClick={() => scrollToSection('programs')}
+              onClick={() => {
+                console.log('Navigating to:', `/${locale}/colleges`);
+                router.push(`/${locale}/colleges`);
+              }}
               className='px-8 py-4 bg-white text-[#023e8a] font-semibold rounded-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl'
             >
               {heroT('discover_all_programs')}

@@ -35,6 +35,21 @@
   "programs": {
     "learn_more": "المزيد"
   },
+  "colleges": {
+    "title": "كلياتنا",
+    "subtitle": "استكشف مجموعتنا المتنوعة من الكليات التي تقدم تعليمًا وفرص بحثية على مستوى عالمي",
+    "colleges_count": "كلية متاحة",
+    "search_placeholder": "البحث عن الكليات...",
+    "sort_by": "ترتيب حسب",
+    "sort_by_name": "الاسم",
+    "sort_by_students": "عدد الطلاب",
+    "sort_by_programs": "عدد البرامج",
+    "no_colleges_found": "لم يتم العثور على كليات",
+    "no_colleges_description": "لم نتمكن من العثور على أي كليات تطابق معايير البحث الخاصة بك. حاول تعديل المرشحات.",
+    "showing_results": "عرض {count} من {total} كلية",
+    "loading": "جاري تحميل الكليات...",
+    "error": "خطأ في تحميل الكليات"
+  },
   "expand": {
     "About-this": " عن هذا",
     "Featured": "مميز",

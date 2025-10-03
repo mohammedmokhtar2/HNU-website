@@ -111,7 +111,7 @@ export function CollageSection({ sectionId }: CollegeSectionProps) {
             </>
             <div className='w-full flex justify-center mt-4'>
               <Link
-                href='/programs'
+                href='/colleges'
                 className='inline-flex items-center gap-2 text-[#023e8a] font-semibold text-base px-5 py-2.5 rounded-xl transition-all duration-300 group hover:text-blue-700'
               >
                 {CollageSectionData.buttonText?.[

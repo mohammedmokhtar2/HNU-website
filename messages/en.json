@@ -35,6 +35,21 @@
   "programs": {
     "learn_more": "Learn More"
   },
+  "colleges": {
+    "title": "Our Colleges",
+    "subtitle": "Explore our diverse range of colleges offering world-class education and research opportunities",
+    "colleges_count": "colleges available",
+    "search_placeholder": "Search for colleges...",
+    "sort_by": "Sort by",
+    "sort_by_name": "Name",
+    "sort_by_students": "Number of Students",
+    "sort_by_programs": "Number of Programs",
+    "no_colleges_found": "No Colleges Found",
+    "no_colleges_description": "We couldn't find any colleges matching your search criteria. Try adjusting your filters.",
+    "showing_results": "Showing {count} of {total} colleges",
+    "loading": "Loading colleges...",
+    "error": "Error loading colleges"
+  },
   "expand": {
     "About-this": "About this",
     "Featured": "Featured",
