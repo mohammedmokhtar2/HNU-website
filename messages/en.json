@@ -30,7 +30,10 @@
   },
   "hero": {
     "discover_all_programs": "Discover All Programs",
-    "learn_more": "Learn More"
+    "learn_more": "Learn More",
+    "view_blog": "View Blog",
+    "view_event": "View Event",
+    "read_more": "Read More"
   },
   "programs": {
     "learn_more": "Learn More"

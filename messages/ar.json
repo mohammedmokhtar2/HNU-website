@@ -30,7 +30,10 @@
   },
   "hero": {
     "discover_all_programs": "اكتشف جميع البرامج",
-    "learn_more": "المزيد"
+    "learn_more": "المزيد",
+    "view_blog": "عرض المدونة",
+    "view_event": "عرض الحدث",
+    "read_more": "اقرأ المزيد"
   },
   "programs": {
     "learn_more": "المزيد"

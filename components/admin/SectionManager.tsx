@@ -80,6 +80,7 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { ImageSelectorModal } from '@/components/ui/image-selector-modal';
 import { useQueryClient } from '@tanstack/react-query';
+import { useBlogsAndEvents, getBlogTitle } from '@/hooks/use-blogs-events';
 import {
   DndContext,
   closestCenter,
@@ -290,7 +291,7 @@ function SortableSectionItem({
                 <Badge variant='outline' className='text-xs'>
                   {
                     sectionTypeLabels[
-                      section.type as keyof typeof sectionTypeLabels
+                    section.type as keyof typeof sectionTypeLabels
                     ]
                   }
                 </Badge>
@@ -338,17 +339,17 @@ function SortableSectionItem({
                   (section.content as any)?.videoUrl) ||
                   (section.type === 'ABOUT' &&
                     (section.content as any)?.videoUrl)) && (
-                  <div className='flex items-center gap-2'>
-                    <video
-                      width={100}
-                      height={100}
-                      src={(section.content as any).videoUrl}
-                      className='w-16 h-12 object-cover rounded border'
-                      muted
-                    />
-                    <span className='text-xs text-gray-500'>Video</span>
-                  </div>
-                )}
+                    <div className='flex items-center gap-2'>
+                      <video
+                        width={100}
+                        height={100}
+                        src={(section.content as any).videoUrl}
+                        className='w-16 h-12 object-cover rounded border'
+                        muted
+                      />
+                      <span className='text-xs text-gray-500'>Video</span>
+                    </div>
+                  )}
               </div>
             </div>
           </div>
@@ -809,6 +810,9 @@ function SectionForm({
   submitLabel,
   colleges,
 }: SectionFormProps) {
+  // Fetch blogs and events for the dropdowns
+  const { blogs, events, isLoading: loadingBlogsEvents } = useBlogsAndEvents();
+
   const renderContentFields = () => {
     const { type, content } = formData;
 
@@ -816,138 +820,338 @@ function SectionForm({
       case SectionType.HERO:
         return (
           <div className='space-y-4'>
+            {/* Display Type Selector */}
             <div>
-              <Label>Title (English)</Label>
-              <Input
-                value={content.title?.en || ''}
-                onChange={e =>
+              <Label>Display Type</Label>
+              <Select
+                value={content.displayType || 'default'}
+                onValueChange={value =>
                   setFormData({
                     ...formData,
                     content: {
                       ...content,
-                      title: { ...content.title, en: e.target.value },
+                      displayType: value as 'default' | 'blog' | 'event',
+                      // Clear linked IDs when changing display type
+                      linkedBlogId:
+                        value === 'blog' ? content.linkedBlogId : undefined,
+                      linkedEventId:
+                        value === 'event' ? content.linkedEventId : undefined,
                     },
                   })
                 }
-                placeholder='Enter English title'
-              />
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder='Select display type' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='default'>
+                    Default (Static Content)
+                  </SelectItem>
+                  <SelectItem value='blog'>Link to Blog</SelectItem>
+                  <SelectItem value='event'>Link to Event</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className='text-xs text-gray-500 mt-1'>
+                Choose what to display in the hero section
+              </p>
             </div>
-            <div>
-              <Label>Title (Arabic)</Label>
-              <Input
-                value={content.title?.ar || ''}
-                onChange={e =>
-                  setFormData({
-                    ...formData,
-                    content: {
-                      ...content,
-                      title: { ...content.title, ar: e.target.value },
-                    },
-                  })
-                }
-                placeholder='Enter Arabic title'
-              />
-            </div>
-            <div>
-              <Label>Content (English)</Label>
-              <Textarea
-                value={content.content?.en || ''}
-                onChange={e =>
-                  setFormData({
-                    ...formData,
-                    content: {
-                      ...content,
-                      content: { ...content.content, en: e.target.value },
-                    },
-                  })
-                }
-                placeholder='Enter English content'
-                rows={4}
-              />
-            </div>
-            <div>
-              <Label>Content (Arabic)</Label>
-              <Textarea
-                value={content.content?.ar || ''}
-                onChange={e =>
-                  setFormData({
-                    ...formData,
-                    content: {
-                      ...content,
-                      content: { ...content.content, ar: e.target.value },
-                    },
-                  })
-                }
-                placeholder='Enter Arabic content'
-                rows={4}
-              />
-            </div>
-            <div>
-              <Label>Image URL</Label>
-              <div className='flex gap-2'>
-                <Input
-                  value={content.imageUrl || ''}
-                  onChange={e =>
-                    setFormData({
-                      ...formData,
-                      content: { ...content, imageUrl: e.target.value },
-                    })
-                  }
-                  placeholder='Image URL'
-                />
-                <Button
-                  type='button'
-                  variant='outline'
-                  size='sm'
-                  onClick={() => onImageSelect('imageUrl')}
-                >
-                  <ImageIcon className='h-4 w-4' />
-                </Button>
+
+            {/* Conditional rendering based on display type */}
+            {content.displayType === 'blog' && (
+              <div className='bg-blue-50 p-4 rounded-lg space-y-4'>
+                <div>
+                  <Label>Select Blog</Label>
+                  <Select
+                    value={content.linkedBlogId || ''}
+                    onValueChange={value =>
+                      setFormData({
+                        ...formData,
+                        content: { ...content, linkedBlogId: value },
+                      })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder='Choose a blog to link' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {loadingBlogsEvents ? (
+                        <SelectItem value='loading' disabled>
+                          Loading blogs...
+                        </SelectItem>
+                      ) : blogs.length === 0 ? (
+                        <SelectItem value='empty' disabled>
+                          No published blogs found
+                        </SelectItem>
+                      ) : (
+                        blogs.map(blog => (
+                          <SelectItem key={blog.id} value={blog.id}>
+                            {getBlogTitle(blog, 'en')} |{' '}
+                            {getBlogTitle(blog, 'ar')}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                  <p className='text-xs text-gray-500 mt-1'>
+                    The blog&apos;s image and description will be displayed
+                  </p>
+                </div>
               </div>
-              {content.imageUrl && (
-                <div className='mt-2'>
-                  <Image
-                    width={100}
-                    height={100}
-                    src={content.imageUrl}
-                    alt='Preview'
-                    className='w-32 h-24 object-cover rounded border'
+            )}
+
+            {content.displayType === 'event' && (
+              <div className='bg-green-50 p-4 rounded-lg space-y-4'>
+                <div>
+                  <Label>Select Event</Label>
+                  <Select
+                    value={content.linkedEventId || ''}
+                    onValueChange={value =>
+                      setFormData({
+                        ...formData,
+                        content: { ...content, linkedEventId: value },
+                      })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder='Choose an event to link' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {loadingBlogsEvents ? (
+                        <SelectItem value='loading' disabled>
+                          Loading events...
+                        </SelectItem>
+                      ) : events.length === 0 ? (
+                        <SelectItem value='empty' disabled>
+                          No published events found
+                        </SelectItem>
+                      ) : (
+                        events.map(event => (
+                          <SelectItem key={event.id} value={event.id}>
+                            {getBlogTitle(event, 'en')} |{' '}
+                            {getBlogTitle(event, 'ar')}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                  <p className='text-xs text-gray-500 mt-1'>
+                    The event&apos;s image and description will be displayed
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Default content fields (shown only when displayType is 'default' or not set) */}
+            {(!content.displayType || content.displayType === 'default') && (
+              <>
+                <div>
+                  <Label>Title (English)</Label>
+                  <Input
+                    value={content.title?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          title: { ...content.title, en: e.target.value },
+                        },
+                      })
+                    }
+                    placeholder='Enter English title'
                   />
                 </div>
-              )}
-            </div>
-            <div>
-              <Label>Video URL</Label>
-              <div className='flex gap-2'>
-                <Input
-                  value={content.videoUrl || ''}
-                  onChange={e =>
-                    setFormData({
-                      ...formData,
-                      content: { ...content, videoUrl: e.target.value },
-                    })
-                  }
-                  placeholder='Video URL'
-                />
-                <Button
-                  type='button'
-                  variant='outline'
-                  size='sm'
-                  onClick={() => onImageSelect('videoUrl')}
-                >
-                  <Video className='h-4 w-4' />
-                </Button>
-              </div>
-              {content.videoUrl && (
-                <div className='mt-2'>
-                  <video
-                    src={content.videoUrl}
-                    className='w-32 h-24 object-cover rounded border'
-                    controls
-                    muted
+                <div>
+                  <Label>Title (Arabic)</Label>
+                  <Input
+                    value={content.title?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          title: { ...content.title, ar: e.target.value },
+                        },
+                      })
+                    }
+                    placeholder='Enter Arabic title'
                   />
                 </div>
-              )}
+                <div>
+                  <Label>Content (English)</Label>
+                  <Textarea
+                    value={content.content?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          content: { ...content.content, en: e.target.value },
+                        },
+                      })
+                    }
+                    placeholder='Enter English content'
+                    rows={4}
+                  />
+                </div>
+                <div>
+                  <Label>Content (Arabic)</Label>
+                  <Textarea
+                    value={content.content?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          content: { ...content.content, ar: e.target.value },
+                        },
+                      })
+                    }
+                    placeholder='Enter Arabic content'
+                    rows={4}
+                  />
+                </div>
+                <div>
+                  <Label>Image URL</Label>
+                  <div className='flex gap-2'>
+                    <Input
+                      value={content.imageUrl || ''}
+                      onChange={e =>
+                        setFormData({
+                          ...formData,
+                          content: { ...content, imageUrl: e.target.value },
+                        })
+                      }
+                      placeholder='Image URL'
+                    />
+                    <Button
+                      type='button'
+                      variant='outline'
+                      size='sm'
+                      onClick={() => onImageSelect('imageUrl')}
+                    >
+                      <ImageIcon className='h-4 w-4' />
+                    </Button>
+                  </div>
+                  {content.imageUrl && (
+                    <div className='mt-2'>
+                      <Image
+                        width={100}
+                        height={100}
+                        src={content.imageUrl}
+                        alt='Preview'
+                        className='w-32 h-24 object-cover rounded border'
+                      />
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <Label>Video URL</Label>
+                  <div className='flex gap-2'>
+                    <Input
+                      value={content.videoUrl || ''}
+                      onChange={e =>
+                        setFormData({
+                          ...formData,
+                          content: { ...content, videoUrl: e.target.value },
+                        })
+                      }
+                      placeholder='Video URL'
+                    />
+                    <Button
+                      type='button'
+                      variant='outline'
+                      size='sm'
+                      onClick={() => onImageSelect('videoUrl')}
+                    >
+                      <Video className='h-4 w-4' />
+                    </Button>
+                  </div>
+                  {content.videoUrl && (
+                    <div className='mt-2'>
+                      <video
+                        src={content.videoUrl}
+                        className='w-32 h-24 object-cover rounded border'
+                        controls
+                        muted
+                      />
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+
+            {/* Custom button configuration (shown for all display types) */}
+            <div className='border-t pt-4'>
+              <h4 className='font-medium mb-3'>Button Configuration</h4>
+              <div className='space-y-3'>
+                <div>
+                  <Label>Button Text (English) - Optional</Label>
+                  <Input
+                    value={content.buttonConfig?.text?.en || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          buttonConfig: {
+                            ...content.buttonConfig,
+                            text: {
+                              ...content.buttonConfig?.text,
+                              en: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='e.g., View Blog, Read More'
+                  />
+                </div>
+                <div>
+                  <Label>Button Text (Arabic) - Optional</Label>
+                  <Input
+                    value={content.buttonConfig?.text?.ar || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          buttonConfig: {
+                            ...content.buttonConfig,
+                            text: {
+                              ...content.buttonConfig?.text,
+                              ar: e.target.value,
+                            },
+                          },
+                        },
+                      })
+                    }
+                    placeholder='مثال: عرض المدونة، اقرأ المزيد'
+                  />
+                </div>
+                <div>
+                  <Label>Custom Button URL - Optional</Label>
+                  <Input
+                    value={content.buttonConfig?.url || ''}
+                    onChange={e =>
+                      setFormData({
+                        ...formData,
+                        content: {
+                          ...content,
+                          buttonConfig: {
+                            ...content.buttonConfig,
+                            url: e.target.value,
+                          },
+                        },
+                      })
+                    }
+                    placeholder='Leave empty for auto-generated URLs'
+                  />
+                  <p className='text-xs text-gray-500 mt-1'>
+                    If empty, will auto-navigate to the selected blog/event
+                    page
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         );
@@ -3661,7 +3865,7 @@ function SectionForm({
 
       {/* Submit Button */}
       <div className='flex justify-end gap-2'>
-        <Button type='button' variant='outline' onClick={() => {}}>
+        <Button type='button' variant='outline' onClick={() => { }}>
           Cancel
         </Button>
         <Button onClick={onSubmit} className='bg-blue-600 hover:bg-blue-700'>
