@@ -1,4 +1,4 @@
-import axios from 'axios';
+// import axios from 'axios';
 
 export interface AiBotRequest {
   content: string;
@@ -14,12 +14,12 @@ class BotService {
     'https://nonconsumable-heaping-nicolasa.ngrok-free.dev/webhook/f9bdb1a9-891d-40eb-8738-e9a64104197d';
 
   // post request for the n8n webhook
-  static async postRequest(data: AiBotRequest): Promise<AiBotResponse> {
-    console.log(this.WEBHOOK_URL);
-    console.log('sending data to webhook....');
-    const response = await axios.post(this.WEBHOOK_URL, data);
-    return response.data;
-  }
+  // static async postRequest(data: AiBotRequest): Promise<AiBotResponse> {
+  //   console.log(this.WEBHOOK_URL);
+  //   console.log('sending data to webhook....');
+  //   const response = await axios.post(this.WEBHOOK_URL, data);
+  //   return response.data;
+  // }
 
   // Generate a unique session ID
   static generateSessionId(): string {

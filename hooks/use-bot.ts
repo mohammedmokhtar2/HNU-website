@@ -1,14 +1,15 @@
 'use client';
-import { useMutation } from '@tanstack/react-query';
 import { useState, useEffect, useCallback } from 'react';
-import BotService, { AiBotResponse } from '../services/bot.service';
+import BotService from '../services/bot.service'; // We still use this for session management
 
+// This interface remains IDENTICAL to your old one, so the UI won't break.
 export interface ChatMessage {
   from: 'user' | 'bot';
   text: string;
   timestamp: Date;
 }
 
+// The hook's return type also remains the same.
 export interface UseBotReturn {
   messages: ChatMessage[];
   isLoading: boolean;
@@ -21,8 +22,12 @@ export interface UseBotReturn {
 export function useBot(): UseBotReturn {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [sessionId, setSessionId] = useState<string>('');
+  
+  // NEW state management, replacing useMutation's state
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
-  // Save messages to localStorage
+  // --- ALL YOUR LOCALSTORAGE AND SESSION LOGIC REMAINS UNCHANGED ---
   const saveMessages = useCallback(
     (messagesToSave: ChatMessage[]) => {
       if (sessionId && typeof window !== 'undefined') {
@@ -35,81 +40,93 @@ export function useBot(): UseBotReturn {
     [sessionId]
   );
 
-  // Initialize session ID and load messages on mount
   useEffect(() => {
     const id = BotService.getSessionId();
     setSessionId(id);
-
-    // Load saved messages from localStorage
     const savedMessages = localStorage.getItem(`bot_messages_${id}`);
     if (savedMessages) {
       try {
         const parsedMessages = JSON.parse(savedMessages);
-        // Convert timestamp strings back to Date objects
         const messagesWithDates = parsedMessages.map((msg: any) => ({
           ...msg,
           timestamp: new Date(msg.timestamp),
         }));
         setMessages(messagesWithDates);
-      } catch (error) {
-        console.error('Failed to load saved messages:', error);
+      } catch (e) {
+        console.error('Failed to load saved messages:', e);
       }
     }
   }, []);
 
-  // Save messages to localStorage whenever messages change
   useEffect(() => {
     if (sessionId && messages.length > 0) {
       saveMessages(messages);
     }
   }, [messages, sessionId, saveMessages]);
+  // --- END OF YOUR UNCHANGED LOCALSTORAGE LOGIC ---
 
-  // Mutation for sending messages to the bot
-  const sendMessageMutation = useMutation<AiBotResponse, Error, string>({
-    mutationFn: async (content: string) => {
-      if (!sessionId) {
-        throw new Error('Session ID not available');
-      }
-      return await BotService.postRequest({ content, sessionId });
-    },
-    onSuccess: data => {
-      // Add bot response to messages
-      setMessages(prev => [
-        ...prev,
-        {
-          from: 'bot',
-          text: data.output,
-          timestamp: new Date(),
-        },
-      ]);
-    },
-    onError: () => {
-      // Add error message to chat
-      setMessages(prev => [
-        ...prev,
-        {
-          from: 'bot',
-          text: 'Sorry, I encountered an error. Please try again.',
-          timestamp: new Date(),
-        },
-      ]);
-    },
-  });
 
-  const sendMessage = (content: string) => {
-    if (!content.trim() || !sessionId) return;
+  // --- THE NEW sendMessage FUNCTION ---
+  const sendMessage = useCallback(async (content: string) => {
+    if (!content.trim() || isLoading) return;
 
-    // Add user message immediately
+    // Add user message immediately, using your existing ChatMessage format
     const userMessage: ChatMessage = {
       from: 'user',
       text: content,
       timestamp: new Date(),
     };
-    setMessages(prev => [...prev, userMessage]);
+    // Add a placeholder for the bot's response
+    const botPlaceholder: ChatMessage = {
+      from: 'bot',
+      text: '', // Start with empty text
+      timestamp: new Date(),
+    };
+    setMessages(prev => [...prev, userMessage, botPlaceholder]);
+    
+    setIsLoading(true);
+    setError(null);
 
-    // Send to bot
-    sendMessageMutation.mutate(content);
-  };
+    try {
+      // NEW: The streaming fetch call
+      const response = await fetch('https://mokh2x-hnu-final.hf.space/chat/stream', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: content }), // The new API doesn't need sessionId here
+      });
+
+      if (!response.ok || !response.body) {
+        throw new Error(`API Error: ${response.statusText}`);
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        // Update the 'text' of the last message (the bot's placeholder)
+        setMessages(prev => {
+            const lastMessage = prev[prev.length - 1];
+            const updatedLastMessage = { ...lastMessage, text: lastMessage.text + chunk };
+            return [...prev.slice(0, -1), updatedLastMessage];
+        });
+      }
+    } catch (e) {
+      const err = e instanceof Error ? e : new Error('An unknown error occurred.');
+      setError(err);
+      // Update the placeholder with an error message
+      setMessages(prev => {
+          const lastMessage = prev[prev.length - 1];
+          const updatedLastMessage = { ...lastMessage, text: 'Sorry, I encountered an error. Please try again.' };
+          return [...prev.slice(0, -1), updatedLastMessage];
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isLoading]); // Dependency on isLoading to prevent concurrent requests
+
 
   const clearMessages = () => {
     setMessages([]);
@@ -119,12 +136,9 @@ export function useBot(): UseBotReturn {
   };
 
   const clearSession = () => {
-    // Clear current session messages
     if (sessionId) {
       BotService.clearSessionMessages(sessionId);
     }
-
-    // Generate new session
     BotService.clearSessionId();
     const newSessionId = BotService.getSessionId();
     setSessionId(newSessionId);
@@ -133,8 +147,8 @@ export function useBot(): UseBotReturn {
 
   return {
     messages,
-    isLoading: sendMessageMutation.isPending,
-    error: sendMessageMutation.error,
+    isLoading, // Now sourced from our own useState
+    error,     // Now sourced from our own useState
     sendMessage,
     clearMessages,
     clearSession,
