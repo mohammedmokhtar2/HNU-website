@@ -2,10 +2,6 @@
 
 AA modern, feature-rich official website for Helwan National University (HNU) built with Next.js 15, TypeScript, and Tailwind CSS.
 
-## 🚀 **Live Demo**
-
-**Production**: https://hnu-official-website-orsypfjnq-mahmoud-matters-projects.vercel.app
-
 ## 📋 **Project Overview**
 
 HNU Official Website is a comprehensive web platform designed to showcase Helwan National University's academic excellence, services, and information. The website features a modern, responsive design with internationalization support for both English and Arabic languages.
@@ -138,18 +134,6 @@ hnu-offical-website/
 - **Package Manager**: npm, yarn, or pnpm
 - **Git**: Version control system
 
-### **Installation**
-```bash
-# Clone the repository
-git clone https://github.com/mahmoudmatter12/HNU-Official-website.git
-cd hnu-offical-website
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-```
 
 ### **Environment Setup**
 Create a `.env.local` file in the root directory:
@@ -341,12 +325,6 @@ We welcome contributions! Please see our [Contributing Guidelines](.github/CONTR
 - **Contributing**: [.github/CONTRIBUTING.md](.github/CONTRIBUTING.md)
 - **API Reference**: Check individual component files
 
-## 📞 **Support & Contact**
-
-- **Repository**: https://github.com/mahmoudmatter12/HNU-Official-website
-- **Issues**: Create an issue for bugs or feature requests
-- **Discussions**: Use GitHub Discussions for questions
-- **Owner**: @mahmoud-zel-din
 
 ## 📄 **License**
 
@@ -469,4 +447,5 @@ hnu-offical-website
 └─ VERSIONING.md
 
 ```
+
 # HNU-website
